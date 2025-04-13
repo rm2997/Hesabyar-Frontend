@@ -1,19 +1,23 @@
 import React, { useState } from "react";
-
 import {
   Box,
   Button,
+  Center,
+  Divider,
   FormControl,
   FormLabel,
   Heading,
   Input,
+  Link,
   VStack,
   useToast,
 } from "@chakra-ui/react";
+import { UnlockIcon } from "@chakra-ui/icons";
+import { login } from "../api/services/authService";
 
 export const LoginForm = () => {
   const toast = useToast();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ username: "", password: "" });
   const [isFormDisabled, setIsFormDisabled] = useState(false);
 
   const handleChange = (e) => {
@@ -23,37 +27,39 @@ export const LoginForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsFormDisabled(true);
-    const examplePromise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(200);
-        setIsFormDisabled(false);
-      }, 5000);
-    });
-
-    toast.promise(examplePromise, {
-      success: {
-        title: "ورود موفقیت‌آمیز",
-        description: `خوش اومدی ${form.email}`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      },
-      error: {
-        title: "مشکلی هنگام مرود به سیستم رخ داد",
-        description: "",
-        status: "error",
-        duration: 3000,
-        isClosable: false,
-      },
-      loading: {
-        title: "در انتظار دریافت نتیجه از سرور",
-        description: "لطفا شکیبا باشید",
-      },
-    });
+    toast.promise(
+      login(form)
+        .then((res) => {
+          return res;
+        })
+        .finally(() => {
+          setIsFormDisabled(false);
+        }),
+      {
+        success: (res) => ({
+          title: "ورود موفقیت‌آمیز",
+          description: `خوش اومدی ${form.username}`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        }),
+        error: (err) => ({
+          title: err.message,
+          description: err.message,
+          status: "error",
+          duration: 3000,
+          isClosable: false,
+        }),
+        loading: {
+          title: "در انتظار دریافت نتیجه از سرور",
+          description: "لطفا شکیبا باشید",
+        },
+      }
+    );
   };
   return (
     <Box
-      maxW="400px"
+      maxW="600px"
       mx="auto"
       mt="100px"
       p={8}
@@ -62,46 +68,55 @@ export const LoginForm = () => {
       boxShadow="lg"
       dir="rtl"
     >
-      <Heading size={"sm"} mb={6} textAlign="right">
-        به حسابیار خوش آمدید
-      </Heading>
       <Heading size={"lg"} mb={6} textAlign="center">
-        ورود به حساب
+        ورود به حساب کاربری
       </Heading>
-      <form onSubmit={handleSubmit}>
-        <VStack spacing={4}>
-          <FormControl isRequired>
-            <FormLabel>ایمیل</FormLabel>
-            <Input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="your@email.com"
-            />
-          </FormControl>
 
-          <FormControl isRequired>
-            <FormLabel>رمز عبور</FormLabel>
-            <Input
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder=""
-            />
-          </FormControl>
+      <VStack as="form" spacing={6} onSubmit={handleSubmit}>
+        <FormControl isRequired>
+          <FormLabel>نام کاربری</FormLabel>
+          <Input
+            colorScheme="blue"
+            name="username"
+            dir="ltr"
+            type="text"
+            variant="flushed"
+            value={form.username}
+            onChange={handleChange}
+            placeholder="Username"
+          />
+        </FormControl>
 
-          <Button
-            colorScheme="teal"
-            type="submit"
-            width="full"
-            disabled={isFormDisabled}
-          >
-            ورود
-          </Button>
-        </VStack>
-      </form>
+        <FormControl isRequired>
+          <FormLabel>کلمه عبور</FormLabel>
+          <Input
+            dir="ltr"
+            colorScheme="blue"
+            name="password"
+            type="password"
+            variant="flushed"
+            value={form.password}
+            onChange={handleChange}
+            placeholder="Password"
+          />
+        </FormControl>
+
+        <Button
+          colorScheme="blue"
+          rightIcon={<UnlockIcon />}
+          type="submit"
+          width="full"
+          disabled={isFormDisabled}
+        >
+          ورود
+        </Button>
+      </VStack>
+      <Divider marginTop={10} marginBottom={5} />
+      <Center>
+        <Link href="#" color="blue">
+          رمز خود را فراموش کرده اید؟
+        </Link>
+      </Center>
     </Box>
   );
 };
