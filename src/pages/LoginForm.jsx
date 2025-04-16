@@ -14,14 +14,21 @@ import {
 } from "@chakra-ui/react";
 import { UnlockIcon } from "@chakra-ui/icons";
 import { login } from "../api/services/authService";
+import { useNavigate } from "react-router-dom";
 
 export const LoginForm = () => {
   const toast = useToast();
   const [form, setForm] = useState({ username: "", password: "" });
   const [isFormDisabled, setIsFormDisabled] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    navigate("/forget-password");
   };
 
   const handleSubmit = (e) => {
@@ -34,6 +41,7 @@ export const LoginForm = () => {
         })
         .finally(() => {
           setIsFormDisabled(false);
+          navigate("/home");
         }),
       {
         success: (res) => ({
@@ -113,7 +121,7 @@ export const LoginForm = () => {
       </VStack>
       <Divider marginTop={10} marginBottom={5} />
       <Center>
-        <Link href="#" color="blue">
+        <Link href="#" onClick={handleClick} color="blue">
           رمز خود را فراموش کرده اید؟
         </Link>
       </Center>

@@ -6,7 +6,7 @@ export const login = async (data) => {
   try {
     clearTokens();
     const response = await axiosClient.post(endpoints.auth.login, data);
-    saveTokens(response.data.access_token, null);
+    saveTokens(response.data.accessToken, response.data.refreshToken);
     return response;
   } catch (error) {
     if (error.response) {
@@ -29,6 +29,17 @@ export const sendResetLink = async (mobile) => {
       endpoints.auth.forgetPassword,
       mobile
     );
+    return response;
+  } catch (error) {}
+};
+
+export const refreshTokens = async (oldRefreshToken) => {
+  try {
+    if (!oldRefreshToken) return;
+    const data = {
+      refreshToken: oldRefreshToken,
+    };
+    const response = await axiosClient.post(endpoints.auth.refresh, data);
     return response;
   } catch (error) {}
 };

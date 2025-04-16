@@ -9,17 +9,23 @@ import {
   VStack,
   Heading,
   Text,
-  Link,
   Divider,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { sendResetLink } from "../api/services/authService"; // فرض بر اینکه داریمش
+import { useNavigate } from "react-router-dom";
+import { LinkIcon } from "@chakra-ui/icons";
 
 export const ForgotPasswordForm = () => {
   const toast = useToast();
   const [mobile, setMobile] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
+  const handleClick = (e) => {
+    e.preventDefault();
+    navigate("/login");
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -85,9 +91,15 @@ export const ForgotPasswordForm = () => {
           ارسال لینک بازیابی
         </Button>
         <Divider />
-        <Link href="#" color="blue">
+        <Button
+          leftIcon={<LinkIcon />}
+          colorScheme="pink"
+          variant="solid"
+          onClick={handleClick}
+          width="full"
+        >
           ورود به سیستم
-        </Link>
+        </Button>
       </VStack>
     </Box>
   );

@@ -4,6 +4,7 @@ const endpoints = {
     register: "/auth/register",
     logout: "/auth/logout",
     forgetPassword: "/auth/forgetPassword",
+    refresh: "/auth/refresh",
   },
   user: {
     profile: "/user/profile",
