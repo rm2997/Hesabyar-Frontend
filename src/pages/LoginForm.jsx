@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -15,13 +15,19 @@ import {
 import { UnlockIcon } from "@chakra-ui/icons";
 import { login } from "../api/services/authService";
 import { useNavigate } from "react-router-dom";
+import { loadTokens } from "../api/tokenUtils";
 
 export const LoginForm = () => {
   const toast = useToast();
   const [form, setForm] = useState({ username: "", password: "" });
   const [isFormDisabled, setIsFormDisabled] = useState(false);
   const navigate = useNavigate();
-
+  const { accessToken } = loadTokens();
+   
+  useEffect(()=>{
+      if (accessToken)
+        navigate("/home");
+  },[])
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -65,6 +71,8 @@ export const LoginForm = () => {
       }
     );
   };
+
+
   return (
     <Box
       maxW="600px"

@@ -8,18 +8,20 @@ import {
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+
 import { PrivateRoute } from "./my-components/PrivateRoute";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { MyHome } from "./pages/HomePage";
+import { Logout } from "./my-components/Logout";
 function App() {
   return (
     <ChakraProvider>
       <Router>
-        <AuthProvider>
+        {/* <AuthProvider> */}
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/login" element={<LoginForm />} />
-            <Route path="/logout" element={<LoginForm />} />
+            <Route path="/logout" element={<Logout />} />
             <Route path="/forget-password" element={<ForgotPasswordForm />} />
             <Route
               path="/dashbord"
@@ -33,14 +35,14 @@ function App() {
               path="/home"
               element={
                 <PrivateRoute>
-                  <>home</>
+                  <MyHome />
                 </PrivateRoute>
               }
             />
 
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
-        </AuthProvider>
+        {/* </AuthProvider> */}
       </Router>
     </ChakraProvider>
   );
