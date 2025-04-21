@@ -20,15 +20,15 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 export const PieChart = () => {
   return (
     <Box h="300px" w="100%" bg="gray.700" p={4} borderRadius="md">
-      <Text mb={2}>نمودار دایره‌ای</Text>
+      <Text mb={1}>وضعیت</Text>
       <ResponsiveContainer width="100%" height="100%">
         <RechartPieChart>
           <Pie
             data={data}
             dataKey="value"
-            innerRadius={60}
+            innerRadius={50}
             outerRadius={80}
-            paddingAngle={5}
+            paddingAngle={6}
             fill="#8884d8"
           >
             {data.map((entry, index) => (

@@ -31,7 +31,7 @@ export const HeaderBar = ({ isDesktop, setIsSidebarOpen }) => {
       </Text>
 
       {!isDesktop && (
-        <Tooltip label="باز کردن منو">
+        <Tooltip label="باز کردن منو" hasArrow>
           <IconButton
             icon={<SquareEqual />}
             onClick={() => setIsSidebarOpen(true)}

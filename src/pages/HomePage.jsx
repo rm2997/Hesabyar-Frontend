@@ -7,14 +7,17 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
 } from "@chakra-ui/react";
 import { HeaderBar } from "../my-components/HeaderBar";
 import { Sidebar } from "../my-components/SideBar";
 import { MainContents } from "../my-components/MainContents";
 
 export const MyHome = () => {
-  const [sidebarWidth, setSidebarWidth] = useState(250);
+  const [sidebarWidth, setSidebarWidth] = useState(300);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeContent, setActiveContent] = useState("");
   const isDesktop = useBreakpointValue({ base: false, md: true });
 
   const sidebarRef = useRef(null);
@@ -25,16 +28,18 @@ export const MyHome = () => {
       if (!isResizingRef.current || !isDesktop) return;
       const touch = e.touches[0];
       const newWidth = window.innerWidth - touch.clientX;
-      setSidebarWidth(Math.max(150, Math.min(newWidth, 400)));
+      setSidebarWidth(Math.max(250, Math.min(newWidth, 400)));
     };
 
     const handleTouchEnd = () => {
+      if (!isDesktop) return;
       isResizingRef.current = false;
     };
 
-    document.addEventListener("touchmove", handleTouchMove);
-    document.addEventListener("touchend", handleTouchEnd);
-
+    if (isDesktop) {
+      document.addEventListener("touchmove", handleTouchMove);
+      document.addEventListener("touchend", handleTouchEnd);
+    }
     return () => {
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("touchend", handleTouchEnd);
@@ -50,7 +55,7 @@ export const MyHome = () => {
   const handleResize = (e) => {
     if (isResizingRef.current) {
       const newWidth = window.innerWidth - e.clientX;
-      setSidebarWidth(Math.max(150, Math.min(newWidth, 400)));
+      setSidebarWidth(Math.max(250, Math.min(newWidth, 400)));
     }
   };
 
@@ -71,6 +76,7 @@ export const MyHome = () => {
             sidebarRef={sidebarRef}
             startResize={startResize}
             isDesktop={isDesktop}
+            onMenuItemClick={setActiveContent}
           />
         ) : (
           <Drawer
@@ -80,18 +86,23 @@ export const MyHome = () => {
           >
             <DrawerOverlay />
             <DrawerContent bg="gray.800" color="white">
-              <DrawerCloseButton />
-              <Sidebar
-                sidebarWidth={sidebarWidth}
-                sidebarRef={sidebarRef}
-                startResize={startResize}
-                isDesktop={isDesktop}
-              />
+              <DrawerHeader>
+                <DrawerCloseButton />
+              </DrawerHeader>
+              <DrawerBody bg="gray.800">
+                <Sidebar
+                  sidebarWidth={sidebarWidth}
+                  sidebarRef={sidebarRef}
+                  startResize={startResize}
+                  isDesktop={isDesktop}
+                  onMenuItemClick={(e) => setActiveContent(e)}
+                />
+              </DrawerBody>
             </DrawerContent>
           </Drawer>
         )}
 
-        <MainContents />
+        <MainContents activeContent={activeContent} />
       </Flex>
     </Flex>
   );
