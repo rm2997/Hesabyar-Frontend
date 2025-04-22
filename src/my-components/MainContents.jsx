@@ -1,12 +1,22 @@
 // components/MainContent.jsx
-import { Box, Card, CardBody, CardHeader, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Text,
+} from "@chakra-ui/react";
 
 import { UserProformas } from "../pages/UserProfomas";
 import { useEffect, useState } from "react";
+import { UserInvoices } from "../pages/UserInvoice";
+import { NewProForma } from "../pages/NewProforma";
+import { NewInvoice } from "../pages/NewInvoice";
 
 const validContents = [
-  { name: "newProforma", value: "بیش فاکتور جدید" },
-  { name: "proformaStat", value: "بیش فاکتور ها" },
+  { name: "newProforma", value: "پیش فاکتور جدید" },
+  { name: "proformaStat", value: "پیش فاکتور ها" },
   { name: "newInvoice", value: "فاکتور جدید" },
   { name: "invoiceStat", value: "فاکتور ها" },
   { name: "newSale", value: "فروش جدید" },
@@ -27,21 +37,20 @@ export const MainContents = ({ activeContent }) => {
       setPageTitle(valid.value);
       const element = SetActiveElement(valid.name);
       setShouldRender(element);
-      console.log("hi");
     };
 
     const SetActiveElement = (index) => {
       switch (index) {
         case "newProforma":
-          break;
+          return <NewProForma />;
         case "proformaStat":
           return <UserProformas />;
         case "newInvoice":
-          return <>Hi1</>;
+          return <NewInvoice />;
         case "invoiceStat":
-          return <>Hi2</>;
+          return <UserInvoices />;
         case "newSale":
-          return <>Hi3</>;
+          return;
         case "saleStat":
           return <>Hi4</>;
         default:
@@ -53,21 +62,19 @@ export const MainContents = ({ activeContent }) => {
   }, [activeContent]);
 
   return (
-    <Box overflow="scroll" width="full">
-      <Heading bg="gray.600" color="gray.200" mt={5}>
-        {pageTitle}
-      </Heading>
-
-      <Card
-        borderColor="gray.600"
-        variant="outline"
-        bg="gray.700"
-        width="full"
-        color="gray.400"
+    <Card w="90%" m={1}>
+      <CardHeader
+        bg="blue.400"
+        borderBottomColor="gray.100"
+        borderBottomWidth="1px"
+        color="white"
       >
-        <CardHeader></CardHeader>
-        <CardBody color="gray.100">{shouldRender}</CardBody>
-      </Card>
-    </Box>
+        <Text fontSize={"2xl"}>{pageTitle}</Text>
+      </CardHeader>
+      <CardBody bg="#e8e4e5" overflow="scroll" color="gray.200">
+        <Box>{shouldRender}</Box>
+      </CardBody>
+      <CardFooter bg="#dedcdd"></CardFooter>
+    </Card>
   );
 };

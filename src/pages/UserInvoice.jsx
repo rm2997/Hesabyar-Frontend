@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ProformaDataTable } from "../my-components/ProformaDataTable";
 import { MyLoading } from "../my-components/MyLoading";
-import { Box, Card, CardBody, CardHeader } from "@chakra-ui/react";
+import { InvoiceDataTable } from "../my-components/InvoiceDataTable";
 
 const data = {
   Headers: ["ردیف", "تاریخ", "مشتری", "نوع فروش", "جمع اقلام"],
@@ -22,7 +22,7 @@ const data = {
     },
   ],
 };
-export const UserProformas = () => {
+export const UserInvoices = () => {
   const [userData, setUserData] = useState(null);
   const [showLoading, setShowLoading] = useState(true);
   useEffect(() => {
@@ -46,7 +46,7 @@ export const UserProformas = () => {
   if (userData)
     return (
       <>
-        <ProformaDataTable
+        <InvoiceDataTable
           HeadLables={userData.Headers}
           DataRows={userData.Rows}
         />

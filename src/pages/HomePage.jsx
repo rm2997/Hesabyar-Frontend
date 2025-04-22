@@ -9,6 +9,7 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
+  Box,
 } from "@chakra-ui/react";
 import { HeaderBar } from "../my-components/HeaderBar";
 import { Sidebar } from "../my-components/SideBar";

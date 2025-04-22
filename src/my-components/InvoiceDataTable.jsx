@@ -10,11 +10,11 @@ import {
   Tr,
 } from "@chakra-ui/react";
 
-export const ProformaDataTable = ({ HeadLables, DataRows }) => {
+export const InvoiceDataTable = ({ HeadLables, DataRows }) => {
   return (
     <TableContainer>
       <Table color="black" colorScheme="blackAlpha">
-        <TableCaption>جدول اطلاعات پیش فاکتور های کاربر جاری</TableCaption>
+        <TableCaption>جدول اطلاعات فاکتور های کاربر جاری</TableCaption>
         <Thead bg="#2b0b8a">
           <Tr>
             {HeadLables.map((label) => (

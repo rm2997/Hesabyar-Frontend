@@ -28,7 +28,7 @@ export const Sidebar = ({
       >
         <SidebarItem
           id={1}
-          title="بیش فاکتور"
+          title="پیش فاکتور"
           children={[
             { id: "newProforma", name: "جدید", type: "text" },
             { id: "proformaStat", name: "آمار", type: "text" },

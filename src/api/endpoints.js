@@ -14,7 +14,7 @@ const endpoints = {
   proforma: {
     list: "/proforma/list",
     detail: (id) => `/proforma/${id}`,
-    create: "/proforma/create",
+    create: "/proforma/",
   },
   invoice: {
     list: "/invoice/list",
