@@ -1,41 +1,19 @@
 import { useEffect, useState } from "react";
 import { ProformaDataTable } from "../my-components/ProformaDataTable";
 import { MyLoading } from "../my-components/MyLoading";
-import { Box, Card, CardBody, CardHeader } from "@chakra-ui/react";
+import { ShowUserAllProformas } from "../api/services/proformaService";
 
 const data = {
-  Headers: ["ردیف", "تاریخ", "مشتری", "نوع فروش", "جمع اقلام"],
-  Rows: [
-    {
-      id: "1",
-      Date: "1404/01/30",
-      Customer: "Mohamadi",
-      SaleTaype: "Cash",
-      GoodsCount: "5",
-    },
-    {
-      id: "2",
-      Date: "1404/01/31",
-      Customer: "Hasani",
-      SaleTaype: "Cash",
-      GoodsCount: "1",
-    },
-  ],
+  Headers: ["ردیف", "تاریخ", "نام مشتری", "فایل تاییدیه", "جمع مبلغ", "عملیات"],
+  Rows: [],
 };
 export const UserProformas = () => {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState(data);
   const [showLoading, setShowLoading] = useState(true);
   useEffect(() => {
-    const loadData = () => {
-      for (let index = 3; index < 100; index++) {
-        data.Rows.push({
-          id: index,
-          Customer: "Reza" + index,
-          Date: "1404/01/01",
-          GoodsCount: index,
-          SaleTaype: "Cash",
-        });
-      }
+    const loadData = async () => {
+      const response = await ShowUserAllProformas();
+      data.Rows = response.data;
       setUserData(data);
       setShowLoading(false);
     };

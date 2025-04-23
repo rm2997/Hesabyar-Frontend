@@ -6,7 +6,6 @@ import {
 } from "@chakra-ui/react";
 
 export const MyLoading = ({ showLoading }) => {
-  console.log(showLoading);
   if (!showLoading) return <></>;
   return (
     <AbsoluteCenter>

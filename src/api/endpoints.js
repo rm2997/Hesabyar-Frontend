@@ -12,7 +12,8 @@ const endpoints = {
     list: "/user/list",
   },
   proforma: {
-    list: "/proforma/list",
+    listAll: "/proforma/user/my",
+    listOne: (id) => `/proforma/${id}`,
     detail: (id) => `/proforma/${id}`,
     create: "/proforma/",
   },

@@ -1,16 +1,31 @@
+import { DeleteIcon } from "@chakra-ui/icons";
 import {
+  HStack,
+  Link,
   Table,
   TableCaption,
   TableContainer,
   Tbody,
   Td,
+  Text,
   Tfoot,
   Th,
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { Edit } from "lucide-react";
+import { MyModalContainer } from "./MyModalContainer";
+import { useState } from "react";
 
 export const ProformaDataTable = ({ HeadLables, DataRows }) => {
+  const [showModal, setShowModal] = useState(false);
+  const handleDeleteProforma = (id) => {
+    console.log(`Delete: ${id}`);
+  };
+  const handleEditProforma = (id) => {
+    console.log(`Edit: ${id}`);
+    setShowModal(true);
+  };
   return (
     <TableContainer>
       <Table color="black" colorScheme="blackAlpha">
@@ -27,11 +42,31 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
         <Tbody>
           {DataRows.map((row) => (
             <Tr>
-              <Td id={row.id}>{row.id}</Td>
-              <Td id={row.Date}>{row.Date}</Td>
-              <Td id={row.Customer}>{row.Customer}</Td>
-              <Td id={row.SaleTaype}>{row.SaleTaype}</Td>
-              <Td id={row.GoodsCount}>{row.GoodsCount}</Td>
+              <Td id={row.id}>
+                <Text>{row.id}</Text>
+              </Td>
+              <Td id={row.createdAt}>{row.createdAt}</Td>
+              <Td id={row.customerName}>{row.customerName}</Td>
+              <Td id={row.approvedFile}>
+                {row.approvedFile ? "دارد" : "ندارد"}
+              </Td>
+              <Td id={row.totalAmount}>{row.totalAmount}</Td>
+              <Td>
+                <HStack>
+                  <Link
+                    color="blue.600"
+                    onClick={() => handleEditProforma(row.id)}
+                  >
+                    <Edit />
+                  </Link>
+                  <Link
+                    color="red.600"
+                    onClick={() => handleDeleteProforma(row.id)}
+                  >
+                    <DeleteIcon />
+                  </Link>
+                </HStack>
+              </Td>
             </Tr>
           ))}
         </Tbody>
@@ -45,6 +80,7 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
           </Tr>
         </Tfoot>
       </Table>
+      <MyModalContainer show={showModal} />
     </TableContainer>
   );
 };
