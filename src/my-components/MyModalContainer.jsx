@@ -10,52 +10,57 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   useDisclosure,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { use, useEffect, useState } from "react";
 
-export const MyModalContainer = ({ show, handleShow }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export const MyModalContainer = ({
+  children,
+  onSave,
+  isOpen,
+  onClose,
+  proformaId,
+  modalHeader,
+}) => {
+  useEffect(() => {
+    if (children) console.log(`Id[${proformaId}] received..`);
+  }, [children]);
 
-  const initialRef = React.useRef(null);
-  const finalRef = React.useRef(null);
-
-  return (
-    <>
-      <Button ml={4} ref={finalRef}>
-        I'll receive focus on close
-      </Button>
-
-      <Modal
-        initialFocusRef={initialRef}
-        finalFocusRef={finalRef}
-        isOpen={show}
-        onClose={handleShow}
-      >
+  if (!children) {
+    return (
+      <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create your account</ModalHeader>
+          <ModalHeader textAlign="center">{modalHeader}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>First name</FormLabel>
-              <Input ref={initialRef} placeholder="First name" />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Last name</FormLabel>
-              <Input placeholder="Last name" />
-            </FormControl>
+            <Spinner />
           </ModalBody>
-
           <ModalFooter>
-            <Button colorScheme="blue" mr={3}>
-              Save
+            <Button colorScheme="blue" mr={3} onClick={onSave}>
+              تایید
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>انصراف</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    );
+  }
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader textAlign="center">{modalHeader}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody pb={6}>{children}</ModalBody>
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={onSave}>
+            تایید
+          </Button>
+          <Button onClick={onClose}>انصراف</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };

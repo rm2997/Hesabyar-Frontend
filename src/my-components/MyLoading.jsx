@@ -10,7 +10,12 @@ export const MyLoading = ({ showLoading }) => {
   return (
     <AbsoluteCenter>
       <Center>
-        <CircularProgress isIndeterminate value={50} size="220px">
+        <CircularProgress
+          color="green.400"
+          isIndeterminate
+          value={50}
+          size="220px"
+        >
           <CircularProgressLabel fontSize="md">
             لطفا شکیبا باشید
           </CircularProgressLabel>

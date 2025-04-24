@@ -5,6 +5,9 @@ import {
   CardFooter,
   CardHeader,
   FormControl,
+  FormLabel,
+  HStack,
+  Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -13,6 +16,7 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  Text,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -50,50 +54,73 @@ export const NewProForma = () => {
 
   return (
     <Card m={10}>
-      <CardHeader>ثبت پیش فاکتور جدید</CardHeader>
+      <CardHeader
+        bg="blue.500"
+        borderBottomColor="gray.400"
+        borderBottomWidth="1px"
+        color="gray.200"
+      >
+        ثبت پیش فاکتور جدید
+      </CardHeader>
       <CardBody>
-        <VStack as="form" spacing={4} onSubmit={handleSubmit}>
+        <VStack as="form" spacing={5} onSubmit={handleSubmit}>
           <FormControl>
-            <InputGroup>
-              <InputRightElement>
-                <Hash color="gray" />
-              </InputRightElement>
-              <Input placeholder="ردیف" htmlSize={19} width="auto" />
-            </InputGroup>
+            <HStack>
+              <FormLabel width="90px">ردیف</FormLabel>
+              <InputGroup>
+                <InputRightElement pointerEvents="none">
+                  <Icon as={Hash} pointerEvents="none" color="gray.500" />
+                </InputRightElement>
+                <Input
+                  pr="2.5rem"
+                  placeholder="ردیف"
+                  htmlSize={19}
+                  width="auto"
+                />
+              </InputGroup>
+            </HStack>
           </FormControl>
 
           <FormControl isRequired>
-            <InputGroup>
-              <InputRightElement pointerEvents="none">
-                <IdCard />
-              </InputRightElement>
-              <Input
-                name="customerName"
-                placeholder="نام مشتری"
-                type="text"
-                htmlSize={19}
-                width="auto"
-                value={formData.customerName}
-                onChange={handleChangeFormData}
-              />
-            </InputGroup>
+            <HStack>
+              <FormLabel width="90px">نام مشتری</FormLabel>
+              <InputGroup>
+                <InputRightElement pointerEvents="none">
+                  <Icon as={IdCard} pointerEvents="none" color="gray.500" />
+                </InputRightElement>
+                <Input
+                  pr="2.5rem"
+                  name="customerName"
+                  placeholder="نام مشتری"
+                  type="text"
+                  htmlSize={19}
+                  width="auto"
+                  value={formData.customerName}
+                  onChange={handleChangeFormData}
+                />
+              </InputGroup>
+            </HStack>
           </FormControl>
 
           <FormControl isRequired>
-            <InputGroup>
-              <InputRightElement pointerEvents="none">
-                <DollarSign pointerEvents="none" />
-              </InputRightElement>
-              <Input
-                name="totalAmount"
-                placeholder="مبلغ نهایی"
-                type="number"
-                htmlSize={19}
-                width="auto"
-                value={formData.totalAmount}
-                onChange={handleChangeFormData}
-              />
-            </InputGroup>
+            <HStack>
+              <FormLabel width="90px">مبلغ نهایی</FormLabel>
+              <InputGroup>
+                <InputRightElement pointerEvents="none">
+                  <Icon as={DollarSign} pointerEvents="none" color="gray.500" />
+                </InputRightElement>
+                <Input
+                  pr="2.5rem"
+                  name="totalAmount"
+                  placeholder="مبلغ نهایی"
+                  type="number"
+                  htmlSize={19}
+                  width="auto"
+                  value={formData.totalAmount}
+                  onChange={handleChangeFormData}
+                />
+              </InputGroup>
+            </HStack>
           </FormControl>
 
           <Button colorScheme="blue" type="submit" isLoading={loading}>

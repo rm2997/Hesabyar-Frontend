@@ -15,7 +15,7 @@ export const InvoiceDataTable = ({ HeadLables, DataRows }) => {
     <TableContainer>
       <Table color="black" colorScheme="blackAlpha">
         <TableCaption>جدول اطلاعات فاکتور های کاربر جاری</TableCaption>
-        <Thead bg="#2b0b8a">
+        <Thead bg="blue.600">
           <Tr>
             {HeadLables.map((label) => (
               <Th color="white" id={label}>
