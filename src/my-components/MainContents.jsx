@@ -64,7 +64,7 @@ export const MainContents = ({ activeContent }) => {
   return (
     <Card w="90%" m={1}>
       <CardHeader
-        bg="blue.400"
+        bg="#0A9DBB"
         borderBottomColor="gray.100"
         borderBottomWidth="1px"
         color="white"

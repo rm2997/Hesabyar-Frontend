@@ -7,6 +7,7 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -34,7 +35,7 @@ export const NewInvoice = () => {
   return (
     <Card m={10}>
       <CardHeader
-        bg="#7bfb32"
+        bg="#68C15A"
         borderBottomColor="gray.400"
         borderBottomWidth="1px"
         borderTopRadius={5}
@@ -49,14 +50,17 @@ export const NewInvoice = () => {
               <HStack>
                 <FormLabel width="90px">ردیف</FormLabel>
                 <InputGroup>
-                  <InputRightElement>
-                    <Hash color="gray" />
+                  <InputRightElement
+                    borderLeftColor="gray.200"
+                    borderLeftWidth={1}
+                  >
+                    <Icon as={Hash} color="gray" />
                   </InputRightElement>
                   <Input
                     placeholder="ردیف"
                     htmlSize={19}
                     width="auto"
-                    pr="2.1rem"
+                    pr="2.8rem"
                   />
                 </InputGroup>
               </HStack>
@@ -66,11 +70,15 @@ export const NewInvoice = () => {
               <HStack>
                 <FormLabel width="90px">نام مشتری</FormLabel>
                 <InputGroup>
-                  <InputRightElement pointerEvents="none">
-                    <IdCard color="gray" />
+                  <InputRightElement
+                    pointerEvents="none"
+                    borderLeftColor="gray.200"
+                    borderLeftWidth={1}
+                  >
+                    <Icon as={IdCard} color="gray" />
                   </InputRightElement>
                   <Input
-                    pr="2.1rem"
+                    pr="2.8rem"
                     name="customerName"
                     placeholder="نام مشتری"
                     type="text"
@@ -87,11 +95,15 @@ export const NewInvoice = () => {
               <HStack>
                 <FormLabel width="90px">مبلغ نهایی</FormLabel>
                 <InputGroup>
-                  <InputRightElement pointerEvents="none">
-                    <DollarSign pointerEvents="none" color="gray" />
+                  <InputRightElement
+                    pointerEvents="none"
+                    borderLeftColor="gray.200"
+                    borderLeftWidth={1}
+                  >
+                    <Icon as={DollarSign} pointerEvents="none" color="gray" />
                   </InputRightElement>
                   <Input
-                    pr="2.1rem"
+                    pr="2.8rem"
                     name="totalAmount"
                     placeholder="مبلغ نهایی"
                     type="number"

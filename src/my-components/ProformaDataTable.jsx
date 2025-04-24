@@ -2,7 +2,6 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import {
   HStack,
   Link,
-  ModalContent,
   Table,
   TableCaption,
   TableContainer,
@@ -19,7 +18,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { MyModalContainer } from "./MyModalContainer";
 import { useState } from "react";
 import { EditProforma } from "./EditProforma";
-import { color } from "framer-motion";
+import { DeleteProforma } from "./DeleteProforma";
 
 export const ProformaDataTable = ({ HeadLables, DataRows }) => {
   const [selectedID, setSelectedID] = useState(0);
@@ -29,6 +28,8 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleDeleteProforma = (id) => {
     setSelectedID(id);
+    setModalHeader("آیا از حذف پیش فاکتور زیر اطمینان دارید؟");
+    setModalContetnt(<DeleteProforma id={id} onClose={onClose} />);
     onOpen();
   };
   const handleEditProforma = (id) => {
@@ -36,8 +37,7 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
 
     setSelectedID(id);
     setModalHeader("ویرایش پیش فاکتور");
-    setModalContetnt(<EditProforma id={id} onClose={onClose}></EditProforma>);
-
+    setModalContetnt(<EditProforma id={id} onClose={onClose} />);
     onOpen();
   };
   return (
@@ -45,11 +45,12 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
       <Table color="black" colorScheme="blackAlpha">
         <TableCaption>جدول اطلاعات پیش فاکتور های کاربر جاری</TableCaption>
         <Thead
-          bg="#7bfb32"
+          bg="#68C15A"
           borderBottomColor="gray.400"
           borderBottomWidth="1px"
-          borderTopRadius={5}
+          borderTopRadius={50}
           color="black"
+          height={50}
         >
           <Tr>
             {HeadLables.map((label) => (

@@ -10,15 +10,15 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { DollarSign, Hash, IdCard } from "lucide-react";
+import { ChevronRight, DollarSign, Hash, IdCard, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
+  RemoveProforma,
   ShowProformasByID,
-  UpdateProforma,
 } from "../api/services/proformaService";
 import { MyLoading } from "./MyLoading";
 
-export const EditProforma = ({ id, onClose }) => {
+export const DeleteProforma = ({ id, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const toast = useToast();
@@ -41,16 +41,10 @@ export const EditProforma = ({ id, onClose }) => {
     loadFormData(id);
   }, [id]);
 
-  const handleChangeFormData = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const response = await UpdateProforma(formData.id, formData)
+    const response = await RemoveProforma(formData.id)
       .then((result) => {
         setFormData({
           id: "",
@@ -59,8 +53,8 @@ export const EditProforma = ({ id, onClose }) => {
         });
         onClose();
         toast({
-          title: "ثبت شد",
-          description: `اطلاعات پیش فاکتور شما بروزرسانی شد`,
+          title: "حذف شد",
+          description: ` پیش فاکتور شما با موفقیت حذف شد`,
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -104,7 +98,7 @@ export const EditProforma = ({ id, onClose }) => {
           </InputGroup>
         </HStack>
       </FormControl>
-      <FormControl isRequired>
+      <FormControl isRequired isDisabled>
         <HStack>
           <FormLabel width={110}>نام مشتری</FormLabel>
           <InputGroup>
@@ -123,12 +117,11 @@ export const EditProforma = ({ id, onClose }) => {
               htmlSize={19}
               width="auto"
               value={formData.customerName}
-              onChange={handleChangeFormData}
             />
           </InputGroup>
         </HStack>
       </FormControl>
-      <FormControl isRequired>
+      <FormControl isRequired isDisabled>
         <HStack>
           <FormLabel width={110}>مبلغ نهایی</FormLabel>
           <InputGroup>
@@ -147,15 +140,21 @@ export const EditProforma = ({ id, onClose }) => {
               htmlSize={19}
               width="auto"
               value={formData.totalAmount}
-              onChange={handleChangeFormData}
             />
           </InputGroup>
         </HStack>
       </FormControl>
       <HStack>
-        <Button onClick={onClose}>انصراف</Button>
-        <Button colorScheme="blue" type="submit" isLoading={loading}>
-          تایید
+        <Button leftIcon={<ChevronRight />} onClick={onClose}>
+          انصراف
+        </Button>
+        <Button
+          leftIcon={<Trash2 />}
+          colorScheme="red"
+          type="submit"
+          isLoading={loading}
+        >
+          حذف
         </Button>
       </HStack>
     </VStack>

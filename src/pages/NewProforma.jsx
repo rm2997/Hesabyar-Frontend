@@ -11,18 +11,12 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  Text,
   VStack,
   useToast,
 } from "@chakra-ui/react";
 import { DollarSign, Hash, IdCard } from "lucide-react";
 import { useState } from "react";
-import { createProforma } from "../api/services/proformaService";
+import { CreateProforma } from "../api/services/proformaService";
 import { useNavigate } from "react-router-dom";
 
 export const NewProForma = () => {
@@ -35,10 +29,29 @@ export const NewProForma = () => {
     e.preventDefault();
     setLoading(true);
 
-    const response = await createProforma(formData)
-      .then((result) => {})
+    const response = await CreateProforma(formData)
+      .then((result) => {
+        setFormData({
+          id: "",
+          customerName: "",
+          totalAmount: "",
+        });
+        toast({
+          title: "ثبت شد",
+          description: `اطلاعات پیش فاکتور شما ذخیره شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
       .catch((err) => {
-        if (err.status === 401) navigate("/login");
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
       })
       .finally(() => {
         setLoading(false);
@@ -55,7 +68,7 @@ export const NewProForma = () => {
   return (
     <Card m={10}>
       <CardHeader
-        bg="#7bfb32"
+        bg="#68C15A"
         borderBottomColor="gray.400"
         borderBottomWidth="1px"
         borderTopRadius={5}
@@ -69,11 +82,15 @@ export const NewProForma = () => {
             <HStack>
               <FormLabel width="90px">ردیف</FormLabel>
               <InputGroup>
-                <InputRightElement pointerEvents="none">
+                <InputRightElement
+                  pointerEvents="none"
+                  borderLeftColor="gray.200"
+                  borderLeftWidth={1}
+                >
                   <Icon as={Hash} pointerEvents="none" color="gray.500" />
                 </InputRightElement>
                 <Input
-                  pr="2.5rem"
+                  pr="2.8rem"
                   placeholder="ردیف"
                   htmlSize={19}
                   width="auto"
@@ -86,11 +103,15 @@ export const NewProForma = () => {
             <HStack>
               <FormLabel width="90px">نام مشتری</FormLabel>
               <InputGroup>
-                <InputRightElement pointerEvents="none">
-                  <Icon as={IdCard} pointerEvents="none" color="gray.500" />
+                <InputRightElement
+                  pointerEvents="none"
+                  borderLeftColor="gray.200"
+                  borderLeftWidth={1}
+                >
+                  <Icon as={IdCard} color="gray.500" />
                 </InputRightElement>
                 <Input
-                  pr="2.5rem"
+                  pr="2.8rem"
                   name="customerName"
                   placeholder="نام مشتری"
                   type="text"
@@ -107,11 +128,15 @@ export const NewProForma = () => {
             <HStack>
               <FormLabel width="90px">مبلغ نهایی</FormLabel>
               <InputGroup>
-                <InputRightElement pointerEvents="none">
-                  <Icon as={DollarSign} pointerEvents="none" color="gray.500" />
+                <InputRightElement
+                  pointerEvents="none"
+                  borderLeftColor="gray.200"
+                  borderLeftWidth={1}
+                >
+                  <Icon as={DollarSign} color="gray.500" />
                 </InputRightElement>
                 <Input
-                  pr="2.5rem"
+                  pr="2.8rem"
                   name="totalAmount"
                   placeholder="مبلغ نهایی"
                   type="number"

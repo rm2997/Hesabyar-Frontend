@@ -13,9 +13,11 @@ const endpoints = {
   },
   proforma: {
     listAll: "/proforma/user/my",
+    update: (id) => `/proforma/${id}`,
     listOne: (id) => `/proforma/${id}`,
     detail: (id) => `/proforma/${id}`,
     create: "/proforma/",
+    delete: (id) => `/proforma/${id}`,
   },
   invoice: {
     list: "/invoice/list",

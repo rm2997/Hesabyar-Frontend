@@ -30,7 +30,9 @@ export const MyModalContainer = ({
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader textAlign="center">{modalHeader}</ModalHeader>
+          <ModalHeader textAlign="center" bg="#FFC300">
+            {modalHeader}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} dir="rtl">
             <Spinner />
@@ -49,9 +51,13 @@ export const MyModalContainer = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader textAlign="center">{modalHeader}</ModalHeader>
+        <ModalHeader textAlign="center" bg="#68C15A">
+          {modalHeader}
+        </ModalHeader>
         <ModalCloseButton />
-        <ModalBody pb={6}>{children}</ModalBody>
+        <ModalBody pb={6} borderTopWidth={2}>
+          {children}
+        </ModalBody>
         {/* <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={onSave}>
             تایید
