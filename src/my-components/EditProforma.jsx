@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { ShowProformasByID } from "../api/services/proformaService";
 import { MyLoading } from "./MyLoading";
 
-export const EditProforma = ({ id, setId }) => {
+export const EditProforma = ({ id, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
 
@@ -24,8 +24,7 @@ export const EditProforma = ({ id, setId }) => {
       setLoading(true);
       await ShowProformasByID(id)
         .then((result) => {
-          console.log("Proforma Data is:" + result);
-          setFormData({ ...result });
+          setFormData({ ...result.data });
         })
         .catch((err) => {
           console.log(err);
@@ -34,7 +33,6 @@ export const EditProforma = ({ id, setId }) => {
           setLoading(false);
         });
     };
-    console.log(`Proforma ID is:${id}`);
 
     loadFormData(id);
   }, [id]);
@@ -58,72 +56,72 @@ export const EditProforma = ({ id, setId }) => {
     //   });
   };
 
-  if (loading) {
-    return <MyLoading />;
-  } else
-    return (
-      <VStack as="form" spacing={5} onSubmit={handleSubmit}>
-        <FormControl isRequired isDisabled>
-          <HStack>
-            <FormLabel width="90px">ردیف</FormLabel>
-            <InputGroup>
-              <InputRightElement pointerEvents="none">
-                <Icon as={Hash} pointerEvents="none" color="gray.500" />
-              </InputRightElement>
-              <Input
-                pr="2.5rem"
-                placeholder="ردیف"
-                htmlSize={19}
-                width="auto"
-              />
-            </InputGroup>
-          </HStack>
-        </FormControl>
-
-        <FormControl isRequired>
-          <HStack>
-            <FormLabel width="90px">نام مشتری</FormLabel>
-            <InputGroup>
-              <InputRightElement pointerEvents="none">
-                <Icon as={IdCard} pointerEvents="none" color="gray.500" />
-              </InputRightElement>
-              <Input
-                pr="2.5rem"
-                name="customerName"
-                placeholder="نام مشتری"
-                type="text"
-                htmlSize={19}
-                width="auto"
-                value={formData.customerName}
-                onChange={handleChangeFormData}
-              />
-            </InputGroup>
-          </HStack>
-        </FormControl>
-
-        <FormControl isRequired>
-          <HStack>
-            <FormLabel width="90px">مبلغ نهایی</FormLabel>
-            <InputGroup>
-              <InputRightElement pointerEvents="none">
-                <Icon as={DollarSign} pointerEvents="none" color="gray.500" />
-              </InputRightElement>
-              <Input
-                pr="2.5rem"
-                name="totalAmount"
-                placeholder="مبلغ نهایی"
-                type="number"
-                htmlSize={19}
-                width="auto"
-                value={formData.totalAmount}
-                onChange={handleChangeFormData}
-              />
-            </InputGroup>
-          </HStack>
-        </FormControl>
+  return (
+    <VStack as="form" spacing={5} onSubmit={handleSubmit} dir="rtl">
+      {loading} && <MyLoading />
+      <FormControl isRequired isDisabled>
+        <HStack>
+          <FormLabel width={110}>ردیف</FormLabel>
+          <InputGroup>
+            <InputRightElement pointerEvents="none">
+              <Icon as={Hash} pointerEvents="none" color="gray.500" />
+            </InputRightElement>
+            <Input
+              pr="2.5rem"
+              placeholder="ردیف"
+              htmlSize={19}
+              width="auto"
+              value={formData.id}
+            />
+          </InputGroup>
+        </HStack>
+      </FormControl>
+      <FormControl isRequired>
+        <HStack>
+          <FormLabel width={110}>نام مشتری</FormLabel>
+          <InputGroup>
+            <InputRightElement pointerEvents="none">
+              <Icon as={IdCard} pointerEvents="none" color="gray.500" />
+            </InputRightElement>
+            <Input
+              pr="2.5rem"
+              name="customerName"
+              placeholder="نام مشتری"
+              type="text"
+              htmlSize={19}
+              width="auto"
+              value={formData.customerName}
+              onChange={handleChangeFormData}
+            />
+          </InputGroup>
+        </HStack>
+      </FormControl>
+      <FormControl isRequired>
+        <HStack>
+          <FormLabel width={110}>مبلغ نهایی</FormLabel>
+          <InputGroup>
+            <InputRightElement pointerEvents="none">
+              <Icon as={DollarSign} pointerEvents="none" color="gray.500" />
+            </InputRightElement>
+            <Input
+              pr="2.5rem"
+              name="totalAmount"
+              placeholder="مبلغ نهایی"
+              type="number"
+              htmlSize={19}
+              width="auto"
+              value={formData.totalAmount}
+              onChange={handleChangeFormData}
+            />
+          </InputGroup>
+        </HStack>
+      </FormControl>
+      <HStack>
+        <Button onClick={onClose}>انصراف</Button>
         <Button colorScheme="blue" type="submit" isLoading={loading}>
           تایید
         </Button>
-      </VStack>
-    );
+      </HStack>
+    </VStack>
+  );
 };

@@ -23,9 +23,7 @@ export const MyModalContainer = ({
   proformaId,
   modalHeader,
 }) => {
-  useEffect(() => {
-    if (children) console.log(`Id[${proformaId}] received..`);
-  }, [children]);
+  useEffect(() => {}, [children]);
 
   if (!children) {
     return (
@@ -34,7 +32,7 @@ export const MyModalContainer = ({
         <ModalContent>
           <ModalHeader textAlign="center">{modalHeader}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={6}>
+          <ModalBody pb={6} dir="rtl">
             <Spinner />
           </ModalBody>
           <ModalFooter>
@@ -54,12 +52,12 @@ export const MyModalContainer = ({
         <ModalHeader textAlign="center">{modalHeader}</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>{children}</ModalBody>
-        <ModalFooter>
+        {/* <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={onSave}>
             تایید
           </Button>
           <Button onClick={onClose}>انصراف</Button>
-        </ModalFooter>
+        </ModalFooter> */}
       </ModalContent>
     </Modal>
   );

@@ -55,14 +55,15 @@ export const NewProForma = () => {
   return (
     <Card m={10}>
       <CardHeader
-        bg="blue.500"
+        bg="#7bfb32"
         borderBottomColor="gray.400"
         borderBottomWidth="1px"
-        color="gray.200"
+        borderTopRadius={5}
+        color="black"
       >
         ثبت پیش فاکتور جدید
       </CardHeader>
-      <CardBody>
+      <CardBody borderTopWidth={2}>
         <VStack as="form" spacing={5} onSubmit={handleSubmit}>
           <FormControl>
             <HStack>

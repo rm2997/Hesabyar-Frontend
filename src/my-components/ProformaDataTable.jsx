@@ -2,6 +2,7 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import {
   HStack,
   Link,
+  ModalContent,
   Table,
   TableCaption,
   TableContainer,
@@ -14,10 +15,11 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Edit } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import { MyModalContainer } from "./MyModalContainer";
 import { useState } from "react";
 import { EditProforma } from "./EditProforma";
+import { color } from "framer-motion";
 
 export const ProformaDataTable = ({ HeadLables, DataRows }) => {
   const [selectedID, setSelectedID] = useState(0);
@@ -32,30 +34,26 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
   const handleEditProforma = (id) => {
     if (id === 0) return;
 
-    console.log("Going to set selected with" + id);
-
     setSelectedID(id);
-
-    console.log("Proforma ID selected:" + id);
-
     setModalHeader("ویرایش پیش فاکتور");
-    setModalContetnt(
-      <>
-        <EditProforma id={id} setId={setSelectedID}></EditProforma>
-      </>
-    );
+    setModalContetnt(<EditProforma id={id} onClose={onClose}></EditProforma>);
+
     onOpen();
   };
   return (
     <TableContainer>
       <Table color="black" colorScheme="blackAlpha">
         <TableCaption>جدول اطلاعات پیش فاکتور های کاربر جاری</TableCaption>
-        <Thead bg="blue.600">
+        <Thead
+          bg="#7bfb32"
+          borderBottomColor="gray.400"
+          borderBottomWidth="1px"
+          borderTopRadius={5}
+          color="black"
+        >
           <Tr>
             {HeadLables.map((label) => (
-              <Th color="white" id={label}>
-                {label}
-              </Th>
+              <Th id={label}>{label}</Th>
             ))}
           </Tr>
         </Thead>
@@ -72,16 +70,18 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
               <Td>
                 <HStack>
                   <Link
+                    _hover={{ color: "#00952b" }}
                     color="blue.600"
                     onClick={(e) => handleEditProforma(row.id)}
                   >
                     <Edit />
                   </Link>
                   <Link
+                    _hover={{ color: "#00952b" }}
                     color="red.600"
                     onClick={(e) => handleDeleteProforma(row.id)}
                   >
-                    <DeleteIcon />
+                    <Trash2 />
                   </Link>
                 </HStack>
               </Td>
@@ -98,14 +98,16 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
           </Tr>
         </Tfoot>
       </Table>
+
       <MyModalContainer
         onClose={onClose}
         isOpen={isOpen}
         onOpen={onOpen}
         proformaID={selectedID}
         modalHeader={modalHeader}
-      />
-      {modalContetnt}
+      >
+        {modalContetnt}
+      </MyModalContainer>
     </TableContainer>
   );
 };

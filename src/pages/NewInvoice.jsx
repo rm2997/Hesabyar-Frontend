@@ -5,6 +5,8 @@ import {
   CardFooter,
   CardHeader,
   FormControl,
+  FormLabel,
+  HStack,
   Input,
   InputGroup,
   InputRightElement,
@@ -31,51 +33,75 @@ export const NewInvoice = () => {
 
   return (
     <Card m={10}>
-      <CardHeader>ثبت فاکتور جدید</CardHeader>
-      <CardBody>
+      <CardHeader
+        bg="#7bfb32"
+        borderBottomColor="gray.400"
+        borderBottomWidth="1px"
+        borderTopRadius={5}
+        color="black"
+      >
+        ثبت فاکتور جدید
+      </CardHeader>
+      <CardBody borderTopWidth={2}>
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
             <FormControl>
-              <InputGroup>
-                <InputRightElement>
-                  <Hash color="gray" />
-                </InputRightElement>
-                <Input placeholder="ردیف" htmlSize={19} width="auto" />
-              </InputGroup>
+              <HStack>
+                <FormLabel width="90px">ردیف</FormLabel>
+                <InputGroup>
+                  <InputRightElement>
+                    <Hash color="gray" />
+                  </InputRightElement>
+                  <Input
+                    placeholder="ردیف"
+                    htmlSize={19}
+                    width="auto"
+                    pr="2.1rem"
+                  />
+                </InputGroup>
+              </HStack>
             </FormControl>
 
             <FormControl isRequired>
-              <InputGroup>
-                <InputRightElement pointerEvents="none">
-                  <IdCard />
-                </InputRightElement>
-                <Input
-                  name="customerName"
-                  placeholder="نام مشتری"
-                  type="text"
-                  htmlSize={19}
-                  width="auto"
-                  value={formData.customerName}
-                  onChange={handleChangeFormData}
-                />
-              </InputGroup>
+              <HStack>
+                <FormLabel width="90px">نام مشتری</FormLabel>
+                <InputGroup>
+                  <InputRightElement pointerEvents="none">
+                    <IdCard color="gray" />
+                  </InputRightElement>
+                  <Input
+                    pr="2.1rem"
+                    name="customerName"
+                    placeholder="نام مشتری"
+                    type="text"
+                    htmlSize={19}
+                    width="auto"
+                    value={formData.customerName}
+                    onChange={handleChangeFormData}
+                  />
+                </InputGroup>
+              </HStack>
             </FormControl>
 
             <FormControl isRequired>
-              <InputGroup>
-                <InputRightElement pointerEvents="none">
-                  <DollarSign pointerEvents="none" />
-                </InputRightElement>
-                <Input
-                  name="totalAmount"
-                  placeholder="مبلغ نهایی"
-                  type="number"
-                  htmlSize={19}
-                  width="auto"
-                  value={formData.totalAmount}
-                  onChange={handleChangeFormData}
-                />
-              </InputGroup>
+              <HStack>
+                <FormLabel width="90px">مبلغ نهایی</FormLabel>
+                <InputGroup>
+                  <InputRightElement pointerEvents="none">
+                    <DollarSign pointerEvents="none" color="gray" />
+                  </InputRightElement>
+                  <Input
+                    pr="2.1rem"
+                    name="totalAmount"
+                    placeholder="مبلغ نهایی"
+                    type="number"
+                    htmlSize={19}
+                    width="auto"
+                    value={formData.totalAmount}
+                    onChange={handleChangeFormData}
+                  />
+                </InputGroup>
+              </HStack>
             </FormControl>
 
             <Button colorScheme="blue" type="submit">
