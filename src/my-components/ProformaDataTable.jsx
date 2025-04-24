@@ -41,7 +41,7 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
     setModalHeader("ویرایش پیش فاکتور");
     setModalContetnt(
       <>
-        <EditProforma id={id}></EditProforma>
+        <EditProforma id={id} setId={setSelectedID}></EditProforma>
       </>
     );
     onOpen();
