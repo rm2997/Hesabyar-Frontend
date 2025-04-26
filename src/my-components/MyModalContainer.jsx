@@ -1,8 +1,5 @@
 import {
   Button,
-  FormControl,
-  FormLabel,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,9 +8,8 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  useDisclosure,
 } from "@chakra-ui/react";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 export const MyModalContainer = ({
   children,

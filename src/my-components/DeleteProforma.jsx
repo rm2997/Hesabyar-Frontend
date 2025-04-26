@@ -17,6 +17,7 @@ import {
   ShowProformasByID,
 } from "../api/services/proformaService";
 import { MyLoading } from "./MyLoading";
+import { MyInputBox } from "./MyInputBox";
 
 export const DeleteProforma = ({ id, onClose }) => {
   const [loading, setLoading] = useState(false);
@@ -80,68 +81,37 @@ export const DeleteProforma = ({ id, onClose }) => {
       <FormControl isRequired isDisabled>
         <HStack>
           <FormLabel width={110}>ردیف</FormLabel>
-          <InputGroup>
-            <InputRightElement
-              pointerEvents="none"
-              borderLeftColor="gray.200"
-              borderLeftWidth={1}
-            >
-              <Icon as={Hash} pointerEvents="none" color="gray.500" />
-            </InputRightElement>
-            <Input
-              pr="2.9rem"
-              placeholder="ردیف"
-              htmlSize={19}
-              width="auto"
-              value={formData.id}
-            />
-          </InputGroup>
+          <MyInputBox
+            name="id"
+            title="ردیف"
+            value={formData.id}
+            icon={Hash}
+            size={19}
+          />
         </HStack>
       </FormControl>
       <FormControl isRequired isDisabled>
         <HStack>
           <FormLabel width={110}>نام مشتری</FormLabel>
-          <InputGroup>
-            <InputRightElement
-              pointerEvents="none"
-              borderLeftColor="gray.200"
-              borderLeftWidth={1}
-            >
-              <Icon as={IdCard} pointerEvents="none" color="gray.500" />
-            </InputRightElement>
-            <Input
-              pr="2.9rem"
-              name="customerName"
-              placeholder="نام مشتری"
-              type="text"
-              htmlSize={19}
-              width="auto"
-              value={formData.customerName}
-            />
-          </InputGroup>
+          <MyInputBox
+            name="customerName"
+            title="نام مشتری"
+            value={formData.customerName}
+            icon={IdCard}
+            size={19}
+          />
         </HStack>
       </FormControl>
       <FormControl isRequired isDisabled>
         <HStack>
           <FormLabel width={110}>مبلغ نهایی</FormLabel>
-          <InputGroup>
-            <InputRightElement
-              pointerEvents="none"
-              borderLeftColor="gray.200"
-              borderLeftWidth={1}
-            >
-              <Icon as={DollarSign} pointerEvents="none" color="gray.500" />
-            </InputRightElement>
-            <Input
-              pr="2.9rem"
-              name="totalAmount"
-              placeholder="مبلغ نهایی"
-              type="number"
-              htmlSize={19}
-              width="auto"
-              value={formData.totalAmount}
-            />
-          </InputGroup>
+          <MyInputBox
+            name="totalAmount"
+            title="مبلغ نهایی"
+            value={formData.totalAmount}
+            icon={IdCard}
+            size={19}
+          />
         </HStack>
       </FormControl>
       <HStack>

@@ -1,26 +1,4 @@
-import { DeleteIcon } from "@chakra-ui/icons";
-import {
-  HStack,
-  Link,
-  Table,
-  TableCaption,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { Edit, Trash2 } from "lucide-react";
-import { MyModalContainer } from "./MyModalContainer";
-import { useState } from "react";
-import { EditProforma } from "./EditProforma";
-import { DeleteProforma } from "./DeleteProforma";
-
-export const ProformaDataTable = ({ HeadLables, DataRows }) => {
+export const NotificationDataTable = ({ HeadLables, DataRows }) => {
   const [selectedID, setSelectedID] = useState(0);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
@@ -28,22 +6,23 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleDeleteProforma = (id) => {
     setSelectedID(id);
-    setModalHeader("آیا از حذف پیش فاکتور زیر اطمینان دارید؟");
+    setModalHeader("آیا از حذف پیام زیر اطمینان دارید؟");
     setModalContetnt(<DeleteProforma id={id} onClose={onClose} />);
     onOpen();
   };
-  const handleEditProforma = (id) => {
+  const handleEditNotification = (id) => {
     if (id === 0) return;
 
     setSelectedID(id);
-    setModalHeader("ویرایش پیش فاکتور");
+    setModalHeader("ویرایش پیام");
     setModalContetnt(<EditProforma id={id} onClose={onClose} />);
     onOpen();
   };
+
   return (
     <TableContainer>
       <Table color="black" colorScheme="blackAlpha">
-        <TableCaption>جدول اطلاعات پیش فاکتور های کاربر جاری</TableCaption>
+        <TableCaption> پیام های شما</TableCaption>
         <Thead
           bg="#68C15A"
           borderBottomColor="gray.400"
