@@ -19,7 +19,7 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 export const PieChart = () => {
   return (
-    <Box h="300px" w="100%" bg="gray.700" p={4} borderRadius="md">
+    <Box mt={5} h="300px" w="100%" bg="gray.700" p={4} borderRadius="md">
       <Text mb={1}>وضعیت</Text>
       <ResponsiveContainer width="100%" height="100%">
         <RechartPieChart>

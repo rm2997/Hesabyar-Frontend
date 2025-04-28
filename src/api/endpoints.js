@@ -7,9 +7,9 @@ const endpoints = {
     refresh: "/auth/refresh",
   },
   user: {
-    profile: "/user/profile",
-    update: "/user/update",
-    list: "/user/list",
+    profile: "/users/profile",
+    update: "/users/update",
+    listAll: "/users/",
   },
   proforma: {
     listAll: "/proforma/user/my",
@@ -23,6 +23,13 @@ const endpoints = {
     list: "/invoice/list",
     detail: (id) => `/invoice/${id}`,
     create: "/invoice/create",
+  },
+  notifications: {
+    listAll: "/notifications/all",
+    listOne: (id) => `/notifications/${id}`,
+    create: "/notifications/",
+    delete: (id) => `/notifications/${id}`,
+    update: (id) => `/notifications/${id}`,
   },
 };
 

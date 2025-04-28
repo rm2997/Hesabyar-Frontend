@@ -1,3 +1,4 @@
+import axiosClient from "../axiosClient";
 import endpoints from "../endpoints";
 import axios from "axios";
 
@@ -11,4 +12,8 @@ export const register = async (data) => {
 
 export const logout = async () => {
   return axios.post(endpoints.auth.logout);
+};
+
+export const GetAllUsers = (async) => {
+  return axiosClient.get(endpoints.user.listAll);
 };

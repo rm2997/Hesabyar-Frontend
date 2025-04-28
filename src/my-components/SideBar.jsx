@@ -1,5 +1,5 @@
 // components/Sidebar.jsx
-import { Accordion, Box } from "@chakra-ui/react";
+import { Accordion, Box, Divider } from "@chakra-ui/react";
 import { SidebarItem } from "./SIdebarItem";
 import { PieChart } from "./PieChart";
 
@@ -31,7 +31,7 @@ export const Sidebar = ({
           title="پیش فاکتور"
           children={[
             { id: "newProforma", name: "جدید", type: "text" },
-            { id: "proformaStat", name: "آمار", type: "text" },
+            { id: "proformaStat", name: "لیست پیش فاکتورها", type: "text" },
           ]}
           onMenuItemClick={onMenuItemClick}
         />
@@ -40,7 +40,7 @@ export const Sidebar = ({
           title="فاکتور"
           children={[
             { id: "newInvoice", name: "جدید", type: "text" },
-            { id: "invoiceStat", name: "آمار", type: "text" },
+            { id: "invoiceStat", name: "لیست فاکتورها", type: "text" },
           ]}
           onMenuItemClick={onMenuItemClick}
         />
@@ -49,12 +49,30 @@ export const Sidebar = ({
           title="فروش"
           children={[
             { id: "newSale", name: "جدید", type: "text" },
-            { id: "saleStat", name: "آمار", type: "text" },
+            { id: "saleStat", name: "لیست فروش", type: "text" },
           ]}
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
           id={4}
+          title="انبار"
+          children={[
+            { id: "newSendDepot", name: "جدید", type: "text" },
+            { id: "depotStat", name: "لیست انبار", type: "text" },
+          ]}
+          onMenuItemClick={onMenuItemClick}
+        />
+        <SidebarItem
+          id={5}
+          title="پیام ها"
+          children={[
+            { id: "newNotification", name: "جدید", type: "text" },
+            { id: "notifications", name: "لیست پیام ها", type: "text" },
+          ]}
+          onMenuItemClick={onMenuItemClick}
+        />
+        {/* <SidebarItem
+          id={6}
           title="نمودار وضعیت"
           children={[
             {
@@ -65,8 +83,10 @@ export const Sidebar = ({
             },
           ]}
           onMenuItemClick={onMenuItemClick}
-        />
+        /> */}
       </Accordion>
+      <Divider mt={5} />
+      <PieChart />
       {isDesktop ? (
         <Box
           position="absolute"

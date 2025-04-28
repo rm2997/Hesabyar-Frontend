@@ -14,7 +14,7 @@ import {
 import { Bell, SquareEqual, User2 } from "lucide-react";
 import { useState } from "react";
 
-export const HeaderBar = ({ isDesktop, setIsSidebarOpen }) => {
+export const HeaderBar = ({ isDesktop, setIsSidebarOpen, OnItemClick }) => {
   const [badgeCount, setBadgeCount] = useState(1);
 
   return (
@@ -43,11 +43,13 @@ export const HeaderBar = ({ isDesktop, setIsSidebarOpen }) => {
       <Flex gap={4} align="center">
         <Box position="relative">
           <IconButton
+            id="notifications"
             icon={<Bell />}
             size="sm"
             cursor="pointer"
             aria-label="Notifications"
             variant=""
+            onClick={(e) => OnItemClick(e.target.parentNode.id)}
           />
           <Badge
             colorScheme="red"
@@ -63,15 +65,20 @@ export const HeaderBar = ({ isDesktop, setIsSidebarOpen }) => {
         <Menu>
           <MenuButton
             as={IconButton}
+            id="user"
             icon={<User2 />}
             size="sm"
             cursor="pointer"
             variant=""
           />
           <MenuList color="black">
-            <MenuItem>تنظیمات</MenuItem>
-            <MenuItem>پیام‌های مشاهده‌نشده</MenuItem>
-            <MenuItem>خروج</MenuItem>
+            <MenuItem onClick={() => OnItemClick("userSettings")}>
+              تنظیمات
+            </MenuItem>
+            <MenuItem onClick={() => OnItemClick("userUnreadMessages")}>
+              پیام‌های مشاهده‌نشده
+            </MenuItem>
+            <MenuItem onClick={() => OnItemClick("logout")}>خروج</MenuItem>
           </MenuList>
         </Menu>
       </Flex>

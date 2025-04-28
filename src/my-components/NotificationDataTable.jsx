@@ -1,13 +1,31 @@
+import {
+  HStack,
+  Link,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { Edit, Mail, MailCheckIcon, MailOpen, Trash2 } from "lucide-react";
+import { MyModalContainer } from "./MyModalContainer";
+import { useState } from "react";
 export const NotificationDataTable = ({ HeadLables, DataRows }) => {
   const [selectedID, setSelectedID] = useState(0);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const handleDeleteProforma = (id) => {
+  const handleDeleteNotification = (id) => {
     setSelectedID(id);
     setModalHeader("آیا از حذف پیام زیر اطمینان دارید؟");
-    setModalContetnt(<DeleteProforma id={id} onClose={onClose} />);
+    //setModalContetnt(<DeleteProforma id={id} onClose={onClose} />);
     onOpen();
   };
   const handleEditNotification = (id) => {
@@ -15,7 +33,7 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
 
     setSelectedID(id);
     setModalHeader("ویرایش پیام");
-    setModalContetnt(<EditProforma id={id} onClose={onClose} />);
+    //setModalContetnt(<EditProforma id={id} onClose={onClose} />);
     onOpen();
   };
 
@@ -39,29 +57,37 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
         </Thead>
         <Tbody>
           {DataRows.map((row) => (
-            <Tr _hover={{ bg: "#EEEE", color: "orange" }}>
+            <Tr id={row.id} _hover={{ bg: "#EEEE", color: "orange" }}>
               <Td id={row.id}>
                 <Text>{row.id}</Text>
               </Td>
-              <Td>{row.createdAt}</Td>
-              <Td>{row.customerName}</Td>
-              <Td>{row.approvedFile ? "دارد" : "ندارد"}</Td>
-              <Td>{row.totalAmount}</Td>
-              <Td>
+              <Td>{row.title}</Td>
+              <Td>{row.message}</Td>
+              <Td>{row.read ? <MailOpen /> : <Mail />}</Td>
+              <Td textAlign="center">
                 <HStack>
                   <Link
                     _hover={{
                       color: "orange",
                     }}
                     color="blue.600"
-                    onClick={(e) => handleEditProforma(row.id)}
+                    onClick={(e) => handleEditNotification(row.id)}
+                  >
+                    <MailCheckIcon />
+                  </Link>
+                  <Link
+                    _hover={{
+                      color: "orange",
+                    }}
+                    color="blue.600"
+                    onClick={(e) => handleEditNotification(row.id)}
                   >
                     <Edit />
                   </Link>
                   <Link
                     _hover={{ color: "#ffd54f" }}
                     color="red.600"
-                    onClick={(e) => handleDeleteProforma(row.id)}
+                    onClick={(e) => handleDeleteNotification(row.id)}
                   >
                     <Trash2 />
                   </Link>
