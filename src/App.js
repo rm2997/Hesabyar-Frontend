@@ -1,6 +1,7 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { LoginForm } from "./pages/LoginForm";
 import { ForgotPasswordForm } from "./pages/ForgetPasswordForm";
+import { NotificationProvider } from "./contexts/NotificationContext";
 
 import {
   Navigate,
@@ -18,30 +19,32 @@ function App() {
     <ChakraProvider>
       <Router>
         {/* <AuthProvider> */}
-          <Routes>
-            <Route path="/" element={<Navigate to="/home" />} />
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/forget-password" element={<ForgotPasswordForm />} />
-            <Route
-              path="/dashbord"
-              element={
-                <PrivateRoute>
-                  <>dashbord</>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/home"
-              element={
-                <PrivateRoute>
+        <Routes>
+          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/forget-password" element={<ForgotPasswordForm />} />
+          <Route
+            path="/dashbord"
+            element={
+              <PrivateRoute>
+                <>dashbord</>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/home"
+            element={
+              <PrivateRoute>
+                <NotificationProvider>
                   <MyHome />
-                </PrivateRoute>
-              }
-            />
+                </NotificationProvider>
+              </PrivateRoute>
+            }
+          />
 
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
         {/* </AuthProvider> */}
       </Router>
     </ChakraProvider>

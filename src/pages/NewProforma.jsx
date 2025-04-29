@@ -29,33 +29,32 @@ export const NewProForma = () => {
     e.preventDefault();
     setLoading(true);
 
-    const response = await CreateProforma(formData)
-      .then((result) => {
-        setFormData({
-          id: "",
-          customerName: "",
-          totalAmount: "",
-        });
-        toast({
-          title: "ثبت شد",
-          description: `اطلاعات پیش فاکتور شما ذخیره شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+    try {
+      const response = await CreateProforma(formData);
+      if (!response.data) return;
+      setFormData({
+        id: "",
+        customerName: "",
+        totalAmount: "",
       });
+      toast({
+        title: "ثبت شد",
+        description: `اطلاعات پیش فاکتور شما ذخیره شد`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (err) {
+      toast({
+        title: "خطایی رخ داد",
+        description: `${err}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChangeFormData = (e) => {

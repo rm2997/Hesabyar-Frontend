@@ -12,11 +12,13 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { Bell, SquareEqual, User2 } from "lucide-react";
-import { useState } from "react";
 
-export const HeaderBar = ({ isDesktop, setIsSidebarOpen, OnItemClick }) => {
-  const [badgeCount, setBadgeCount] = useState(1);
-
+export const HeaderBar = ({
+  isDesktop,
+  setIsSidebarOpen,
+  OnItemClick,
+  badgeCount,
+}) => {
   return (
     <Flex
       align="center"
@@ -58,7 +60,7 @@ export const HeaderBar = ({ isDesktop, setIsSidebarOpen, OnItemClick }) => {
             top="-1"
             right="-1"
           >
-            {badgeCount}
+            {badgeCount > 0 ? badgeCount : ""}
           </Badge>
         </Box>
 

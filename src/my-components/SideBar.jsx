@@ -3,16 +3,9 @@ import { Accordion, Box, Divider } from "@chakra-ui/react";
 import { SidebarItem } from "./SIdebarItem";
 import { PieChart } from "./PieChart";
 
-export const Sidebar = ({
-  sidebarWidth,
-  sidebarRef,
-  startResize,
-  isDesktop,
-  onMenuItemClick,
-}) => {
+export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
   return (
     <Box
-      ref={sidebarRef}
       w={sidebarWidth}
       bg="gray.800"
       p={4}
@@ -20,7 +13,6 @@ export const Sidebar = ({
       borderLeft="8px solid gray.100"
     >
       <Accordion
-        onMouseDown={startResize}
         spacing={2}
         align="stretch"
         color="gray.100"
@@ -87,22 +79,6 @@ export const Sidebar = ({
       </Accordion>
       <Divider mt={5} />
       <PieChart />
-      {isDesktop ? (
-        <Box
-          position="absolute"
-          top={0}
-          left={0}
-          h="100%"
-          w="8px"
-          cursor="col-resize"
-          onMouseDown={startResize}
-          zIndex={1}
-          borderRightWidth="1px"
-          borderColor="gray.700"
-        />
-      ) : (
-        <></>
-      )}
     </Box>
   );
 };

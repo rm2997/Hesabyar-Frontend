@@ -14,57 +14,20 @@ import {
 import { HeaderBar } from "../my-components/HeaderBar";
 import { Sidebar } from "../my-components/SideBar";
 import { MainContents } from "../my-components/MainContents";
+import { ShowUnreadNotificationsCount } from "../api/services/notificationService";
+import { useNotification } from "../contexts/NotificationContext";
 
 export const MyHome = () => {
   const [sidebarWidth, setSidebarWidth] = useState(300);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeContent, setActiveContent] = useState("");
+  const { notificationCount, loadUnreadeNotif } = useNotification();
   const isDesktop = useBreakpointValue({ base: false, md: true });
 
-  const sidebarRef = useRef(null);
-  const isResizingRef = useRef(false);
-
   useEffect(() => {
-    const handleTouchMove = (e) => {
-      if (!isResizingRef.current || !isDesktop) return;
-      const touch = e.touches[0];
-      const newWidth = window.innerWidth - touch.clientX;
-      setSidebarWidth(Math.max(250, Math.min(newWidth, 400)));
-    };
-
-    const handleTouchEnd = () => {
-      if (!isDesktop) return;
-      isResizingRef.current = false;
-    };
-
-    if (isDesktop) {
-      document.addEventListener("touchmove", handleTouchMove);
-      document.addEventListener("touchend", handleTouchEnd);
-    }
-    return () => {
-      document.removeEventListener("touchmove", handleTouchMove);
-      document.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, [isDesktop]);
-
-  const startResize = (e) => {
-    isResizingRef.current = true;
-    document.addEventListener("mousemove", handleResize);
-    document.addEventListener("mouseup", stopResize);
-  };
-
-  const handleResize = (e) => {
-    if (isResizingRef.current) {
-      const newWidth = window.innerWidth - e.clientX;
-      setSidebarWidth(Math.max(250, Math.min(newWidth, 400)));
-    }
-  };
-
-  const stopResize = () => {
-    isResizingRef.current = false;
-    document.removeEventListener("mousemove", handleResize);
-    document.removeEventListener("mouseup", stopResize);
-  };
+    loadUnreadeNotif();
+  }, []);
+  useEffect(() => {}, [isDesktop]);
 
   return (
     <Flex h="100vh" direction="column" bg="gray.900" color="white" dir="rtl">
@@ -72,15 +35,13 @@ export const MyHome = () => {
         isDesktop={isDesktop}
         setIsSidebarOpen={setIsSidebarOpen}
         OnItemClick={(e) => setActiveContent(e)}
+        badgeCount={notificationCount}
       />
 
       <Flex flex={1} position="relative" overflow="hidden">
         {isDesktop ? (
           <Sidebar
             sidebarWidth={sidebarWidth}
-            sidebarRef={sidebarRef}
-            startResize={startResize}
-            isDesktop={isDesktop}
             onMenuItemClick={(e) => setActiveContent(e)}
           />
         ) : (
@@ -97,9 +58,6 @@ export const MyHome = () => {
               <DrawerBody bg="gray.800">
                 <Sidebar
                   sidebarWidth={sidebarWidth}
-                  sidebarRef={sidebarRef}
-                  startResize={startResize}
-                  isDesktop={isDesktop}
                   onMenuItemClick={(e) => setActiveContent(e)}
                 />
               </DrawerBody>

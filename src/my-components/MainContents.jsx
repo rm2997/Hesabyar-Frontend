@@ -15,6 +15,7 @@ import { NewProForma } from "../pages/NewProforma";
 import { NewInvoice } from "../pages/NewInvoice";
 import { UserNotifications } from "../pages/UserNotifications";
 import { NewNotification } from "../pages/NewNotification";
+import { ShowUnreadNotificationsCount } from "../api/services/notificationService";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -86,7 +87,7 @@ export const MainContents = ({ activeContent }) => {
       >
         <Text fontSize={"2xl"}>{pageTitle}</Text>
       </CardHeader>
-      <CardBody bg="#e8e4e5" overflow="scroll" color="gray.200">
+      <CardBody overflow="scroll" color="gray.200">
         <Box>{shouldRender}</Box>
       </CardBody>
       <CardFooter bg="#dedcdd"></CardFooter>

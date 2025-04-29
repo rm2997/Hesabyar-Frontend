@@ -21,6 +21,7 @@ import { CreateNotification } from "../api/services/notificationService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../my-components/MyInputBox";
 import { GetAllUsers } from "../api/services/userService";
+import { useNotification } from "../contexts/NotificationContext";
 
 export const NewNotification = () => {
   const [formData, setFormData] = useState({});
@@ -28,6 +29,7 @@ export const NewNotification = () => {
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { loadUnreadeNotif } = useNotification();
   const toast = useToast();
 
   useEffect(() => {
@@ -40,12 +42,14 @@ export const NewNotification = () => {
     };
     fetchUsersData();
   }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    const response = await CreateNotification(formData)
-      .then((result) => {
+    try {
+      const response = await CreateNotification(formData);
+      if (response === 200) {
+        loadUnreadeNotif();
         setFormData({
           id: "",
           title: "",
@@ -59,19 +63,18 @@ export const NewNotification = () => {
           duration: 3000,
           isClosable: true,
         });
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+      }
+    } catch (err) {
+      toast({
+        title: "خطایی رخ داد",
+        description: `${err}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChangeFormData = (e) => {
@@ -128,7 +131,7 @@ export const NewNotification = () => {
           </FormControl>
 
           <FormControl isRequired>
-            <HStack textAlign={"right"}>
+            <HStack>
               <FormLabel width="90px">گیرنده</FormLabel>
               {loading ? (
                 <Spinner />
@@ -146,7 +149,6 @@ export const NewNotification = () => {
                     </Icon>
                   </InputRightElement>
                   <Select
-                    dir="rtl"
                     borderRightWidth={0}
                     borderRightRadius={0}
                     pr="2.5rem"
@@ -167,20 +169,6 @@ export const NewNotification = () => {
               )}
             </HStack>
           </FormControl>
-
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel width="90px">گیرنده</FormLabel>
-              <MyInputBox
-                icon={DollarSign}
-                name="touser"
-                title="گیرنده"
-                value={formData.touser}
-                onChange={handleChangeFormData}
-              />
-            </HStack>
-          </FormControl>
-
           <Button colorScheme="blue" type="submit" isLoading={loading}>
             تایید
           </Button>

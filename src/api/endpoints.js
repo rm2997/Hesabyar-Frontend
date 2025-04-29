@@ -25,6 +25,8 @@ const endpoints = {
     create: "/invoice/create",
   },
   notifications: {
+    unreadCount: "notifications/unread",
+    markAsRead: (id) => `notifications/${id}/read`,
     listAll: "/notifications/all",
     listOne: (id) => `/notifications/${id}`,
     create: "/notifications/",

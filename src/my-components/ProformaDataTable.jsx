@@ -44,7 +44,7 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
       <Table color="black" colorScheme="blackAlpha">
         <TableCaption>جدول اطلاعات پیش فاکتور های کاربر جاری</TableCaption>
         <Thead
-          bg="#68C15A"
+          bg="#fad7a0"
           borderBottomColor="gray.400"
           borderBottomWidth="1px"
           borderTopRadius={50}
@@ -59,7 +59,7 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
         </Thead>
         <Tbody>
           {DataRows.map((row) => (
-            <Tr _hover={{ bg: "#EEEE", color: "orange" }}>
+            <Tr _hover={{ bg: "#EEEE" }}>
               <Td id={row.id}>
                 <Text>{row.id}</Text>
               </Td>

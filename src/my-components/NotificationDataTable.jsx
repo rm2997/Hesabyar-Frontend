@@ -13,27 +13,39 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Edit, Mail, MailCheckIcon, MailOpen, Trash2 } from "lucide-react";
+import { Eye, Mail, MailOpen } from "lucide-react";
 import { MyModalContainer } from "./MyModalContainer";
 import { useState } from "react";
+import { MarkNotificationAsRead } from "../api/services/notificationService";
+import { ShowUserNotification } from "./ٍShowUserNotification";
+import { useNotification } from "../contexts/NotificationContext";
+
 export const NotificationDataTable = ({ HeadLables, DataRows }) => {
   const [selectedID, setSelectedID] = useState(0);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
-
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { notificationCount, loadUnreadeNotif } = useNotification();
+
+  const handleMarkAsReadNotification = async (id) => {
+    setSelectedID(id);
+    const response = await MarkNotificationAsRead(id);
+    if (response === 200) loadUnreadeNotif();
+  };
+
   const handleDeleteNotification = (id) => {
     setSelectedID(id);
     setModalHeader("آیا از حذف پیام زیر اطمینان دارید؟");
     //setModalContetnt(<DeleteProforma id={id} onClose={onClose} />);
-    onOpen();
+    //onOpen();
   };
+
   const handleEditNotification = (id) => {
     if (id === 0) return;
 
     setSelectedID(id);
-    setModalHeader("ویرایش پیام");
-    //setModalContetnt(<EditProforma id={id} onClose={onClose} />);
+    setModalHeader("مشاهده پیام");
+    setModalContetnt(<ShowUserNotification id={id} onClose={onClose} />);
     onOpen();
   };
 
@@ -42,7 +54,7 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
       <Table color="black" colorScheme="blackAlpha">
         <TableCaption> پیام های شما</TableCaption>
         <Thead
-          bg="#68C15A"
+          bg="#fad7a0"
           borderBottomColor="gray.400"
           borderBottomWidth="1px"
           borderTopRadius={50}
@@ -57,13 +69,31 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
         </Thead>
         <Tbody>
           {DataRows.map((row) => (
-            <Tr id={row.id} _hover={{ bg: "#EEEE", color: "orange" }}>
+            <Tr id={row.id} _hover={{ bg: "#EEEE" }}>
               <Td id={row.id}>
                 <Text>{row.id}</Text>
               </Td>
               <Td>{row.title}</Td>
-              <Td>{row.message}</Td>
-              <Td>{row.read ? <MailOpen /> : <Mail />}</Td>
+              <Td>
+                {row.message.length > 15
+                  ? row.message.substring(0, 12) + "..."
+                  : row.message}
+              </Td>
+              <Td>
+                <Link
+                  _hover={{
+                    color: "orange",
+                  }}
+                  color="blue.600"
+                  onClick={(e) => handleMarkAsReadNotification(row.id)}
+                >
+                  {row.read ? (
+                    <MailOpen color="green" />
+                  ) : (
+                    <Mail color=" #d2b4de " />
+                  )}
+                </Link>
+              </Td>
               <Td textAlign="center">
                 <HStack>
                   <Link
@@ -73,24 +103,15 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
                     color="blue.600"
                     onClick={(e) => handleEditNotification(row.id)}
                   >
-                    <MailCheckIcon />
+                    <Eye />
                   </Link>
-                  <Link
-                    _hover={{
-                      color: "orange",
-                    }}
-                    color="blue.600"
-                    onClick={(e) => handleEditNotification(row.id)}
-                  >
-                    <Edit />
-                  </Link>
-                  <Link
+                  {/* <Link
                     _hover={{ color: "#ffd54f" }}
                     color="red.600"
                     onClick={(e) => handleDeleteNotification(row.id)}
                   >
                     <Trash2 />
-                  </Link>
+                  </Link> */}
                 </HStack>
               </Td>
             </Tr>
