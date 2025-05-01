@@ -6,12 +6,14 @@ const NotificationContext = createContext();
 
 export const NotificationProvider = ({ children }) => {
   const [notificationCount, setNotificationCount] = useState(0);
-
   const loadUnreadeNotif = async () => {
-    console.log("Notification context loaded.");
-    const response = await ShowUnreadNotificationsCount();
-    if (!response) setNotificationCount(0);
-    else setNotificationCount(response.data.length);
+    try {
+      const response = await ShowUnreadNotificationsCount();
+      setNotificationCount(response.data.length);
+    } catch (err) {
+      console.log(err);
+      setNotificationCount(0);
+    }
   };
 
   return (

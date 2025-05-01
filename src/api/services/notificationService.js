@@ -4,7 +4,6 @@ import endpoints from "../endpoints";
 export const ShowUserAllNotifications = async () => {
   try {
     const response = await axiosClient.get(endpoints.notifications.listAll);
-    console.log(response);
     return response;
   } catch (error) {
     if (error.response) {

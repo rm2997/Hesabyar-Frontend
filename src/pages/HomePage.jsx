@@ -27,7 +27,10 @@ export const MyHome = () => {
   useEffect(() => {
     loadUnreadeNotif();
   }, []);
-  useEffect(() => {}, [isDesktop]);
+
+  useEffect(() => {
+    loadUnreadeNotif();
+  }, [activeContent]);
 
   return (
     <Flex h="100vh" direction="column" bg="gray.900" color="white" dir="rtl">

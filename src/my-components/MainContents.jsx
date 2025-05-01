@@ -15,7 +15,6 @@ import { NewProForma } from "../pages/NewProforma";
 import { NewInvoice } from "../pages/NewInvoice";
 import { UserNotifications } from "../pages/UserNotifications";
 import { NewNotification } from "../pages/NewNotification";
-import { ShowUnreadNotificationsCount } from "../api/services/notificationService";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },

@@ -3,22 +3,9 @@ import {
   FormControl,
   FormLabel,
   HStack,
-  InputGroup,
-  InputRightElement,
-  Select,
-  Spinner,
-  useToast,
   VStack,
-  Icon,
 } from "@chakra-ui/react";
-import {
-  Captions,
-  DollarSign,
-  Hash,
-  IdCard,
-  ScrollText,
-  UserSearch,
-} from "lucide-react";
+import { Captions, Hash, ScrollText, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MyLoading } from "./MyLoading";
 import { MyInputBox } from "./MyInputBox";
@@ -29,7 +16,6 @@ export const ShowUserNotification = ({ id, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const [usersData, setUsersData] = useState([]);
-  const toast = useToast();
 
   useEffect(() => {
     const loadFormData = async (id) => {
@@ -47,14 +33,19 @@ export const ShowUserNotification = ({ id, onClose }) => {
 
     const fetchUsersData = async () => {
       setLoading(true);
-      const response = await GetAllUsers();
-      const result = response.data;
-      setUsersData(result);
-      setLoading(false);
+      try {
+        const response = await GetAllUsers();
+        const result = response.data;
+        setUsersData(result);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchUsersData();
     loadFormData(id);
-    setLoading(false);
   }, [id]);
 
   const handleChangeFormData = (e) => {
@@ -110,7 +101,7 @@ export const ShowUserNotification = ({ id, onClose }) => {
           <FormLabel width={110}>گیرنده</FormLabel>
           <MyInputBox
             size={19}
-            icon={ScrollText}
+            icon={User}
             title="گیرنده"
             name="touser"
             value={formData.touser}

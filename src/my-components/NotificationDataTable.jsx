@@ -15,22 +15,39 @@ import {
 } from "@chakra-ui/react";
 import { Eye, Mail, MailOpen } from "lucide-react";
 import { MyModalContainer } from "./MyModalContainer";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { MarkNotificationAsRead } from "../api/services/notificationService";
 import { ShowUserNotification } from "./ٍShowUserNotification";
 import { useNotification } from "../contexts/NotificationContext";
 
 export const NotificationDataTable = ({ HeadLables, DataRows }) => {
   const [selectedID, setSelectedID] = useState(0);
+  const [userMessages, setUserMessages] = useState([]);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { notificationCount, loadUnreadeNotif } = useNotification();
+  const { loadUnreadeNotif } = useNotification();
 
+  useLayoutEffect(() => {
+    loadUnreadeNotif();
+    setUserMessages([...DataRows]);
+    console.log(DataRows);
+  }, []);
+
+  const setUserMessagesReasStat = async (id) => {
+    setUserMessages((prev) =>
+      prev.map((msg) => (msg.id === id ? { ...msg, read: true } : msg))
+    );
+  };
   const handleMarkAsReadNotification = async (id) => {
     setSelectedID(id);
-    const response = await MarkNotificationAsRead(id);
-    if (response === 200) loadUnreadeNotif();
+    try {
+      await MarkNotificationAsRead(id);
+      await setUserMessagesReasStat(id);
+      await loadUnreadeNotif();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleDeleteNotification = (id) => {
@@ -40,10 +57,9 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
     //onOpen();
   };
 
-  const handleEditNotification = (id) => {
+  const handleShowNotification = async (id) => {
     if (id === 0) return;
-
-    setSelectedID(id);
+    await handleMarkAsReadNotification(id);
     setModalHeader("مشاهده پیام");
     setModalContetnt(<ShowUserNotification id={id} onClose={onClose} />);
     onOpen();
@@ -68,7 +84,7 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {DataRows.map((row) => (
+          {userMessages.map((row) => (
             <Tr id={row.id} _hover={{ bg: "#EEEE" }}>
               <Td id={row.id}>
                 <Text>{row.id}</Text>
@@ -101,7 +117,7 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
                       color: "orange",
                     }}
                     color="blue.600"
-                    onClick={(e) => handleEditNotification(row.id)}
+                    onClick={(e) => handleShowNotification(row.id)}
                   >
                     <Eye />
                   </Link>
