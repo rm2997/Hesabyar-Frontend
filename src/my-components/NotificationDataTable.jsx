@@ -28,10 +28,12 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { loadUnreadeNotif } = useNotification();
 
+  useEffect(() => {
+    setUserMessages([...DataRows]);
+  }, [DataRows]);
+
   useLayoutEffect(() => {
     loadUnreadeNotif();
-    setUserMessages([...DataRows]);
-    console.log(DataRows);
   }, []);
 
   const setUserMessagesReasStat = async (id) => {
