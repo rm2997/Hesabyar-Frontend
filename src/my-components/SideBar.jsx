@@ -1,17 +1,49 @@
 // components/Sidebar.jsx
-import { Accordion, Box, Divider } from "@chakra-ui/react";
+import { Accordion, Box, Divider, Heading, Link, Text } from "@chakra-ui/react";
 import { SidebarItem } from "./SIdebarItem";
 import { PieChart } from "./PieChart";
+import {
+  BookUser,
+  Coins,
+  DecimalsArrowRight,
+  FileSpreadsheet,
+  FileUser,
+  House,
+  Layers,
+  LucideLayers,
+  Mail,
+  MessageCircleCode,
+  Newspaper,
+  Paperclip,
+  Send,
+  Sheet,
+  Table,
+  UserRoundPlus,
+  Users,
+  UsersRound,
+} from "lucide-react";
 
 export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
   return (
     <Box
       w={sidebarWidth}
       bg="gray.800"
-      p={4}
       position="relative"
       borderLeft="8px solid gray.100"
     >
+      <Box mt={1} bg="#50b742" w="100%" h="40px" borderRadius={2}>
+        <Link>
+          <Text
+            pt={1}
+            alignContent={"center"}
+            textAlign={"center"}
+            fontSize={sidebarWidth === 300 ? "2xl" : "medium"}
+            fontFamily={""}
+          >
+            حسابیار
+          </Text>
+        </Link>
+      </Box>
       <Accordion
         spacing={2}
         align="stretch"
@@ -21,48 +53,136 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
         <SidebarItem
           id={1}
           title="پیش فاکتور"
+          icon={<Sheet />}
+          color="#ffbc65"
+          justIcon={sidebarWidth === 300 ? false : true}
           children={[
-            { id: "newProforma", name: "جدید", type: "text" },
-            { id: "proformaStat", name: "لیست پیش فاکتورها", type: "text" },
+            {
+              id: "newProforma",
+              name: "جدید",
+              type: "text",
+              icon: <FileSpreadsheet />,
+            },
+            {
+              id: "proformaStat",
+              name: "لیست پیش فاکتورها",
+              type: "text",
+              icon: <LucideLayers />,
+            },
           ]}
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
           id={2}
           title="فاکتور"
+          color="#da6284"
+          justIcon={sidebarWidth === 300 ? false : true}
+          icon={<Paperclip />}
           children={[
-            { id: "newInvoice", name: "جدید", type: "text" },
-            { id: "invoiceStat", name: "لیست فاکتورها", type: "text" },
+            {
+              id: "newInvoice",
+              name: "جدید",
+              type: "text",
+              icon: <Newspaper />,
+            },
+            {
+              id: "invoiceStat",
+              name: "لیست فاکتورها",
+              type: "text",
+              icon: <Layers />,
+            },
           ]}
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
           id={3}
           title="فروش"
+          color="#957871"
+          justIcon={sidebarWidth === 300 ? false : true}
+          icon={<Coins />}
           children={[
-            { id: "newSale", name: "جدید", type: "text" },
-            { id: "saleStat", name: "لیست فروش", type: "text" },
+            {
+              id: "newSale",
+              name: "جدید",
+              type: "text",
+              icon: <Coins />,
+            },
+            {
+              id: "saleStat",
+              name: "لیست فروش",
+              type: "text",
+              icon: <Table />,
+            },
           ]}
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
           id={4}
           title="انبار"
+          color="orange.400"
+          justIcon={sidebarWidth === 300 ? false : true}
+          icon={<House />}
           children={[
-            { id: "newSendDepot", name: "جدید", type: "text" },
-            { id: "depotStat", name: "لیست انبار", type: "text" },
+            {
+              id: "newSendDepot",
+              name: "جدید",
+              type: "text",
+              icon: <DecimalsArrowRight />,
+            },
+            {
+              id: "depotStat",
+              name: "لیست انبار",
+              type: "text",
+              icon: <House />,
+            },
           ]}
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
           id={5}
-          title="پیام ها"
+          title="مشتریان"
+          justIcon={sidebarWidth === 300 ? false : true}
+          color="red.400"
+          icon={<UsersRound />}
           children={[
-            { id: "newNotification", name: "جدید", type: "text" },
-            { id: "notifications", name: "لیست پیام ها", type: "text" },
+            {
+              id: "newCustomer",
+              name: "جدید",
+              type: "text",
+              icon: <UserRoundPlus />,
+            },
+            {
+              id: "customers",
+              name: "لیست مشتریان",
+              type: "text",
+              icon: <Users />,
+            },
           ]}
           onMenuItemClick={onMenuItemClick}
         />
+        <SidebarItem
+          id={6}
+          title="پیام ها"
+          justIcon={sidebarWidth === 300 ? false : true}
+          color="#4f7ede"
+          icon={<Send />}
+          children={[
+            {
+              id: "newNotification",
+              name: "جدید",
+              type: "text",
+              icon: <MessageCircleCode />,
+            },
+            {
+              id: "notifications",
+              name: "لیست پیام ها",
+              type: "text",
+              icon: <Mail />,
+            },
+          ]}
+          onMenuItemClick={onMenuItemClick}
+        />
+
         {/* <SidebarItem
           id={6}
           title="نمودار وضعیت"
@@ -78,7 +198,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
         /> */}
       </Accordion>
       <Divider mt={5} />
-      <PieChart />
+      <PieChart sidebarWidth={sidebarWidth} />
     </Box>
   );
 };

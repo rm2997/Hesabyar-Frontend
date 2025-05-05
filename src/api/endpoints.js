@@ -24,6 +24,14 @@ const endpoints = {
     detail: (id) => `/invoice/${id}`,
     create: "/invoice/create",
   },
+  customer: {
+    listAll: "/customer/",
+    update: (id) => `/customer/${id}`,
+    listOne: (id) => `/customer/${id}`,
+    detail: (id) => `/customer/${id}`,
+    create: "/customer/",
+    delete: (id) => `/customer/${id}`,
+  },
   notifications: {
     unreadCount: "notifications/unread",
     markAsRead: (id) => `notifications/${id}/read`,

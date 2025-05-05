@@ -10,15 +10,23 @@ import {
   MenuItem,
   Badge,
   Tooltip,
+  HStack,
 } from "@chakra-ui/react";
-import { Bell, SquareEqual, User2 } from "lucide-react";
+import { Bell, MenuIcon, SquareEqual, User2 } from "lucide-react";
 
 export const HeaderBar = ({
   isDesktop,
   setIsSidebarOpen,
+  setSidebarWidth,
+  sidebarWidth,
   OnItemClick,
   badgeCount,
 }) => {
+  const handleSideBarWith = () => {
+    if (sidebarWidth === 300) setSidebarWidth(100);
+    else setSidebarWidth(300);
+  };
+
   return (
     <Flex
       align="center"
@@ -28,10 +36,21 @@ export const HeaderBar = ({
       borderBottom="1px"
       borderColor="gray.700"
     >
-      <Text fontSize="xl" fontWeight="bold">
-        لوگو
-      </Text>
-
+      <HStack spacing={sidebarWidth === 300 ? 190 : 50}>
+        <Text fontSize="xl" fontWeight="bold">
+          لوگو
+        </Text>
+        {isDesktop && (
+          <IconButton
+            color="white"
+            bg="gray.600"
+            variant="ghost"
+            colorScheme="whiteAlpha"
+            icon={<MenuIcon />}
+            onClick={handleSideBarWith}
+          />
+        )}
+      </HStack>
       {!isDesktop && (
         <Tooltip label="باز کردن منو" hasArrow>
           <IconButton

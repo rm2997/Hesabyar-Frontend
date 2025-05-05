@@ -16,7 +16,7 @@ export const MyLoading = ({ showLoading }) => {
           value={50}
           size="220px"
         >
-          <CircularProgressLabel fontSize="md">
+          <CircularProgressLabel color="blackAlpha.600" fontSize="md">
             لطفا شکیبا باشید
           </CircularProgressLabel>
         </CircularProgress>

@@ -37,6 +37,8 @@ export const MyHome = () => {
       <HeaderBar
         isDesktop={isDesktop}
         setIsSidebarOpen={setIsSidebarOpen}
+        setSidebarWidth={(e) => setSidebarWidth(e)}
+        sidebarWidth={sidebarWidth}
         OnItemClick={(e) => setActiveContent(e)}
         badgeCount={notificationCount}
       />

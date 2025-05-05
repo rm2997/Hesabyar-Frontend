@@ -15,6 +15,8 @@ import { NewProForma } from "../pages/NewProforma";
 import { NewInvoice } from "../pages/NewInvoice";
 import { UserNotifications } from "../pages/UserNotifications";
 import { NewNotification } from "../pages/NewNotification";
+import { NewCustomer } from "../pages/NewCustomer";
+import { Customers } from "../pages/Customers";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -26,6 +28,8 @@ const validContents = [
   { name: "newSendDepot", value: "ثبت ورود" },
   { name: "depotStat", value: "لیست انبار" },
   { name: "user", value: "کاربران" },
+  { name: "newCustomer", value: "ثبت مشتری جدید" },
+  { name: "customers", value: "لیست مشتریان" },
   { name: "newNotification", value: "پیام جدید" },
   { name: "notifications", value: "پیام ها" },
   { name: "userSettings", value: "تنظیمات کاربر" },
@@ -68,6 +72,10 @@ export const MainContents = ({ activeContent }) => {
           return <UserNotifications />;
         case "newNotification":
           return <NewNotification />;
+        case "newCustomer":
+          return <NewCustomer />;
+        case "customers":
+          return <Customers />;
         default:
           break;
       }
@@ -77,7 +85,7 @@ export const MainContents = ({ activeContent }) => {
   }, [activeContent]);
 
   return (
-    <Card w="90%" m={1}>
+    <Card w="98%" m={1} bg="#efefef">
       <CardHeader
         bg="#0A9DBB"
         borderBottomColor="gray.100"

@@ -16,10 +16,10 @@ import {
 import { Edit, Trash2 } from "lucide-react";
 import { MyModalContainer } from "./MyModalContainer";
 import { useState } from "react";
-import { EditProforma } from "./EditProforma";
-import { DeleteProforma } from "./DeleteProforma";
+import { EditCustomer } from "./EditCustomer";
+import { DeleteCustomer } from "./Deleteustomer";
 
-export const ProformaDataTable = ({ HeadLables, DataRows }) => {
+export const CustomerDataTable = ({ HeadLables, DataRows }) => {
   const [selectedID, setSelectedID] = useState(0);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
@@ -27,16 +27,16 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleDeleteProforma = (id) => {
     setSelectedID(id);
-    setModalHeader("آیا از حذف پیش فاکتور زیر اطمینان دارید؟");
-    setModalContetnt(<DeleteProforma id={id} onClose={onClose} />);
+    setModalHeader("آیا از حذف مشتری زیر اطمینان دارید؟");
+    setModalContetnt(<DeleteCustomer id={id} onClose={onClose} />);
     onOpen();
   };
   const handleEditProforma = (id) => {
     if (id === 0) return;
 
     setSelectedID(id);
-    setModalHeader("ویرایش پیش فاکتور");
-    setModalContetnt(<EditProforma id={id} onClose={onClose} />);
+    setModalHeader("ویرایش مشخصات مشتری");
+    setModalContetnt(<EditCustomer id={id} onClose={onClose} />);
     onOpen();
   };
   return (
@@ -47,7 +47,7 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
         borderWidth="1px"
         borderColor="gray.600"
       >
-        <TableCaption>جدول اطلاعات پیش فاکتور های کاربر جاری</TableCaption>
+        <TableCaption>جدول اطلاعات مشتری ها</TableCaption>
         <Thead bg="#50b742" color="white" borderTopRadius={50} height={50}>
           <Tr color="white">
             {HeadLables.map((label) => (
@@ -61,10 +61,15 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
               <Td id={row.id}>
                 <Text>{row.id}</Text>
               </Td>
-              <Td>{row.createdAt}</Td>
-              <Td>{row.customerName}</Td>
-              <Td>{row.approvedFile ? "دارد" : "ندارد"}</Td>
-              <Td>{row.totalAmount}</Td>
+              <Td>{row.customerFName}</Td>
+              <Td>{row.customerLName}</Td>
+              <Td>{row.customerNationalCode}</Td>
+              <Td>{row.customerPhone}</Td>
+              <Td>
+                {row.customerAddress.length > 15
+                  ? row.customerAddress.substring(0, 12) + "..."
+                  : row.customerAddress}
+              </Td>
               <Td>
                 <HStack>
                   <Link

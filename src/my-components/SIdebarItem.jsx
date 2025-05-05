@@ -1,20 +1,35 @@
-// components/SidebarItem.jsx
 import {
   Box,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  HStack,
+  Icon,
+  Text,
 } from "@chakra-ui/react";
 
-export const SidebarItem = ({ id, title, children, onMenuItemClick }) => {
+export const SidebarItem = ({
+  id,
+  title,
+  children,
+  onMenuItemClick,
+  icon,
+  color,
+  justIcon,
+}) => {
   return (
     <AccordionItem id={id}>
       <h2>
         <AccordionButton>
-          <Box flex="2" textAlign="right">
-            {title}
-          </Box>
+          <HStack spacing={2}>
+            <Icon color={color}>{icon}</Icon>
+            {!justIcon && (
+              <Box flex="2" textAlign="right">
+                {title}
+              </Box>
+            )}
+          </HStack>
           <AccordionIcon />
         </AccordionButton>
       </h2>
@@ -25,7 +40,14 @@ export const SidebarItem = ({ id, title, children, onMenuItemClick }) => {
             onClick={() => onMenuItemClick(child.id)}
           >
             <Box as="h3" flex="3" textAlign="right">
-              {child.type === "text" ? child.name : child.element}
+              {child.type === "text" ? (
+                <HStack>
+                  <Icon color="#50b742">{child.icon}</Icon>
+                  {!justIcon && <Text>{child.name}</Text>}
+                </HStack>
+              ) : (
+                child.element
+              )}
             </Box>
           </AccordionButton>
         ))}

@@ -69,16 +69,14 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
 
   return (
     <TableContainer>
-      <Table color="black" colorScheme="blackAlpha">
+      <Table
+        color="black"
+        colorScheme="blackAlpha"
+        borderWidth="1px"
+        borderColor="gray.600"
+      >
         <TableCaption> پیام های شما</TableCaption>
-        <Thead
-          bg="#fad7a0"
-          borderBottomColor="gray.400"
-          borderBottomWidth="1px"
-          borderTopRadius={50}
-          color="black"
-          height={50}
-        >
+        <Thead bg="#50b742">
           <Tr>
             {HeadLables.map((label) => (
               <Th id={label}>{label}</Th>
@@ -87,7 +85,7 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
         </Thead>
         <Tbody>
           {userMessages.map((row) => (
-            <Tr id={row.id} _hover={{ bg: "#EEEE" }}>
+            <Tr cursor="pointer" id={row.id} _hover={{ bg: "#f5f5f5" }}>
               <Td id={row.id}>
                 <Text>{row.id}</Text>
               </Td>
@@ -105,11 +103,7 @@ export const NotificationDataTable = ({ HeadLables, DataRows }) => {
                   color="blue.600"
                   onClick={(e) => handleMarkAsReadNotification(row.id)}
                 >
-                  {row.read ? (
-                    <MailOpen color="green" />
-                  ) : (
-                    <Mail color=" #d2b4de " />
-                  )}
+                  {row.read ? <MailOpen /> : <Mail />}
                 </Link>
               </Td>
               <Td textAlign="center">
