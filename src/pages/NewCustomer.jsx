@@ -7,6 +7,7 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  Textarea,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -142,15 +143,16 @@ export const NewCustomer = () => {
 
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="100px">آدرس</FormLabel>
-              <MyInputBox
-                icon={MapPin}
+              <FormLabel width="90px">آدرس</FormLabel>
+              <Textarea
+                placeholder="آدرس"
                 name="customerAddress"
-                title="آدرس"
-                size={50}
+                resize="horizontal"
+                size="lg"
+                w="auto"
                 value={formData.customerAddress}
                 onChange={handleChangeFormData}
-              ></MyInputBox>
+              />
             </HStack>
           </FormControl>
 

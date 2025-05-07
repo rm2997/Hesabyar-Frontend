@@ -15,30 +15,67 @@ import {
 } from "@chakra-ui/react";
 import { Edit, Trash2 } from "lucide-react";
 import { MyModalContainer } from "./MyModalContainer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditCustomer } from "./EditCustomer";
-import { DeleteCustomer } from "./Deleteustomer";
+import { DeleteCustomer } from "./DeleteCustomer";
 
 export const CustomerDataTable = ({ HeadLables, DataRows }) => {
+  const [customersData, setCustomersData] = useState([]);
   const [selectedID, setSelectedID] = useState(0);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const handleDeleteProforma = (id) => {
+
+  const handleDeleteCustomer = (id) => {
     setSelectedID(id);
     setModalHeader("آیا از حذف مشتری زیر اطمینان دارید؟");
-    setModalContetnt(<DeleteCustomer id={id} onClose={onClose} />);
+    setModalContetnt(
+      <DeleteCustomer
+        id={id}
+        onDelete={deleteCustomerFromList}
+        onClose={onClose}
+      />
+    );
     onOpen();
   };
-  const handleEditProforma = (id) => {
+
+  const updateCustomerInList = (updatedCustomer) => {
+    setCustomersData((prev) =>
+      prev.map((customer) =>
+        customer.id === updatedCustomer.id ? updatedCustomer : customer
+      )
+    );
+  };
+
+  const deleteCustomerFromList = (id) => {
+    setCustomersData((prev) => prev.filter((customer) => customer.id !== id));
+  };
+
+  const findCustomerFromList = (id) => {
+    customersData.map((customer) => (customer.id === id ? customer : null));
+  };
+
+  const handleEditCustomer = (id) => {
     if (id === 0) return;
 
     setSelectedID(id);
     setModalHeader("ویرایش مشخصات مشتری");
-    setModalContetnt(<EditCustomer id={id} onClose={onClose} />);
+    setModalContetnt(
+      <EditCustomer
+        id={id}
+        onClose={onClose}
+        onUpdate={updateCustomerInList}
+        customer={findCustomerFromList(id)}
+      />
+    );
     onOpen();
   };
+
+  useEffect(() => {
+    setCustomersData([...DataRows]);
+  }, [DataRows]);
+
   return (
     <TableContainer>
       <Table
@@ -56,7 +93,7 @@ export const CustomerDataTable = ({ HeadLables, DataRows }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {DataRows.map((row) => (
+          {customersData.map((row) => (
             <Tr _hover={{ bg: "#f5f5f5" }} cursor="pointer">
               <Td id={row.id}>
                 <Text>{row.id}</Text>
@@ -77,14 +114,14 @@ export const CustomerDataTable = ({ HeadLables, DataRows }) => {
                       color: "orange",
                     }}
                     color="blue.600"
-                    onClick={(e) => handleEditProforma(row.id)}
+                    onClick={(e) => handleEditCustomer(row.id)}
                   >
                     <Edit />
                   </Link>
                   <Link
                     _hover={{ color: "#ffd54f" }}
                     color="red.600"
-                    onClick={(e) => handleDeleteProforma(row.id)}
+                    onClick={(e) => handleDeleteCustomer(row.id)}
                   >
                     <Trash2 />
                   </Link>

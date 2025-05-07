@@ -7,19 +7,27 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  Textarea,
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { IdCard, MapPin, Phone, SquareCheckBig } from "lucide-react";
+import {
+  ChevronRight,
+  IdCard,
+  MapPin,
+  Phone,
+  SquareCheckBig,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   ShowCustomerByID,
-  UpdateCustomer,
+  RemoveCustomer,
 } from "../api/services/customerService";
 import { MyLoading } from "./MyLoading";
 import { MyInputBox } from "./MyInputBox";
 
-export const DeleteCustomer = ({ id, onClose }) => {
+export const DeleteCustomer = ({ id, onClose, onDelete }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const toast = useToast();
@@ -51,17 +59,20 @@ export const DeleteCustomer = ({ id, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const response = await UpdateCustomer(formData.id, formData)
+    await RemoveCustomer(formData.id)
       .then((result) => {
+        onDelete(formData.id);
         setFormData({
-          id: "",
-          customerName: "",
-          totalAmount: "",
+          customerFName: "",
+          customerLName: "",
+          customerNationalCode: "",
+          customerPhone: "",
+          customerAddress: "",
         });
         onClose();
         toast({
           title: "ثبت شد",
-          description: `اطلاعات مشتری بروزرسانی شد`,
+          description: "مشتری موردنظر حذف شد",
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -82,11 +93,11 @@ export const DeleteCustomer = ({ id, onClose }) => {
   };
 
   return (
-    <VStack as="form" spacing={5} onSubmit={handleSubmit} dir="rtl">
+    <VStack as="form" spacing={2} onSubmit={handleSubmit} dir="rtl">
       {loading} && <MyLoading />
       <FormControl isDisabled>
         <HStack>
-          <FormLabel width="100px">نام مشتری</FormLabel>
+          <FormLabel width="150px">نام مشتری</FormLabel>
           <MyInputBox
             icon={IdCard}
             name="customerFName"
@@ -99,7 +110,7 @@ export const DeleteCustomer = ({ id, onClose }) => {
       </FormControl>
       <FormControl isDisabled>
         <HStack>
-          <FormLabel width="100px">نام خانوادگی</FormLabel>
+          <FormLabel width="150px">نام خانوادگی</FormLabel>
           <MyInputBox
             icon={IdCard}
             name="customerLName"
@@ -112,7 +123,7 @@ export const DeleteCustomer = ({ id, onClose }) => {
       </FormControl>
       <FormControl isDisabled>
         <HStack>
-          <FormLabel width="100px">شماره ملی</FormLabel>
+          <FormLabel width="150px">شماره ملی</FormLabel>
           <MyInputBox
             icon={IdCard}
             name="customerNationalCode"
@@ -125,7 +136,7 @@ export const DeleteCustomer = ({ id, onClose }) => {
       </FormControl>
       <FormControl isDisabled>
         <HStack>
-          <FormLabel width="100px">شماره تلفن</FormLabel>
+          <FormLabel width="150px">شماره تلفن</FormLabel>
           <MyInputBox
             icon={Phone}
             name="customerPhone"
@@ -138,25 +149,31 @@ export const DeleteCustomer = ({ id, onClose }) => {
       </FormControl>
       <FormControl isDisabled>
         <HStack>
-          <FormLabel width="100px">آدرس</FormLabel>
-          <MyInputBox
-            icon={MapPin}
+          <FormLabel width="110px">آدرس</FormLabel>
+          <Textarea
+            placeholder="آدرس"
             name="customerAddress"
-            title="آدرس"
-            size={19}
+            resize="horizontal"
+            size="lg"
+            w="auto"
             value={formData.customerAddress}
             onChange={handleChangeFormData}
-          ></MyInputBox>
+          />
         </HStack>
       </FormControl>
-      <Button
-        leftIcon={<SquareCheckBig />}
-        colorScheme="blue"
-        type="submit"
-        isLoading={loading}
-      >
-        تایید
-      </Button>
+      <HStack>
+        <Button leftIcon={<ChevronRight />} onClick={onClose}>
+          انصراف
+        </Button>
+        <Button
+          leftIcon={<Trash2 />}
+          colorScheme="red"
+          type="submit"
+          isLoading={loading}
+        >
+          حذف
+        </Button>
+      </HStack>
     </VStack>
   );
 };
