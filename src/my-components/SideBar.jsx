@@ -4,6 +4,7 @@ import { SidebarItem } from "./SIdebarItem";
 import { PieChart } from "./PieChart";
 import {
   BookUser,
+  Boxes,
   Coins,
   DecimalsArrowRight,
   FileSpreadsheet,
@@ -12,11 +13,14 @@ import {
   Layers,
   LucideLayers,
   Mail,
+  Mails,
   MessageCircleCode,
   Newspaper,
+  PackagePlus,
   Paperclip,
   Send,
   Sheet,
+  ShoppingBag,
   Table,
   UserRoundPlus,
   Users,
@@ -161,17 +165,39 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
+          id={5}
+          title="کالاها"
+          justIcon={sidebarWidth === 300 ? false : true}
+          color="maroon"
+          icon={<ShoppingBag />}
+          children={[
+            {
+              id: "newGood",
+              name: "جدید",
+              type: "text",
+              icon: <PackagePlus />,
+            },
+            {
+              id: "goods",
+              name: "لیست کالاها",
+              type: "text",
+              icon: <Boxes />,
+            },
+          ]}
+          onMenuItemClick={onMenuItemClick}
+        />
+        <SidebarItem
           id={6}
           title="پیام ها"
           justIcon={sidebarWidth === 300 ? false : true}
           color="#4f7ede"
-          icon={<Send />}
+          icon={<Mails />}
           children={[
             {
               id: "newNotification",
               name: "جدید",
               type: "text",
-              icon: <MessageCircleCode />,
+              icon: <Send />,
             },
             {
               id: "notifications",

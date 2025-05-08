@@ -13,11 +13,11 @@ import {
 } from "@chakra-ui/react";
 import { IdCard, Phone, SquareCheckBig } from "lucide-react";
 import { useState } from "react";
-import { CreateCustomer } from "../api/services/customerService";
+import { CreateGood } from "../api/services/goodsService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../my-components/MyInputBox";
 
-export const NewCustomer = () => {
+export const NewGood = () => {
   const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -28,18 +28,16 @@ export const NewCustomer = () => {
     setLoading(true);
 
     try {
-      const response = await CreateCustomer(formData);
+      const response = await CreateGood(formData);
       if (!response.data) return;
       setFormData({
-        customerFName: "",
-        customerLName: "",
-        customerNationalCode: "",
-        customerPhone: "",
-        customerAddress: "",
+        GoodName: "",
+        GoodUnit: "",
+        GoodInfo: "",
       });
       toast({
         title: "ثبت شد",
-        description: `اطلاعات مشتری ذخیره شد`,
+        description: `اطلاعات کالا ذخیره شد`,
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -73,78 +71,47 @@ export const NewCustomer = () => {
         borderTopRadius={5}
         color="black"
       >
-        ثبت مشتری جدید
+        ثبت کالای جدید
       </CardHeader>
       <CardBody borderTopWidth={2}>
         <VStack as="form" spacing={5} onSubmit={handleSubmit}>
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="100px">نام مشتری</FormLabel>
+              <FormLabel width="150px">نام کالا</FormLabel>
               <MyInputBox
                 icon={IdCard}
-                name="customerFName"
-                title="نام"
+                name="goodName"
+                title="نام کالا"
                 size={19}
-                value={formData.customerFName}
+                value={formData.goodName}
                 onChange={handleChangeFormData}
               ></MyInputBox>
             </HStack>
           </FormControl>
-
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="100px">نام خانوادگی</FormLabel>
+              <FormLabel width="150px">واحد اندازه گیری</FormLabel>
               <MyInputBox
                 icon={IdCard}
-                name="customerLName"
-                title="نام خانوادگی"
+                name="goodUnit"
+                title="واحد اندازه گیری"
                 size={19}
-                value={formData.customerLName}
+                value={formData.goodUnit}
                 onChange={handleChangeFormData}
               ></MyInputBox>
             </HStack>
           </FormControl>
-
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="100px">شماره ملی</FormLabel>
+              <FormLabel width="150px">توضیحات</FormLabel>
               <MyInputBox
                 icon={IdCard}
-                name="customerNationalCode"
-                title="شماره ملی"
+                name="goodInfo"
+                title="توضیحات"
                 size={19}
-                value={formData.customerNationalCode}
+                value={formData.goodInfo}
                 onChange={handleChangeFormData}
               ></MyInputBox>
-            </HStack>
-          </FormControl>
-
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel width="100px">شماره تلفن</FormLabel>
-              <MyInputBox
-                icon={Phone}
-                name="customerPhone"
-                title="شماره تلفن"
-                size={19}
-                value={formData.customerPhone}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
-
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel width="90px">آدرس</FormLabel>
-              <Textarea
-                placeholder="آدرس"
-                name="customerAddress"
-                resize="horizontal"
-                size="lg"
-                w="auto"
-                value={formData.customerAddress}
-                onChange={handleChangeFormData}
-              />
             </HStack>
           </FormControl>
 

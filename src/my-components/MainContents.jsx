@@ -17,6 +17,8 @@ import { UserNotifications } from "../pages/UserNotifications";
 import { NewNotification } from "../pages/NewNotification";
 import { NewCustomer } from "../pages/NewCustomer";
 import { Customers } from "../pages/Customers";
+import { Goods } from "../pages/Goods";
+import { NewGood } from "../pages/NewGood";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -30,6 +32,8 @@ const validContents = [
   { name: "user", value: "کاربران" },
   { name: "newCustomer", value: "ثبت مشتری جدید" },
   { name: "customers", value: "لیست مشتریان" },
+  { name: "newGood", value: "ثبت کالای جدید" },
+  { name: "goods", value: "لیست کالاها" },
   { name: "newNotification", value: "پیام جدید" },
   { name: "notifications", value: "پیام ها" },
   { name: "userSettings", value: "تنظیمات کاربر" },
@@ -76,6 +80,10 @@ export const MainContents = ({ activeContent }) => {
           return <NewCustomer />;
         case "customers":
           return <Customers />;
+        case "newGood":
+          return <NewGood />;
+        case "goods":
+          return <Goods />;
         default:
           break;
       }

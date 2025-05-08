@@ -1,0 +1,35 @@
+import { useEffect, useState } from "react";
+import { MyLoading } from "../my-components/MyLoading";
+import { GoodsDataTable } from "../my-components/GoodsDataTable";
+import { ShowAllGoods } from "../api/services/goodsService";
+
+const data = {
+  Headers: ["ردیف", "نام کالا", "واحد اندازه گیری", "توضیحات", "عملیات"],
+  Rows: [],
+};
+export const Goods = () => {
+  const [userData, setUserData] = useState(data);
+  const [showLoading, setShowLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const response = await ShowAllGoods();
+      data.Rows = response.data;
+      setUserData(data);
+      setShowLoading(false);
+    };
+
+    loadData();
+  }, []);
+
+  if (userData)
+    return (
+      <>
+        <GoodsDataTable
+          HeadLables={userData.Headers}
+          DataRows={userData.Rows}
+        />
+        <MyLoading showLoading={showLoading} />
+      </>
+    );
+};
