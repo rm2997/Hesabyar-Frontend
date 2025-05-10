@@ -20,9 +20,12 @@ const endpoints = {
     delete: (id) => `/proforma/${id}`,
   },
   invoice: {
-    list: "/invoice/list",
+    listAll: "/invoice/user/my",
+    update: (id) => `/invoice/${id}`,
+    listOne: (id) => `/invoice/${id}`,
     detail: (id) => `/invoice/${id}`,
-    create: "/invoice/create",
+    create: "/invoice/",
+    delete: (id) => `/invoice/${id}`,
   },
   customer: {
     listAll: "/customer/",
@@ -40,6 +43,14 @@ const endpoints = {
     create: "/notifications/",
     delete: (id) => `/notifications/${id}`,
     update: (id) => `/notifications/${id}`,
+  },
+  good: {
+    listAll: "/goods/",
+    update: (id) => `/goods/${id}`,
+    listOne: (id) => `/goods/${id}`,
+    detail: (id) => `/goods/${id}`,
+    create: "/goods/",
+    delete: (id) => `/goods/${id}`,
   },
 };
 
