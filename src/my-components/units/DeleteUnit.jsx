@@ -8,11 +8,11 @@ import {
 } from "@chakra-ui/react";
 import { ChevronRight, IdCard, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ShowGoodByID, RemoveGood } from "../api/services/goodsService";
-import { MyLoading } from "./MyLoading";
-import { MyInputBox } from "./MyInputBox";
+import { ShowUnitByID, RemoveUnit } from "../../api/services/unitsService";
+import { MyLoading } from "../MyLoading";
+import { MyInputBox } from "../MyInputBox";
 
-export const DeleteGood = ({ id, onClose, onDelete }) => {
+export const DeleteUnit = ({ id, onClose, onDelete }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const toast = useToast();
@@ -20,7 +20,7 @@ export const DeleteGood = ({ id, onClose, onDelete }) => {
   useEffect(() => {
     const loadFormData = async (id) => {
       setLoading(true);
-      await ShowGoodByID(id)
+      await ShowUnitByID(id)
         .then((result) => {
           setFormData({ ...result.data });
         })
@@ -44,20 +44,20 @@ export const DeleteGood = ({ id, onClose, onDelete }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await RemoveGood(formData.id)
+    await RemoveUnit(formData.id)
       .then((result) => {
         onDelete(formData.id);
         setFormData({
-          GoodFName: "",
-          GoodLName: "",
-          GoodNationalCode: "",
-          GoodPhone: "",
-          GoodAddress: "",
+          UnitFName: "",
+          UnitLName: "",
+          UnitNationalCode: "",
+          UnitPhone: "",
+          UnitAddress: "",
         });
         onClose();
         toast({
           title: "ثبت شد",
-          description: "کالای موردنظر حذف شد",
+          description: "واحد موردنظر حذف شد",
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -82,26 +82,13 @@ export const DeleteGood = ({ id, onClose, onDelete }) => {
       {loading} && <MyLoading />
       <FormControl isDisabled>
         <HStack>
-          <FormLabel width="150px">نام کالا</FormLabel>
+          <FormLabel width="150px">نام واحد</FormLabel>
           <MyInputBox
             icon={IdCard}
-            name="goodName"
-            title="نام کالا"
+            name="unitName"
+            title="نام واحد"
             size={19}
-            value={formData.goodName}
-            onChange={handleChangeFormData}
-          ></MyInputBox>
-        </HStack>
-      </FormControl>
-      <FormControl isDisabled>
-        <HStack>
-          <FormLabel width="150px">واحد اندازه گیری</FormLabel>
-          <MyInputBox
-            icon={IdCard}
-            name="goodUnit"
-            title="واحد اندازه گیری"
-            size={19}
-            value={formData.goodUnit}
+            value={formData.unitName}
             onChange={handleChangeFormData}
           ></MyInputBox>
         </HStack>
@@ -111,10 +98,10 @@ export const DeleteGood = ({ id, onClose, onDelete }) => {
           <FormLabel width="150px">توضیحات</FormLabel>
           <MyInputBox
             icon={IdCard}
-            name="goodInfo"
+            name="unitInfo"
             title="توضیحات"
             size={19}
-            value={formData.goodInfo}
+            value={formData.unitInfo}
             onChange={handleChangeFormData}
           ></MyInputBox>
         </HStack>

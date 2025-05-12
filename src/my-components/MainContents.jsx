@@ -8,17 +8,19 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { UserProformas } from "../pages/UserProfomas";
+import { UserProformas } from "../pages/proformas/Profomas";
+import { NewProForma } from "../pages/proformas/NewProforma";
 import { useEffect, useState } from "react";
-import { UserInvoices } from "../pages/UserInvoice";
-import { NewProForma } from "../pages/NewProforma";
-import { NewInvoice } from "../pages/NewInvoice";
-import { UserNotifications } from "../pages/UserNotifications";
-import { NewNotification } from "../pages/NewNotification";
-import { NewCustomer } from "../pages/NewCustomer";
-import { Customers } from "../pages/Customers";
-import { Goods } from "../pages/Goods";
-import { NewGood } from "../pages/NewGood";
+import { UserInvoices } from "../pages/invoices/Invoices";
+import { NewInvoice } from "../pages/invoices/NewInvoice";
+import { UserNotifications } from "../pages/notifications/UserNotifications";
+import { NewNotification } from "../pages/notifications/NewNotification";
+import { NewCustomer } from "../pages/customers/NewCustomer";
+import { Customers } from "../pages/customers/Customers";
+import { Goods } from "../pages/goods/Goods";
+import { NewGood } from "../pages/goods/NewGood";
+import { Units } from "../pages/units/Units";
+import { NewUnit } from "../pages/units/NewUnit";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -34,6 +36,8 @@ const validContents = [
   { name: "customers", value: "لیست مشتریان" },
   { name: "newGood", value: "ثبت کالای جدید" },
   { name: "goods", value: "لیست کالاها" },
+  { name: "newUnit", value: "ثبت واحد جدید" },
+  { name: "units", value: "لیست واحدها" },
   { name: "newNotification", value: "پیام جدید" },
   { name: "notifications", value: "پیام ها" },
   { name: "userSettings", value: "تنظیمات کاربر" },
@@ -84,6 +88,10 @@ export const MainContents = ({ activeContent }) => {
           return <NewGood />;
         case "goods":
           return <Goods />;
+        case "newUnit":
+          return <NewUnit />;
+        case "units":
+          return <Units />;
         default:
           break;
       }

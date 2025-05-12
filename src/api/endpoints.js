@@ -52,6 +52,14 @@ const endpoints = {
     create: "/goods/",
     delete: (id) => `/goods/${id}`,
   },
+  unit: {
+    listAll: "/units/",
+    update: (id) => `/units/${id}`,
+    listOne: (id) => `/units/${id}`,
+    detail: (id) => `/units/${id}`,
+    create: "/units/",
+    delete: (id) => `/units/${id}`,
+  },
 };
 
 export default endpoints;

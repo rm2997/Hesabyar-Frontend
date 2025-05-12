@@ -1,13 +1,9 @@
 import axiosClient from "../axiosClient";
 import endpoints from "../endpoints";
 
-export const CreateInvoice = async (invoiceData) => {
+export const CreateUnit = async (unitData) => {
   try {
-    console.log(invoiceData);
-    const response = await axiosClient.post(
-      endpoints.invoice.create,
-      invoiceData
-    );
+    const response = await axiosClient.post(endpoints.unit.create, unitData);
     return response;
   } catch (error) {
     if (error.response) {
@@ -23,12 +19,9 @@ export const CreateInvoice = async (invoiceData) => {
   }
 };
 
-export const UpdateInvoice = async (id, invoiceData) => {
+export const UpdateUnit = async (id, unitData) => {
   try {
-    const response = await axiosClient.put(
-      endpoints.invoice.update(id),
-      invoiceData
-    );
+    const response = await axiosClient.put(endpoints.unit.update(id), unitData);
     return response;
   } catch (error) {
     if (error.response) {
@@ -44,11 +37,9 @@ export const UpdateInvoice = async (id, invoiceData) => {
   }
 };
 
-export const RemoveInvoice = async (id) => {
+export const RemoveUnit = async (id) => {
   try {
-    console.log(id);
-
-    const response = await axiosClient.delete(endpoints.invoice.delete(id));
+    const response = await axiosClient.delete(endpoints.unit.delete(id));
     return response;
   } catch (error) {
     if (error.response) {
@@ -64,9 +55,9 @@ export const RemoveInvoice = async (id) => {
   }
 };
 
-export const ShowUserAllInvoices = async () => {
+export const ShowUnitByID = async (id) => {
   try {
-    const response = await axiosClient.get(endpoints.invoice.listAll);
+    const response = await axiosClient.get(endpoints.unit.listOne(id));
     return response;
   } catch (error) {
     if (error.response) {
@@ -82,9 +73,9 @@ export const ShowUserAllInvoices = async () => {
   }
 };
 
-export const ShowInvoicesByID = async (id) => {
+export const ShowAllUnits = async () => {
   try {
-    const response = await axiosClient.get(endpoints.invoice.listOne(id));
+    const response = await axiosClient.get(endpoints.unit.listAll);
     return response;
   } catch (error) {
     if (error.response) {

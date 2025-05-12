@@ -14,61 +14,31 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { Edit, Trash2 } from "lucide-react";
-import { MyModalContainer } from "./MyModalContainer";
-import { useEffect, useState } from "react";
-import { EditGood } from "./EditGood";
-import { DeleteGood } from "./DeleteGood";
+import { MyModalContainer } from "../MyModalContainer";
+import { useState } from "react";
+import { EditInvoice } from "../invoices/EditInvoice";
+import { DeleteInvoice } from "../invoices/DeleteInvoice";
 
-export const GoodsDataTable = ({ HeadLables, DataRows }) => {
-  const [goodsData, setGoodsData] = useState([]);
+export const InvoiceDataTable = ({ HeadLables, DataRows }) => {
   const [selectedID, setSelectedID] = useState(0);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
-
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const updateGoodInList = (updatedGood) => {
-    setGoodsData((prev) =>
-      prev.map((Good) => (Good.id === updatedGood.id ? updatedGood : Good))
-    );
-  };
-
-  const deleteGoodFromList = (id) => {
-    setGoodsData((prev) => prev.filter((Good) => Good.id !== id));
-  };
-
-  const findGoodFromList = (id) => {
-    goodsData.map((Good) => (Good.id === id ? Good : null));
-  };
-
-  const handleDeleteGood = (id) => {
+  const handleDeleteInvoice = (id) => {
     setSelectedID(id);
-    setModalHeader("آیا از حذف کالای زیر اطمینان دارید؟");
-    setModalContetnt(
-      <DeleteGood id={id} onDelete={deleteGoodFromList} onClose={onClose} />
-    );
+    setModalHeader("آیا از حذف فاکتور زیر اطمینان دارید؟");
+    setModalContetnt(<DeleteInvoice id={id} onClose={onClose} />);
     onOpen();
   };
 
-  const handleEditGood = (id) => {
+  const handleEditInvoice = (id) => {
     if (id === 0) return;
-
     setSelectedID(id);
-    setModalHeader("ویرایش مشخصات کالا");
-    setModalContetnt(
-      <EditGood
-        id={id}
-        onClose={onClose}
-        onUpdate={updateGoodInList}
-        Good={findGoodFromList(id)}
-      />
-    );
+    setModalHeader("ویرایش فاکتور");
+    setModalContetnt(<EditInvoice id={id} onClose={onClose} />);
     onOpen();
   };
-
-  useEffect(() => {
-    setGoodsData([...DataRows]);
-  }, [DataRows]);
 
   return (
     <TableContainer>
@@ -78,7 +48,7 @@ export const GoodsDataTable = ({ HeadLables, DataRows }) => {
         borderWidth="1px"
         borderColor="gray.600"
       >
-        <TableCaption>جدول اطلاعات کالا ها</TableCaption>
+        <TableCaption>جدول اطلاعات فاکتور های کاربر جاری</TableCaption>
         <Thead bg="#50b742" color="white" borderTopRadius={50} height={50}>
           <Tr color="white">
             {HeadLables.map((label) => (
@@ -87,18 +57,20 @@ export const GoodsDataTable = ({ HeadLables, DataRows }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {goodsData.map((row) => (
+          {DataRows.map((row) => (
             <Tr _hover={{ bg: "#f5f5f5" }} cursor="pointer">
               <Td id={row.id}>
                 <Text>{row.id}</Text>
               </Td>
-              <Td>{row.goodName}</Td>
-              <Td>{row.goodUnit}</Td>
+              <Td>{row.createdAt}</Td>
               <Td>
-                {row.goodInfo.length > 15
-                  ? row.goodInfo.substring(0, 12) + "..."
-                  : row.goodInfo}
+                {row.customer?.customerFName +
+                  " " +
+                  row.customer?.customerLName}
               </Td>
+              <Td>{row.paymentStatus}</Td>
+              <Td>{row.approvedFile ? "دارد" : "ندارد"}</Td>
+              <Td>{row.totalAmount}</Td>
               <Td>
                 <HStack>
                   <Link
@@ -106,14 +78,14 @@ export const GoodsDataTable = ({ HeadLables, DataRows }) => {
                       color: "orange",
                     }}
                     color="blue.600"
-                    onClick={(e) => handleEditGood(row.id)}
+                    onClick={(e) => handleEditInvoice(row.id)}
                   >
                     <Edit />
                   </Link>
                   <Link
                     _hover={{ color: "#ffd54f" }}
                     color="red.600"
-                    onClick={(e) => handleDeleteGood(row.id)}
+                    onClick={(e) => handleDeleteInvoice(row.id)}
                   >
                     <Trash2 />
                   </Link>
@@ -137,7 +109,7 @@ export const GoodsDataTable = ({ HeadLables, DataRows }) => {
         onClose={onClose}
         isOpen={isOpen}
         onOpen={onOpen}
-        proformaID={selectedID}
+        invoiceID={selectedID}
         modalHeader={modalHeader}
       >
         {modalContetnt}

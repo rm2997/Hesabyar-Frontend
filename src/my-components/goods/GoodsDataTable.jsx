@@ -14,66 +14,60 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { Edit, Trash2 } from "lucide-react";
-import { MyModalContainer } from "./MyModalContainer";
+import { MyModalContainer } from "../MyModalContainer";
 import { useEffect, useState } from "react";
-import { EditCustomer } from "./EditCustomer";
-import { DeleteCustomer } from "./DeleteCustomer";
+import { EditGood } from "./EditGood";
+import { DeleteGood } from "./DeleteGood";
 
-export const CustomerDataTable = ({ HeadLables, DataRows }) => {
-  const [customersData, setCustomersData] = useState([]);
+export const GoodsDataTable = ({ HeadLables, DataRows }) => {
+  const [goodsData, setGoodsData] = useState([]);
   const [selectedID, setSelectedID] = useState(0);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleDeleteCustomer = (id) => {
+  const updateGoodInList = (updatedGood) => {
+    setGoodsData((prev) =>
+      prev.map((g) => (g.id === updatedGood.id ? updatedGood : g))
+    );
+  };
+
+  const deleteGoodFromList = (id) => {
+    setGoodsData((prev) => prev.filter((g) => g.id !== id));
+  };
+
+  const findGoodFromList = (id) => {
+    goodsData.map((g) => (g.id === id ? g : null));
+  };
+
+  const handleDeleteGood = (id) => {
     setSelectedID(id);
-    setModalHeader("آیا از حذف مشتری زیر اطمینان دارید؟");
+    setModalHeader("آیا از حذف کالای زیر اطمینان دارید؟");
     setModalContetnt(
-      <DeleteCustomer
-        id={id}
-        onDelete={deleteCustomerFromList}
-        onClose={onClose}
-      />
+      <DeleteGood id={id} onDelete={deleteGoodFromList} onClose={onClose} />
     );
     onOpen();
   };
 
-  const updateCustomerInList = (updatedCustomer) => {
-    setCustomersData((prev) =>
-      prev.map((customer) =>
-        customer.id === updatedCustomer.id ? updatedCustomer : customer
-      )
-    );
-  };
-
-  const deleteCustomerFromList = (id) => {
-    setCustomersData((prev) => prev.filter((customer) => customer.id !== id));
-  };
-
-  const findCustomerFromList = (id) => {
-    customersData.map((customer) => (customer.id === id ? customer : null));
-  };
-
-  const handleEditCustomer = (id) => {
+  const handleEditGood = (id) => {
     if (id === 0) return;
 
     setSelectedID(id);
-    setModalHeader("ویرایش مشخصات مشتری");
+    setModalHeader("ویرایش مشخصات کالا");
     setModalContetnt(
-      <EditCustomer
+      <EditGood
         id={id}
         onClose={onClose}
-        onUpdate={updateCustomerInList}
-        customer={findCustomerFromList(id)}
+        onUpdate={updateGoodInList}
+        Good={findGoodFromList(id)}
       />
     );
     onOpen();
   };
 
   useEffect(() => {
-    setCustomersData([...DataRows]);
+    setGoodsData([...DataRows]);
   }, [DataRows]);
 
   return (
@@ -84,7 +78,7 @@ export const CustomerDataTable = ({ HeadLables, DataRows }) => {
         borderWidth="1px"
         borderColor="gray.600"
       >
-        <TableCaption>جدول اطلاعات مشتری ها</TableCaption>
+        <TableCaption>جدول اطلاعات کالا ها</TableCaption>
         <Thead bg="#50b742" color="white" borderTopRadius={50} height={50}>
           <Tr color="white">
             {HeadLables.map((label) => (
@@ -93,19 +87,18 @@ export const CustomerDataTable = ({ HeadLables, DataRows }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {customersData.map((row) => (
+          {goodsData.map((row) => (
             <Tr _hover={{ bg: "#f5f5f5" }} cursor="pointer">
               <Td id={row.id}>
                 <Text>{row.id}</Text>
               </Td>
-              <Td>{row.customerFName}</Td>
-              <Td>{row.customerLName}</Td>
-              <Td>{row.customerNationalCode}</Td>
-              <Td>{row.customerPhone}</Td>
+              <Td>{row.goodName}</Td>
+              <Td>{row.goodUnit?.unitName}</Td>
+              <Td>{row.goodPrice}</Td>
               <Td>
-                {row.customerAddress.length > 15
-                  ? row.customerAddress.substring(0, 12) + "..."
-                  : row.customerAddress}
+                {row.goodInfo.length > 15
+                  ? row.goodInfo.substring(0, 12) + "..."
+                  : row.goodInfo}
               </Td>
               <Td>
                 <HStack>
@@ -114,14 +107,14 @@ export const CustomerDataTable = ({ HeadLables, DataRows }) => {
                       color: "orange",
                     }}
                     color="blue.600"
-                    onClick={(e) => handleEditCustomer(row.id)}
+                    onClick={(e) => handleEditGood(row.id)}
                   >
                     <Edit />
                   </Link>
                   <Link
                     _hover={{ color: "#ffd54f" }}
                     color="red.600"
-                    onClick={(e) => handleDeleteCustomer(row.id)}
+                    onClick={(e) => handleDeleteGood(row.id)}
                   >
                     <Trash2 />
                   </Link>

@@ -13,9 +13,9 @@ import {
 } from "@chakra-ui/react";
 import { IdCard, Phone, SquareCheckBig } from "lucide-react";
 import { useState } from "react";
-import { CreateCustomer } from "../api/services/customerService";
+import { CreateCustomer } from "../../api/services/customerService";
 import { useNavigate } from "react-router-dom";
-import { MyInputBox } from "../my-components/MyInputBox";
+import { MyInputBox } from "../../my-components/MyInputBox";
 
 export const NewCustomer = () => {
   const [formData, setFormData] = useState({});

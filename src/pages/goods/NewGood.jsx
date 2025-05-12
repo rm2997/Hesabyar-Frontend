@@ -7,22 +7,42 @@ import {
   FormControl,
   FormLabel,
   HStack,
-  Textarea,
+  Select,
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { IdCard, Phone, SquareCheckBig } from "lucide-react";
-import { useState } from "react";
-import { CreateGood } from "../api/services/goodsService";
+import {
+  DollarSign,
+  IdCard,
+  Info,
+  Package2,
+  SquareCheckBig,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+import { CreateGood } from "../../api/services/goodsService";
 import { useNavigate } from "react-router-dom";
-import { MyInputBox } from "../my-components/MyInputBox";
+import { MyInputBox } from "../../my-components/MyInputBox";
+import { ShowAllUnits } from "../../api/services/unitsService";
 
 export const NewGood = () => {
+  const [units, setUnits] = new useState([]);
+  const [selectedUnit, setSelectedUnit] = useState(0);
   const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      await ShowAllUnits().then((res) => setUnits(res.data));
+      setLoading(false);
+    };
+
+    loadData();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -31,9 +51,10 @@ export const NewGood = () => {
       const response = await CreateGood(formData);
       if (!response.data) return;
       setFormData({
-        GoodName: "",
-        GoodUnit: "",
-        GoodInfo: "",
+        goodName: "",
+        goodUnit: "",
+        goodPrice: "",
+        goodInfo: "",
       });
       toast({
         title: "ثبت شد",
@@ -77,9 +98,9 @@ export const NewGood = () => {
         <VStack as="form" spacing={5} onSubmit={handleSubmit}>
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="150px">نام کالا</FormLabel>
+              <FormLabel width="170px">نام کالا</FormLabel>
               <MyInputBox
-                icon={IdCard}
+                icon={Package2}
                 name="goodName"
                 title="نام کالا"
                 size={19}
@@ -91,21 +112,48 @@ export const NewGood = () => {
           <FormControl isRequired>
             <HStack>
               <FormLabel width="150px">واحد اندازه گیری</FormLabel>
-              <MyInputBox
+              <Select
+                dir="ltr"
+                name="goodUnit"
+                w={295}
+                placeholder="انتخاب کنید"
+                value={formData.goodUnit}
+                onChange={handleChangeFormData}
+              >
+                {units.map((unit) => (
+                  <option value={unit.id} key={unit.id}>
+                    {unit.unitName}
+                  </option>
+                ))}
+              </Select>
+              {/* <MyInputBox
                 icon={IdCard}
                 name="goodUnit"
                 title="واحد اندازه گیری"
                 size={19}
                 value={formData.goodUnit}
                 onChange={handleChangeFormData}
+              ></MyInputBox> */}
+            </HStack>
+          </FormControl>
+          <FormControl isRequired>
+            <HStack>
+              <FormLabel width="170px">قیمت</FormLabel>
+              <MyInputBox
+                icon={DollarSign}
+                name="goodPrice"
+                title="قیمت"
+                size={19}
+                value={formData.goodPrice}
+                onChange={handleChangeFormData}
               ></MyInputBox>
             </HStack>
           </FormControl>
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="150px">توضیحات</FormLabel>
+              <FormLabel width="170px">توضیحات</FormLabel>
               <MyInputBox
-                icon={IdCard}
+                icon={Info}
                 name="goodInfo"
                 title="توضیحات"
                 size={19}

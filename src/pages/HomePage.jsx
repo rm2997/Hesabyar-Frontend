@@ -1,5 +1,5 @@
 // Home.jsx
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Flex,
   useBreakpointValue,
@@ -9,12 +9,10 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
-  Box,
 } from "@chakra-ui/react";
 import { HeaderBar } from "../my-components/HeaderBar";
 import { Sidebar } from "../my-components/SideBar";
 import { MainContents } from "../my-components/MainContents";
-import { ShowUnreadNotificationsCount } from "../api/services/notificationService";
 import { useNotification } from "../contexts/NotificationContext";
 
 export const MyHome = () => {

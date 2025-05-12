@@ -3,23 +3,19 @@ import {
   FormControl,
   FormLabel,
   HStack,
-  Icon,
-  Input,
-  InputGroup,
-  InputRightElement,
   useToast,
   VStack,
 } from "@chakra-ui/react";
 import { DollarSign, Hash, IdCard } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
-  ShowProformasByID,
-  UpdateProforma,
-} from "../api/services/proformaService";
-import { MyLoading } from "./MyLoading";
-import { MyInputBox } from "./MyInputBox";
+  ShowInvoicesByID,
+  UpdateInvoice,
+} from "../../api/services/invoiceService";
+import { MyLoading } from "../MyLoading";
+import { MyInputBox } from "../MyInputBox";
 
-export const EditProforma = ({ id, onClose }) => {
+export const EditInvoice = ({ id, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const toast = useToast();
@@ -27,7 +23,7 @@ export const EditProforma = ({ id, onClose }) => {
   useEffect(() => {
     const loadFormData = async (id) => {
       setLoading(true);
-      await ShowProformasByID(id)
+      await ShowInvoicesByID(id)
         .then((result) => {
           setFormData({ ...result.data });
         })
@@ -51,7 +47,7 @@ export const EditProforma = ({ id, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const response = await UpdateProforma(formData.id, formData)
+    await UpdateInvoice(formData.id, formData)
       .then((result) => {
         setFormData({
           id: "",
@@ -61,7 +57,7 @@ export const EditProforma = ({ id, onClose }) => {
         onClose();
         toast({
           title: "ثبت شد",
-          description: `اطلاعات پیش فاکتور شما بروزرسانی شد`,
+          description: `اطلاعات فاکتور شما بروزرسانی شد`,
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -86,12 +82,12 @@ export const EditProforma = ({ id, onClose }) => {
       {loading} && <MyLoading />
       <FormControl isRequired isDisabled>
         <HStack>
-          <FormLabel width={110}>ردیف</FormLabel>
+          <FormLabel width={110}>کد</FormLabel>
           <MyInputBox
             name="id"
             size={19}
             icon={Hash}
-            title="ردیف"
+            title="کد"
             value={formData.id}
           />
         </HStack>

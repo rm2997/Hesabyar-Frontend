@@ -14,11 +14,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { Eye, Mail, MailOpen } from "lucide-react";
-import { MyModalContainer } from "./MyModalContainer";
+import { MyModalContainer } from "../MyModalContainer";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { MarkNotificationAsRead } from "../api/services/notificationService";
+import { MarkNotificationAsRead } from "../../api/services/notificationService";
 import { ShowUserNotification } from "./ٍShowUserNotification";
-import { useNotification } from "../contexts/NotificationContext";
+import { useNotification } from "../../contexts/NotificationContext";
 
 export const NotificationDataTable = ({ HeadLables, DataRows }) => {
   const [selectedID, setSelectedID] = useState(0);

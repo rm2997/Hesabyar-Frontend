@@ -17,11 +17,11 @@ import {
 } from "@chakra-ui/react";
 import { DollarSign, Hash, IdCard, UserIcon, UserSearch } from "lucide-react";
 import { useEffect, useState } from "react";
-import { CreateNotification } from "../api/services/notificationService";
+import { CreateNotification } from "../../api/services/notificationService";
 import { useNavigate } from "react-router-dom";
-import { MyInputBox } from "../my-components/MyInputBox";
-import { GetAllUsers } from "../api/services/userService";
-import { useNotification } from "../contexts/NotificationContext";
+import { MyInputBox } from "../../my-components/MyInputBox";
+import { GetAllUsers } from "../../api/services/userService";
+import { useNotification } from "../../contexts/NotificationContext";
 
 export const NewNotification = () => {
   const [formData, setFormData] = useState({});

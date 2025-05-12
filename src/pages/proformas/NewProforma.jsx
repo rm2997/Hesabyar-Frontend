@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { DollarSign, Hash, IdCard } from "lucide-react";
 import { useState } from "react";
-import { CreateProforma } from "../api/services/proformaService";
+import { CreateProforma } from "../../api/services/proformaService";
 import { useNavigate } from "react-router-dom";
 
 export const NewProForma = () => {

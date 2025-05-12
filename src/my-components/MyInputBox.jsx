@@ -4,7 +4,6 @@ export const MyInputBox = ({ icon, size, title, onChange, ...props }) => {
   const handleChange = (e) => {
     if (onChange) {
       onChange(e);
-      console.log("Hi from MyInputBox");
     }
   };
   return (

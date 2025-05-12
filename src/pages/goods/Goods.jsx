@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
-import { ProformaDataTable } from "../my-components/ProformaDataTable";
-import { MyLoading } from "../my-components/MyLoading";
-import { ShowUserAllProformas } from "../api/services/proformaService";
+import { MyLoading } from "../../my-components/MyLoading";
+import { GoodsDataTable } from "../../my-components/goods/GoodsDataTable";
+import { ShowAllGoods } from "../../api/services/goodsService";
 
 const data = {
-  Headers: ["ردیف", "تاریخ", "نام مشتری", "فایل تاییدیه", "جمع مبلغ", "عملیات"],
+  Headers: ["کد", "نام کالا", "واحد", "قیمت", "توضیحات", "عملیات"],
   Rows: [],
 };
-export const UserProformas = () => {
+export const Goods = () => {
   const [userData, setUserData] = useState(data);
   const [showLoading, setShowLoading] = useState(true);
+
   useEffect(() => {
     const loadData = async () => {
-      const response = await ShowUserAllProformas();
+      const response = await ShowAllGoods();
       data.Rows = response.data;
       setUserData(data);
       setShowLoading(false);
@@ -24,7 +25,7 @@ export const UserProformas = () => {
   if (userData)
     return (
       <>
-        <ProformaDataTable
+        <GoodsDataTable
           HeadLables={userData.Headers}
           DataRows={userData.Rows}
         />

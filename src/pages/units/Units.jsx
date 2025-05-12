@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { MyLoading } from "../my-components/MyLoading";
-import { GoodsDataTable } from "../my-components/GoodsDataTable";
-import { ShowAllGoods } from "../api/services/goodsService";
+import { MyLoading } from "../../my-components/MyLoading";
+import { UnitsDataTable } from "../../my-components/units/UnitsDataTable";
+import { ShowAllUnits } from "../../api/services/unitsService";
 
 const data = {
-  Headers: ["ردیف", "نام کالا", "واحد اندازه گیری", "توضیحات", "عملیات"],
+  Headers: ["کد", "نام واحد", "توضیحات", "عملیات"],
   Rows: [],
 };
-export const Goods = () => {
+export const Units = () => {
   const [userData, setUserData] = useState(data);
   const [showLoading, setShowLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
-      const response = await ShowAllGoods();
+      const response = await ShowAllUnits();
       data.Rows = response.data;
       setUserData(data);
       setShowLoading(false);
@@ -25,7 +25,7 @@ export const Goods = () => {
   if (userData)
     return (
       <>
-        <GoodsDataTable
+        <UnitsDataTable
           HeadLables={userData.Headers}
           DataRows={userData.Rows}
         />

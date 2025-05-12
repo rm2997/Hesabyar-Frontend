@@ -16,9 +16,9 @@ import { useEffect, useState } from "react";
 import {
   ShowCustomerByID,
   UpdateCustomer,
-} from "../api/services/customerService";
-import { MyLoading } from "./MyLoading";
-import { MyInputBox } from "./MyInputBox";
+} from "../../api/services/customerService";
+import { MyLoading } from "../MyLoading";
+import { MyInputBox } from "../MyInputBox";
 
 export const EditCustomer = ({ id, onClose, onUpdate, customer }) => {
   const [loading, setLoading] = useState(false);

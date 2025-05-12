@@ -1,26 +1,26 @@
 import { useEffect, useState } from "react";
-import { MyLoading } from "../my-components/MyLoading";
-import { ShowAllCustomers } from "../api/services/customerService";
-import { CustomerDataTable } from "../my-components/CustomerDataTable";
+import { ProformaDataTable } from "../../my-components/proformas/ProformaDataTable";
+import { MyLoading } from "../../my-components/MyLoading";
+import { ShowUserAllProformas } from "../../api/services/proformaService";
 
 const data = {
   Headers: [
-    "ردیف",
+    "کد",
+    "تاریخ",
     "نام مشتری",
-    "نام خانوادگی",
-    "شماره ملی",
-    "تلفن",
-    "آدرس",
+    "نوع پرداخت",
+    "فایل تاییدیه",
+    "جمع مبلغ",
     "عملیات",
   ],
   Rows: [],
 };
-export const Customers = () => {
+export const UserProformas = () => {
   const [userData, setUserData] = useState(data);
   const [showLoading, setShowLoading] = useState(true);
   useEffect(() => {
     const loadData = async () => {
-      const response = await ShowAllCustomers();
+      const response = await ShowUserAllProformas();
       data.Rows = response.data;
       setUserData(data);
       setShowLoading(false);
@@ -32,7 +32,7 @@ export const Customers = () => {
   if (userData)
     return (
       <>
-        <CustomerDataTable
+        <ProformaDataTable
           HeadLables={userData.Headers}
           DataRows={userData.Rows}
         />

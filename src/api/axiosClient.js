@@ -22,10 +22,10 @@ axiosClient.interceptors.response.use(
   async (err) => {
     if (err.response.status === 401) {
       clearTokens();
-      setTimeout(() => {
-        if (window.location.href.endsWith("/login") === false)
-          window.location.href = "/login";
-      }, 2000);
+
+      if (window.location.href.endsWith("/login") === false)
+        window.location.href = "/login";
+
       return Promise.reject(err);
     }
   }

@@ -10,16 +10,16 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { ChevronRight, DollarSign, Hash, IdCard, Trash2 } from "lucide-react";
+import { DollarSign, Hash, IdCard } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
-  RemoveProforma,
   ShowProformasByID,
-} from "../api/services/proformaService";
-import { MyLoading } from "./MyLoading";
-import { MyInputBox } from "./MyInputBox";
+  UpdateProforma,
+} from "../../api/services/proformaService";
+import { MyLoading } from "../MyLoading";
+import { MyInputBox } from "../MyInputBox";
 
-export const DeleteProforma = ({ id, onClose }) => {
+export const EditProforma = ({ id, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const toast = useToast();
@@ -42,10 +42,16 @@ export const DeleteProforma = ({ id, onClose }) => {
     loadFormData(id);
   }, [id]);
 
+  const handleChangeFormData = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const response = await RemoveProforma(formData.id)
+    const response = await UpdateProforma(formData.id, formData)
       .then((result) => {
         setFormData({
           id: "",
@@ -54,8 +60,8 @@ export const DeleteProforma = ({ id, onClose }) => {
         });
         onClose();
         toast({
-          title: "حذف شد",
-          description: ` پیش فاکتور شما با موفقیت حذف شد`,
+          title: "ثبت شد",
+          description: `اطلاعات پیش فاکتور شما بروزرسانی شد`,
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -83,48 +89,43 @@ export const DeleteProforma = ({ id, onClose }) => {
           <FormLabel width={110}>ردیف</FormLabel>
           <MyInputBox
             name="id"
+            size={19}
+            icon={Hash}
             title="ردیف"
             value={formData.id}
-            icon={Hash}
-            size={19}
           />
         </HStack>
       </FormControl>
-      <FormControl isRequired isDisabled>
+      <FormControl isRequired>
         <HStack>
           <FormLabel width={110}>نام مشتری</FormLabel>
           <MyInputBox
+            onChange={(e) => handleChangeFormData(e)}
+            size={19}
+            icon={IdCard}
             name="customerName"
             title="نام مشتری"
             value={formData.customerName}
-            icon={IdCard}
-            size={19}
           />
         </HStack>
       </FormControl>
-      <FormControl isRequired isDisabled>
+      <FormControl isRequired>
         <HStack>
           <FormLabel width={110}>مبلغ نهایی</FormLabel>
           <MyInputBox
-            name="totalAmount"
-            title="مبلغ نهایی"
-            value={formData.totalAmount}
-            icon={IdCard}
             size={19}
+            icon={DollarSign}
+            title="مبلغ نهایی"
+            name="totalAmount"
+            value={formData.totalAmount}
+            onChange={handleChangeFormData}
           />
         </HStack>
       </FormControl>
       <HStack>
-        <Button leftIcon={<ChevronRight />} onClick={onClose}>
-          انصراف
-        </Button>
-        <Button
-          leftIcon={<Trash2 />}
-          colorScheme="red"
-          type="submit"
-          isLoading={loading}
-        >
-          حذف
+        <Button onClick={onClose}>انصراف</Button>
+        <Button colorScheme="blue" type="submit" isLoading={loading}>
+          تایید
         </Button>
       </HStack>
     </VStack>

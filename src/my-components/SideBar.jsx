@@ -18,6 +18,8 @@ import {
   Newspaper,
   PackagePlus,
   Paperclip,
+  Plus,
+  Ruler,
   Send,
   Sheet,
   ShoppingBag,
@@ -188,6 +190,28 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
         />
         <SidebarItem
           id={6}
+          title="واحدها"
+          justIcon={sidebarWidth === 300 ? false : true}
+          color="white"
+          icon={<Ruler />}
+          children={[
+            {
+              id: "newUnit",
+              name: "جدید",
+              type: "text",
+              icon: <Plus />,
+            },
+            {
+              id: "units",
+              name: "لیست واحدها",
+              type: "text",
+              icon: <Boxes />,
+            },
+          ]}
+          onMenuItemClick={onMenuItemClick}
+        />
+        <SidebarItem
+          id={7}
           title="پیام ها"
           justIcon={sidebarWidth === 300 ? false : true}
           color="#4f7ede"

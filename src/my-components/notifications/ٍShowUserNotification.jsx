@@ -7,10 +7,10 @@ import {
 } from "@chakra-ui/react";
 import { Captions, Hash, ScrollText, User } from "lucide-react";
 import { useEffect, useState } from "react";
-import { MyLoading } from "./MyLoading";
-import { MyInputBox } from "./MyInputBox";
-import { ShowNotifictionById } from "../api/services/notificationService";
-import { GetAllUsers } from "../api/services/userService";
+import { MyLoading } from "../MyLoading";
+import { MyInputBox } from "../MyInputBox";
+import { ShowNotifictionById } from "../../api/services/notificationService";
+import { GetAllUsers } from "../../api/services/userService";
 
 export const ShowUserNotification = ({ id, onClose }) => {
   const [loading, setLoading] = useState(false);

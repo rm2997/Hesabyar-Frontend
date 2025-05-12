@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { NotificationDataTable } from "../my-components/NotificationDataTable";
-import { ShowUserAllNotifications } from "../api/services/notificationService";
+import { NotificationDataTable } from "../../my-components/notifications/NotificationDataTable";
+import { ShowUserAllNotifications } from "../../api/services/notificationService";
 
 const data = {
   Headers: ["ردیف", "عنوان", "متن", "خوانده شده", "عملیات"],
