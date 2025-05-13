@@ -51,13 +51,13 @@ export const NewInvoice = () => {
     customer: 0,
     totalAmount: 0,
     paymentStatus: 0,
-    goods: {},
+    invoiceGoods: {},
   });
   const [invoiceItems, setInvoiceItems] = useState([
     {
       uniqueId: Date.now().toString(),
       no: 1,
-      goodId: 0,
+      good: 0,
       goodName: 0,
       price: 0,
       goodUnitName: "",
@@ -96,8 +96,8 @@ export const NewInvoice = () => {
     setProformaLoading(true);
     ShowProformasByID(selectedProforma)
       .then((res) => {
-        if (res.data?.goods) {
-          setInvoiceItems({ ...res.data.goods });
+        if (res.data?.invoiceGoods) {
+          setInvoiceItems({ ...res.data.invoiceGoods });
         } else {
           toast({
             title: "توجه",
@@ -137,25 +137,12 @@ export const NewInvoice = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = { ...formData };
-    data.goods = invoiceItems;
+    data.invoiceGoods = [...invoiceItems];
     data.totalAmount = totalPrice;
     data.proforma = selectedProforma;
     console.log(data);
     setFormData(data);
-    // setFormData({
-    //   ...formData,
-    //   totalAmount: totalPrice,
-    //   goods: { ...invoiceItems },
-    //   id: 0,
-    // proforma: 0,
-    // customer: 0,
-    // totalAmount: 0,
-    // paymentStatus: 0,
-    // goods: {},
-    // });
-
     setLoading(true);
-
     try {
       const response = await CreateInvoice(data);
       if (!response.data) return;
@@ -163,10 +150,13 @@ export const NewInvoice = () => {
         customerName: "",
         totalAmount: "",
         paymentStatus: "",
-        proforma: {},
-        customer: {},
-        goods: {},
+        proforma: 0,
+        customer: 0,
+        invoiceGoods: [],
       });
+      setSelectedProforma(0);
+      setInvoiceItems([]);
+      recalculateTotal();
       toast({
         title: "ثبت شد",
         description: `اطلاعات فاکتور شما ذخیره شد`,
@@ -192,7 +182,7 @@ export const NewInvoice = () => {
     newItems[index][field] =
       field === "quantity" || field === "goodPrice" ? Number(value) : value;
 
-    if (field === "goodId" && Number(value) > 0) {
+    if (field === "good" && Number(value) > 0) {
       const selected = allGoods.find((p) => p.id === Number(value));
       if (selected) {
         newItems[index].goodPrice = selected.goodPrice;
@@ -225,7 +215,7 @@ export const NewInvoice = () => {
     const newItem = {
       uniqueId: Date.now().toString(),
       no: items?.length > 0 ? items[items.length - 1]?.no + 1 : 1,
-      goodId: 0,
+      good: 0,
       goodName: 0,
       goodPrice: 0,
       goodUnitName: "",
@@ -379,13 +369,13 @@ export const NewInvoice = () => {
                         <Select
                           disabled={goodLoading}
                           name="id"
-                          key={item.goodId}
+                          key={item.good}
                           defaultValue={0}
                           dir="ltr"
                           placeholder="انتخاب کنید"
-                          value={item.goodId}
+                          value={item.good}
                           onChange={(e) =>
-                            handleItemChange(index, "goodId", e.target.value)
+                            handleItemChange(index, "good", e.target.value)
                           }
                         >
                           {allGoods.map((i) => (

@@ -36,8 +36,9 @@ export const NewGood = () => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllUnits().then((res) => setUnits(res.data));
-      setLoading(false);
+      await ShowAllUnits()
+        .then((res) => setUnits(res.data))
+        .finally(setLoading(false));
     };
 
     loadData();

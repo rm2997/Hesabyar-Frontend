@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 
 import { UserProformas } from "../pages/proformas/Profomas";
-import { NewProForma } from "../pages/proformas/NewProforma";
+import { NewProForma, NewProforma } from "../pages/proformas/NewProforma";
 import { useEffect, useState } from "react";
 import { UserInvoices } from "../pages/invoices/Invoices";
 import { NewInvoice } from "../pages/invoices/NewInvoice";
@@ -63,7 +63,7 @@ export const MainContents = ({ activeContent }) => {
     const SetActiveElement = (index) => {
       switch (index) {
         case "newProforma":
-          return <NewProForma />;
+          return <NewProforma />;
         case "proformaStat":
           return <UserProformas />;
         case "newInvoice":

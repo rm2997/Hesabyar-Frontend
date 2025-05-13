@@ -7,14 +7,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import {
-  DollarSign,
-  IdCard,
-  Info,
-  Package,
-  Package2,
-  SquareCheckBig,
-} from "lucide-react";
+import { DollarSign, Info, Package2, SquareCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ShowGoodByID, UpdateGood } from "../../api/services/goodsService";
 import { MyLoading } from "../MyLoading";
@@ -30,10 +23,10 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllUnits().then((res) => setUnits(res.data));
-      setLoading(false);
+      await ShowAllUnits()
+        .then((res) => setUnits(res.data))
+        .finally(setLoading(false));
     };
-
     loadData();
   }, []);
 
@@ -64,9 +57,9 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     await UpdateGood(formData.id, formData)
       .then((result) => {
-        console.log({ ...result });
         onUpdate(result.data);
         setFormData({
           goodName: "",
@@ -121,7 +114,8 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
             dir="ltr"
             w={290}
             placeholder="انتخاب کنید"
-            value={formData.goodUnit}
+            value={formData.goodUnit?.id}
+            name="goodUnit"
             onChange={handleChangeFormData}
           >
             {units.map((unit) => (
