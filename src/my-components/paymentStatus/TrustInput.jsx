@@ -12,15 +12,14 @@ import {
   NumberInputField,
   NumberInputStepper,
   Box,
-  TagLabel,
   Text,
 } from "@chakra-ui/react";
 import { Datepicker } from "@ijavad805/react-datepicker";
-import { Banknote } from "lucide-react";
+import { HandCoins } from "lucide-react";
 
 import { useEffect } from "react";
 
-export const ChequeInput = ({
+export const TrustInput = ({
   title,
   display,
   formData,
@@ -33,55 +32,17 @@ export const ChequeInput = ({
       handleChangeFormData({ target: { value: "", name: "chequeDate" } });
     }
   }, [display]);
+
   if (display)
     return (
       <Card h={240} w={360}>
         <CardHeader bg="blue.500" color={"white"} borderTopRadius={5}>
           <HStack>
-            <Banknote />
+            <HandCoins />
             <Text>{title}</Text>
           </HStack>
         </CardHeader>
         <CardBody>
-          <FormControl mb={2}>
-            <HStack>
-              <FormLabel w="50px">مبلغ</FormLabel>
-              <NumberInput
-                defaultValue={0}
-                w={250}
-                dir="ltr"
-                min={0}
-                name="chequeAmount"
-                value={formData.chequeAmount}
-                onChange={(value) => {
-                  handleChangeFormData({
-                    target: { value: value, name: "chequeAmount" },
-                  });
-                }}
-                placeholder="مبلغ چک"
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </HStack>
-          </FormControl>
-
-          <FormControl mb={2}>
-            <HStack>
-              <FormLabel w="50px">سریال</FormLabel>
-              <Input
-                w={250}
-                dir="ltr"
-                name="chequeSerial"
-                placeholder="سریال چک"
-                value={formData.chequeSerial}
-                onChange={handleChangeFormData}
-              />
-            </HStack>
-          </FormControl>
           <FormControl mb={2}>
             <HStack>
               <FormLabel w="50px">تاریخ</FormLabel>
@@ -99,11 +60,11 @@ export const ChequeInput = ({
                   theme="green"
                   allowClear={true}
                   style={{ backgroundColor: "yellow" }}
-                  name="chequeDate"
-                  value={formData.chequeDate}
+                  name="trustIssueDate"
+                  value={formData.trustIssueDate}
                   onChange={(e) =>
                     handleChangeFormData({
-                      target: { value: e, name: "chequeDate" },
+                      target: { value: e, name: "trustIssueDate" },
                     })
                   }
                 />

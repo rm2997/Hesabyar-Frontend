@@ -27,26 +27,35 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   TableContainer,
+  Box,
+  Flex,
+  Icon,
+  Stack,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import {
+  Minus,
+  Paperclip,
+  Plus,
+  Trash2,
+  UserRoundPlus,
+  UserSearch,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateProforma } from "../../api/services/proformaService";
 import { useNavigate } from "react-router-dom";
 import { ShowAllCustomers } from "../../api/services/customerService";
-import {
-  ShowProformasByID,
-  ShowUserAllProformas,
-} from "../../api/services/proformaService";
 import { ShowAllGoods } from "../../api/services/goodsService";
 import { MyLoading } from "../../my-components/MyLoading";
 import { ChequeInput } from "../../my-components/paymentStatus/ChequeInput";
+import { PaperMoneyInput } from "../../my-components/paymentStatus/PaperMoneyInput";
+import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
 
-export const NewProforma = () => {
+export const NewProforma = ({ isDesktop }) => {
   const toast = useToast();
   const [customers, setCustomers] = useState([]);
   const [allGoods, setAllGoods] = useState([]);
-
+  console.log(isDesktop);
   const [formData, setFormData] = useState({
     customer: 0,
     totalAmount: 0,
@@ -59,6 +68,7 @@ export const NewProforma = () => {
     paperMoneySerial: 0,
     trustIssueDate: "",
     proformaGoods: {},
+    description: "",
   });
   const [proformaItems, setProformaItems] = useState([
     {
@@ -70,6 +80,7 @@ export const NewProforma = () => {
       goodUnitName: "",
       quantity: 0,
       total: 0,
+      description: "",
     },
   ]);
 
@@ -116,6 +127,7 @@ export const NewProforma = () => {
         paperMoneySerial: 0,
         trustIssueDate: "",
         proformaGoods: [],
+        description: "",
       });
       setProformaItems([]);
       recalculateTotal();
@@ -148,6 +160,7 @@ export const NewProforma = () => {
       const selected = allGoods.find((p) => p.id === Number(value));
       if (selected) {
         newItems[index].goodPrice = selected.goodPrice;
+        newItems[index].price = selected.goodPrice;
         newItems[index].goodName = selected.goodName;
         newItems[index].goodUnitName = selected.goodUnit?.unitName;
         newItems[index].total = selected.goodPrice * newItems[index].quantity;
@@ -180,9 +193,11 @@ export const NewProforma = () => {
       good: 0,
       goodName: 0,
       goodPrice: 0,
+      price: 0,
       goodUnitName: "",
       quantity: 0,
       amount: 0,
+      description: "",
     };
     items.push(newItem);
     setProformaItems(items);
@@ -229,10 +244,12 @@ export const NewProforma = () => {
           ثبت پیش فاکتور جدید
         </CardHeader>
         <CardBody borderTopWidth={2}>
-          <VStack as="form" spacing={5} onSubmit={handleSubmit}>
+          <VStack as="form" align="stretch" spacing={5} onSubmit={handleSubmit}>
             <FormControl isRequired>
               <HStack>
-                <FormLabel width="120px">نام مشتری</FormLabel>
+                <FormLabel hidden={!isDesktop} width="120px">
+                  نام مشتری
+                </FormLabel>
                 <Select
                   disabled={customerLoading}
                   w={250}
@@ -249,12 +266,16 @@ export const NewProforma = () => {
                   ))}
                 </Select>
                 {customerLoading && <Spinner color="red.500" size={"sm"} />}
+                <IconButton size={"md"} icon={<UserRoundPlus />} />
+                <IconButton size={"md"} icon={<UserSearch />} />
               </HStack>
             </FormControl>
 
             <FormControl isRequired>
               <HStack>
-                <FormLabel width="120px">نوع پرداخت</FormLabel>
+                <FormLabel hidden={!isDesktop} width="120px">
+                  نوع پرداخت
+                </FormLabel>
                 <Select
                   w={250}
                   dir="ltr"
@@ -271,14 +292,38 @@ export const NewProforma = () => {
                 </Select>
               </HStack>
             </FormControl>
+            <Flex justifyContent="flex-start">
+              <Stack direction={["row", "column"]} mr={8} spacing={4}>
+                <PaperMoneyInput
+                  title={"اطلاعات سفته"}
+                  display={
+                    formData.paymentStatus === "سفته" ||
+                    formData.paymentStatus === "اعتباری"
+                  }
+                  formData={formData}
+                  handleChangeFormData={handleChangeFormData}
+                />
+                <ChequeInput
+                  title={"اطلاعات چک"}
+                  display={
+                    formData.paymentStatus === "چک" ||
+                    formData.paymentStatus === "اعتباری"
+                  }
+                  formData={formData}
+                  handleChangeFormData={handleChangeFormData}
+                />
 
-            <ChequeInput
-              title={"اطلاعات چک"}
-              display={formData.paymentStatus === "چک"}
-              formData={formData}
-              handleChangeFormData={handleChangeFormData}
-            />
-
+                <TrustInput
+                  title={"اطلاعات امانی"}
+                  display={
+                    formData.paymentStatus === "امانی" ||
+                    formData.paymentStatus === "اعتباری"
+                  }
+                  formData={formData}
+                  handleChangeFormData={handleChangeFormData}
+                />
+              </Stack>
+            </Flex>
             <TableContainer>
               <Table size="sm" variant="simple">
                 <Thead>
@@ -286,9 +331,10 @@ export const NewProforma = () => {
                     <Th width="100px">ردیف</Th>
                     <Th width="400px">نام کالا</Th>
                     <Th width="100px">تعداد</Th>
-                    <Th width="200px">واحد</Th>
-                    <Th width="300px">قیمت واحد</Th>
+                    <Th width="100px">واحد</Th>
+                    <Th width="200px">قیمت واحد</Th>
                     <Th width="300px">قیمت کل</Th>
+                    <Th width="300px">توضیحات</Th>
                     <Th>
                       <IconButton
                         icon={<Plus />}
@@ -337,9 +383,9 @@ export const NewProforma = () => {
                       </Td>
                       <Td>
                         <NumberInput
-                          defaultValue={0}
+                          defaultValue={1}
                           dir="ltr"
-                          min={0}
+                          min={1}
                           name="quantity"
                           value={item.quantity}
                           onChange={(value) =>
@@ -374,7 +420,6 @@ export const NewProforma = () => {
                         />
                       </Td>
                       <Td>
-                        {" "}
                         <Input
                           disabled
                           type="number"
@@ -383,6 +428,20 @@ export const NewProforma = () => {
                           placeholder="قیمت"
                           onChange={(e) =>
                             handleItemChange(index, "goodPrice", e.target.value)
+                          }
+                        />
+                      </Td>
+                      <Td>
+                        <Input
+                          name="description"
+                          value={item.description}
+                          placeholder="توضیحات"
+                          onChange={(e) =>
+                            handleItemChange(
+                              index,
+                              "description",
+                              e.target.value
+                            )
                           }
                         />
                       </Td>
@@ -409,6 +468,7 @@ export const NewProforma = () => {
                     <Th width="300px">
                       <Text>جمع کل: {totalPrice}</Text>
                     </Th>
+                    <Th></Th>
                     <Th>
                       {proformaItems.length > 0 && (
                         <IconButton
@@ -423,7 +483,12 @@ export const NewProforma = () => {
                 </Tfoot>
               </Table>
             </TableContainer>
-            <HStack justify="space-between"></HStack>
+            <Input
+              placeholder=" توضیحات فاکتور"
+              name="description"
+              value={formData.description}
+              onChange={handleChangeFormData}
+            />
             <Button colorScheme="blue" type="submit" isLoading={loading}>
               ثبت فاکتور
             </Button>

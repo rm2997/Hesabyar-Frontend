@@ -68,7 +68,7 @@ export const MyHome = () => {
           </Drawer>
         )}
 
-        <MainContents activeContent={activeContent} />
+        <MainContents isDesktop={isDesktop} activeContent={activeContent} />
       </Flex>
     </Flex>
   );

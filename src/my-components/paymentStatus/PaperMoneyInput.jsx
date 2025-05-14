@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   CardBody,
   CardHeader,
@@ -11,16 +12,13 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Box,
-  TagLabel,
   Text,
 } from "@chakra-ui/react";
 import { Datepicker } from "@ijavad805/react-datepicker";
-import { Banknote } from "lucide-react";
-
+import { StickyNote } from "lucide-react";
 import { useEffect } from "react";
 
-export const ChequeInput = ({
+export const PaperMoneyInput = ({
   title,
   display,
   formData,
@@ -28,17 +26,18 @@ export const ChequeInput = ({
 }) => {
   useEffect(() => {
     if (!display) {
-      handleChangeFormData({ target: { value: 0, name: "chequeAmount" } });
-      handleChangeFormData({ target: { value: 0, name: "chequeSerial" } });
-      handleChangeFormData({ target: { value: "", name: "chequeDate" } });
+      handleChangeFormData({ target: { value: 0, name: "paperAmount" } });
+      handleChangeFormData({ target: { value: 0, name: "paperSerial" } });
+      handleChangeFormData({ target: { value: "", name: "paperDate" } });
     }
   }, [display]);
+
   if (display)
     return (
-      <Card h={240} w={360}>
+      <Card borderTopRadius={5} h={240} w={360}>
         <CardHeader bg="blue.500" color={"white"} borderTopRadius={5}>
           <HStack>
-            <Banknote />
+            <StickyNote />
             <Text>{title}</Text>
           </HStack>
         </CardHeader>
@@ -51,14 +50,14 @@ export const ChequeInput = ({
                 w={250}
                 dir="ltr"
                 min={0}
-                name="chequeAmount"
-                value={formData.chequeAmount}
+                name="paperMoneyAmount"
+                value={formData.paperMoneyAmount}
                 onChange={(value) => {
                   handleChangeFormData({
-                    target: { value: value, name: "chequeAmount" },
+                    target: { value: value, name: "paperMoneyAmount" },
                   });
                 }}
-                placeholder="مبلغ چک"
+                placeholder="مبلغ سفته"
               >
                 <NumberInputField />
                 <NumberInputStepper>
@@ -75,9 +74,9 @@ export const ChequeInput = ({
               <Input
                 w={250}
                 dir="ltr"
-                name="chequeSerial"
-                placeholder="سریال چک"
-                value={formData.chequeSerial}
+                name="paperMoneySerial"
+                placeholder="سریال سفته"
+                value={formData.paperMoneySerial}
                 onChange={handleChangeFormData}
               />
             </HStack>
@@ -99,11 +98,11 @@ export const ChequeInput = ({
                   theme="green"
                   allowClear={true}
                   style={{ backgroundColor: "yellow" }}
-                  name="chequeDate"
-                  value={formData.chequeDate}
+                  name="paperMoneyDate"
+                  value={formData.paperMoneyDate}
                   onChange={(e) =>
                     handleChangeFormData({
-                      target: { value: e, name: "chequeDate" },
+                      target: { value: e, name: "paperMoneyDate" },
                     })
                   }
                 />

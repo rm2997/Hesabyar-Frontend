@@ -45,7 +45,7 @@ const validContents = [
   { name: "logout", value: "خروج" },
 ];
 
-export const MainContents = ({ activeContent }) => {
+export const MainContents = ({ activeContent, isDesktop }) => {
   const [pageTitle, setPageTitle] = useState("");
   const [shouldRender, setShouldRender] = useState(null);
 
@@ -63,7 +63,7 @@ export const MainContents = ({ activeContent }) => {
     const SetActiveElement = (index) => {
       switch (index) {
         case "newProforma":
-          return <NewProforma />;
+          return <NewProforma isDesktop={isDesktop} />;
         case "proformaStat":
           return <UserProformas />;
         case "newInvoice":
