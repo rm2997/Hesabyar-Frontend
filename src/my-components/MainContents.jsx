@@ -24,9 +24,11 @@ import { NewUnit } from "../pages/units/NewUnit";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
-  { name: "proformaStat", value: "لیست پیش فاکتور ها" },
+  { name: "myProformas", value: " پیش فاکتور های من" },
+  { name: "proformaStat", value: "پیش فاکتور ها" },
   { name: "newInvoice", value: "فاکتور جدید" },
-  { name: "invoiceStat", value: "لیست فاکتور ها" },
+  { name: "myInvoices", value: "فاکتور های من" },
+  { name: "invoiceStat", value: "فاکتور ها" },
   { name: "newSale", value: "فروش جدید" },
   { name: "saleStat", value: "لیست فروش" },
   { name: "newSendDepot", value: "ثبت ورود" },
@@ -64,12 +66,16 @@ export const MainContents = ({ activeContent, isDesktop }) => {
       switch (index) {
         case "newProforma":
           return <NewProforma isDesktop={isDesktop} />;
+        case "myProformas":
+          return <UserProformas isDesktop={isDesktop} />;
         case "proformaStat":
-          return <UserProformas />;
+          return <></>;
         case "newInvoice":
-          return <NewInvoice />;
+          return <NewInvoice isDesktop={isDesktop} />;
         case "invoiceStat":
-          return <UserInvoices />;
+          return <></>;
+        case "myInvoices":
+          return <UserInvoices isDesktop={isDesktop} />;
         case "newSale":
           return;
         case "saleStat":
@@ -77,21 +83,21 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         case "user":
           return <>User</>;
         case "notifications":
-          return <UserNotifications />;
+          return <UserNotifications isDesktop={isDesktop} />;
         case "newNotification":
-          return <NewNotification />;
+          return <NewNotification isDesktop={isDesktop} />;
         case "newCustomer":
-          return <NewCustomer />;
+          return <NewCustomer isDesktop={isDesktop} />;
         case "customers":
-          return <Customers />;
+          return <Customers isDesktop={isDesktop} />;
         case "newGood":
-          return <NewGood />;
+          return <NewGood isDesktop={isDesktop} />;
         case "goods":
-          return <Goods />;
+          return <Goods isDesktop={isDesktop} />;
         case "newUnit":
-          return <NewUnit />;
+          return <NewUnit isDesktop={isDesktop} />;
         case "units":
-          return <Units />;
+          return <Units isDesktop={isDesktop} />;
         default:
           break;
       }

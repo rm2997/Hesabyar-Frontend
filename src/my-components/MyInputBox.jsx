@@ -1,6 +1,6 @@
 import { Icon, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 
-export const MyInputBox = ({ icon, size, title, onChange, ...props }) => {
+export const MyInputBox = ({ icon, size, title, onChange, type, ...props }) => {
   const handleChange = (e) => {
     if (onChange) {
       onChange(e);
@@ -16,6 +16,7 @@ export const MyInputBox = ({ icon, size, title, onChange, ...props }) => {
         {icon && <Icon as={icon} pointerEvents="none" color="gray.500" />}
       </InputRightElement>
       <Input
+        type={type}
         pr="2.9rem"
         placeholder={title}
         htmlSize={size}

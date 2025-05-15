@@ -15,7 +15,7 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { DollarSign, Hash, IdCard, UserIcon, UserSearch } from "lucide-react";
+import { DollarSign, Hash, IdCard, UserSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateNotification } from "../../api/services/notificationService";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ import { MyInputBox } from "../../my-components/MyInputBox";
 import { GetAllUsers } from "../../api/services/userService";
 import { useNotification } from "../../contexts/NotificationContext";
 
-export const NewNotification = () => {
+export const NewNotification = ({ isDesktop }) => {
   const [formData, setFormData] = useState({});
   const [usersData, setUsersData] = useState([]);
   const [formError, setFormError] = useState(null);
@@ -96,17 +96,27 @@ export const NewNotification = () => {
         ثبت پیام جدید
       </CardHeader>
       <CardBody borderTopWidth={2}>
-        <VStack as="form" spacing={5} onSubmit={handleSubmit}>
+        <VStack
+          align={"stretch"}
+          direction={["column", "row"]}
+          as="form"
+          spacing={5}
+          onSubmit={handleSubmit}
+        >
           <FormControl isDisabled>
             <HStack>
-              <FormLabel width="90px">ردیف</FormLabel>
+              <FormLabel hidden={!isDesktop} width="90px">
+                ردیف
+              </FormLabel>
               <MyInputBox icon={Hash} title="ردیف" name="id" />
             </HStack>
           </FormControl>
 
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="90px">عنوان</FormLabel>
+              <FormLabel hidden={!isDesktop} width="90px">
+                عنوان
+              </FormLabel>
               <MyInputBox
                 icon={IdCard}
                 name="title"
@@ -119,7 +129,9 @@ export const NewNotification = () => {
 
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="90px">محتوا</FormLabel>
+              <FormLabel hidden={!isDesktop} width="90px">
+                محتوا
+              </FormLabel>
               <MyInputBox
                 icon={DollarSign}
                 name="message"

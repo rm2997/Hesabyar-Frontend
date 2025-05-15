@@ -17,7 +17,7 @@ import { CreateCustomer } from "../../api/services/customerService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
 
-export const NewCustomer = () => {
+export const NewCustomer = ({ isDesktop }) => {
   const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -76,10 +76,18 @@ export const NewCustomer = () => {
         ثبت مشتری جدید
       </CardHeader>
       <CardBody borderTopWidth={2}>
-        <VStack as="form" spacing={5} onSubmit={handleSubmit}>
+        <VStack
+          as="form"
+          direction={["column", "row"]}
+          spacing={5}
+          align={"stretch"}
+          onSubmit={handleSubmit}
+        >
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="100px">نام مشتری</FormLabel>
+              <FormLabel hidden={!isDesktop} width="100px">
+                نام مشتری
+              </FormLabel>
               <MyInputBox
                 icon={IdCard}
                 name="customerFName"
@@ -93,7 +101,9 @@ export const NewCustomer = () => {
 
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="100px">نام خانوادگی</FormLabel>
+              <FormLabel hidden={!isDesktop} width="100px">
+                نام خانوادگی
+              </FormLabel>
               <MyInputBox
                 icon={IdCard}
                 name="customerLName"
@@ -107,8 +117,11 @@ export const NewCustomer = () => {
 
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="100px">شماره ملی</FormLabel>
+              <FormLabel hidden={!isDesktop} width="100px">
+                شماره ملی
+              </FormLabel>
               <MyInputBox
+                type="number"
                 icon={IdCard}
                 name="customerNationalCode"
                 title="شماره ملی"
@@ -121,8 +134,11 @@ export const NewCustomer = () => {
 
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="100px">شماره تلفن</FormLabel>
+              <FormLabel hidden={!isDesktop} width="100px">
+                شماره تلفن
+              </FormLabel>
               <MyInputBox
+                type="number"
                 icon={Phone}
                 name="customerPhone"
                 title="شماره تلفن"
@@ -135,7 +151,9 @@ export const NewCustomer = () => {
 
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="90px">آدرس</FormLabel>
+              <FormLabel hidden={!isDesktop} width="90px">
+                آدرس
+              </FormLabel>
               <Textarea
                 placeholder="آدرس"
                 name="customerAddress"

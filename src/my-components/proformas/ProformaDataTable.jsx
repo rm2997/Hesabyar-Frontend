@@ -1,68 +1,71 @@
 import {
-  Box,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
-  CircularProgress,
   Divider,
-  Flex,
   HStack,
   Link,
-  Spinner,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Stack,
-  Stat,
-  StatArrow,
-  StatGroup,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
-  Table,
-  TableCaption,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
   VStack,
   useDisclosure,
+  Button,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogCloseButton,
+  AlertDialogBody,
+  AlertDialogFooter,
+  Box,
 } from "@chakra-ui/react";
+import dayjs from "dayjs";
+import jalali from "jalali-dayjs";
 import {
-  Check,
-  CheckCheck,
-  Edit,
-  Ellipsis,
-  FileCheck,
+  FilePenLine,
   Send,
   Trash2,
+  SquareArrowUp,
+  CircleFadingArrowUp,
 } from "lucide-react";
-import { MyModalContainer } from "../MyModalContainer";
+
 import { useState } from "react";
 import { EditProforma } from "./EditProforma";
-import { DeleteProforma } from "./DeleteProforma";
-import { Label } from "recharts";
 
-export const ProformaDataTable = ({ HeadLables, DataRows }) => {
+export const ProformaDataTable = ({ DataRows, isDesktop }) => {
   const [selectedID, setSelectedID] = useState(0);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
 
+  dayjs.extend(jalali);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: AlertIsOpen,
+    onOpen: AlertOnOpen,
+    onClose: AlertOnClose,
+  } = useDisclosure();
+
   const handleDeleteProforma = (id) => {
     setSelectedID(id);
-    setModalHeader("آیا از حذف پیش فاکتور زیر اطمینان دارید؟");
-    setModalContetnt(<DeleteProforma id={id} onClose={onClose} />);
-    onOpen();
+    // setModalHeader("آیا از حذف پیش فاکتور زیر اطمینان دارید؟");
+    // setModalContetnt(<DeleteProforma id={id} onClose={AlertOnClose} />);
+    AlertOnOpen();
   };
   const handleEditProforma = (id) => {
     if (id === 0) return;
 
     setSelectedID(id);
-    setModalHeader("ویرایش پیش فاکتور");
-    setModalContetnt(<EditProforma id={id} onClose={onClose} />);
+    // setModalHeader("ویرایش پیش فاکتور");
+    // setModalContetnt(<EditProforma id={id} onClose={onClose} />);
     onOpen();
   };
   return (
@@ -71,7 +74,7 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
         {DataRows.map((row) => (
           <Card
             _hover={{
-              cursor: "pointer",
+              cursor: "",
               borderColor: "orange",
             }}
             borderWidth="1px"
@@ -81,30 +84,24 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
               borderTopRadius={5}
               bg={row?.isAccepted ? "green.200" : "orange.200"}
             >
-              پیش فاکتور شماره :{row.id}
-              <Stat float={"left"}>
-                <StatHelpText>
-                  {row?.isSent ? (
-                    row.isAccepted ? (
-                      <CheckCheck />
-                    ) : (
-                      <Check />
-                    )
+              <HStack>
+                <Text> پیش فاکتور شماره :{row.id}</Text>
+                <Box mr="auto">
+                  {row.isSent ? (
+                    <SquareArrowUp color="green" />
                   ) : (
-                    <CircularProgress
-                      isIndeterminate
-                      color="purple.300"
-                      size="20px"
-                    />
+                    <CircleFadingArrowUp />
                   )}
-                </StatHelpText>
-              </Stat>
+                </Box>
+              </HStack>
             </CardHeader>
             <CardBody>
               <VStack spacing={2} align="stretch">
                 <HStack>
                   <Text>تاریخ : </Text>
-                  <Text>{row.createdAt}</Text>
+                  <Text>
+                    {dayjs(row.createdAt).locale("fa").format("YYYY/MM/DD")}
+                  </Text>
                 </HStack>
                 <Divider />
                 <HStack>
@@ -128,14 +125,16 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
                 <Divider />
                 <HStack>
                   <Text> جمع کل : </Text>
-                  <Text>{Number(row.totalAmount).toLocaleString()}</Text>
+                  <Text fontSize={"xl"}>
+                    {Number(row.totalAmount).toLocaleString()}
+                  </Text>
                 </HStack>
               </VStack>
             </CardBody>
             <CardFooter borderBottomRadius={5} bg="gray.100">
               <Stack
                 direction={["row"]}
-                spacing={5}
+                spacing={2}
                 align={"stretch"}
                 mr="auto"
                 ml="auto"
@@ -147,7 +146,7 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
                   color="blue.600"
                   onClick={(e) => handleEditProforma(row.id)}
                 >
-                  <Edit />
+                  <FilePenLine />
                 </Link>
                 <Link
                   _disabled={true}
@@ -165,6 +164,49 @@ export const ProformaDataTable = ({ HeadLables, DataRows }) => {
                   <Trash2 />
                 </Link>
               </Stack>
+
+              <Modal dir="rtl" onClose={onClose} size={"full"} isOpen={isOpen}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>ویرایش پیش فاکتور</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody dir="rtl">
+                    <EditProforma
+                      isDesktop={isDesktop}
+                      proforma={DataRows.find(
+                        (proforma) => proforma.id === selectedID
+                      )}
+                      onClose={onclose}
+                    />
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button onClick={onClose}>Close</Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+
+              <AlertDialog
+                motionPreset="slideInBottom"
+                onClose={AlertOnClose}
+                isOpen={AlertIsOpen}
+                isCentered
+              >
+                <AlertDialogOverlay />
+
+                <AlertDialogContent>
+                  <AlertDialogHeader>حدف پیش فاکتور</AlertDialogHeader>
+                  <AlertDialogCloseButton />
+                  <AlertDialogBody dir="rtl">
+                    آیا واقعا می خواهید این پیش فاکتور را حذف کنید؟
+                  </AlertDialogBody>
+                  <AlertDialogFooter>
+                    <Button onClick={AlertOnClose}>خیر</Button>
+                    <Button colorScheme="red" ml={3}>
+                      بله
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </CardFooter>
           </Card>
         ))}

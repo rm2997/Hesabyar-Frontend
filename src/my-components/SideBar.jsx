@@ -70,8 +70,14 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
               icon: <FileSpreadsheet />,
             },
             {
+              id: "myProformas",
+              name: "پیش فاکتورهای من",
+              type: "text",
+              icon: <LucideLayers />,
+            },
+            {
               id: "proformaStat",
-              name: "لیست پیش فاکتورها",
+              name: "همه پیش فاکتورها",
               type: "text",
               icon: <LucideLayers />,
             },
@@ -88,6 +94,12 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
             {
               id: "newInvoice",
               name: "جدید",
+              type: "text",
+              icon: <Newspaper />,
+            },
+            {
+              id: "myInvoices",
+              name: "فاکتورهای من",
               type: "text",
               icon: <Newspaper />,
             },

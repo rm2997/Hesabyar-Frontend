@@ -40,7 +40,7 @@ import {
 import { ShowAllGoods } from "../../api/services/goodsService";
 import { MyLoading } from "../../my-components/MyLoading";
 
-export const NewInvoice = () => {
+export const NewInvoice = ({ isDesktop }) => {
   const toast = useToast();
   const [customers, setCustomers] = useState([]);
   const [proformas, setProformas] = useState([]);
@@ -266,10 +266,18 @@ export const NewInvoice = () => {
           ثبت فاکتور جدید
         </CardHeader>
         <CardBody borderTopWidth={2}>
-          <VStack as="form" spacing={5} onSubmit={handleSubmit}>
+          <VStack
+            align={"stretch"}
+            direction={["column", "row"]}
+            as="form"
+            spacing={5}
+            onSubmit={handleSubmit}
+          >
             <FormControl isRequired>
               <HStack>
-                <FormLabel width="120px">نام مشتری</FormLabel>
+                <FormLabel hidden={!isDesktop} width="120px">
+                  نام مشتری
+                </FormLabel>
                 <Select
                   disabled={customerLoading}
                   w={250}
@@ -291,7 +299,9 @@ export const NewInvoice = () => {
 
             <FormControl>
               <HStack>
-                <FormLabel width="120px">شماره پیش‌فاکتور</FormLabel>
+                <FormLabel hidden={!isDesktop} width="120px">
+                  شماره پیش‌فاکتور
+                </FormLabel>
                 <Select
                   disabled={proformaLoading}
                   w={250}
@@ -316,7 +326,9 @@ export const NewInvoice = () => {
 
             <FormControl isRequired>
               <HStack>
-                <FormLabel width="120px">نوع پرداخت</FormLabel>
+                <FormLabel hidden={!isDesktop} width="120px">
+                  نوع پرداخت
+                </FormLabel>
                 <Select
                   w={250}
                   dir="ltr"

@@ -3,28 +3,17 @@ import { ProformaDataTable } from "../../my-components/proformas/ProformaDataTab
 import { MyLoading } from "../../my-components/MyLoading";
 import { ShowUserAllProformas } from "../../api/services/proformaService";
 
-const data = {
-  Headers: [
-    "کد",
-    "تاریخ",
-    "نام مشتری",
-    "نوع پرداخت",
-    "فایل تاییدیه مشتری",
-    "جمع مبلغ",
-    "تایید شده",
-    "عملیات",
-  ],
-  Rows: [],
-};
-export const UserProformas = () => {
-  const [userData, setUserData] = useState(data);
+export const UserProformas = ({ isDesktop }) => {
+  const [userData, setUserData] = useState([]);
   const [showLoading, setShowLoading] = useState(true);
   useEffect(() => {
     const loadData = async () => {
-      const response = await ShowUserAllProformas();
-      data.Rows = response.data;
-      setUserData(data);
-      setShowLoading(false);
+      setShowLoading(true);
+      await ShowUserAllProformas()
+        .then((res) => {
+          setUserData(res.data);
+        })
+        .finally(setShowLoading(false));
     };
 
     loadData();
@@ -33,10 +22,7 @@ export const UserProformas = () => {
   if (userData)
     return (
       <>
-        <ProformaDataTable
-          HeadLables={userData.Headers}
-          DataRows={userData.Rows}
-        />
+        <ProformaDataTable isDesktop={isDesktop} DataRows={userData} />
         <MyLoading showLoading={showLoading} />
       </>
     );

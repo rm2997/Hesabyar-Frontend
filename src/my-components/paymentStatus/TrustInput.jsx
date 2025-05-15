@@ -24,6 +24,7 @@ export const TrustInput = ({
   display,
   formData,
   handleChangeFormData,
+  isDesktop,
 }) => {
   useEffect(() => {
     if (!display) {
@@ -35,7 +36,7 @@ export const TrustInput = ({
 
   if (display)
     return (
-      <Card h={240} w={360}>
+      <Card h={230} w={isDesktop ? 240 : 220}>
         <CardHeader bg="blue.500" color={"white"} borderTopRadius={5}>
           <HStack>
             <HandCoins />
@@ -43,34 +44,42 @@ export const TrustInput = ({
           </HStack>
         </CardHeader>
         <CardBody>
-          <FormControl mb={2}>
-            <HStack>
-              <FormLabel w="50px">تاریخ</FormLabel>
-              <Box
-                alignItems="end"
-                borderWidth={1}
-                borderColor="gray.200"
-                bg="gray.100"
-              >
-                <Datepicker
-                  closeWhenSelectADay={true}
-                  format={"YYYY/MM/DD"}
-                  adjustPosition={"auto"}
-                  input={<input placeholder="انتخاب تاریخ" />}
-                  theme="green"
-                  allowClear={true}
-                  style={{ backgroundColor: "yellow" }}
-                  name="trustIssueDate"
-                  value={formData.trustIssueDate}
-                  onChange={(e) =>
-                    handleChangeFormData({
-                      target: { value: e, name: "trustIssueDate" },
-                    })
-                  }
-                />
-              </Box>
-            </HStack>
-          </FormControl>
+          <Box flex={1} borderRadius="md">
+            <FormControl mb={2}>
+              <HStack>
+                <FormLabel hidden={!isDesktop} w="50px">
+                  تاریخ
+                </FormLabel>
+                <Box
+                  alignItems="end"
+                  borderWidth={1}
+                  borderColor="gray.200"
+                  bg="gray.100"
+                >
+                  <Datepicker
+                    closeWhenSelectADay={true}
+                    format={"YYYY/MM/DD"}
+                    adjustPosition={"auto"}
+                    input={
+                      <input
+                        placeholder="انتخاب تاریخ"
+                        width={isDesktop ? "240px" : "200px"}
+                      />
+                    }
+                    theme="green"
+                    allowClear={true}
+                    name="trustIssueDate"
+                    value={formData.trustIssueDate}
+                    onChange={(e) =>
+                      handleChangeFormData({
+                        target: { value: e, name: "trustIssueDate" },
+                      })
+                    }
+                  />
+                </Box>
+              </HStack>
+            </FormControl>
+          </Box>
         </CardBody>
       </Card>
     );

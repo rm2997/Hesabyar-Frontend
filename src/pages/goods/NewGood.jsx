@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { ShowAllUnits } from "../../api/services/unitsService";
 
-export const NewGood = () => {
+export const NewGood = ({ isDesktop }) => {
   const [units, setUnits] = new useState([]);
   const [selectedUnit, setSelectedUnit] = useState(0);
   const [formData, setFormData] = useState({});
@@ -96,10 +96,18 @@ export const NewGood = () => {
         ثبت کالای جدید
       </CardHeader>
       <CardBody borderTopWidth={2}>
-        <VStack as="form" spacing={5} onSubmit={handleSubmit}>
+        <VStack
+          align={"stretch"}
+          direction={["column", "row"]}
+          as="form"
+          spacing={5}
+          onSubmit={handleSubmit}
+        >
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="170px">نام کالا</FormLabel>
+              <FormLabel hidden={!isDesktop} width="170px">
+                نام کالا
+              </FormLabel>
               <MyInputBox
                 icon={Package2}
                 name="goodName"
@@ -112,7 +120,9 @@ export const NewGood = () => {
           </FormControl>
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="150px">واحد اندازه گیری</FormLabel>
+              <FormLabel hidden={!isDesktop} width="150px">
+                واحد اندازه گیری
+              </FormLabel>
               <Select
                 dir="ltr"
                 name="goodUnit"
@@ -139,7 +149,9 @@ export const NewGood = () => {
           </FormControl>
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="170px">قیمت</FormLabel>
+              <FormLabel hidden={!isDesktop} width="170px">
+                قیمت
+              </FormLabel>
               <MyInputBox
                 icon={DollarSign}
                 name="goodPrice"
@@ -152,7 +164,9 @@ export const NewGood = () => {
           </FormControl>
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="170px">توضیحات</FormLabel>
+              <FormLabel hidden={!isDesktop} width="170px">
+                توضیحات
+              </FormLabel>
               <MyInputBox
                 icon={Info}
                 name="goodInfo"

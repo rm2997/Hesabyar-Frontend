@@ -27,20 +27,21 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   TableContainer,
-  Box,
   Flex,
-  Icon,
   Stack,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Box,
+  Divider,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
-import {
-  Minus,
-  Paperclip,
-  Plus,
-  Trash2,
-  UserRoundPlus,
-  UserSearch,
-} from "lucide-react";
+import { Minus, Plus, Trash2, UserRoundPlus, UserSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateProforma } from "../../api/services/proformaService";
 import { useNavigate } from "react-router-dom";
@@ -50,13 +51,16 @@ import { MyLoading } from "../../my-components/MyLoading";
 import { ChequeInput } from "../../my-components/paymentStatus/ChequeInput";
 import { PaperMoneyInput } from "../../my-components/paymentStatus/PaperMoneyInput";
 import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
+import { NewCustomer } from "../customers/NewCustomer";
 
 export const NewProforma = ({ isDesktop }) => {
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [customers, setCustomers] = useState([]);
   const [allGoods, setAllGoods] = useState([]);
   console.log(isDesktop);
   const [formData, setFormData] = useState({
+    title: "",
     customer: 0,
     totalAmount: 0,
     paymentStatus: 0,
@@ -109,13 +113,13 @@ export const NewProforma = ({ isDesktop }) => {
     const data = { ...formData };
     data.proformaGoods = [...proformaItems];
     data.totalAmount = totalPrice;
-    console.log(data);
     setFormData(data);
     setLoading(true);
     try {
       const response = await CreateProforma(data);
       if (!response.data) return;
       setFormData({
+        title: "",
         customer: 0,
         totalAmount: 0,
         paymentStatus: 0,
@@ -177,7 +181,6 @@ export const NewProforma = ({ isDesktop }) => {
   };
 
   const recalculateTotal = () => {
-    console.log(proformaItems);
     const total = proformaItems.reduce((sum, i) => sum + i.total, 0);
     const count = proformaItems.reduce((sum, i) => sum + i.quantity, 0);
     setTotalPrice(total);
@@ -223,12 +226,17 @@ export const NewProforma = ({ isDesktop }) => {
   };
 
   const handleChangeFormData = (e) => {
-    console.log(`${e.target.name}: ${e.target.value}`);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
+
+  const handleAddNewUser = () => {
+    onOpen();
+  };
+
+  const handleSearchUser = () => {};
 
   if (loading) return <MyLoading showLoading={true} />;
   else
@@ -244,255 +252,314 @@ export const NewProforma = ({ isDesktop }) => {
           ثبت پیش فاکتور جدید
         </CardHeader>
         <CardBody borderTopWidth={2}>
-          <VStack as="form" align="stretch" spacing={5} onSubmit={handleSubmit}>
-            <FormControl isRequired>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="120px">
-                  نام مشتری
-                </FormLabel>
-                <Select
-                  disabled={customerLoading}
-                  w={250}
-                  dir="ltr"
-                  name="customer"
-                  placeholder="یک نفر را انتخاب کنید"
-                  value={formData.customer}
-                  onChange={handleChangeFormData}
-                >
-                  {customers.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.customerFName + " " + p.customerLName}
-                    </option>
-                  ))}
-                </Select>
-                {customerLoading && <Spinner color="red.500" size={"sm"} />}
-                <IconButton size={"md"} icon={<UserRoundPlus />} />
-                <IconButton size={"md"} icon={<UserSearch />} />
-              </HStack>
-            </FormControl>
-
-            <FormControl isRequired>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="120px">
-                  نوع پرداخت
-                </FormLabel>
-                <Select
-                  w={250}
-                  dir="ltr"
-                  name="paymentStatus"
-                  placeholder="نوع پرداخت را انتخاب کنید"
-                  value={formData.paymentStatus}
-                  onChange={handleChangeFormData}
-                >
-                  {PaymentTypes.map((p) => (
-                    <option key={p.key} value={p.value}>
-                      {p.value}
-                    </option>
-                  ))}
-                </Select>
-              </HStack>
-            </FormControl>
-            <Flex justifyContent="flex-start">
-              <Stack direction={["row", "column"]} mr={8} spacing={4}>
-                <PaperMoneyInput
-                  title={"اطلاعات سفته"}
-                  display={
-                    formData.paymentStatus === "سفته" ||
-                    formData.paymentStatus === "اعتباری"
-                  }
-                  formData={formData}
-                  handleChangeFormData={handleChangeFormData}
-                />
-                <ChequeInput
-                  title={"اطلاعات چک"}
-                  display={
-                    formData.paymentStatus === "چک" ||
-                    formData.paymentStatus === "اعتباری"
-                  }
-                  formData={formData}
-                  handleChangeFormData={handleChangeFormData}
-                />
-
-                <TrustInput
-                  title={"اطلاعات امانی"}
-                  display={
-                    formData.paymentStatus === "امانی" ||
-                    formData.paymentStatus === "اعتباری"
-                  }
-                  formData={formData}
-                  handleChangeFormData={handleChangeFormData}
-                />
-              </Stack>
-            </Flex>
-            <TableContainer>
-              <Table size="sm" variant="simple">
-                <Thead>
-                  <Tr>
-                    <Th width="100px">ردیف</Th>
-                    <Th width="400px">نام کالا</Th>
-                    <Th width="100px">تعداد</Th>
-                    <Th width="100px">واحد</Th>
-                    <Th width="200px">قیمت واحد</Th>
-                    <Th width="300px">قیمت کل</Th>
-                    <Th width="300px">توضیحات</Th>
-                    <Th>
-                      <IconButton
-                        icon={<Plus />}
-                        onClick={handleAddNewItem}
-                        colorScheme="green"
+          <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
+            <Flex direction={{ base: "column", md: "row" }} gap={5}>
+              <Box flex={1} p={1} borderRadius="md">
+                <Stack spacing={5} direction="column">
+                  <FormControl>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="120px">
+                        عنوان
+                      </FormLabel>
+                      <Input
+                        w={250}
+                        name="title"
+                        value={formData.title}
+                        placeholder="عنوان"
+                        onChange={handleChangeFormData}
                       />
-                    </Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {proformaItems.map((item, index) => (
-                    <Tr key={item.no}>
-                      <Td>
-                        <Input
-                          value={item.no}
-                          onChange={(e) =>
-                            handleItemChange(index, "no", e.target.value)
-                          }
-                          placeholder="ردیف"
-                        />
-                      </Td>
-                      <Td>
-                        <HStack>
-                          <Select
-                            disabled={goodLoading}
-                            name="id"
-                            key={item.good}
-                            defaultValue={0}
-                            dir="ltr"
-                            placeholder="انتخاب کنید"
-                            value={item.good}
-                            onChange={(e) =>
-                              handleItemChange(index, "good", e.target.value)
-                            }
-                          >
-                            {allGoods.map((i) => (
-                              <option key={i.id} value={i.id}>
-                                {i.goodName}
-                              </option>
-                            ))}
-                          </Select>
-                          {goodLoading && (
-                            <Spinner size={"sm"} color="red.500" />
-                          )}
-                        </HStack>
-                      </Td>
-                      <Td>
-                        <NumberInput
-                          defaultValue={1}
-                          dir="ltr"
-                          min={1}
-                          name="quantity"
-                          value={item.quantity}
-                          onChange={(value) =>
-                            handleItemChange(index, "quantity", value)
-                          }
-                          placeholder="تعداد"
-                        >
-                          <NumberInputField />
-                          <NumberInputStepper>
-                            <NumberIncrementStepper />
-                            <NumberDecrementStepper />
-                          </NumberInputStepper>
-                        </NumberInput>
-                      </Td>
-                      <Td>
-                        <Input
-                          disabled
-                          placeholder="واحد"
-                          name="goodUnitName"
-                          value={item.goodUnitName}
-                        />
-                      </Td>
-                      <Td>
-                        <Input
-                          type="number"
-                          name="goodPrice"
-                          value={item.goodPrice}
-                          placeholder="قیمت"
-                          onChange={(e) =>
-                            handleItemChange(index, "goodPrice", e.target.value)
-                          }
-                        />
-                      </Td>
-                      <Td>
-                        <Input
-                          disabled
-                          type="number"
-                          name="goodPrice"
-                          value={item.quantity * item.goodPrice}
-                          placeholder="قیمت"
-                          onChange={(e) =>
-                            handleItemChange(index, "goodPrice", e.target.value)
-                          }
-                        />
-                      </Td>
-                      <Td>
-                        <Input
-                          name="description"
-                          value={item.description}
-                          placeholder="توضیحات"
-                          onChange={(e) =>
-                            handleItemChange(
-                              index,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </Td>
-                      <Td>
-                        <IconButton
-                          icon={<Minus />}
-                          key={item.no}
-                          onClick={() => handleRemoveItem(item)}
-                          colorScheme="red"
-                        />
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-                <Tfoot>
-                  <Tr>
-                    <Th width="100px"></Th>
-                    <Th width="200px"></Th>
-                    <Th width="200px">
-                      <Text> تعداد کل: {totalQuantity}</Text>
-                    </Th>
-                    <Th width="200px"></Th>
-                    <Th width="300px"></Th>
-                    <Th width="300px">
-                      <Text>جمع کل: {totalPrice}</Text>
-                    </Th>
-                    <Th></Th>
-                    <Th>
-                      {proformaItems.length > 0 && (
-                        <IconButton
-                          bg="maroon"
-                          color="white"
-                          icon={<Trash2 />}
-                          onClick={handleDeleteAllItems}
-                        />
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="120px">
+                        نام مشتری
+                      </FormLabel>
+                      <Select
+                        disabled={customerLoading}
+                        w={250}
+                        dir="ltr"
+                        name="customer"
+                        placeholder="یک نفر را انتخاب کنید"
+                        value={formData.customer}
+                        onChange={handleChangeFormData}
+                      >
+                        {customers.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.customerFName + " " + p.customerLName}
+                          </option>
+                        ))}
+                      </Select>
+                      {customerLoading && (
+                        <Spinner color="red.500" size={"sm"} />
                       )}
-                    </Th>
-                  </Tr>
-                </Tfoot>
-              </Table>
-            </TableContainer>
+                      <IconButton
+                        size={"md"}
+                        icon={<UserRoundPlus />}
+                        onClick={handleAddNewUser}
+                      />
+                      <IconButton
+                        size={"md"}
+                        icon={<UserSearch />}
+                        onClick={handleSearchUser}
+                      />
+                    </HStack>
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="120px">
+                        نوع پرداخت
+                      </FormLabel>
+                      <Select
+                        w={250}
+                        dir="ltr"
+                        name="paymentStatus"
+                        placeholder="نوع پرداخت را انتخاب کنید"
+                        value={formData.paymentStatus}
+                        onChange={handleChangeFormData}
+                      >
+                        {PaymentTypes.map((p) => (
+                          <option key={p.key} value={p.value}>
+                            {p.value}
+                          </option>
+                        ))}
+                      </Select>
+                    </HStack>
+                  </FormControl>
+                </Stack>
+              </Box>
+              <Box flex={1} p={4} borderRadius="md">
+                <Flex direction={{ base: "column", md: "row" }} gap={4}>
+                  <PaperMoneyInput
+                    title={"اطلاعات سفته"}
+                    display={
+                      formData.paymentStatus === "سفته" ||
+                      formData.paymentStatus === "اعتباری"
+                    }
+                    formData={formData}
+                    handleChangeFormData={handleChangeFormData}
+                  />
+                  <ChequeInput
+                    title={"اطلاعات چک"}
+                    display={
+                      formData.paymentStatus === "چک" ||
+                      formData.paymentStatus === "اعتباری"
+                    }
+                    formData={formData}
+                    handleChangeFormData={handleChangeFormData}
+                  />
+
+                  <TrustInput
+                    title={"اطلاعات امانی"}
+                    display={
+                      formData.paymentStatus === "امانی" ||
+                      formData.paymentStatus === "اعتباری"
+                    }
+                    formData={formData}
+                    handleChangeFormData={handleChangeFormData}
+                  />
+                </Flex>
+              </Box>
+            </Flex>
+            <Divider />
+            <Box p={4} borderRadius="md">
+              <TableContainer>
+                <Table size="sm" variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th width="100px">ردیف</Th>
+                      <Th width="400px">نام کالا</Th>
+                      <Th width="100px">تعداد</Th>
+                      <Th width="100px">واحد</Th>
+                      <Th width="200px">قیمت واحد</Th>
+                      <Th width="300px">قیمت کل</Th>
+                      <Th width="300px">توضیحات</Th>
+                      <Th>
+                        <IconButton
+                          icon={<Plus />}
+                          onClick={handleAddNewItem}
+                          colorScheme="green"
+                        />
+                      </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {proformaItems.map((item, index) => (
+                      <Tr key={item.no}>
+                        <Td>
+                          <Input
+                            value={item.no}
+                            onChange={(e) =>
+                              handleItemChange(index, "no", e.target.value)
+                            }
+                            placeholder="ردیف"
+                          />
+                        </Td>
+                        <Td>
+                          <HStack>
+                            <Select
+                              disabled={goodLoading}
+                              name="id"
+                              key={item.good}
+                              defaultValue={0}
+                              dir="ltr"
+                              placeholder="انتخاب کنید"
+                              value={item.good}
+                              onChange={(e) =>
+                                handleItemChange(index, "good", e.target.value)
+                              }
+                            >
+                              {allGoods.map((i) => (
+                                <option key={i.id} value={i.id}>
+                                  {i.goodName}
+                                </option>
+                              ))}
+                            </Select>
+                            {goodLoading && (
+                              <Spinner size={"sm"} color="red.500" />
+                            )}
+                          </HStack>
+                        </Td>
+                        <Td>
+                          <NumberInput
+                            defaultValue={1}
+                            dir="ltr"
+                            min={1}
+                            name="quantity"
+                            value={item.quantity}
+                            onChange={(value) =>
+                              handleItemChange(index, "quantity", value)
+                            }
+                            placeholder="تعداد"
+                          >
+                            <NumberInputField />
+                            <NumberInputStepper>
+                              <NumberIncrementStepper />
+                              <NumberDecrementStepper />
+                            </NumberInputStepper>
+                          </NumberInput>
+                        </Td>
+                        <Td>
+                          <Input
+                            disabled
+                            placeholder="واحد"
+                            name="goodUnitName"
+                            value={item.goodUnitName}
+                          />
+                        </Td>
+                        <Td>
+                          <Input
+                            type="number"
+                            name="goodPrice"
+                            value={item.goodPrice}
+                            placeholder="قیمت"
+                            onChange={(e) =>
+                              handleItemChange(
+                                index,
+                                "goodPrice",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </Td>
+                        <Td>
+                          <Input
+                            disabled
+                            type="number"
+                            name="goodPrice"
+                            value={item.quantity * item.goodPrice}
+                            placeholder="قیمت"
+                            onChange={(e) =>
+                              handleItemChange(
+                                index,
+                                "goodPrice",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </Td>
+                        <Td>
+                          <Input
+                            name="description"
+                            value={item.description}
+                            placeholder="توضیحات"
+                            onChange={(e) =>
+                              handleItemChange(
+                                index,
+                                "description",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </Td>
+                        <Td>
+                          <IconButton
+                            icon={<Minus />}
+                            key={item.no}
+                            onClick={() => handleRemoveItem(item)}
+                            colorScheme="red"
+                          />
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                  <Tfoot>
+                    <Tr>
+                      <Th width="100px"></Th>
+                      <Th width="200px"></Th>
+                      <Th width="200px">
+                        <Text> تعداد کل: {totalQuantity}</Text>
+                      </Th>
+                      <Th width="200px"></Th>
+                      <Th width="300px"></Th>
+                      <Th width="300px">
+                        <Text>جمع کل: {totalPrice}</Text>
+                      </Th>
+                      <Th></Th>
+                      <Th>
+                        {proformaItems.length > 0 && (
+                          <IconButton
+                            bg="maroon"
+                            color="white"
+                            icon={<Trash2 />}
+                            onClick={handleDeleteAllItems}
+                          />
+                        )}
+                      </Th>
+                    </Tr>
+                  </Tfoot>
+                </Table>
+              </TableContainer>
+            </Box>
             <Input
-              placeholder=" توضیحات فاکتور"
+              placeholder=" توضیحات پیش فاکتور"
               name="description"
               value={formData.description}
               onChange={handleChangeFormData}
             />
             <Button colorScheme="blue" type="submit" isLoading={loading}>
-              ثبت فاکتور
+              ثبت پیش فاکتور
             </Button>
-          </VStack>
+            <Modal
+              dir="rtl"
+              onClose={onClose}
+              size={isDesktop ? "xl" : "full"}
+              isOpen={isOpen}
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>مشتری جدید</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody dir="rtl">
+                  <NewCustomer />
+                </ModalBody>
+                <ModalFooter>
+                  <Button onClick={onClose}>Close</Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </Flex>
         </CardBody>
         <CardFooter></CardFooter>
       </Card>

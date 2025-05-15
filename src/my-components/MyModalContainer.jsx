@@ -16,7 +16,6 @@ export const MyModalContainer = ({
   onSave,
   isOpen,
   onClose,
-  proformaId,
   modalHeader,
 }) => {
   useEffect(() => {}, [children]);

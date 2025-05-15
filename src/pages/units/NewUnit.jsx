@@ -16,7 +16,7 @@ import { CreateUnit } from "../../api/services/unitsService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
 
-export const NewUnit = () => {
+export const NewUnit = ({ isDesktop }) => {
   const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -73,10 +73,18 @@ export const NewUnit = () => {
         ثبت واحد جدید
       </CardHeader>
       <CardBody borderTopWidth={2}>
-        <VStack as="form" spacing={5} onSubmit={handleSubmit}>
+        <VStack
+          align={"stretch"}
+          direction={["column", "row"]}
+          as="form"
+          spacing={5}
+          onSubmit={handleSubmit}
+        >
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="150px">نام واحد</FormLabel>
+              <FormLabel hidden={!isDesktop} width="150px">
+                نام واحد
+              </FormLabel>
               <MyInputBox
                 icon={Ruler}
                 name="unitName"
@@ -89,7 +97,9 @@ export const NewUnit = () => {
           </FormControl>
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="150px">توضیحات</FormLabel>
+              <FormLabel hidden={!isDesktop} width="150px">
+                توضیحات
+              </FormLabel>
               <MyInputBox
                 icon={Info}
                 name="unitInfo"
