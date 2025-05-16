@@ -16,7 +16,6 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
   useToast,
   Text,
   Spinner,
@@ -48,7 +47,10 @@ import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { UpdateProforma } from "../../api/services/proformaService";
 import { useNavigate } from "react-router-dom";
-import { ShowAllCustomers } from "../../api/services/customerService";
+import {
+  ShowAllCustomers,
+  ShowCustomerByID,
+} from "../../api/services/customerService";
 import { ShowAllGoods } from "../../api/services/goodsService";
 import { MyLoading } from "../../my-components/MyLoading";
 import { ChequeInput } from "../../my-components/paymentStatus/ChequeInput";
@@ -82,15 +84,11 @@ export const EditProforma = ({ isDesktop, proforma }) => {
       uniqueId: Date.now().toString(),
       createdAt: "",
       description: "",
+      good: {},
       id: 0,
       price: 0,
       quantity: 0,
       total: 0,
-      no: 0,
-      good: {},
-      goodName: 0,
-      goodPrice: 0,
-      goodUnitName: "",
     },
   ]);
 
@@ -118,103 +116,98 @@ export const EditProforma = ({ isDesktop, proforma }) => {
 
   useEffect(() => {
     setFormData({ ...formData, proformaGoods: [...items] });
-    console.log(items);
   }, [items]);
+
+  useEffect(() => {
+    recalculateTotal();
+  }, [formData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = { ...formData };
-    data.proformaGoods = [...proformaItems];
-    data.totalAmount = totalPrice;
-
-    setFormData(data);
     setLoading(true);
-    try {
-      const response = await UpdateProforma(data);
-      if (!response.data) return;
-      setFormData({
-        title: "",
-        customer: {},
-        totalAmount: 0,
-        paymentStatus: 0,
-        chequeAmount: 0,
-        chequeSerial: 0,
-        chequeDate: "",
-        paperMoneyDate: "",
-        paperMoneyAmount: 0,
-        paperMoneySerial: 0,
-        trustIssueDate: "",
-        proformaGoods: [],
-        description: "",
-      });
-      setProformaItems([
-        {
-          createdAt: "",
+
+    await UpdateProforma(formData.id, { ...formData, totalAmount: totalPrice })
+      .then((res) => {
+        if (res.status !== 200) return;
+        setFormData({
+          title: "",
+          customer: {},
+          totalAmount: 0,
+          paymentStatus: 0,
+          chequeAmount: 0,
+          chequeSerial: 0,
+          chequeDate: "",
+          paperMoneyDate: "",
+          paperMoneyAmount: 0,
+          paperMoneySerial: 0,
+          trustIssueDate: "",
+          proformaGoods: [],
           description: "",
-          id: 0,
-          price: 0,
-          quantity: 0,
-          total: 0,
-          no: 0,
-          good: {},
-          goodName: 0,
-          goodPrice: 0,
-          goodUnitName: "",
-        },
-      ]);
-      recalculateTotal();
-      toast({
-        title: "ثبت شد",
-        description: `اطلاعات پیش فاکتور شما ذخیره شد`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (err) {
-      toast({
-        title: "خطایی رخ داد",
-        description: `${err}`,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setLoading(false);
-    }
+        });
+        setProformaItems([
+          {
+            uniqueId: Date.now().toString(),
+            createdAt: "",
+            description: "",
+            good: {},
+            id: 0,
+            price: 0,
+            quantity: 0,
+            total: 0,
+          },
+        ]);
+
+        toast({
+          title: "ثبت شد",
+          description: `اطلاعات پیش فاکتور شما ذخیره شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        onClose();
+      })
+      .catch((err) => {
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .finally(setLoading(false));
   };
 
   const handleItemChange = (index, field, value) => {
-    const newItems = [...formData.proformaGoods];
-    if (!newItems || newItems?.length == 0) return;
+    const newItems = formData.proformaGoods;
+    if (!newItems || newItems?.length === 0) return;
 
     newItems[index][field] =
       field === "quantity" || field === "goodPrice" ? Number(value) : value;
 
     if (field === "good" && Number(value) > 0) {
       const selected = allGoods.find((p) => p.id === Number(value));
+
       if (selected) {
-        newItems[index].goodPrice = selected.goodPrice;
         newItems[index].price = selected.goodPrice;
-        newItems[index].goodName = selected.goodName;
-        newItems[index].goodUnitName = selected.goodUnit?.unitName;
+        newItems[index].good = selected;
         newItems[index].total = selected.goodPrice * newItems[index].quantity;
       }
     }
 
     if (field === "quantity" || field === "goodPrice") {
       const qty = field === "quantity" ? value : newItems[index].quantity;
-      const prc = field === "price" ? value : newItems[index].goodPrice;
+      const prc = field === "price" ? value : newItems[index].price;
       newItems[index].total = qty * prc;
     }
     setFormData({ ...formData, proformaGoods: newItems });
-    recalculateTotal();
   };
 
   const recalculateTotal = () => {
     const items = formData.proformaGoods;
     const total = items.reduce((sum, i) => sum + i.total, 0);
     const count = items.reduce((sum, i) => sum + i.quantity, 0);
-    console.log("calculate:", items);
+
     setTotalPrice(total);
     setTotalQuantity(count);
   };
@@ -241,14 +234,13 @@ export const EditProforma = ({ isDesktop, proforma }) => {
 
   const handleRemoveItem = (item) => {
     const items = [...formData.proformaGoods];
-    const updated = items.filter((i) => i.uniqueId != item.uniqueId);
+    const updated = items.filter((i) => i.uniqueId !== item.uniqueId);
 
     for (let i = 0; i < updated.length; i++) {
       updated[i].no = i + 1;
     }
 
     setFormData({ ...formData, proformaGoods: updated });
-    recalculateTotal();
   };
 
   const handleDeleteAllItems = () => {
@@ -258,10 +250,17 @@ export const EditProforma = ({ isDesktop, proforma }) => {
   };
 
   const handleChangeFormData = (e) => {
+    console.log(e.target.name, e.target.value);
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleChangeCustomerData = (id) => {
+    const newCustomer = customers.find((c) => c.id == id);
+    if (newCustomer) setFormData({ ...formData, customer: newCustomer });
   };
 
   const handleAddNewUser = () => {
@@ -314,7 +313,9 @@ export const EditProforma = ({ isDesktop, proforma }) => {
                         name="customer.id"
                         placeholder="یک نفر را انتخاب کنید"
                         value={formData.customer.id}
-                        onChange={handleChangeFormData}
+                        onChange={(e) =>
+                          handleChangeCustomerData(e.target.value)
+                        }
                       >
                         {customers.map((p) => (
                           <option key={p.id} value={p.id}>
@@ -425,11 +426,11 @@ export const EditProforma = ({ isDesktop, proforma }) => {
                   </Thead>
                   <Tbody>
                     {formData.proformaGoods.map((item, index) => (
-                      <Tr key={item.no}>
+                      <Tr key={"row" + index}>
                         <Td>
                           <Input
                             name="no"
-                            key={"no" + item.id}
+                            key={"Field_no" + item.id}
                             value={index + 1}
                             onChange={(e) =>
                               handleItemChange(index, "no", e.target.value)

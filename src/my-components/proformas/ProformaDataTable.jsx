@@ -40,7 +40,7 @@ import {
   Replace,
 } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditProforma } from "./EditProforma";
 import { RemoveProforma } from "../../api/services/proformaService";
 
@@ -58,6 +58,9 @@ export const ProformaDataTable = ({ DataRows, isDesktop }) => {
 
   dayjs.extend(jalali);
 
+  useEffect(() => {
+    console.log(DataRows);
+  }, []);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleDialogClose = (result) => {
