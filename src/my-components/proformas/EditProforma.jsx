@@ -39,6 +39,7 @@ import {
   ModalFooter,
   Box,
   Divider,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import { Minus, Plus, Trash2, UserRoundPlus, UserSearch } from "lucide-react";
@@ -360,8 +361,12 @@ export const EditProforma = ({ isDesktop, proforma }) => {
                   </FormControl>
                 </Stack>
               </Box>
-              <Box flex={1} p={4} borderRadius="md">
-                <Flex direction={{ base: "column", md: "row" }} gap={4}>
+              <Box flex={3} p={4} borderRadius="md">
+                <SimpleGrid
+                  columns={{ base: 1, md: 3, lg: 3 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+                  spacing={4}
+                  minChildWidth="260px"
+                >
                   <PaperMoneyInput
                     isDesktop={isDesktop}
                     title={"اطلاعات سفته"}
@@ -393,7 +398,7 @@ export const EditProforma = ({ isDesktop, proforma }) => {
                     formData={formData}
                     handleChangeFormData={handleChangeFormData}
                   />
-                </Flex>
+                </SimpleGrid>
               </Box>
             </Flex>
             <Divider />
