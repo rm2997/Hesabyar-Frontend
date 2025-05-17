@@ -58,7 +58,12 @@ import { PaperMoneyInput } from "../../my-components/paymentStatus/PaperMoneyInp
 import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
 import { NewCustomer } from "../../pages/customers/NewCustomer";
 
-export const EditProforma = ({ isDesktop, proforma }) => {
+export const EditProforma = ({
+  isDesktop,
+  proforma,
+  setProformas,
+  proformas,
+}) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [customers, setCustomers] = useState([]);
@@ -129,6 +134,10 @@ export const EditProforma = ({ isDesktop, proforma }) => {
     await UpdateProforma(formData.id, { ...formData, totalAmount: totalPrice })
       .then((res) => {
         if (res.status !== 200) return;
+        console.log("formData", formData);
+        const newProformas = proformas.filter((p) => p.id != formData.id);
+        newProformas.push(formData);
+        setProformas(newProformas);
         setFormData({
           title: "",
           customer: {},
@@ -250,8 +259,6 @@ export const EditProforma = ({ isDesktop, proforma }) => {
   };
 
   const handleChangeFormData = (e) => {
-    console.log(e.target.name, e.target.value);
-
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,

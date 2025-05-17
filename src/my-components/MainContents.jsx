@@ -21,6 +21,8 @@ import { Goods } from "../pages/goods/Goods";
 import { NewGood } from "../pages/goods/NewGood";
 import { Units } from "../pages/units/Units";
 import { NewUnit } from "../pages/units/NewUnit";
+import { ProformaDataTable } from "./proformas/ProformaDataTable";
+import { InvoiceDataTable } from "./invoices/InvoiceDataTable";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -67,7 +69,7 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         case "newProforma":
           return <NewProforma isDesktop={isDesktop} />;
         case "myProformas":
-          return <UserProformas isDesktop={isDesktop} />;
+          return <ProformaDataTable isDesktop={isDesktop} />;
         case "proformaStat":
           return <></>;
         case "newInvoice":
@@ -75,7 +77,7 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         case "invoiceStat":
           return <></>;
         case "myInvoices":
-          return <UserInvoices isDesktop={isDesktop} />;
+          return <InvoiceDataTable isDesktop={isDesktop} />;
         case "newSale":
           return;
         case "saleStat":

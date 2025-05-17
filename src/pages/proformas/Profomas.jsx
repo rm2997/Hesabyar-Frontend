@@ -4,14 +4,14 @@ import { MyLoading } from "../../my-components/MyLoading";
 import { ShowUserAllProformas } from "../../api/services/proformaService";
 
 export const UserProformas = ({ isDesktop }) => {
-  const [userData, setUserData] = useState([]);
+  const [proformas, setProformas] = useState([]);
   const [showLoading, setShowLoading] = useState(true);
   useEffect(() => {
     const loadData = async () => {
       setShowLoading(true);
       await ShowUserAllProformas()
         .then((res) => {
-          setUserData(res.data);
+          setProformas(res.data);
         })
         .finally(setShowLoading(false));
     };
@@ -19,10 +19,14 @@ export const UserProformas = ({ isDesktop }) => {
     loadData();
   }, []);
 
-  if (userData)
+  if (proformas)
     return (
       <>
-        <ProformaDataTable isDesktop={isDesktop} DataRows={userData} />
+        <ProformaDataTable
+          isDesktop={isDesktop}
+          proformas={proformas}
+          setProformas={setProformas}
+        />
         <MyLoading showLoading={showLoading} />
       </>
     );
