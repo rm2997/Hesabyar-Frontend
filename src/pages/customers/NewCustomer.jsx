@@ -4,14 +4,22 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Flex,
   FormControl,
   FormLabel,
   HStack,
+  SimpleGrid,
   Textarea,
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { IdCard, Phone, SquareCheckBig } from "lucide-react";
+import {
+  IdCard,
+  Mailbox,
+  Phone,
+  Smartphone,
+  SquareCheckBig,
+} from "lucide-react";
 import { useState } from "react";
 import { CreateCustomer } from "../../api/services/customerService";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +44,8 @@ export const NewCustomer = ({ isDesktop }) => {
         customerNationalCode: "",
         customerPhone: "",
         customerAddress: "",
+        customerMobile: "",
+        customerPostalCode: "",
       });
       toast({
         title: "ثبت شد",
@@ -76,82 +86,112 @@ export const NewCustomer = ({ isDesktop }) => {
         ثبت مشتری جدید
       </CardHeader>
       <CardBody borderTopWidth={2}>
-        <VStack
-          as="form"
-          direction={["column", "row"]}
-          spacing={5}
-          align={"stretch"}
-          onSubmit={handleSubmit}
-        >
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="100px">
-                نام مشتری
-              </FormLabel>
-              <MyInputBox
-                icon={IdCard}
-                name="customerFName"
-                title="نام"
-                size={19}
-                value={formData.customerFName}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
+        <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
+          <SimpleGrid
+            columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+            spacing={4}
+          >
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  نام مشتری
+                </FormLabel>
+                <MyInputBox
+                  icon={IdCard}
+                  name="customerFName"
+                  title="نام"
+                  size={19}
+                  value={formData.customerFName}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
 
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="100px">
-                نام خانوادگی
-              </FormLabel>
-              <MyInputBox
-                icon={IdCard}
-                name="customerLName"
-                title="نام خانوادگی"
-                size={19}
-                value={formData.customerLName}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  نام خانوادگی
+                </FormLabel>
+                <MyInputBox
+                  icon={IdCard}
+                  name="customerLName"
+                  title="نام خانوادگی"
+                  size={19}
+                  value={formData.customerLName}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
 
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="100px">
-                شماره ملی
-              </FormLabel>
-              <MyInputBox
-                type="number"
-                icon={IdCard}
-                name="customerNationalCode"
-                title="شماره ملی"
-                size={19}
-                value={formData.customerNationalCode}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  شماره ملی
+                </FormLabel>
+                <MyInputBox
+                  type="number"
+                  icon={IdCard}
+                  name="customerNationalCode"
+                  title="شماره ملی"
+                  size={19}
+                  value={formData.customerNationalCode}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
 
+            <FormControl>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  شماره تلفن
+                </FormLabel>
+                <MyInputBox
+                  type="number"
+                  icon={Phone}
+                  name="customerPhone"
+                  title="شماره تلفن"
+                  size={19}
+                  value={formData.customerPhone}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  شماره موبایل
+                </FormLabel>
+                <MyInputBox
+                  type="number"
+                  icon={Smartphone}
+                  name="customerMobile"
+                  title="شماره موبایل"
+                  size={19}
+                  value={formData.customerMobile}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+            <FormControl>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  کد پستی
+                </FormLabel>
+                <MyInputBox
+                  type="number"
+                  icon={Mailbox}
+                  name="customerPostalCode"
+                  title="کد پستی"
+                  size={19}
+                  value={formData.customerPostalCode}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+          </SimpleGrid>
           <FormControl isRequired>
             <HStack>
-              <FormLabel hidden={!isDesktop} width="100px">
-                شماره تلفن
-              </FormLabel>
-              <MyInputBox
-                type="number"
-                icon={Phone}
-                name="customerPhone"
-                title="شماره تلفن"
-                size={19}
-                value={formData.customerPhone}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
-
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="90px">
+              <FormLabel hidden={!isDesktop} width="120px">
                 آدرس
               </FormLabel>
               <Textarea
@@ -159,13 +199,13 @@ export const NewCustomer = ({ isDesktop }) => {
                 name="customerAddress"
                 resize="horizontal"
                 size="lg"
-                w="auto"
+                minW="250px"
+                maxW="1045px"
                 value={formData.customerAddress}
                 onChange={handleChangeFormData}
               />
             </HStack>
           </FormControl>
-
           <Button
             leftIcon={<SquareCheckBig />}
             colorScheme="blue"
@@ -174,7 +214,7 @@ export const NewCustomer = ({ isDesktop }) => {
           >
             تایید
           </Button>
-        </VStack>
+        </Flex>
       </CardBody>
       <CardFooter></CardFooter>
     </Card>

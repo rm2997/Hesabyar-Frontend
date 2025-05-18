@@ -1,6 +1,15 @@
 import {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Flex,
   HStack,
+  Icon,
   Link,
+  SimpleGrid,
+  Stack,
   Table,
   TableCaption,
   TableContainer,
@@ -10,10 +19,22 @@ import {
   Tfoot,
   Th,
   Thead,
+  Tooltip,
   Tr,
+  VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Edit, Trash2 } from "lucide-react";
+import {
+  Edit,
+  FilePenLine,
+  Replace,
+  Ruler,
+  Send,
+  Trash2,
+  User2,
+  UsersRound,
+  WalletCards,
+} from "lucide-react";
 import { MyModalContainer } from "../MyModalContainer";
 import { useEffect, useState } from "react";
 import { EditUnit } from "./EditUnit";
@@ -71,76 +92,59 @@ export const UnitsDataTable = ({ HeadLables, DataRows }) => {
   }, [DataRows]);
 
   return (
-    <TableContainer>
-      <Table
-        color="black"
-        colorScheme="blackAlpha"
-        borderWidth="1px"
-        borderColor="gray.600"
-      >
-        <TableCaption>جدول اطلاعات واحدهای کالا</TableCaption>
-        <Thead bg="#50b742" color="white" borderTopRadius={50} height={50}>
-          <Tr color="white">
-            {HeadLables.map((label) => (
-              <Th id={label}>{label}</Th>
-            ))}
-          </Tr>
-        </Thead>
-        <Tbody>
-          {unitsData.map((row) => (
-            <Tr _hover={{ bg: "#f5f5f5" }} cursor="pointer">
-              <Td id={row.id}>
-                <Text>{row.id}</Text>
-              </Td>
-              <Td>{row.unitName}</Td>
-              <Td>
-                {row.unitInfo.length > 15
-                  ? row.unitInfo.substring(0, 12) + "..."
-                  : row.unitInfo}
-              </Td>
-              <Td>
+    <Flex direction="column" gap={4}>
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+        {DataRows.map((row) => (
+          <Card
+            borderTopRadius={5}
+            borderWidth={1}
+            _hover={{ borderColor: "orange" }}
+          >
+            <CardHeader bg="green.500" borderTopRadius={5} color="white">
+              <HStack>
+                <Ruler color="purple" />
+                <Text mr="auto">{row.unitName}</Text>
+              </HStack>
+            </CardHeader>
+            <CardBody>
+              <VStack align={"stretch"} spacing={2}>
                 <HStack>
-                  <Link
-                    _hover={{
-                      color: "orange",
-                    }}
-                    color="blue.600"
-                    onClick={(e) => handleEditUnit(row.id)}
-                  >
-                    <Edit />
-                  </Link>
-                  <Link
-                    _hover={{ color: "#ffd54f" }}
-                    color="red.600"
-                    onClick={(e) => handleDeleteUnit(row.id)}
-                  >
-                    <Trash2 />
-                  </Link>
+                  <Text>توضیحات :</Text>
+                  <Text mr="auto">
+                    {row.unitInfo.length > 15
+                      ? row.unitInfo.substring(0, 12) + "..."
+                      : row.unitInfo}
+                  </Text>
                 </HStack>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-        <Tfoot>
-          <Tr>
-            {HeadLables.map((label, idx, isNumeric) => (
-              <Th id={idx} isNumeric={isNumeric}>
-                {label}
-              </Th>
-            ))}
-          </Tr>
-        </Tfoot>
-      </Table>
-
-      <MyModalContainer
-        onClose={onClose}
-        isOpen={isOpen}
-        onOpen={onOpen}
-        proformaID={selectedID}
-        modalHeader={modalHeader}
-      >
-        {modalContetnt}
-      </MyModalContainer>
-    </TableContainer>
+              </VStack>
+            </CardBody>
+            <CardFooter borderBottomRadius={5} bg="gray.200">
+              <Stack
+                direction={["row"]}
+                spacing={2}
+                align={"stretch"}
+                mr="auto"
+              >
+                <Link
+                  _hover={{
+                    color: "orange",
+                  }}
+                  color="blue.600"
+                >
+                  <Tooltip label="ویرایش">
+                    <Icon w={6} h={6} as={FilePenLine} />
+                  </Tooltip>
+                </Link>
+                <Link _hover={{ color: "#ffd54f" }} color="red.600">
+                  <Tooltip label="حذف">
+                    <Icon w={6} h={6} as={Trash2} />
+                  </Tooltip>
+                </Link>
+              </Stack>
+            </CardFooter>
+          </Card>
+        ))}
+      </SimpleGrid>
+    </Flex>
   );
 };

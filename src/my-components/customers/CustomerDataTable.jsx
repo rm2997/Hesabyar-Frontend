@@ -1,6 +1,15 @@
 import {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Flex,
   HStack,
+  Icon,
   Link,
+  SimpleGrid,
+  Stack,
   Table,
   TableCaption,
   TableContainer,
@@ -10,10 +19,20 @@ import {
   Tfoot,
   Th,
   Thead,
+  Tooltip,
   Tr,
+  VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Edit, Trash2 } from "lucide-react";
+import {
+  Edit,
+  FilePenLine,
+  Replace,
+  Send,
+  Trash2,
+  User2,
+  UsersRound,
+} from "lucide-react";
 import { MyModalContainer } from "../MyModalContainer";
 import { useEffect, useState } from "react";
 import { EditCustomer } from "./EditCustomer";
@@ -77,79 +96,93 @@ export const CustomerDataTable = ({ HeadLables, DataRows }) => {
   }, [DataRows]);
 
   return (
-    <TableContainer>
-      <Table
-        color="black"
-        colorScheme="blackAlpha"
-        borderWidth="1px"
-        borderColor="gray.600"
+    <Flex direction="column" gap={4}>
+      <SimpleGrid
+        columns={{ base: 1, md: 2, lg: 5 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+        spacing={4}
       >
-        <TableCaption>جدول اطلاعات مشتری ها</TableCaption>
-        <Thead bg="#50b742" color="white" borderTopRadius={50} height={50}>
-          <Tr color="white">
-            {HeadLables.map((label) => (
-              <Th id={label}>{label}</Th>
-            ))}
-          </Tr>
-        </Thead>
-        <Tbody>
-          {customersData.map((row) => (
-            <Tr _hover={{ bg: "#f5f5f5" }} cursor="pointer">
-              <Td id={row.id}>
-                <Text>{row.id}</Text>
-              </Td>
-              <Td>{row.customerFName}</Td>
-              <Td>{row.customerLName}</Td>
-              <Td>{row.customerNationalCode}</Td>
-              <Td>{row.customerPhone}</Td>
-              <Td>
-                {row.customerAddress.length > 15
-                  ? row.customerAddress.substring(0, 12) + "..."
-                  : row.customerAddress}
-              </Td>
-              <Td>
+        {DataRows.map((row) => (
+          <Card
+            borderTopRadius={5}
+            borderWidth={1}
+            _hover={{ borderColor: "orange" }}
+          >
+            <CardHeader bg="green.500" borderTopRadius={5} color="white">
+              <HStack>
+                <UsersRound color="purple" />
+                <Text mr="auto">
+                  {row.customerFName + " " + row.customerLName}
+                </Text>
+              </HStack>
+            </CardHeader>
+            <CardBody>
+              <VStack align={"stretch"} spacing={2}>
                 <HStack>
-                  <Link
-                    _hover={{
-                      color: "orange",
-                    }}
-                    color="blue.600"
-                    onClick={(e) => handleEditCustomer(row.id)}
-                  >
-                    <Edit />
-                  </Link>
-                  <Link
-                    _hover={{ color: "#ffd54f" }}
-                    color="red.600"
-                    onClick={(e) => handleDeleteCustomer(row.id)}
-                  >
-                    <Trash2 />
-                  </Link>
+                  <Text> شماره موبایل :</Text>
+                  <Text mr="auto">{row.customerMobile}</Text>
                 </HStack>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-        <Tfoot>
-          <Tr>
-            {HeadLables.map((label, idx, isNumeric) => (
-              <Th id={idx} isNumeric={isNumeric}>
-                {label}
-              </Th>
-            ))}
-          </Tr>
-        </Tfoot>
-      </Table>
-
-      <MyModalContainer
-        onClose={onClose}
-        isOpen={isOpen}
-        onOpen={onOpen}
-        proformaID={selectedID}
-        modalHeader={modalHeader}
-      >
-        {modalContetnt}
-      </MyModalContainer>
-    </TableContainer>
+                <Divider />
+                <HStack>
+                  <Text> شماره تلفن :</Text>
+                  <Text mr="auto">{row.customerPhone}</Text>
+                </HStack>
+                <Divider />
+                <HStack>
+                  <Text> شماره ملی :</Text>
+                  <Text mr="auto">{row.customerNationalCode}</Text>
+                </HStack>
+                <Divider />
+                <HStack>
+                  <Text> کد پستی :</Text>
+                  <Text mr="auto">{row.customerPostalCode}</Text>
+                </HStack>
+                <Divider />
+                <HStack>
+                  <Text>آدرس :</Text>
+                  <Text mr="auto">
+                    {row.customerAddress.length > 15
+                      ? row.customerAddress.substring(0, 12) + "..."
+                      : row.customerAddress}
+                  </Text>
+                </HStack>
+              </VStack>
+            </CardBody>
+            <CardFooter borderBottomRadius={5} bg="gray.200">
+              <Stack
+                direction={["row"]}
+                spacing={2}
+                align={"stretch"}
+                mr="auto"
+              >
+                <Link
+                  _hover={{
+                    color: "orange",
+                  }}
+                  color="blue.600"
+                >
+                  <Tooltip label="ویرایش">
+                    <Icon w={6} h={6} as={FilePenLine} />
+                  </Tooltip>
+                </Link>
+                <Link
+                  _disabled={true}
+                  _hover={{ color: "#ffd54f" }}
+                  color="green.600"
+                >
+                  <Tooltip label="ارسال تبلیغات به مشتری">
+                    <Icon w={6} h={6} as={Send} />
+                  </Tooltip>
+                </Link>
+                <Link _hover={{ color: "#ffd54f" }} color="red.600">
+                  <Tooltip label="حذف">
+                    <Icon w={6} h={6} as={Trash2} />
+                  </Tooltip>
+                </Link>
+              </Stack>
+            </CardFooter>
+          </Card>
+        ))}
+      </SimpleGrid>
+    </Flex>
   );
 };

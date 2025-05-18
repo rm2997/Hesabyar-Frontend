@@ -39,7 +39,9 @@ const endpoints = {
   notifications: {
     unreadCount: "notifications/unread",
     markAsRead: (id) => `notifications/${id}/read`,
-    listAll: "/notifications/all",
+    markAsunread: (id) => `notifications/${id}/unread`,
+    listSent: "/notifications/sent",
+    listReceived: "/notifications/received",
     listOne: (id) => `/notifications/${id}`,
     create: "/notifications/",
     delete: (id) => `/notifications/${id}`,

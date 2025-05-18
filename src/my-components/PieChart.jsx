@@ -10,7 +10,10 @@ import { Box, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ShowUserAllProformas } from "../api/services/proformaService";
 import { ShowUserAllInvoices } from "../api/services/invoiceService";
-import { ShowUserAllNotifications } from "../api/services/notificationService";
+import {
+  ShowUserAllNotifications,
+  ShowUserRcvAllNotifications,
+} from "../api/services/notificationService";
 
 // const data = [
 //   { name: "بیش فاکتورها", value: 400 },
@@ -34,8 +37,11 @@ export const PieChart = ({ sidebarWidth }) => {
       await ShowUserAllInvoices().then((i) =>
         data.push({ name: "فاکتورها", value: i.data.length })
       );
-      await ShowUserAllNotifications().then((n) =>
-        data.push({ name: "پیام ها", value: n.data.length })
+      await ShowUserRcvAllNotifications().then((n) =>
+        data.push({ name: "پیام های دریافتی", value: n.data.length })
+      );
+      await ShowUserRcvAllNotifications().then((n) =>
+        data.push({ name: "پیام های ارسالی", value: n.data.length })
       );
       setPieData(data);
     };

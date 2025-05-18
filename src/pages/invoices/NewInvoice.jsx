@@ -594,6 +594,7 @@ export const NewInvoice = ({ isDesktop }) => {
                 </Table>
               </TableContainer>
             </Box>
+
             <Input
               placeholder=" توضیحات فاکتور"
               name="description"

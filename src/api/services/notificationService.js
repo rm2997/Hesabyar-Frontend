@@ -1,9 +1,30 @@
 import axiosClient from "../axiosClient";
 import endpoints from "../endpoints";
 
-export const ShowUserAllNotifications = async () => {
+export const ShowUserSndNotifications = async () => {
   try {
-    const response = await axiosClient.get(endpoints.notifications.listAll);
+    const response = await axiosClient.get(endpoints.notifications.listSent);
+    console.log(response);
+    return response;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+    }
+  }
+};
+
+export const ShowUserRcvAllNotifications = async () => {
+  try {
+    const response = await axiosClient.get(
+      endpoints.notifications.listReceived
+    );
     return response;
   } catch (error) {
     if (error.response) {
@@ -54,6 +75,27 @@ export const ShowUnreadNotificationsCount = async () => {
     }
   }
 };
+
+export const MarkNotificationAsUnread = async (id) => {
+  try {
+    const response = await axiosClient.patch(
+      endpoints.notifications.markAsunread(id)
+    );
+    return response;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+    }
+  }
+};
+
 export const MarkNotificationAsRead = async (id) => {
   try {
     const response = await axiosClient.patch(

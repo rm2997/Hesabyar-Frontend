@@ -8,12 +8,12 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { UserProformas } from "../pages/proformas/Profomas";
-import { NewProForma, NewProforma } from "../pages/proformas/NewProforma";
+import { NewProforma } from "../pages/proformas/NewProforma";
 import { useEffect, useState } from "react";
-import { UserInvoices } from "../pages/invoices/Invoices";
+
 import { NewInvoice } from "../pages/invoices/NewInvoice";
-import { UserNotifications } from "../pages/notifications/UserNotifications";
+import { UserReceivedNotifications } from "../pages/notifications/UserReceivedNotifications";
+import { UserSentdNotifications } from "../pages/notifications/UserSentNotifications";
 import { NewNotification } from "../pages/notifications/NewNotification";
 import { NewCustomer } from "../pages/customers/NewCustomer";
 import { Customers } from "../pages/customers/Customers";
@@ -42,8 +42,9 @@ const validContents = [
   { name: "goods", value: "لیست کالاها" },
   { name: "newUnit", value: "ثبت واحد جدید" },
   { name: "units", value: "لیست واحدها" },
-  { name: "newNotification", value: "پیام جدید" },
-  { name: "notifications", value: "پیام ها" },
+  { name: "newNotification", value: "ارسال پیام " },
+  { name: "incomeNotifications", value: "پیام های دریافتی" },
+  { name: "outgoNotifications", value: "پیام های ارسالی" },
   { name: "userSettings", value: "تنظیمات کاربر" },
   { name: "userUnreadMessages", value: "پیام های خوانده نشده" },
   { name: "logout", value: "خروج" },
@@ -84,8 +85,10 @@ export const MainContents = ({ activeContent, isDesktop }) => {
           return <>Hi4</>;
         case "user":
           return <>User</>;
-        case "notifications":
-          return <UserNotifications isDesktop={isDesktop} />;
+        case "incomeNotifications":
+          return <UserReceivedNotifications isDesktop={isDesktop} />;
+        case "outgoNotifications":
+          return <UserSentdNotifications isDesktop={isDesktop} />;
         case "newNotification":
           return <NewNotification isDesktop={isDesktop} />;
         case "newCustomer":

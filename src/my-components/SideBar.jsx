@@ -15,6 +15,8 @@ import {
   Mail,
   Mails,
   MessageCircleCode,
+  MessageSquare,
+  MessageSquareShare,
   Newspaper,
   PackagePlus,
   Paperclip,
@@ -231,15 +233,21 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           children={[
             {
               id: "newNotification",
-              name: "جدید",
+              name: "ارسال پیام",
               type: "text",
               icon: <Send />,
             },
             {
-              id: "notifications",
-              name: "لیست پیام ها",
+              id: "incomeNotifications",
+              name: "پیام های دریافتی",
               type: "text",
-              icon: <Mail />,
+              icon: <MessageSquare />,
+            },
+            {
+              id: "outgoNotifications",
+              name: "پیام های ارسالی",
+              type: "text",
+              icon: <MessageSquareShare />,
             },
           ]}
           onMenuItemClick={onMenuItemClick}

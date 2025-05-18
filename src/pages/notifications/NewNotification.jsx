@@ -4,6 +4,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Flex,
   FormControl,
   FormLabel,
   HStack,
@@ -11,7 +12,9 @@ import {
   InputGroup,
   InputRightElement,
   Select,
+  SimpleGrid,
   Spinner,
+  Textarea,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -24,7 +27,12 @@ import { GetAllUsers } from "../../api/services/userService";
 import { useNotification } from "../../contexts/NotificationContext";
 
 export const NewNotification = ({ isDesktop }) => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    id: 0,
+    title: "",
+    message: "",
+    toUser: {},
+  });
   const [usersData, setUsersData] = useState([]);
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -35,10 +43,10 @@ export const NewNotification = ({ isDesktop }) => {
   useEffect(() => {
     const fetchUsersData = async () => {
       setLoading(true);
-      const response = await GetAllUsers();
-      const result = response.data;
-      setUsersData(result);
-      setLoading(false);
+      await GetAllUsers().then((res) => {
+        setUsersData(res.data);
+        setLoading(false);
+      });
     };
     fetchUsersData();
   }, []);
@@ -46,35 +54,45 @@ export const NewNotification = ({ isDesktop }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      const response = await CreateNotification(formData);
-      if (response === 200) {
-        loadUnreadeNotif();
-        setFormData({
-          id: "",
-          title: "",
-          message: "",
-          touser: "",
-        });
+    await CreateNotification(formData)
+      .then((res) => {
+        if (res.status == 200 || res.status == 201) {
+          loadUnreadeNotif();
+          setFormData({
+            id: "",
+            title: "",
+            message: "",
+            toUser: {},
+          });
+          toast({
+            title: "ثبت شد",
+            description: `اطلاعات پیام شما ذخیره شد`,
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      })
+      .catch((err) => {
         toast({
-          title: "ثبت شد",
-          description: `اطلاعات پیام شما ذخیره شد`,
-          status: "success",
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
           duration: 3000,
           isClosable: true,
         });
-      }
-    } catch (err) {
-      toast({
-        title: "خطایی رخ داد",
-        description: `${err}`,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setLoading(false);
+      })
+      .finally(setLoading(false));
+  };
+
+  const handleChangeUser = (id) => {
+    if (id == 0 || id == "") {
+      setFormData({ ...formData, toUser: {} });
+      return;
     }
+    const user = usersData.find((u) => (u.id = id));
+    if (!user) return;
+    setFormData({ ...formData, toUser: user });
   };
 
   const handleChangeFormData = (e) => {
@@ -96,80 +114,39 @@ export const NewNotification = ({ isDesktop }) => {
         ثبت پیام جدید
       </CardHeader>
       <CardBody borderTopWidth={2}>
-        <VStack
-          align={"stretch"}
-          direction={["column", "row"]}
-          as="form"
-          spacing={5}
-          onSubmit={handleSubmit}
-        >
-          <FormControl isDisabled>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="90px">
-                ردیف
-              </FormLabel>
-              <MyInputBox icon={Hash} title="ردیف" name="id" />
-            </HStack>
-          </FormControl>
+        <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
+          <SimpleGrid
+            columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+            spacing={4}
+          >
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="90px">
+                  عنوان
+                </FormLabel>
+                <MyInputBox
+                  icon={IdCard}
+                  name="title"
+                  title="عنوان"
+                  value={formData.title}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+            </FormControl>
 
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="90px">
-                عنوان
-              </FormLabel>
-              <MyInputBox
-                icon={IdCard}
-                name="title"
-                title="عنوان"
-                value={formData.title}
-                onChange={handleChangeFormData}
-              />
-            </HStack>
-          </FormControl>
-
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="90px">
-                محتوا
-              </FormLabel>
-              <MyInputBox
-                icon={DollarSign}
-                name="message"
-                title="محتوا"
-                value={formData.message}
-                onChange={handleChangeFormData}
-              />
-            </HStack>
-          </FormControl>
-
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel width="90px">گیرنده</FormLabel>
-              {loading ? (
-                <Spinner />
-              ) : (
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="90px">
+                  گیرنده
+                </FormLabel>
                 <InputGroup>
-                  <InputRightElement
-                    pointerEvents="none"
-                    borderColor="gray.200"
-                    borderWidth={1}
-                    borderRadius={5}
-                    borderLeftRadius={0}
-                  >
-                    <Icon pointerEvents="none" color="gray.500">
-                      <UserSearch />
-                    </Icon>
-                  </InputRightElement>
                   <Select
-                    borderRightWidth={0}
-                    borderRightRadius={0}
-                    pr="2.5rem"
-                    width="auto"
+                    dir="ltr"
                     htmlSize={19}
-                    name="touser"
+                    name="toUser"
                     placeholder="لطفا یکی از کاربران را انتخاب کنید"
-                    value={formData.touser}
-                    onChange={handleChangeFormData}
+                    value={formData.toUser.id}
+                    onChange={(e) => handleChangeUser(e.target.value)}
                   >
                     {usersData.map((user) => (
                       <option key={user.id} value={user.id}>
@@ -178,13 +155,29 @@ export const NewNotification = ({ isDesktop }) => {
                     ))}
                   </Select>
                 </InputGroup>
-              )}
+                {loading && <Spinner />}
+              </HStack>
+            </FormControl>
+          </SimpleGrid>
+
+          <FormControl isRequired>
+            <HStack>
+              <FormLabel hidden={!isDesktop} width="85px">
+                محتوا
+              </FormLabel>
+              <Textarea
+                name="message"
+                placeholder="محتوا"
+                value={formData.message}
+                onChange={handleChangeFormData}
+              />
             </HStack>
           </FormControl>
+
           <Button colorScheme="blue" type="submit" isLoading={loading}>
             تایید
           </Button>
-        </VStack>
+        </Flex>
       </CardBody>
       <CardFooter></CardFooter>
     </Card>
