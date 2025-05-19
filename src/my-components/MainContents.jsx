@@ -23,6 +23,7 @@ import { Units } from "../pages/units/Units";
 import { NewUnit } from "../pages/units/NewUnit";
 import { ProformaDataTable } from "./proformas/ProformaDataTable";
 import { InvoiceDataTable } from "./invoices/InvoiceDataTable";
+import { Users } from "../pages/users/Users";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -47,6 +48,7 @@ const validContents = [
   { name: "outgoNotifications", value: "پیام های ارسالی" },
   { name: "userSettings", value: "تنظیمات کاربر" },
   { name: "userUnreadMessages", value: "پیام های خوانده نشده" },
+  { name: "َchangeUsers", value: "کاربران" },
   { name: "logout", value: "خروج" },
 ];
 
@@ -57,9 +59,9 @@ export const MainContents = ({ activeContent, isDesktop }) => {
   useEffect(() => {
     const findActiveContent = (item) => {
       if (!item || item === "") return;
-
       const valid = validContents.find((i) => i.name === item);
       if (!valid || valid.name === "") return;
+      console.log("valid", activeContent);
       setPageTitle(valid.value);
       const element = SetActiveElement(valid.name);
       setShouldRender(element);
@@ -103,6 +105,8 @@ export const MainContents = ({ activeContent, isDesktop }) => {
           return <NewUnit isDesktop={isDesktop} />;
         case "units":
           return <Units isDesktop={isDesktop} />;
+        case "َchangeUsers":
+          return <Users isDesktop={isDesktop} />;
         default:
           break;
       }

@@ -265,67 +265,62 @@ export const InvoiceDataTable = ({ isDesktop }) => {
                   </Tooltip>
                 </Link>
               </Stack>
-
-              <Modal dir="rtl" onClose={onClose} size={"full"} isOpen={isOpen}>
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader>ویرایش پیش فاکتور</ModalHeader>
-                  <ModalCloseButton />
-                  <ModalBody dir="rtl">
-                    <EditInvoice
-                      isDesktop={isDesktop}
-                      setInvoices={setInvoices}
-                      invoices={invoices}
-                      invoice={invoices.find(
-                        (invoice) => invoice.id === selectedID
-                      )}
-                      onClose={onclose}
-                    />
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button onClick={onClose}>Close</Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
-
-              <AlertDialog
-                motionPreset="slideInTop"
-                onClose={handleDialogClose}
-                isOpen={isDialogOpen}
-                isCentered
-              >
-                <AlertDialogOverlay />
-                <AlertDialogContent>
-                  <AlertDialogHeader>{dialogGears.title}</AlertDialogHeader>
-                  <AlertDialogCloseButton />
-                  <AlertDialogBody dir="rtl">
-                    {dialogGears.text}
-                  </AlertDialogBody>
-                  <AlertDialogFooter>
-                    <Button
-                      onClick={(e) => {
-                        setIsDialogOpen(false);
-                        handleDialogClose("Cancel");
-                      }}
-                    >
-                      خیر
-                    </Button>
-                    <Button
-                      colorScheme="red"
-                      ml={3}
-                      onClick={(e) => {
-                        setIsDialogOpen(false);
-                        handleDialogClose("Confirm");
-                      }}
-                    >
-                      بله
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
             </CardFooter>
           </Card>
         ))}
+        <Modal dir="rtl" onClose={onClose} size={"full"} isOpen={isOpen}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>ویرایش پیش فاکتور</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody dir="rtl">
+              <EditInvoice
+                isDesktop={isDesktop}
+                setInvoices={setInvoices}
+                invoices={invoices}
+                invoice={invoices.find((invoice) => invoice.id === selectedID)}
+                onClose={onclose}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button onClick={onClose}>Close</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        <AlertDialog
+          motionPreset="slideInTop"
+          onClose={handleDialogClose}
+          isOpen={isDialogOpen}
+          isCentered
+        >
+          <AlertDialogOverlay />
+          <AlertDialogContent>
+            <AlertDialogHeader>{dialogGears.title}</AlertDialogHeader>
+            <AlertDialogCloseButton />
+            <AlertDialogBody dir="rtl">{dialogGears.text}</AlertDialogBody>
+            <AlertDialogFooter>
+              <Button
+                onClick={(e) => {
+                  setIsDialogOpen(false);
+                  handleDialogClose("Cancel");
+                }}
+              >
+                خیر
+              </Button>
+              <Button
+                colorScheme="red"
+                ml={3}
+                onClick={(e) => {
+                  setIsDialogOpen(false);
+                  handleDialogClose("Confirm");
+                }}
+              >
+                بله
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </SimpleGrid>
     );
 };

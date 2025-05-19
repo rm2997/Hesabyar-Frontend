@@ -11,8 +11,17 @@ import {
   Badge,
   Tooltip,
   HStack,
+  Divider,
 } from "@chakra-ui/react";
-import { Bell, MenuIcon, SquareEqual, User2 } from "lucide-react";
+import {
+  Bell,
+  Mails,
+  MenuIcon,
+  Settings,
+  SquareEqual,
+  User2,
+  Users,
+} from "lucide-react";
 
 export const HeaderBar = ({
   isDesktop,
@@ -64,6 +73,7 @@ export const HeaderBar = ({
       <Flex gap={4} align="center">
         <Box position="relative">
           <IconButton
+            _hover={{ color: "orange" }}
             id="notifications"
             icon={<Bell />}
             size="sm"
@@ -85,6 +95,7 @@ export const HeaderBar = ({
 
         <Menu>
           <MenuButton
+            _hover={{ color: "orange" }}
             as={IconButton}
             id="user"
             icon={<User2 />}
@@ -93,13 +104,44 @@ export const HeaderBar = ({
             variant=""
           />
           <MenuList color="black">
-            <MenuItem onClick={() => OnItemClick("userSettings")}>
-              تنظیمات
+            <MenuItem
+              color="orange.400"
+              onClick={() => OnItemClick("َchangeUsers")}
+            >
+              <HStack spacing={3}>
+                <Users />
+                <Text color="black">کاربران</Text>
+              </HStack>
             </MenuItem>
-            <MenuItem onClick={() => OnItemClick("userUnreadMessages")}>
-              پیام‌های مشاهده‌نشده
+
+            <Divider />
+
+            <MenuItem
+              color="blue.400"
+              onClick={() => OnItemClick("userSettings")}
+            >
+              <HStack spacing={3}>
+                <Settings />
+                <Text color="black">تنظیمات</Text>
+              </HStack>
             </MenuItem>
-            <MenuItem onClick={() => OnItemClick("logout")}>خروج</MenuItem>
+
+            <MenuItem
+              color="green.400"
+              onClick={() => OnItemClick("userUnreadMessages")}
+            >
+              <HStack spacing={3}>
+                <Mails />
+                <Text color="black"> پیام‌های مشاهده‌ نشده</Text>
+              </HStack>
+            </MenuItem>
+            <Divider />
+            <MenuItem color="red.500" onClick={() => OnItemClick("logout")}>
+              <HStack spacing={3}>
+                <Mails />
+                <Text color="black"> خروج</Text>
+              </HStack>
+            </MenuItem>
           </MenuList>
         </Menu>
       </Flex>

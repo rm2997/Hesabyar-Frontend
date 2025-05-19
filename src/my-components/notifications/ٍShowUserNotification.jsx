@@ -12,31 +12,18 @@ import { MyInputBox } from "../MyInputBox";
 import { ShowNotifictionById } from "../../api/services/notificationService";
 import { GetAllUsers } from "../../api/services/userService";
 
-export const ShowUserNotification = ({ id, onClose }) => {
+export const ShowUserNotification = ({ id, notifications, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const [usersData, setUsersData] = useState([]);
 
   useEffect(() => {
-    const loadFormData = async (id) => {
-      setLoading(true);
-      try {
-        const response = await ShowNotifictionById(id);
-        if (!response.data) return;
-        setFormData(...response.data);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     const fetchUsersData = async () => {
       setLoading(true);
       try {
-        const response = await GetAllUsers();
-        const result = response.data;
-        setUsersData(result);
+        GetAllUsers().then((res) => {
+          setUsersData(res.data);
+        });
       } catch (err) {
         console.log(err);
       } finally {
@@ -45,45 +32,32 @@ export const ShowUserNotification = ({ id, onClose }) => {
     };
 
     fetchUsersData();
-    loadFormData(id);
   }, [id]);
 
-  const handleChangeFormData = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  useEffect(() => {
+    const loadData = async () => {
+      const notification = notifications.find((n) => n.id === id);
+      setFormData(notification);
+    };
+    loadData();
+  }, [id]);
 
   return (
     <VStack as="form" spacing={5} dir="rtl">
       {loading} && <MyLoading />
-      <FormControl isRequired isDisabled>
-        <HStack>
-          <FormLabel width={110}>ردیف</FormLabel>
-          <MyInputBox
-            name="id"
-            size={19}
-            icon={Hash}
-            title="ردیف"
-            value={formData.id}
-          />
-        </HStack>
-      </FormControl>
-      <FormControl isDisabled isRequired>
+      <FormControl isDisabled>
         <HStack>
           <FormLabel width={110}>عنوان</FormLabel>
           <MyInputBox
-            onChange={(e) => handleChangeFormData(e)}
             size={19}
             icon={Captions}
             name="title"
             title="عنوان"
-            value={formData.title}
+            value={formData?.title}
           />
         </HStack>
       </FormControl>
-      <FormControl isDisabled isRequired>
+      <FormControl isDisabled>
         <HStack>
           <FormLabel width={110}>محتوا</FormLabel>
           <MyInputBox
@@ -91,29 +65,22 @@ export const ShowUserNotification = ({ id, onClose }) => {
             icon={ScrollText}
             title="محتوا"
             name="message"
-            value={formData.message}
-            onChange={handleChangeFormData}
+            value={formData?.message}
           />
         </HStack>
       </FormControl>
-      <FormControl isDisabled isRequired>
+      <FormControl isDisabled>
         <HStack>
           <FormLabel width={110}>گیرنده</FormLabel>
           <MyInputBox
             size={19}
             icon={User}
             title="گیرنده"
-            name="touser"
-            value={formData.touser}
-            onChange={handleChangeFormData}
+            name="toUser"
+            value={formData?.toUser?.userfname}
           />
         </HStack>
       </FormControl>
-      <HStack>
-        <Button colorScheme="blue" onClick={onClose}>
-          تایید
-        </Button>
-      </HStack>
     </VStack>
   );
 };

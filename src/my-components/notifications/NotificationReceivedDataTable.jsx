@@ -1,4 +1,12 @@
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogCloseButton,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Button,
   Card,
   CardBody,
   CardFooter,
@@ -8,6 +16,13 @@ import {
   HStack,
   Icon,
   Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   SimpleGrid,
   Stack,
   Table,
@@ -23,6 +38,7 @@ import {
   Tr,
   VStack,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import {
   Edit,
@@ -38,6 +54,7 @@ import {
   Mail,
   MailOpen,
   EyeClosed,
+  View,
 } from "lucide-react";
 
 import { MyModalContainer } from "../MyModalContainer";
@@ -45,6 +62,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import {
   MarkNotificationAsRead,
   MarkNotificationAsUnread,
+  RemoveNotification,
 } from "../../api/services/notificationService";
 import { ShowUserNotification } from "./ٍShowUserNotification";
 import { useNotification } from "../../contexts/NotificationContext";
@@ -52,12 +70,20 @@ import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 
 export const NotificationReceivedDataTable = ({ DataRows }) => {
+  const [dialogGears, setDialogGears] = useState({
+    title: "",
+    text: "",
+    callBack: null,
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [selectedID, setSelectedID] = useState(0);
   const [userMessages, setUserMessages] = useState([]);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { loadUnreadeNotif } = useNotification();
+  const toast = useToast();
 
   useEffect(() => {
     setUserMessages([...DataRows]);
@@ -68,24 +94,18 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
   }, []);
 
   const setUserMessagesAsRead = async (id) => {
-    const messages = userMessages.filter((u) => u.id != id);
-    const message = userMessages.find((u) => u.id == id);
-    message.read = true;
-    if (!message) return;
-    messages.push(message);
-    setUserMessages(messages);
+    setUserMessages((prev) =>
+      prev.map((msg) => (msg.id === id ? { ...msg, receiverRead: true } : msg))
+    );
   };
 
   const setUserMessagesAsUnread = async (id) => {
-    const messages = userMessages.filter((u) => u.id != id);
-    const message = userMessages.find((u) => u.id == id);
-    message.read = false;
-    if (!message) return;
-    messages.push(message);
-    setUserMessages(messages);
+    setUserMessages((prev) =>
+      prev.map((msg) => (msg.id === id ? { ...msg, receiverRead: false } : msg))
+    );
   };
+
   const handleMarkAsReadNotification = async (id) => {
-    console.log(id);
     setSelectedID(id);
     try {
       await MarkNotificationAsRead(id);
@@ -97,7 +117,6 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
   };
 
   const handleMarkAsUnreadNotification = async (id) => {
-    console.log(id);
     setSelectedID(id);
     try {
       await MarkNotificationAsUnread(id);
@@ -108,19 +127,39 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
     }
   };
 
-  const handleDeleteNotification = (id) => {
-    setSelectedID(id);
-    setModalHeader("آیا از حذف پیام زیر اطمینان دارید؟");
-    //setModalContetnt(<DeleteProforma id={id} onClose={onClose} />);
-    //onOpen();
+  const handleDialogClose = (result) => {
+    if (result === "Confirm") dialogGears.callBack(selectedID);
+  };
+  const handleDeleteNotification = () => {
+    setLoading(true);
+    RemoveNotification(selectedID)
+      .then((res) => {
+        const notifs = userMessages.filter((n) => n.id !== selectedID);
+        setUserMessages(notifs);
+        toast({
+          title: "توجه",
+          description: ` پیام حذف شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) =>
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      )
+      .finally(setLoading(false));
   };
 
   const handleShowNotification = async (id) => {
     if (id === 0) return;
-    await handleMarkAsReadNotification(id);
-    setModalHeader("مشاهده پیام");
-    setModalContetnt(<ShowUserNotification id={id} onClose={onClose} />);
-    onOpen();
+    setSelectedID(id);
+    handleMarkAsReadNotification(id).then(() => onOpen());
   };
 
   dayjs.extend(jalali);
@@ -128,7 +167,7 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
   return (
     <Flex direction="column" gap={4}>
       <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
-        {DataRows.map((row) => (
+        {userMessages.map((row) => (
           <Card
             borderTopRadius={5}
             borderWidth={1}
@@ -136,7 +175,7 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
           >
             <CardHeader bg="green.500" borderTopRadius={5} color="white">
               <HStack>
-                {row.read ? (
+                {row.receiverRead ? (
                   <Tooltip label="خوانده شده">
                     <MailOpen color="yellow" />
                   </Tooltip>
@@ -159,7 +198,7 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
                 </HStack>
                 <Divider />
                 <HStack>
-                  <Text>از طرف :</Text>
+                  <Text>فرستنده :</Text>
                   <Text mr="auto">
                     {row.fromUser?.userfname + " " + row.fromUser?.userlname}
                   </Text>
@@ -182,7 +221,7 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
                 align={"stretch"}
                 mr="auto"
               >
-                {row.read ? (
+                {row.receiverRead ? (
                   <Link
                     _hover={{
                       color: "orange",
@@ -207,9 +246,33 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
                     </Tooltip>
                   </Link>
                 )}
-                <Link _hover={{ color: "#ffd54f" }} color="red.600">
+                <Link
+                  _hover={{ color: "#ffd54f" }}
+                  color="red.600"
+                  onClick={(e) => {
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "حذف پیام",
+                      text: "آیا واقعا می خواهید این پیام را حذف کنید؟",
+                      callBack: handleDeleteNotification,
+                    });
+                    setIsDialogOpen(true);
+                  }}
+                >
                   <Tooltip label="حذف">
                     <Icon w={6} h={6} as={Trash2} />
+                  </Tooltip>
+                </Link>
+
+                <Link
+                  _hover={{ color: "#ffd54f" }}
+                  color="green"
+                  onClick={() => {
+                    handleShowNotification(row.id);
+                  }}
+                >
+                  <Tooltip label="مشاهده">
+                    <Icon w={6} h={6} as={View} />
                   </Tooltip>
                 </Link>
               </Stack>
@@ -217,6 +280,59 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
           </Card>
         ))}
       </SimpleGrid>
+      <Modal dir="rtl" onClose={onClose} size={"md"} isOpen={isOpen}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader bg="blue.400">مشاهده پیام</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody dir="rtl">
+            <ShowUserNotification
+              id={selectedID}
+              notifications={userMessages}
+              onClose={onClose}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={onClose}>
+              تایید
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <AlertDialog
+        motionPreset="slideInTop"
+        onClose={handleDialogClose}
+        isOpen={isDialogOpen}
+        isCentered
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+          <AlertDialogHeader>{dialogGears.title}</AlertDialogHeader>
+          <AlertDialogCloseButton />
+          <AlertDialogBody dir="rtl">{dialogGears.text}</AlertDialogBody>
+          <AlertDialogFooter>
+            <Button
+              onClick={(e) => {
+                setIsDialogOpen(false);
+                handleDialogClose("Cancel");
+              }}
+            >
+              خیر
+            </Button>
+            <Button
+              colorScheme="red"
+              ml={3}
+              onClick={(e) => {
+                setIsDialogOpen(false);
+                handleDialogClose("Confirm");
+              }}
+            >
+              بله
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Flex>
   );
 };
