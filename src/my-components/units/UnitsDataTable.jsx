@@ -3,88 +3,90 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Divider,
   Flex,
   HStack,
   Icon,
   Link,
   SimpleGrid,
   Stack,
-  Table,
-  TableCaption,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Tfoot,
-  Th,
-  Thead,
   Tooltip,
-  Tr,
   VStack,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import {
-  Edit,
-  FilePenLine,
-  Replace,
-  Ruler,
-  Send,
-  Trash2,
-  User2,
-  UsersRound,
-  WalletCards,
-} from "lucide-react";
-import { MyModalContainer } from "../MyModalContainer";
+import { FilePenLine, Ruler, Trash2 } from "lucide-react";
+
 import { useEffect, useState } from "react";
 import { EditUnit } from "./EditUnit";
 import { DeleteUnit } from "./DeleteUnit";
+import { MyAlert } from "../MyAlert";
+import { MyModal } from "../MyModal";
+import { RemoveUnit } from "../../api/services/unitsService";
 
 export const UnitsDataTable = ({ HeadLables, DataRows }) => {
+  const [dialogGears, setDialogGears] = useState({
+    title: "",
+    text: "",
+    callBack: null,
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [unitsData, setUnitsData] = useState([]);
   const [selectedID, setSelectedID] = useState(0);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+
+  const handleDialogClose = (result) => {
+    setIsDialogOpen(false);
+    if (result === "Confirm") dialogGears.callBack(selectedID);
+  };
 
   const updateUnitInList = (updatedUnit) => {
     setUnitsData((prev) =>
-      prev.map((Unit) => (Unit.id === updatedUnit.id ? updatedUnit : Unit))
+      prev.map((u) => (u.id == updatedUnit.id ? updatedUnit : u))
     );
   };
 
   const deleteUnitFromList = (id) => {
-    setUnitsData((prev) => prev.filter((Unit) => Unit.id !== id));
+    setUnitsData((prev) => prev.filter((u) => u.id != id));
   };
 
   const findUnitFromList = (id) => {
-    unitsData.map((Unit) => (Unit.id === id ? Unit : null));
+    unitsData.map((u) => (u.id === id ? u : null));
   };
 
-  const handleDeleteUnit = (id) => {
-    setSelectedID(id);
-    setModalHeader("آیا از حذف واحد زیر اطمینان دارید؟");
-    setModalContetnt(
-      <DeleteUnit id={id} onDelete={deleteUnitFromList} onClose={onClose} />
-    );
-    onOpen();
+  const handleDeleteUnit = () => {
+    if (selectedID === 0) return;
+    setLoading(true);
+    RemoveUnit(selectedID)
+      .then((res) => {
+        deleteUnitFromList(selectedID);
+        toast({
+          title: "توجه",
+          description: ` ,واحد حذف شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) =>
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      )
+      .finally(setLoading(false));
   };
 
-  const handleEditUnit = (id) => {
-    if (id === 0) return;
-
-    setSelectedID(id);
-    setModalHeader("ویرایش مشخصات واحد");
-    setModalContetnt(
-      <EditUnit
-        id={id}
-        onClose={onClose}
-        onUpdate={updateUnitInList}
-        Unit={findUnitFromList(id)}
-      />
-    );
-    onOpen();
+  const handleEditUnit = () => {
+    if (selectedID === 0) return;
   };
 
   useEffect(() => {
@@ -130,12 +132,31 @@ export const UnitsDataTable = ({ HeadLables, DataRows }) => {
                     color: "orange",
                   }}
                   color="blue.600"
+                  onClick={(e) => {
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "ویرایش واحد",
+                    });
+                    onOpen();
+                  }}
                 >
                   <Tooltip label="ویرایش">
                     <Icon w={6} h={6} as={FilePenLine} />
                   </Tooltip>
                 </Link>
-                <Link _hover={{ color: "#ffd54f" }} color="red.600">
+                <Link
+                  _hover={{ color: "#ffd54f" }}
+                  color="red.600"
+                  onClick={(e) => {
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "حذف واحد",
+                      text: "آیا واقعا می خواهید این واحد را حذف کنید؟",
+                      callBack: handleDeleteUnit,
+                    });
+                    setIsDialogOpen(true);
+                  }}
+                >
                   <Tooltip label="حذف">
                     <Icon w={6} h={6} as={Trash2} />
                   </Tooltip>
@@ -145,6 +166,24 @@ export const UnitsDataTable = ({ HeadLables, DataRows }) => {
           </Card>
         ))}
       </SimpleGrid>
+      <MyModal
+        modalHeader={dialogGears.title}
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <EditUnit
+          id={selectedID}
+          onClose={onClose}
+          onUpdate={updateUnitInList}
+          Unit={findUnitFromList(selectedID)}
+        />
+      </MyModal>
+      <MyAlert
+        AlertHeader={dialogGears.title}
+        AlertMessage={dialogGears.text}
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+      />
     </Flex>
   );
 };

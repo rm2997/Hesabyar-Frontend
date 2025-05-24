@@ -10,42 +10,38 @@ import {
   Link,
   SimpleGrid,
   Stack,
-  Table,
-  TableCaption,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Tfoot,
-  Th,
-  Thead,
   Tooltip,
-  Tr,
   VStack,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import {
-  Edit,
-  FilePenLine,
-  Replace,
-  Send,
-  Trash2,
-  User2,
-  UsersRound,
-  WalletCards,
-} from "lucide-react";
-import { MyModalContainer } from "../MyModalContainer";
+import { FilePenLine, Trash2, WalletCards } from "lucide-react";
+
 import { useEffect, useState } from "react";
 import { EditGood } from "./EditGood";
-import { DeleteGood } from "./DeleteGood";
+import { MyModal } from "../MyModal";
+import { MyAlert } from "../MyAlert";
+import { RemoveGood } from "../../api/services/goodsService";
 
 export const GoodsDataTable = ({ HeadLables, DataRows }) => {
   const [goodsData, setGoodsData] = useState([]);
   const [selectedID, setSelectedID] = useState(0);
-  const [modalContetnt, setModalContetnt] = useState(null);
-  const [modalHeader, setModalHeader] = useState("");
+  const [dialogGears, setDialogGears] = useState({
+    title: "",
+    text: "",
+    callBack: null,
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+
+  const handleDialogClose = (result) => {
+    setIsDialogOpen(false);
+    if (result === "Confirm") dialogGears.callBack(selectedID);
+  };
 
   const updateGoodInList = (updatedGood) => {
     setGoodsData((prev) =>
@@ -61,29 +57,34 @@ export const GoodsDataTable = ({ HeadLables, DataRows }) => {
     goodsData.map((g) => (g.id === id ? g : null));
   };
 
-  const handleDeleteGood = (id) => {
-    setSelectedID(id);
-    setModalHeader("آیا از حذف کالای زیر اطمینان دارید؟");
-    setModalContetnt(
-      <DeleteGood id={id} onDelete={deleteGoodFromList} onClose={onClose} />
-    );
-    onOpen();
+  const handleDeleteGood = () => {
+    if (selectedID === 0) return;
+    RemoveGood(selectedID)
+      .then((res) => {
+        setLoading(true);
+        deleteGoodFromList(selectedID);
+        toast({
+          title: "توجه",
+          description: ` ,واحد حذف شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) =>
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      )
+      .finally(setLoading(false));
   };
 
   const handleEditGood = (id) => {
-    if (id === 0) return;
-
-    setSelectedID(id);
-    setModalHeader("ویرایش مشخصات کالا");
-    setModalContetnt(
-      <EditGood
-        id={id}
-        onClose={onClose}
-        onUpdate={updateGoodInList}
-        Good={findGoodFromList(id)}
-      />
-    );
-    onOpen();
+    if (selectedID === 0) return;
   };
 
   useEffect(() => {
@@ -139,12 +140,33 @@ export const GoodsDataTable = ({ HeadLables, DataRows }) => {
                     color: "orange",
                   }}
                   color="blue.600"
+                  onClick={(e) => {
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "ویرایش کالا",
+                      text: "",
+                      callBack: null,
+                    });
+                    onOpen();
+                  }}
                 >
                   <Tooltip label="ویرایش">
                     <Icon w={6} h={6} as={FilePenLine} />
                   </Tooltip>
                 </Link>
-                <Link _hover={{ color: "#ffd54f" }} color="red.600">
+                <Link
+                  _hover={{ color: "#ffd54f" }}
+                  color="red.600"
+                  onClick={(e) => {
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "حذف کالا",
+                      text: "آیا واقعا می خواهید این کالا را حذف کنید؟",
+                      callBack: handleDeleteGood,
+                    });
+                    setIsDialogOpen(true);
+                  }}
+                >
                   <Tooltip label="حذف">
                     <Icon w={6} h={6} as={Trash2} />
                   </Tooltip>
@@ -154,6 +176,20 @@ export const GoodsDataTable = ({ HeadLables, DataRows }) => {
           </Card>
         ))}
       </SimpleGrid>
+      <MyModal modalHeader="مشاهده پیام" isOpen={isOpen} onClose={onClose}>
+        <EditGood
+          id={selectedID}
+          onClose={onClose}
+          onUpdate={updateGoodInList}
+          Good={findGoodFromList(selectedID)}
+        />
+      </MyModal>
+      <MyAlert
+        AlertHeader={dialogGears.title}
+        AlertMessage={dialogGears.text}
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+      />
     </Flex>
   );
 };

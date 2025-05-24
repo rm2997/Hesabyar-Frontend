@@ -48,6 +48,8 @@ import {
   ShowUserAllInvoices,
 } from "../../api/services/invoiceService";
 import { useEffect, useState } from "react";
+import { MyModal } from "../MyModal";
+import { MyAlert } from "../MyAlert";
 
 export const InvoiceDataTable = ({ isDesktop }) => {
   const [invoices, setInvoices] = useState([]);
@@ -81,6 +83,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleDialogClose = (result) => {
+    setIsDialogOpen(false);
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
 
@@ -268,59 +271,22 @@ export const InvoiceDataTable = ({ isDesktop }) => {
             </CardFooter>
           </Card>
         ))}
-        <Modal dir="rtl" onClose={onClose} size={"full"} isOpen={isOpen}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>ویرایش پیش فاکتور</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody dir="rtl">
-              <EditInvoice
-                isDesktop={isDesktop}
-                setInvoices={setInvoices}
-                invoices={invoices}
-                invoice={invoices.find((invoice) => invoice.id === selectedID)}
-                onClose={onclose}
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button onClick={onClose}>Close</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
 
-        <AlertDialog
-          motionPreset="slideInTop"
+        <MyModal modalHeader="ویرایش فاکتور" onClose={onClose} isOpen={isOpen}>
+          <EditInvoice
+            isDesktop={isDesktop}
+            setInvoices={setInvoices}
+            invoices={invoices}
+            invoice={invoices.find((invoice) => invoice.id === selectedID)}
+            onClose={onclose}
+          />
+        </MyModal>
+        <MyAlert
           onClose={handleDialogClose}
           isOpen={isDialogOpen}
-          isCentered
-        >
-          <AlertDialogOverlay />
-          <AlertDialogContent>
-            <AlertDialogHeader>{dialogGears.title}</AlertDialogHeader>
-            <AlertDialogCloseButton />
-            <AlertDialogBody dir="rtl">{dialogGears.text}</AlertDialogBody>
-            <AlertDialogFooter>
-              <Button
-                onClick={(e) => {
-                  setIsDialogOpen(false);
-                  handleDialogClose("Cancel");
-                }}
-              >
-                خیر
-              </Button>
-              <Button
-                colorScheme="red"
-                ml={3}
-                onClick={(e) => {
-                  setIsDialogOpen(false);
-                  handleDialogClose("Confirm");
-                }}
-              >
-                بله
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+          AlertHeader={dialogGears.title}
+          AlertMessage={dialogGears.text}
+        />
       </SimpleGrid>
     );
 };

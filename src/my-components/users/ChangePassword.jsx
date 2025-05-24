@@ -11,17 +11,18 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { IdCard, Info, Ruler, SquareCheckBig } from "lucide-react";
+import { Info, SquareCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
-import { CreateUnit } from "../../api/services/unitsService";
+import { ChangePass } from "../../api/services/userService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { GetAllUsers } from "../../api/services/userService";
 
 export const ChangePassword = ({ isDesktop }) => {
   const [formData, setFormData] = useState({
-    user: {},
-    password: "",
+    id: 0,
+    current: "",
+    new: "",
     confirm: "",
   });
   const [users, setUsers] = useState([]);
@@ -47,32 +48,33 @@ export const ChangePassword = ({ isDesktop }) => {
     e.preventDefault();
     setLoading(true);
 
-    // CreateUser(formData)
-    //   .then((res) => {
-    //     if (!res.data) return;
-    //     setFormData({
-    //       user: {},
-    //       password: "",
-    //       confirm: "",
-    //     });
-    //     toast({
-    //       title: "ثبت شد",
-    //       description: `اطلاعات ذخیره شد`,
-    //       status: "success",
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //   })
-    //   .catch((err) =>
-    //     toast({
-    //       title: "خطایی رخ داد",
-    //       description: `${err}`,
-    //       status: "error",
-    //       duration: 3000,
-    //       isClosable: true,
-    //     })
-    //   )
-    //   .finally(setLoading(false));
+    ChangePass(formData.id, formData)
+      .then((res) => {
+        if (!res.data) return;
+        setFormData({
+          id: 0,
+          current: "",
+          new: "",
+          confirm: "",
+        });
+        toast({
+          title: "ثبت شد",
+          description: `اطلاعات ذخیره شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) =>
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      )
+      .finally(setLoading(false));
   };
 
   const handleChangeUser = (id) => {
@@ -80,7 +82,7 @@ export const ChangePassword = ({ isDesktop }) => {
     const user = users.find((u) => u.id == id);
 
     if (!user || id === 0 || id === "") setFormData({ ...formData, user: {} });
-    else setFormData({ ...formData, user: user });
+    else setFormData({ ...formData, id: id });
   };
 
   const handleChangeFormData = (e) => {
@@ -130,23 +132,38 @@ export const ChangePassword = ({ isDesktop }) => {
               </Select>
             </HStack>
           </FormControl>
-          <FormControl isRequired>
+          <FormControl>
             <HStack>
               <FormLabel hidden={!isDesktop} width="170px">
-                کلمه عبور
+                کلمه عبور فعلی
               </FormLabel>
               <MyInputBox
                 type="password"
                 icon={Info}
-                name="password"
-                title="کلمه عبور"
+                name="current"
+                title="کلمه عبور فعلی"
                 size={30}
-                value={formData.password}
+                value={formData.current}
                 onChange={handleChangeFormData}
               ></MyInputBox>
             </HStack>
           </FormControl>
-
+          <FormControl isRequired>
+            <HStack>
+              <FormLabel hidden={!isDesktop} width="170px">
+                کلمه عبور جدید
+              </FormLabel>
+              <MyInputBox
+                type="password"
+                icon={Info}
+                name="new"
+                title="کلمه عبور جدید"
+                size={30}
+                value={formData.new}
+                onChange={handleChangeFormData}
+              ></MyInputBox>
+            </HStack>
+          </FormControl>
           <FormControl isRequired>
             <HStack>
               <FormLabel hidden={!isDesktop} width="170px">
@@ -160,7 +177,7 @@ export const ChangePassword = ({ isDesktop }) => {
                 size={30}
                 value={formData.confirm}
                 onChange={handleChangeFormData}
-              ></MyInputBox>
+              />
             </HStack>
           </FormControl>
 

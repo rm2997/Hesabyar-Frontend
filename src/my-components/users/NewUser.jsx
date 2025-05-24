@@ -4,24 +4,28 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Flex,
   FormControl,
   FormLabel,
   HStack,
   Select,
+  SimpleGrid,
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { IdCard, Info, Ruler, SquareCheckBig } from "lucide-react";
+import { IdCard, Info, Phone, Ruler, SquareCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateUnit } from "../../api/services/unitsService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
-import { GetAllUsers } from "../../api/services/userService";
+import { CreateUser, GetAllUsers } from "../../api/services/userService";
+import { UserRoles } from "../../api/services/enums/roles.enum";
 
 export const NewUser = ({ isDesktop }) => {
   const [formData, setFormData] = useState({
     id: 0,
     role: "",
+    username: "",
     userfname: "",
     userlname: "",
     usermobilenumber: "",
@@ -29,13 +33,14 @@ export const NewUser = ({ isDesktop }) => {
     confirm: "",
   });
   const [users, setUsers] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
 
   useEffect(() => {
-    const loadData = () => {
+    const loadUsersData = () => {
       setLoading(true);
       GetAllUsers()
         .then((res) => {
@@ -45,38 +50,52 @@ export const NewUser = ({ isDesktop }) => {
         .catch((err) => {})
         .finally(setLoading(false));
     };
-    loadData();
+
+    loadUsersData();
   }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    if (formData.password !== formData.confirm) {
+      toast({
+        title: "خطایی رخ داد",
+        description: `کلمه عبور باید با تکرار آن برابر باشد`,
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
 
-    // CreateUser(formData)
-    //   .then((res) => {
-    //     if (!res.data) return;
-    //     setFormData({
-    //       user: {},
-    //       password: "",
-    //       confirm: "",
-    //     });
-    //     toast({
-    //       title: "ثبت شد",
-    //       description: `اطلاعات ذخیره شد`,
-    //       status: "success",
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //   })
-    //   .catch((err) =>
-    //     toast({
-    //       title: "خطایی رخ داد",
-    //       description: `${err}`,
-    //       status: "error",
-    //       duration: 3000,
-    //       isClosable: true,
-    //     })
-    //   )
-    //   .finally(setLoading(false));
+    setLoading(true);
+    CreateUser(formData)
+      .then((res) => {
+        setFormData({
+          role: "",
+          username: "",
+          userfname: "",
+          userlname: "",
+          usermobilenumber: "",
+          password: "",
+          confirm: "",
+        });
+        toast({
+          title: "ثبت شد",
+          description: `اطلاعات کاربر ذخیره شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) =>
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      )
+      .finally(setLoading(false));
   };
 
   const handleChangeUser = (id) => {
@@ -88,6 +107,7 @@ export const NewUser = ({ isDesktop }) => {
   };
 
   const handleChangeFormData = (e) => {
+    console.log(e.target.name, e.target.value);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -103,85 +123,131 @@ export const NewUser = ({ isDesktop }) => {
         borderTopRadius={5}
         color="black"
       >
-        تغییر کلمه عبور
+        کاربر جدید
       </CardHeader>
       <CardBody borderTopWidth={2}>
-        <VStack
-          align={"stretch"}
-          direction={["column", "row"]}
-          as="form"
-          spacing={5}
-          onSubmit={handleSubmit}
-        >
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="150px">
-                نام کاربری
-              </FormLabel>
-            </HStack>
-          </FormControl>
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="150px">
-                نام
-              </FormLabel>
-            </HStack>
-          </FormControl>
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="150px">
-                نام خانوادگی
-              </FormLabel>
-            </HStack>
-          </FormControl>
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="150px">
-                شماره موبایل
-              </FormLabel>
-            </HStack>
-          </FormControl>
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="150px">
-                نقش کاربری
-              </FormLabel>
-            </HStack>
-          </FormControl>
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                کلمه عبور
-              </FormLabel>
-              <MyInputBox
-                type="password"
-                icon={Info}
-                name="password"
-                title="کلمه عبور"
-                size={30}
-                value={formData.password}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
+        <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
+          <SimpleGrid
+            columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+            spacing={4}
+          >
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  نام کاربری
+                </FormLabel>
+                <MyInputBox
+                  icon={IdCard}
+                  name="username"
+                  title="نام کاربری"
+                  size={30}
+                  value={formData.username}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+            </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="135px">
+                  نقش کاربری
+                </FormLabel>
+                <Select
+                  placeholder="یک نقش انتخاب کنید"
+                  dir="ltr"
+                  value={formData.role}
+                  name="role"
+                  width="402px"
+                  onChange={handleChangeFormData}
+                >
+                  {UserRoles.map((r) => (
+                    <option key={r.key} value={r.value}>
+                      {r.value}
+                    </option>
+                  ))}
+                </Select>
+              </HStack>
+            </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  نام
+                </FormLabel>
+                <MyInputBox
+                  icon={IdCard}
+                  name="userfname"
+                  title="نام"
+                  size={30}
+                  value={formData.userfname}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+            </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  نام خانوادگی
+                </FormLabel>
+                <MyInputBox
+                  icon={IdCard}
+                  name="userlname"
+                  title="نام خانوادگی"
+                  size={30}
+                  value={formData.userlname}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+            </FormControl>
 
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                تکرار کلمه عبور
-              </FormLabel>
-              <MyInputBox
-                icon={Info}
-                type="password"
-                name="confirm"
-                title="تکرار کلمه عبور"
-                size={30}
-                value={formData.confirm}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  شماره موبایل
+                </FormLabel>
+                <MyInputBox
+                  icon={Phone}
+                  name="usermobilenumber"
+                  title="شماره موبایل"
+                  size={30}
+                  value={formData.usermobilenumber}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+            </FormControl>
 
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  کلمه عبور
+                </FormLabel>
+                <MyInputBox
+                  type="password"
+                  icon={Info}
+                  name="password"
+                  title="کلمه عبور"
+                  size={30}
+                  value={formData.password}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+            </FormControl>
+
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  تکرار کلمه عبور
+                </FormLabel>
+                <MyInputBox
+                  icon={Info}
+                  type="password"
+                  name="confirm"
+                  title="تکرار کلمه عبور"
+                  size={30}
+                  value={formData.confirm}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+          </SimpleGrid>
           <Button
             leftIcon={<SquareCheckBig />}
             colorScheme="blue"
@@ -190,7 +256,7 @@ export const NewUser = ({ isDesktop }) => {
           >
             تایید
           </Button>
-        </VStack>
+        </Flex>
       </CardBody>
       <CardFooter></CardFooter>
     </Card>

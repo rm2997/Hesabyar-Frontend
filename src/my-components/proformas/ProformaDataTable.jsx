@@ -50,6 +50,8 @@ import {
 } from "../../api/services/proformaService";
 import { useEffect, useState } from "react";
 import { CreateInvoice } from "../../api/services/invoiceService";
+import { MyModal } from "../MyModal";
+import { MyAlert } from "../MyAlert";
 
 export const ProformaDataTable = ({ isDesktop }) => {
   const [proformas, setProformas] = useState([]);
@@ -58,7 +60,7 @@ export const ProformaDataTable = ({ isDesktop }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-  const [deleteDialogResult, setDeleteDialogResult] = useState(null);
+
   const [dialogGears, setDialogGears] = useState({
     title: "",
     text: "",
@@ -84,6 +86,7 @@ export const ProformaDataTable = ({ isDesktop }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleDialogClose = (result) => {
+    setIsDialogOpen(false);
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
 
@@ -354,61 +357,24 @@ export const ProformaDataTable = ({ isDesktop }) => {
             </CardFooter>
           </Card>
         ))}
-        <Modal dir="rtl" onClose={onClose} size={"full"} isOpen={isOpen}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>ویرایش پیش فاکتور</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody dir="rtl">
-              <EditProforma
-                isDesktop={isDesktop}
-                setProformas={setProformas}
-                proformas={proformas}
-                proforma={proformas.find(
-                  (proforma) => proforma.id === selectedID
-                )}
-                onClose={onclose}
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button onClick={onClose}>Close</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-
-        <AlertDialog
-          motionPreset="slideInTop"
+        <MyModal
+          modalHeader="ویرایش پیش فاکتور"
+          onClose={onClose}
+          isOpen={isOpen}
+        >
+          <EditProforma
+            isDesktop={isDesktop}
+            setProformas={setProformas}
+            proformas={proformas}
+            proforma={proformas.find((proforma) => proforma.id === selectedID)}
+          />
+        </MyModal>
+        <MyAlert
           onClose={handleDialogClose}
           isOpen={isDialogOpen}
-          isCentered
-        >
-          <AlertDialogOverlay />
-          <AlertDialogContent>
-            <AlertDialogHeader>{dialogGears.title}</AlertDialogHeader>
-            <AlertDialogCloseButton />
-            <AlertDialogBody dir="rtl">{dialogGears.text}</AlertDialogBody>
-            <AlertDialogFooter>
-              <Button
-                onClick={(e) => {
-                  setIsDialogOpen(false);
-                  handleDialogClose("Cancel");
-                }}
-              >
-                خیر
-              </Button>
-              <Button
-                colorScheme="red"
-                ml={3}
-                onClick={(e) => {
-                  setIsDialogOpen(false);
-                  handleDialogClose("Confirm");
-                }}
-              >
-                بله
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+          AlertHeader={dialogGears.title}
+          AlertMessage={dialogGears.text}
+        />
       </SimpleGrid>
     );
 };

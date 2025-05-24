@@ -1,12 +1,4 @@
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogCloseButton,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
   Card,
   CardBody,
   CardFooter,
@@ -16,48 +8,16 @@ import {
   HStack,
   Icon,
   Link,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   SimpleGrid,
   Stack,
-  Table,
-  TableCaption,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Tfoot,
-  Th,
-  Thead,
   Tooltip,
-  Tr,
   VStack,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import {
-  Edit,
-  FilePenLine,
-  Replace,
-  Ruler,
-  Send,
-  Trash2,
-  User2,
-  UsersRound,
-  WalletCards,
-  Eye,
-  Mail,
-  MailOpen,
-  EyeClosed,
-  View,
-} from "lucide-react";
+import { Trash2, Eye, Mail, MailOpen, EyeClosed, View } from "lucide-react";
 
-import { MyModalContainer } from "../MyModalContainer";
 import { useEffect, useLayoutEffect, useState } from "react";
 import {
   MarkNotificationAsRead,
@@ -68,6 +28,8 @@ import { ShowUserNotification } from "./ٍShowUserNotification";
 import { useNotification } from "../../contexts/NotificationContext";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
+import { MyAlert } from "../MyAlert";
+import { MyModal } from "../MyModal";
 
 export const NotificationReceivedDataTable = ({ DataRows }) => {
   const [dialogGears, setDialogGears] = useState({
@@ -79,8 +41,6 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
   const [loading, setLoading] = useState(false);
   const [selectedID, setSelectedID] = useState(0);
   const [userMessages, setUserMessages] = useState([]);
-  const [modalContetnt, setModalContetnt] = useState(null);
-  const [modalHeader, setModalHeader] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { loadUnreadeNotif } = useNotification();
   const toast = useToast();
@@ -128,8 +88,10 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
   };
 
   const handleDialogClose = (result) => {
+    setIsDialogOpen(false);
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
+
   const handleDeleteNotification = () => {
     setLoading(true);
     RemoveNotification(selectedID)
@@ -156,10 +118,10 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
       .finally(setLoading(false));
   };
 
-  const handleShowNotification = async (id) => {
-    if (id === 0) return;
-    setSelectedID(id);
-    handleMarkAsReadNotification(id).then(() => onOpen());
+  const handleShowNotification = async () => {
+    if (selectedID === 0) return;
+
+    handleMarkAsReadNotification(selectedID).then(() => onOpen());
   };
 
   dayjs.extend(jalali);
@@ -268,7 +230,14 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
                   _hover={{ color: "#ffd54f" }}
                   color="green"
                   onClick={() => {
-                    handleShowNotification(row.id);
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "مشاهده پیام",
+                      text: "",
+                      callBack: null,
+                    });
+                    handleMarkAsReadNotification(row.id);
+                    onOpen();
                   }}
                 >
                   <Tooltip label="مشاهده">
@@ -280,59 +249,20 @@ export const NotificationReceivedDataTable = ({ DataRows }) => {
           </Card>
         ))}
       </SimpleGrid>
-      <Modal dir="rtl" onClose={onClose} size={"md"} isOpen={isOpen}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader bg="blue.400">مشاهده پیام</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody dir="rtl">
-            <ShowUserNotification
-              id={selectedID}
-              notifications={userMessages}
-              onClose={onClose}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" onClick={onClose}>
-              تایید
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
-      <AlertDialog
-        motionPreset="slideInTop"
-        onClose={handleDialogClose}
-        isOpen={isDialogOpen}
-        isCentered
+      <MyModal
+        modalHeader={dialogGears.title}
+        isOpen={isOpen}
+        onClose={onClose}
       >
-        <AlertDialogOverlay />
-        <AlertDialogContent>
-          <AlertDialogHeader>{dialogGears.title}</AlertDialogHeader>
-          <AlertDialogCloseButton />
-          <AlertDialogBody dir="rtl">{dialogGears.text}</AlertDialogBody>
-          <AlertDialogFooter>
-            <Button
-              onClick={(e) => {
-                setIsDialogOpen(false);
-                handleDialogClose("Cancel");
-              }}
-            >
-              خیر
-            </Button>
-            <Button
-              colorScheme="red"
-              ml={3}
-              onClick={(e) => {
-                setIsDialogOpen(false);
-                handleDialogClose("Confirm");
-              }}
-            >
-              بله
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        <ShowUserNotification id={selectedID} notifications={userMessages} />
+      </MyModal>
+      <MyAlert
+        AlertHeader={dialogGears.title}
+        AlertMessage={dialogGears.text}
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+      />
     </Flex>
   );
 };

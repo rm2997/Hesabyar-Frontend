@@ -10,53 +10,65 @@ import {
   Link,
   SimpleGrid,
   Stack,
-  Table,
-  TableCaption,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Tfoot,
-  Th,
-  Thead,
   Tooltip,
-  Tr,
   VStack,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import {
-  Edit,
-  FilePenLine,
-  Replace,
-  Send,
-  Trash2,
-  User2,
-  UsersRound,
-} from "lucide-react";
-import { MyModalContainer } from "../MyModalContainer";
+import { FilePenLine, Send, Trash2, UsersRound } from "lucide-react";
+import { MyModal } from "../MyModal";
 import { useEffect, useState } from "react";
 import { EditCustomer } from "./EditCustomer";
-import { DeleteCustomer } from "./DeleteCustomer";
 
-export const CustomerDataTable = ({ HeadLables, DataRows }) => {
+import { MyAlert } from "../MyAlert";
+import { RemoveCustomer } from "../../api/services/customerService";
+
+export const CustomerDataTable = ({ HeadLables, DataRows, isDesktop }) => {
+  const [loading, setLoading] = useState(false);
   const [customersData, setCustomersData] = useState([]);
   const [selectedID, setSelectedID] = useState(0);
   const [modalContetnt, setModalContetnt] = useState(null);
   const [modalHeader, setModalHeader] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogGears, setDialogGears] = useState({
+    title: "",
+    text: "",
+    callBack: null,
+  });
 
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const handleDialogClose = (result) => {
+    setIsDialogOpen(false);
+    if (result === "Confirm") dialogGears.callBack(selectedID);
+  };
+
   const handleDeleteCustomer = (id) => {
-    setSelectedID(id);
-    setModalHeader("آیا از حذف مشتری زیر اطمینان دارید؟");
-    setModalContetnt(
-      <DeleteCustomer
-        id={id}
-        onDelete={deleteCustomerFromList}
-        onClose={onClose}
-      />
-    );
-    onOpen();
+    if (id === 0) return;
+    setLoading(true);
+    RemoveCustomer()
+      .then((res) => {
+        deleteCustomerFromList(id);
+        toast({
+          title: "توجه",
+          description: `اطلاعات مشتری حذف شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) => {
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .finally(setLoading(false));
   };
 
   const updateCustomerInList = (updatedCustomer) => {
@@ -77,18 +89,7 @@ export const CustomerDataTable = ({ HeadLables, DataRows }) => {
 
   const handleEditCustomer = (id) => {
     if (id === 0) return;
-
-    setSelectedID(id);
-    setModalHeader("ویرایش مشخصات مشتری");
-    setModalContetnt(
-      <EditCustomer
-        id={id}
-        onClose={onClose}
-        onUpdate={updateCustomerInList}
-        customer={findCustomerFromList(id)}
-      />
-    );
-    onOpen();
+    console.log("accepted");
   };
 
   useEffect(() => {
@@ -159,6 +160,15 @@ export const CustomerDataTable = ({ HeadLables, DataRows }) => {
                     color: "orange",
                   }}
                   color="blue.600"
+                  onClick={(e) => {
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "ویرایش مشتری",
+                      text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
+                      callBack: handleEditCustomer,
+                    });
+                    onOpen();
+                  }}
                 >
                   <Tooltip label="ویرایش">
                     <Icon w={6} h={6} as={FilePenLine} />
@@ -173,7 +183,19 @@ export const CustomerDataTable = ({ HeadLables, DataRows }) => {
                     <Icon w={6} h={6} as={Send} />
                   </Tooltip>
                 </Link>
-                <Link _hover={{ color: "#ffd54f" }} color="red.600">
+                <Link
+                  _hover={{ color: "#ffd54f" }}
+                  color="red.600"
+                  onClick={(e) => {
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "حذف پیش فاکتور",
+                      text: "آیا واقعا می خواهید این مشتری حذف کنید؟",
+                      callBack: handleDeleteCustomer,
+                    });
+                    setIsDialogOpen(true);
+                  }}
+                >
                   <Tooltip label="حذف">
                     <Icon w={6} h={6} as={Trash2} />
                   </Tooltip>
@@ -183,6 +205,25 @@ export const CustomerDataTable = ({ HeadLables, DataRows }) => {
           </Card>
         ))}
       </SimpleGrid>
+      <MyAlert
+        onClose={handleDialogClose}
+        isOpen={isDialogOpen}
+        AlertHeader={dialogGears.title}
+        AlertMessage={dialogGears.text}
+      />
+      <MyModal
+        modalHeader={dialogGears.title}
+        onClose={onClose}
+        isOpen={isOpen}
+      >
+        <EditCustomer
+          id={selectedID}
+          isDesktop={isDesktop}
+          onClose={onclose}
+          onUpdate={dialogGears.callBack}
+          customer={findCustomerFromList(selectedID)}
+        />
+      </MyModal>
     </Flex>
   );
 };

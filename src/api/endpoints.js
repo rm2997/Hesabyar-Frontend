@@ -7,8 +7,11 @@ const endpoints = {
     refresh: "/auth/refresh",
   },
   user: {
+    create: "/users",
+    delete: (id) => `/users/${id}`,
     profile: "/users/profile",
-    update: "/users/update",
+    update: (id) => `/users/${id}`,
+    changePass: (id) => `/users/changePass/${id}`,
     listAll: "/users/",
   },
   proforma: {

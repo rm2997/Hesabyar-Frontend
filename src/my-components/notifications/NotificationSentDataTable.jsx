@@ -10,53 +10,36 @@ import {
   Link,
   SimpleGrid,
   Stack,
-  Table,
-  TableCaption,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Tfoot,
-  Th,
-  Thead,
   Tooltip,
-  Tr,
   VStack,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import {
-  Edit,
-  FilePenLine,
-  Replace,
-  Ruler,
-  Send,
-  Trash2,
-  User2,
-  UsersRound,
-  WalletCards,
-  Eye,
-  Mail,
-  MailOpen,
-  EyeClosed,
-} from "lucide-react";
+import { Trash2, Mail, View } from "lucide-react";
 
-import { MyModalContainer } from "../MyModalContainer";
 import { useEffect, useLayoutEffect, useState } from "react";
-import {
-  MarkNotificationAsRead,
-  MarkNotificationAsUnread,
-} from "../../api/services/notificationService";
-import { ShowUserNotification } from "./ٍShowUserNotification";
 import { useNotification } from "../../contexts/NotificationContext";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
+import { MyModal } from "../MyModal";
+import { MyAlert } from "../MyAlert";
+import { RemoveNotification } from "../../api/services/notificationService";
+import { ShowUserNotification } from "./ٍShowUserNotification";
 
 export const NotificationSentDataTable = ({ DataRows }) => {
+  const [dialogGears, setDialogGears] = useState({
+    title: "",
+    text: "",
+    callBack: null,
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [selectedID, setSelectedID] = useState(0);
   const [userMessages, setUserMessages] = useState([]);
-  const [modalContetnt, setModalContetnt] = useState(null);
-  const [modalHeader, setModalHeader] = useState("");
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
   const { loadUnreadeNotif } = useNotification();
 
   useEffect(() => {
@@ -85,11 +68,35 @@ export const NotificationSentDataTable = ({ DataRows }) => {
     setUserMessages(messages);
   };
 
-  const handleDeleteNotification = (id) => {
-    setSelectedID(id);
-    setModalHeader("آیا از حذف پیام زیر اطمینان دارید؟");
-    //setModalContetnt(<DeleteProforma id={id} onClose={onClose} />);
-    //onOpen();
+  const handleDialogClose = (result) => {
+    setIsDialogOpen(false);
+    if (result === "Confirm") dialogGears.callBack(selectedID);
+  };
+
+  const handleDeleteNotification = () => {
+    setLoading(true);
+    RemoveNotification(selectedID)
+      .then((res) => {
+        const notifs = userMessages.filter((n) => n.id !== selectedID);
+        setUserMessages(notifs);
+        toast({
+          title: "توجه",
+          description: ` پیام حذف شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) =>
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      )
+      .finally(setLoading(false));
   };
 
   dayjs.extend(jalali);
@@ -144,7 +151,37 @@ export const NotificationSentDataTable = ({ DataRows }) => {
                 align={"stretch"}
                 mr="auto"
               >
-                <Link _hover={{ color: "#ffd54f" }} color="red.600">
+                <Link
+                  _hover={{ color: "#ffd54f" }}
+                  color="green"
+                  onClick={() => {
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "مشاهده پیام",
+                      text: "",
+                      callBack: null,
+                    });
+                    onOpen();
+                  }}
+                >
+                  <Tooltip label="مشاهده">
+                    <Icon w={6} h={6} as={View} />
+                  </Tooltip>
+                </Link>
+
+                <Link
+                  _hover={{ color: "#ffd54f" }}
+                  color="red.600"
+                  onClick={(e) => {
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "حذف پیام",
+                      text: "آیا واقعا می خواهید این پیام را حذف کنید؟",
+                      callBack: handleDeleteNotification,
+                    });
+                    setIsDialogOpen(true);
+                  }}
+                >
                   <Tooltip label="حذف">
                     <Icon w={6} h={6} as={Trash2} />
                   </Tooltip>
@@ -154,6 +191,19 @@ export const NotificationSentDataTable = ({ DataRows }) => {
           </Card>
         ))}
       </SimpleGrid>
+      <MyModal
+        modalHeader={dialogGears.title}
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <ShowUserNotification id={selectedID} notifications={userMessages} />
+      </MyModal>
+      <MyAlert
+        AlertHeader={dialogGears.title}
+        AlertMessage={dialogGears.text}
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+      />
     </Flex>
   );
 };
