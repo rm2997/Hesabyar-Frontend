@@ -14,6 +14,7 @@ import { PrivateRoute } from "./my-components/PrivateRoute";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { MyHome } from "./pages/HomePage";
 import { Logout } from "./my-components/Logout";
+import { LocationProvider } from "./contexts/LocationContext";
 function App() {
   return (
     <ChakraProvider>
@@ -37,7 +38,9 @@ function App() {
             element={
               <PrivateRoute>
                 <NotificationProvider>
-                  <MyHome />
+                  <LocationProvider>
+                    <MyHome />
+                  </LocationProvider>
                 </NotificationProvider>
               </PrivateRoute>
             }

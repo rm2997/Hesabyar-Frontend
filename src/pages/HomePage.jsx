@@ -14,16 +14,20 @@ import { HeaderBar } from "../my-components/HeaderBar";
 import { Sidebar } from "../my-components/SideBar";
 import { MainContents } from "../my-components/MainContents";
 import { useNotification } from "../contexts/NotificationContext";
+import { useLocation } from "react-router-dom";
 
 export const MyHome = () => {
   const [sidebarWidth, setSidebarWidth] = useState(300);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeContent, setActiveContent] = useState("");
   const { notificationCount, loadUnreadeNotif } = useNotification();
+  const { location, loadLocation } = useLocation();
   const isDesktop = useBreakpointValue({ base: false, md: true });
 
   useEffect(() => {
     loadUnreadeNotif();
+    loadLocation();
+    console.log(location);
   }, []);
 
   useEffect(() => {
