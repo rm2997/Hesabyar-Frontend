@@ -1,6 +1,5 @@
 import axios from "axios";
-import { clearTokens, loadTokens, saveTokens } from "./tokenUtils";
-import { refreshTokens } from "./services/authService";
+import { clearTokens, loadTokens } from "./tokenUtils";
 
 const BASE_URL = "http://localhost:3001";
 const axiosClient = axios.create({

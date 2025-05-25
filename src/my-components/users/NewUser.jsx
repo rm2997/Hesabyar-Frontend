@@ -13,9 +13,8 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { IdCard, Info, Phone, Ruler, SquareCheckBig } from "lucide-react";
+import { IdCard, Info, Phone, SquareCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
-import { CreateUnit } from "../../api/services/unitsService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { CreateUser, GetAllUsers } from "../../api/services/userService";

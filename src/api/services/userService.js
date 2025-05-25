@@ -1,5 +1,6 @@
 import axiosClient from "../axiosClient";
 import endpoints from "../endpoints";
+import { sendLocationSms } from "../smsUtils";
 
 export const login = async (data) => {
   try {
@@ -37,7 +38,7 @@ export const register = async (data) => {
 
 export const logout = async () => {
   try {
-    return axiosClient.post(endpoints.auth.logout);
+    return await axiosClient.post(endpoints.auth.logout);
   } catch (error) {
     if (error.response) {
       // پاسخ از سمت سرور (۴xx یا ۵xx)
@@ -54,7 +55,7 @@ export const logout = async () => {
 
 export const GetAllUsers = async () => {
   try {
-    return axiosClient.get(endpoints.user.listAll);
+    return await axiosClient.get(endpoints.user.listAll);
   } catch (error) {
     if (error.response) {
       // پاسخ از سمت سرور (۴xx یا ۵xx)
@@ -71,7 +72,7 @@ export const GetAllUsers = async () => {
 
 export const CreateUser = async (userData) => {
   try {
-    return axiosClient.post(endpoints.user.create, userData);
+    return await axiosClient.post(endpoints.user.create, userData);
   } catch (error) {
     if (error.response) {
       // پاسخ از سمت سرور (۴xx یا ۵xx)
@@ -88,7 +89,7 @@ export const CreateUser = async (userData) => {
 
 export const RemoveUser = async (id) => {
   try {
-    return axiosClient.delete(endpoints.user.update(id));
+    return await axiosClient.delete(endpoints.user.update(id));
   } catch (error) {
     if (error.response) {
       // پاسخ از سمت سرور (۴xx یا ۵xx)
@@ -105,7 +106,7 @@ export const RemoveUser = async (id) => {
 
 export const UpdateUser = async (id, userData) => {
   try {
-    return axiosClient.put(endpoints.user.update(id), userData);
+    return await axiosClient.put(endpoints.user.update(id), userData);
   } catch (error) {
     if (error.response) {
       // پاسخ از سمت سرور (۴xx یا ۵xx)
@@ -122,7 +123,42 @@ export const UpdateUser = async (id, userData) => {
 
 export const ChangePass = async (id, userData) => {
   try {
-    return axiosClient.put(endpoints.user.changePass(id), userData);
+    return await axiosClient.put(endpoints.user.changePass(id), userData);
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+    }
+  }
+};
+
+export const UpdateUserLocation = async (location) => {
+  try {
+    return await axiosClient.put(endpoints.user.setLocation, location);
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+    }
+  }
+};
+
+export const SendLocationSms = async (user) => {
+  try {
+    const resp = await sendLocationSms(user);
+    return resp;
   } catch (error) {
     if (error.response) {
       // پاسخ از سمت سرور (۴xx یا ۵xx)

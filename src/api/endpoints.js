@@ -12,6 +12,8 @@ const endpoints = {
     profile: "/users/profile",
     update: (id) => `/users/${id}`,
     changePass: (id) => `/users/changePass/${id}`,
+    sendSms: (id) => `/users/sms/${id}`,
+    setLocation: "/users/location/",
     listAll: "/users/",
   },
   proforma: {
@@ -65,6 +67,9 @@ const endpoints = {
     detail: (id) => `/units/${id}`,
     create: "/units/",
     delete: (id) => `/units/${id}`,
+  },
+  sms: {
+    send: "https://api.sms.ir/v1/send/bulk",
   },
 };
 

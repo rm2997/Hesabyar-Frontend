@@ -16,14 +16,16 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { FilePenLine, Ruler, Trash2, User2 } from "lucide-react";
-
+import { FilePenLine, MapPin, Trash2, User2 } from "lucide-react";
+import dayjs from "dayjs";
+import jalali from "jalali-dayjs";
 import { useEffect, useState } from "react";
 import { EditUser } from "./EditUser";
 
 import { MyAlert } from "../MyAlert";
 import { MyModal } from "../MyModal";
 import { RemoveUser } from "../../api/services/userService";
+import { SendLocationSms } from "../../api/services/userService";
 
 export const UsersDataTable = ({ DataRows }) => {
   const [dialogGears, setDialogGears] = useState({
@@ -40,6 +42,8 @@ export const UsersDataTable = ({ DataRows }) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+
+  dayjs.extend(jalali);
 
   useEffect(() => {
     setUsersData(DataRows);
@@ -65,6 +69,32 @@ export const UsersDataTable = ({ DataRows }) => {
     return user;
   };
 
+  const handleSendLocationRequest = async () => {
+    const user = findUserFromList(selectedID);
+    if (!user) return;
+    SendLocationSms(user)
+      .then((res) => {
+        console.log("response:", res);
+        toast({
+          title: "توجه",
+          description: "درخواست موقعیت مکانی به شماره کاربر ارسال گردید",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) =>
+        toast({
+          title: "خطا",
+          description: `خطایی به شرح زیر رخ داد ${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      )
+      .finally(setLoading(false));
+  };
+
   const handleDeleteUser = () => {
     if (selectedID === 0) return;
     setLoading(true);
@@ -73,7 +103,7 @@ export const UsersDataTable = ({ DataRows }) => {
         deleteUserFromList(selectedID);
         toast({
           title: "توجه",
-          description: ` ,کاربر حذف شد`,
+          description: `کاربر حذف شد`,
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -133,7 +163,33 @@ export const UsersDataTable = ({ DataRows }) => {
                 <Divider />
                 <HStack>
                   <Text>نقش :</Text>
-                  <Text mr="auto">{row.role}</Text>
+                  <Text color="green.300" mr="auto">
+                    {row.role}
+                  </Text>
+                </HStack>
+                <Divider />
+                <HStack>
+                  <Text>آخرین ورود :</Text>
+                  <Text color="orange.300" dir="ltr" mr="auto">
+                    {dayjs(row.lastLogin)
+                      .locale("fa")
+                      .format("YYYY/MM/DD HH:mm:ss")}
+                  </Text>
+                </HStack>
+                <Divider />
+                <HStack>
+                  <Text>آخرین لوکیشن :</Text>
+                  <Link
+                    dir="ltr"
+                    mr="auto"
+                    color="blue.300"
+                    href={row.userLocation}
+                    isExternal
+                  >
+                    {row.userLocation?.length > 19
+                      ? row.userLocation?.substring(0, 19) + "..."
+                      : row.userLocation}
+                  </Link>
                 </HStack>
               </VStack>
             </CardBody>
@@ -159,6 +215,23 @@ export const UsersDataTable = ({ DataRows }) => {
                 >
                   <Tooltip label="ویرایش">
                     <Icon w={6} h={6} as={FilePenLine} />
+                  </Tooltip>
+                </Link>
+                <Link
+                  _hover={{ color: "#ffd54f" }}
+                  color="green.600"
+                  onClick={(e) => {
+                    setSelectedID(row.id);
+                    setDialogGears({
+                      title: "ارسال درخواست موقعیت مکانی",
+                      text: "آیا واقعا می خواهید این کاربر موقعیت مکانی خود را ارسال کند؟",
+                      callBack: handleSendLocationRequest,
+                    });
+                    setIsDialogOpen(true);
+                  }}
+                >
+                  <Tooltip label="درخواست موقعیت مکانی">
+                    <Icon w={6} h={6} as={MapPin} />
                   </Tooltip>
                 </Link>
                 <Link

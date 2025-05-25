@@ -1,5 +1,5 @@
 // Home.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   Flex,
   useBreakpointValue,
@@ -9,12 +9,15 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
+  useToast,
 } from "@chakra-ui/react";
 import { HeaderBar } from "../my-components/HeaderBar";
 import { Sidebar } from "../my-components/SideBar";
 import { MainContents } from "../my-components/MainContents";
 import { useNotification } from "../contexts/NotificationContext";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "../contexts/LocationContext";
+import { UpdateUserLocation } from "../api/services/userService";
+import { UserContext } from "../contexts/UserContext";
 
 export const MyHome = () => {
   const [sidebarWidth, setSidebarWidth] = useState(300);
@@ -23,11 +26,28 @@ export const MyHome = () => {
   const { notificationCount, loadUnreadeNotif } = useNotification();
   const { location, loadLocation } = useLocation();
   const isDesktop = useBreakpointValue({ base: false, md: true });
+  const toast = useToast();
 
+  const { user } = useContext(UserContext);
   useEffect(() => {
     loadUnreadeNotif();
-    loadLocation();
-    console.log(location);
+    loadLocation().then((res) => {
+      let userLocation = "";
+      if (res === undefined || res == "") userLocation = "Denied";
+      else userLocation = res;
+      UpdateUserLocation({ location: userLocation }).then(() => {
+        toast({
+          title: "توجه",
+          description:
+            userLocation === "Denied"
+              ? "دسترسی به موقعیت مکانی داده نشد"
+              : "موقعیت مکانی ثبت شد",
+          status: userLocation === "Denied" ? "warning" : "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+    });
   }, []);
 
   useEffect(() => {

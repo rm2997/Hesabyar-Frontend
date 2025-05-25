@@ -16,7 +16,6 @@ import { UnlockIcon } from "@chakra-ui/icons";
 import { login } from "../api/services/authService";
 import { useNavigate } from "react-router-dom";
 import { loadTokens } from "../api/tokenUtils";
-import { getCurrentLocation } from "../api/services/locationService";
 
 export const LoginForm = () => {
   const toast = useToast();
@@ -25,26 +24,12 @@ export const LoginForm = () => {
     password: "",
     userLocation: "",
   });
-  const [location, setLocation] = useState({
-    latitude: "",
-    longitude: "",
-    googleMapLink: "",
-  });
+
   const [isFormDisabled, setIsFormDisabled] = useState(false);
   const navigate = useNavigate();
   const { accessToken } = loadTokens();
 
   useEffect(() => {
-    const getLocation = async () => {
-      const { latitude, longitude, googleMapLink } = await getCurrentLocation();
-      setLocation({
-        latitude: latitude,
-        longitude: longitude,
-        googleMapLink: googleMapLink,
-      });
-      setForm({ ...form, userLocation: googleMapLink });
-    };
-    getLocation();
     if (accessToken) navigate("/home");
   }, []);
 
