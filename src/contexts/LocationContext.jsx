@@ -12,7 +12,6 @@ export const LocationProvider = ({ children }) => {
   const loadLocation = async () => {
     try {
       const { latitude, longitude, googleMapLink } = await getCurrentLocation();
-      console.log("link", googleMapLink);
       setLocation({
         latitude,
         longitude,

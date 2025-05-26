@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -15,7 +15,7 @@ import {
 import { UnlockIcon } from "@chakra-ui/icons";
 import { login } from "../api/services/authService";
 import { useNavigate } from "react-router-dom";
-import { loadTokens } from "../api/tokenUtils";
+import { loadTokens, saveTokens } from "../api/tokenUtils";
 
 export const LoginForm = () => {
   const toast = useToast();
@@ -45,15 +45,25 @@ export const LoginForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsFormDisabled(true);
-    console.log(form);
     toast.promise(
       login(form)
         .then((res) => {
-          return res;
+          if (!res.status.toString().startsWith("2")) return;
+
+          if (res?.data?.twoFactorAuthntication === false) {
+            saveTokens(res.data.accessToken);
+            navigate("/home");
+          } else {
+            navigate(
+              "/second-login?token=" +
+                res.data.accessToken +
+                "&mobile=" +
+                res?.data?.mobilnumber
+            );
+          }
         })
         .finally(() => {
           setIsFormDisabled(false);
-          navigate("/home");
         }),
       {
         success: (res) => ({
@@ -64,7 +74,7 @@ export const LoginForm = () => {
           isClosable: true,
         }),
         error: (err) => ({
-          title: err.message,
+          title: "خطا",
           description: err.message,
           status: "error",
           duration: 3000,

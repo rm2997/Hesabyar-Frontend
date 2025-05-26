@@ -4,6 +4,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Flex,
   FormControl,
   FormLabel,
   HStack,
@@ -132,7 +133,7 @@ export const ChangePassword = ({ isDesktop }) => {
               </Select>
             </HStack>
           </FormControl>
-          <FormControl>
+          <FormControl as={Flex}>
             <HStack>
               <FormLabel hidden={!isDesktop} width="170px">
                 کلمه عبور فعلی
@@ -145,10 +146,10 @@ export const ChangePassword = ({ isDesktop }) => {
                 size={30}
                 value={formData.current}
                 onChange={handleChangeFormData}
-              ></MyInputBox>
+              />
             </HStack>
           </FormControl>
-          <FormControl isRequired>
+          <FormControl isRequired as={Flex}>
             <HStack>
               <FormLabel hidden={!isDesktop} width="170px">
                 کلمه عبور جدید
@@ -164,7 +165,7 @@ export const ChangePassword = ({ isDesktop }) => {
               ></MyInputBox>
             </HStack>
           </FormControl>
-          <FormControl isRequired>
+          <FormControl isRequired as={Flex}>
             <HStack>
               <FormLabel hidden={!isDesktop} width="170px">
                 تکرار کلمه عبور

@@ -10,6 +10,7 @@ import {
   HStack,
   Select,
   SimpleGrid,
+  Switch,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -28,6 +29,7 @@ export const NewUser = ({ isDesktop }) => {
     userfname: "",
     userlname: "",
     usermobilenumber: "",
+    twoFactorAuthntication: false,
     password: "",
     confirm: "",
   });
@@ -74,6 +76,7 @@ export const NewUser = ({ isDesktop }) => {
           userfname: "",
           userlname: "",
           usermobilenumber: "",
+          twoFactorAuthntication: false,
           password: "",
           confirm: "",
         });
@@ -243,7 +246,25 @@ export const NewUser = ({ isDesktop }) => {
                   size={30}
                   value={formData.confirm}
                   onChange={handleChangeFormData}
-                ></MyInputBox>
+                />
+              </HStack>
+            </FormControl>
+
+            <FormControl>
+              <HStack>
+                <FormLabel
+                  htmlFor="twoFactorAuthntication"
+                  hidden={!isDesktop}
+                  width="140px"
+                >
+                  ورود دو مرحله ای
+                </FormLabel>
+                <Switch
+                  ml="auto"
+                  id="twoFactorAuthntication"
+                  value={formData.twoFactorAuthntication}
+                  onChange={handleChangeFormData}
+                />
               </HStack>
             </FormControl>
           </SimpleGrid>

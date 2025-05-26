@@ -29,8 +29,10 @@ export const MyHome = () => {
   const toast = useToast();
 
   const { user } = useContext(UserContext);
+
   useEffect(() => {
     loadUnreadeNotif();
+
     loadLocation().then((res) => {
       let userLocation = "";
       if (res === undefined || res == "") userLocation = "Denied";

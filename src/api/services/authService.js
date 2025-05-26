@@ -6,7 +6,7 @@ export const login = async (data) => {
   try {
     clearTokens();
     const response = await axiosClient.post(endpoints.auth.login, data);
-    saveTokens(response.data.accessToken, response.data.refreshToken);
+
     return response;
   } catch (error) {
     if (error.response) {

@@ -69,7 +69,8 @@ const endpoints = {
     delete: (id) => `/units/${id}`,
   },
   sms: {
-    send: "https://api.sms.ir/v1/send/bulk",
+    bulk: "https://api.sms.ir/v1/send/bulk",
+    verify: "https://api.sms.ir/v1/send/verify",
   },
 };
 

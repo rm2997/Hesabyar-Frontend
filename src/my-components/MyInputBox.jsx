@@ -1,6 +1,31 @@
-import { Icon, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+import {
+  Icon,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+} from "@chakra-ui/react";
+import { Eye, EyeClosed } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const MyInputBox = ({ icon, size, title, onChange, type, ...props }) => {
+  const [passIcon, setPassIcon] = useState(Eye);
+  const [inputType, setInputType] = useState({ type });
+
+  useEffect(() => {
+    if (inputType == "password") setPassIcon(Eye);
+    else;
+  }, [type]);
+
+  const handleShowPassword = () => {
+    if (inputType == "password") {
+      setInputType("text");
+      setPassIcon(EyeClosed);
+    } else {
+      setInputType("password");
+      setPassIcon(Eye);
+    }
+  };
   const handleChange = (e) => {
     if (onChange) {
       onChange(e);
@@ -16,14 +41,22 @@ export const MyInputBox = ({ icon, size, title, onChange, type, ...props }) => {
         {icon && <Icon as={icon} pointerEvents="none" color="gray.500" />}
       </InputRightElement>
       <Input
-        type={type}
+        type={inputType}
         pr="2.9rem"
+        pl="2.9rem"
         placeholder={title}
-        htmlSize={size}
-        width="auto"
+        htmlSize={type == "password" ? size - 3 : size}
         onChange={handleChange}
         {...props}
       />
+      {type == "password" && (
+        <InputLeftElement
+          onClick={handleShowPassword}
+          _hover={{ color: "orange", cursor: "pointer" }}
+        >
+          <Icon as={passIcon} />
+        </InputLeftElement>
+      )}
     </InputGroup>
   );
 };

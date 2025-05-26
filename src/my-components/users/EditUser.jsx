@@ -10,6 +10,7 @@ import {
   HStack,
   Select,
   SimpleGrid,
+  Switch,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -32,6 +33,7 @@ export const EditUser = ({ isDesktop, user, onClose }) => {
     username: "",
     userfname: "",
     userlname: "",
+    twoFactorAuthntication: false,
     usermobilenumber: "",
   });
   const [users, setUsers] = useState([]);
@@ -72,6 +74,7 @@ export const EditUser = ({ isDesktop, user, onClose }) => {
           username: "",
           userfname: "",
           userlname: "",
+          twoFactorAuthntication: false,
           usermobilenumber: "",
         });
         toast({
@@ -104,11 +107,17 @@ export const EditUser = ({ isDesktop, user, onClose }) => {
   };
 
   const handleChangeFormData = (e) => {
-    console.log(e.target.name, e.target.value);
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    console.log(e.target.checked);
+    if (e.target.name == "twoFactorAuthntication")
+      setFormData({
+        ...formData,
+        twoFactorAuthntication: e.target.checked,
+      });
+    else
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+      });
   };
 
   return (
@@ -206,6 +215,26 @@ export const EditUser = ({ isDesktop, user, onClose }) => {
                   title="شماره موبایل"
                   size={30}
                   value={formData.usermobilenumber}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+            </FormControl>
+
+            <FormControl>
+              <HStack>
+                <FormLabel
+                  htmlFor="twoFactorAuthntication"
+                  hidden={!isDesktop}
+                  width="140px"
+                >
+                  ورود دو مرحله ای
+                </FormLabel>
+                <Switch
+                  title="ورود دو مرحله ای"
+                  ml="auto"
+                  id="twoFactorAuthntication"
+                  name="twoFactorAuthntication"
+                  isChecked={formData.twoFactorAuthntication}
                   onChange={handleChangeFormData}
                 />
               </HStack>

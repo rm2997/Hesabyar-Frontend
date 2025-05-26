@@ -16,6 +16,7 @@ import { MyHome } from "./pages/HomePage";
 import { Logout } from "./my-components/Logout";
 import { LocationProvider } from "./contexts/LocationContext";
 import { UserProvider } from "./contexts/UserContext";
+import { SecondLogin } from "./pages/SecondLogin";
 function App() {
   return (
     <ChakraProvider>
@@ -48,7 +49,7 @@ function App() {
               </PrivateRoute>
             }
           />
-
+          <Route path="/second-login" element={<SecondLogin />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         {/* </AuthProvider> */}

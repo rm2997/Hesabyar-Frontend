@@ -32,7 +32,7 @@ export const NotFoundPage = () => {
       </MotionBox>
 
       <Heading fontSize="4xl" color={useColorModeValue("teal.600", "teal.300")}>
-        صفحه پیدا نشد
+        صفحه مورد نظر وجود ندارد
       </Heading>
 
       <Text fontSize="lg" color={useColorModeValue("gray.600", "gray.400")}>

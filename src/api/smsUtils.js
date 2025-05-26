@@ -8,20 +8,48 @@ const axiosClient = axios.create({
   },
 });
 
-export const sendLocationSms = async (user) => {
-  const body =
-    "همکار محترم " +
-    user.userfname +
-    " " +
-    user.userlname +
-    " " +
-    "لطفا در اولین فرصت موقعیت خود را از طریق برنامه به مجموعه ارسال فرمایید.";
+// export const sendLocationSms = async (user) => {
+//   const body =
+//     "همکار محترم " +
+//     user.userfname +
+//     " " +
+//     user.userlname +
+//     " " +
+//     "لطفا در اولین فرصت موقعیت خود را از طریق برنامه به مجموعه ارسال فرمایید.";
 
+//   const reqBody = {
+//     lineNumber: 30002108002437,
+//     messageText: body,
+//     mobiles: [user.usermobilenumber],
+//     sendDateTime: null,
+//   };
+//   return await axiosClient.post(endpoints.sms.bulk, reqBody);
+// };
+
+export const sendLocationSms = async (mobileNumber, userName) => {
   const reqBody = {
-    lineNumber: 30002108002437,
-    messageText: body,
-    mobiles: [user.usermobilenumber],
-    sendDateTime: null,
+    mobile: mobileNumber,
+    templateId: 724507,
+    parameters: [
+      {
+        name: "USERNAME",
+        value: userName,
+      },
+    ],
   };
-  return await axiosClient.post(endpoints.sms.send, reqBody);
+  return await axiosClient.post(endpoints.sms.verify, reqBody);
+};
+
+export const sendValidationKeySms = async (mobileNumber, key) => {
+  const reqBody = {
+    mobile: mobileNumber,
+    templateId: 580229,
+    parameters: [
+      {
+        name: "CODE",
+        value: key,
+      },
+    ],
+  };
+  return await axiosClient.post(endpoints.sms.verify, reqBody);
 };

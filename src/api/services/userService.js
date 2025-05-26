@@ -155,9 +155,9 @@ export const UpdateUserLocation = async (location) => {
   }
 };
 
-export const SendLocationSms = async (user) => {
+export const SendLocationSms = async (mobileNumber, userName) => {
   try {
-    const resp = await sendLocationSms(user);
+    const resp = await sendLocationSms(mobileNumber, userName);
     return resp;
   } catch (error) {
     if (error.response) {

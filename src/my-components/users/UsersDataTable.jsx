@@ -69,10 +69,25 @@ export const UsersDataTable = ({ DataRows }) => {
     return user;
   };
 
-  const handleSendLocationRequest = async () => {
-    const user = findUserFromList(selectedID);
+  const handleSendLocationRequest = (id) => {
+    if (!id || id == 0) {
+      toast({
+        title: "خطا",
+        description: "کاربر انتخاب نشده است" + " " + id,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    const user = findUserFromList(id);
+
     if (!user) return;
-    SendLocationSms(user)
+    SendLocationSms(
+      user.usermobilenumber,
+      user.userfname + " " + user.userlname
+    )
       .then((res) => {
         console.log("response:", res);
         toast({
@@ -95,8 +110,8 @@ export const UsersDataTable = ({ DataRows }) => {
       .finally(setLoading(false));
   };
 
-  const handleDeleteUser = () => {
-    if (selectedID === 0) return;
+  const handleDeleteUser = (id) => {
+    if (id === 0) return;
     setLoading(true);
     RemoveUser(selectedID)
       .then((res) => {
@@ -171,9 +186,11 @@ export const UsersDataTable = ({ DataRows }) => {
                 <HStack>
                   <Text>آخرین ورود :</Text>
                   <Text color="orange.300" dir="ltr" mr="auto">
-                    {dayjs(row.lastLogin)
-                      .locale("fa")
-                      .format("YYYY/MM/DD HH:mm:ss")}
+                    {!row?.lastLogin
+                      ? "ندارد"
+                      : dayjs(row.lastLogin)
+                          .locale("fa")
+                          .format("YYYY/MM/DD HH:mm:ss")}
                   </Text>
                 </HStack>
                 <Divider />
@@ -186,7 +203,9 @@ export const UsersDataTable = ({ DataRows }) => {
                     href={row.userLocation}
                     isExternal
                   >
-                    {row.userLocation?.length > 19
+                    {!row?.userLocation
+                      ? "ندارد"
+                      : row.userLocation?.length > 19
                       ? row.userLocation?.substring(0, 19) + "..."
                       : row.userLocation}
                   </Link>
@@ -225,7 +244,7 @@ export const UsersDataTable = ({ DataRows }) => {
                     setDialogGears({
                       title: "ارسال درخواست موقعیت مکانی",
                       text: "آیا واقعا می خواهید این کاربر موقعیت مکانی خود را ارسال کند؟",
-                      callBack: handleSendLocationRequest,
+                      callBack: () => handleSendLocationRequest(row.id),
                     });
                     setIsDialogOpen(true);
                   }}
@@ -242,7 +261,7 @@ export const UsersDataTable = ({ DataRows }) => {
                     setDialogGears({
                       title: "حذف کاربر",
                       text: "آیا واقعا می خواهید این کاربر را حذف کنید؟",
-                      callBack: handleDeleteUser,
+                      callBack: () => handleDeleteUser(row.id),
                     });
                     setIsDialogOpen(true);
                   }}
