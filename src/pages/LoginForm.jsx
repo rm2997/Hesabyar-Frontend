@@ -16,6 +16,8 @@ import { UnlockIcon } from "@chakra-ui/icons";
 import { login } from "../api/services/authService";
 import { useNavigate } from "react-router-dom";
 import { loadTokens, saveTokens } from "../api/tokenUtils";
+import { MyInputBox } from "../my-components/MyInputBox";
+import { RotateCcwKey } from "lucide-react";
 
 export const LoginForm = () => {
   const toast = useToast();
@@ -114,13 +116,13 @@ export const LoginForm = () => {
             variant="flushed"
             value={form.username}
             onChange={handleChange}
-            placeholder="Username"
+            placeholder="نام کاربری"
           />
         </FormControl>
 
         <FormControl isRequired>
           <FormLabel>کلمه عبور</FormLabel>
-          <Input
+          {/* <Input
             dir="ltr"
             colorScheme="blue"
             name="password"
@@ -129,6 +131,16 @@ export const LoginForm = () => {
             value={form.password}
             onChange={handleChange}
             placeholder="Password"
+          /> */}
+          <MyInputBox
+            dir="ltr"
+            type="password"
+            variant="flushed"
+            name="password"
+            title="کلمه عبور"
+            size={30}
+            value={form.password}
+            onChange={handleChange}
           />
         </FormControl>
 
@@ -144,6 +156,7 @@ export const LoginForm = () => {
       </VStack>
       <Divider marginTop={10} marginBottom={5} />
       <Center>
+        <RotateCcwKey color="orange" />
         <Link href="#" onClick={handleClick} color="blue">
           رمز خود را فراموش کرده اید؟
         </Link>

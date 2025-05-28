@@ -19,6 +19,8 @@ const endpoints = {
   proforma: {
     listAll: "/proforma/user/my",
     convert: (id) => `/proforma/convert/${id}`,
+    listByToken: (token) => `/proforma/token/${token}`,
+    generateNewToken: (id) => `/proforma/generateNewToken/${id}`,
     update: (id) => `/proforma/${id}`,
     listOne: (id) => `/proforma/${id}`,
     detail: (id) => `/proforma/${id}`,

@@ -46,7 +46,6 @@ export const NewUser = ({ isDesktop }) => {
       GetAllUsers()
         .then((res) => {
           setUsers(res.data);
-          console.log(res.data);
         })
         .catch((err) => {})
         .finally(setLoading(false));
@@ -109,7 +108,6 @@ export const NewUser = ({ isDesktop }) => {
   };
 
   const handleChangeFormData = (e) => {
-    console.log(e.target.name, e.target.value);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -128,10 +126,12 @@ export const NewUser = ({ isDesktop }) => {
         کاربر جدید
       </CardHeader>
       <CardBody borderTopWidth={2}>
-        <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
+        <Flex direction="column" gap={7} as="form" onSubmit={handleSubmit}>
           <SimpleGrid
-            columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
-            spacing={4}
+            ml="15px"
+            mr="15px"
+            columns={{ base: 1, md: 2, lg: 2 }}
+            spacing={8}
           >
             <FormControl isRequired>
               <HStack>
@@ -150,7 +150,7 @@ export const NewUser = ({ isDesktop }) => {
             </FormControl>
             <FormControl isRequired>
               <HStack>
-                <FormLabel hidden={!isDesktop} width="135px">
+                <FormLabel hidden={!isDesktop} width="165px">
                   نقش کاربری
                 </FormLabel>
                 <Select
@@ -158,7 +158,7 @@ export const NewUser = ({ isDesktop }) => {
                   dir="ltr"
                   value={formData.role}
                   name="role"
-                  width="402px"
+                  maxW="620px"
                   onChange={handleChangeFormData}
                 >
                   {UserRoles.map((r) => (
@@ -252,11 +252,7 @@ export const NewUser = ({ isDesktop }) => {
 
             <FormControl>
               <HStack>
-                <FormLabel
-                  htmlFor="twoFactorAuthntication"
-                  hidden={!isDesktop}
-                  width="140px"
-                >
+                <FormLabel htmlFor="twoFactorAuthntication" width="140px">
                   ورود دو مرحله ای
                 </FormLabel>
                 <Switch

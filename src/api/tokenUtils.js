@@ -10,6 +10,6 @@ export const clearTokens = () => {
 
 export const loadTokens = () => {
   const accessToken = sessionStorage.getItem("accessToken");
-  const refreshToken = sessionStorage.getItem("refreshToken");
-  return { accessToken, refreshToken };
+  //const refreshToken = sessionStorage.getItem("refreshToken");
+  return { accessToken };
 };

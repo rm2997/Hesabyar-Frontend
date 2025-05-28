@@ -1,6 +1,7 @@
 import {
   SimpleGrid,
   Tab,
+  TabIndicator,
   TabList,
   TabPanel,
   TabPanels,
@@ -42,20 +43,27 @@ export const Users = ({ isDesktop }) => {
   return (
     <SimpleGrid>
       <Tabs
+        isLazy
         borderWidth="1px"
-        isFitted
-        bg=""
-        color="black"
         align="start"
-        colorScheme=""
-        variant="enclosed"
+        variant="unstyled"
+        borderRadius="5"
+        color="black"
+        colorScheme="blue"
+        borderColor="gray.200"
       >
-        <TabList borderColor="green">
+        <TabList>
           <Tab>کاربر جدید</Tab>
           <Tab>تغییر کلمه عبور</Tab>
           <Tab>کاربران</Tab>
         </TabList>
-        <TabPanels borderColor="green" borderWidth="1px">
+        <TabIndicator
+          mt="-1.5px"
+          height="2px"
+          bg="blue.500"
+          borderRadius="1px"
+        />
+        <TabPanels borderColor="gray.200" borderWidth="1px" borderRadius="5">
           <TabPanel>
             <NewUser isDesktop={isDesktop} />
           </TabPanel>

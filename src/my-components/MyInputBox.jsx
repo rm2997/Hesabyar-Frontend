@@ -13,9 +13,8 @@ export const MyInputBox = ({ icon, size, title, onChange, type, ...props }) => {
   const [inputType, setInputType] = useState({ type });
 
   useEffect(() => {
-    if (inputType == "password") setPassIcon(Eye);
-    else;
-  }, [type]);
+    setInputType(type);
+  }, []);
 
   const handleShowPassword = () => {
     if (inputType == "password") {
@@ -33,17 +32,19 @@ export const MyInputBox = ({ icon, size, title, onChange, type, ...props }) => {
   };
   return (
     <InputGroup>
-      <InputRightElement
-        pointerEvents="none"
-        borderLeftColor="gray.200"
-        borderLeftWidth={1}
-      >
-        {icon && <Icon as={icon} pointerEvents="none" color="gray.500" />}
-      </InputRightElement>
+      {icon && (
+        <InputRightElement
+          pointerEvents="none"
+          borderLeftColor="gray.200"
+          borderLeftWidth={1}
+        >
+          <Icon as={icon} pointerEvents="none" color="gray.500" />
+        </InputRightElement>
+      )}
       <Input
         type={inputType}
-        pr="2.9rem"
-        pl="2.9rem"
+        pr={icon ? "2.9rem" : 0}
+        pl={type == "password" ? "2.9rem" : 0}
         placeholder={title}
         htmlSize={type == "password" ? size - 3 : size}
         onChange={handleChange}

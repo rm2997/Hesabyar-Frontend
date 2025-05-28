@@ -132,10 +132,10 @@ export const EditUser = ({ isDesktop, user, onClose }) => {
         ویرایش کاربر
       </CardHeader>
       <CardBody borderTopWidth={2}>
-        <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
+        <Flex direction="column" gap={10} as="form" onSubmit={handleSubmit}>
           <SimpleGrid
             columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
-            spacing={4}
+            spacing={8}
           >
             <FormControl isRequired>
               <HStack>
@@ -162,7 +162,7 @@ export const EditUser = ({ isDesktop, user, onClose }) => {
                   dir="ltr"
                   value={formData.role}
                   name="role"
-                  width="402px"
+                  maxW="900px"
                   onChange={handleChangeFormData}
                 >
                   {UserRoles.map((r) => (
@@ -222,11 +222,7 @@ export const EditUser = ({ isDesktop, user, onClose }) => {
 
             <FormControl>
               <HStack>
-                <FormLabel
-                  htmlFor="twoFactorAuthntication"
-                  hidden={!isDesktop}
-                  width="140px"
-                >
+                <FormLabel htmlFor="twoFactorAuthntication" width="140px">
                   ورود دو مرحله ای
                 </FormLabel>
                 <Switch

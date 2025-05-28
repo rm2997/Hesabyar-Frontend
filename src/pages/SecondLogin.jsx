@@ -15,7 +15,7 @@ import { UnlockIcon } from "@chakra-ui/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { TimerReset } from "lucide-react";
 import { saveTokens } from "../api/tokenUtils";
-import { sendLocationSms, sendValidationKeySms } from "../api/smsUtils";
+import { sendValidationKeySms } from "../api/smsUtils";
 
 export const SecondLogin = ({}) => {
   const toast = useToast();

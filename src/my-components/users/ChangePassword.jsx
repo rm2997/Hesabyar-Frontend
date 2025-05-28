@@ -38,7 +38,6 @@ export const ChangePassword = ({ isDesktop }) => {
       GetAllUsers()
         .then((res) => {
           setUsers(res.data);
-          console.log(res.data);
         })
         .catch((err) => {})
         .finally(setLoading(false));
@@ -109,18 +108,18 @@ export const ChangePassword = ({ isDesktop }) => {
           align={"stretch"}
           direction={["column", "row"]}
           as="form"
-          spacing={5}
+          spacing={8}
           onSubmit={handleSubmit}
         >
           <FormControl isRequired>
             <HStack>
-              <FormLabel hidden={!isDesktop} width="150px">
+              <FormLabel hidden={!isDesktop} width="125px">
                 کاربر
               </FormLabel>
               <Select
                 dir="ltr"
                 placeholder="انتخاب کنید"
-                maxW="400px"
+                maxW="425px"
                 name="user.id"
                 value={formData?.user?.id}
                 onChange={(e) => handleChangeUser(e.target.value)}

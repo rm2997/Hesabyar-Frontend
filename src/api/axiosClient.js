@@ -21,7 +21,6 @@ axiosClient.interceptors.response.use(
   async (err) => {
     if (err.response.status === 401) {
       clearTokens();
-
       if (window.location.href.endsWith("/login") === false)
         window.location.href = "/login";
 

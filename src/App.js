@@ -17,6 +17,7 @@ import { Logout } from "./my-components/Logout";
 import { LocationProvider } from "./contexts/LocationContext";
 import { UserProvider } from "./contexts/UserContext";
 import { SecondLogin } from "./pages/SecondLogin";
+import { UploadProformaDocument } from "./pages/UploadProformaDocument";
 function App() {
   return (
     <ChakraProvider>
@@ -50,6 +51,10 @@ function App() {
             }
           />
           <Route path="/second-login" element={<SecondLogin />} />
+          <Route
+            path="/upload-proforma-document"
+            element={<UploadProformaDocument proformaId={17} />}
+          />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         {/* </AuthProvider> */}

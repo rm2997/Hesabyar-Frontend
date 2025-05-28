@@ -45,6 +45,7 @@ import {
 import { EditProforma } from "./EditProforma";
 import {
   ConvertProformaToInvoice,
+  GenerateNewToken,
   RemoveProforma,
   ShowUserAllProformas,
 } from "../../api/services/proformaService";
@@ -126,7 +127,6 @@ export const ProformaDataTable = ({ isDesktop }) => {
       invoiceGoods: proforma.proformaGoods,
       proforma: { ...proforma },
     };
-    console.log(newInvoice);
     setLoading(true);
     CreateInvoice(newInvoice)
       .then((res) => {
@@ -157,6 +157,35 @@ export const ProformaDataTable = ({ isDesktop }) => {
       )
       .finally(setLoading(false));
   };
+
+  const handleGenerateNewLink = (id) => {
+    setSelectedID(id);
+    setLoading(true);
+    GenerateNewToken(id)
+      .then((res) => {
+        toast({
+          title: "توجه",
+          description: ` لینک جدید ساخته شد می توانید آن را دوباره به مشتری ارسال کنید`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        setProformas((prev) =>
+          prev.map((p) => (p.id == id ? { ...p, customerLink: res.data } : p))
+        );
+      })
+      .catch((err) => {
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .finally(setLoading(false));
+  };
+
   const handleDeleteProforma = (id) => {
     setSelectedID(id);
     setLoading(true);
@@ -306,6 +335,19 @@ export const ProformaDataTable = ({ isDesktop }) => {
                     <Icon w={6} h={6} as={FilePenLine} />
                   </Tooltip>
                 </Link>
+
+                <Link
+                  _hover={{
+                    color: "orange",
+                  }}
+                  color="blue.600"
+                  onClick={(e) => handleGenerateNewLink(row.id)}
+                >
+                  <Tooltip label="لینک جدید">
+                    <Icon w={6} h={6} as={FilePenLine} />
+                  </Tooltip>
+                </Link>
+
                 <Link
                   _disabled={true}
                   _hover={{ color: "#ffd54f" }}
