@@ -40,6 +40,7 @@ import {
   SquareArrowUp,
   CircleFadingArrowUp,
   Replace,
+  Link2,
 } from "lucide-react";
 
 import { EditProforma } from "./EditProforma";
@@ -47,12 +48,14 @@ import {
   ConvertProformaToInvoice,
   GenerateNewToken,
   RemoveProforma,
+  SendUpdateProformaSms,
   ShowUserAllProformas,
 } from "../../api/services/proformaService";
 import { useEffect, useState } from "react";
 import { CreateInvoice } from "../../api/services/invoiceService";
 import { MyModal } from "../MyModal";
 import { MyAlert } from "../MyAlert";
+import { sendUpdateProformaSms } from "../../api/smsUtils";
 
 export const ProformaDataTable = ({ isDesktop }) => {
   const [proformas, setProformas] = useState([]);
@@ -92,13 +95,76 @@ export const ProformaDataTable = ({ isDesktop }) => {
   };
 
   const handleSendCustomerLink = (id) => {
-    toast({
-      title: "توجه",
-      description: `لینک تاییدیه به مشتری ارسال شد`,
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
+    const proforma = proformas.find((p) => p.id == id);
+    console.log(proforma);
+    if (!proforma) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "اطلاعات مشتری در دسترس نیست",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (!proforma?.customer?.customerMobile) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "شماره موبایل مشتری ثبت نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (!proforma?.customerLink) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "لینک موقت مشتری ساخته نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    const customer =
+      proforma?.customer?.customerGender +
+      " " +
+      proforma?.customer?.customerFName +
+      " " +
+      proforma?.customer?.customerLName;
+    SendUpdateProformaSms(
+      customer,
+      proforma?.customer?.customerMobile,
+      "www.hesab-yaar.ir/upload-proforma-document?token=" +
+        proforma?.customerLink
+    )
+      .then((res) => {
+        toast({
+          title: "توجه",
+          description:
+            "لینک تاییدیه به شماره موبایل" +
+            " " +
+            proforma.customer.customerMobile +
+            " به نام " +
+            proforma.customer.customerFName +
+            " " +
+            proforma.customer.customerLName +
+            " ارسال شد. ",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) =>
+        toast({
+          title: "خطا بعد از ارسال",
+          description: err.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      );
   };
 
   const handleConvertToInvoice = (id) => {
@@ -343,8 +409,8 @@ export const ProformaDataTable = ({ isDesktop }) => {
                   color="blue.600"
                   onClick={(e) => handleGenerateNewLink(row.id)}
                 >
-                  <Tooltip label="لینک جدید">
-                    <Icon w={6} h={6} as={FilePenLine} />
+                  <Tooltip label="تولید لینک جدید">
+                    <Icon w={6} h={6} as={Link2} />
                   </Tooltip>
                 </Link>
 
@@ -356,14 +422,22 @@ export const ProformaDataTable = ({ isDesktop }) => {
                     setSelectedID(row.id);
                     setDialogGears({
                       title: "ارسال لینک به مشتری",
-                      text: `آیا می خواهید لینک به شماره ${row.customer.customerPhone} به نام ${row.customer.customerLName} ارسال گردد؟`,
-                      callBack: handleSendCustomerLink,
+                      text: `آیا می خواهید لینک به شماره ${
+                        row.customer.customerMobile
+                      } به نام ${
+                        row.customer.customerGender +
+                        " " +
+                        row.customer.customerFName +
+                        " " +
+                        row.customer.customerLName
+                      } ارسال گردد؟`,
+                      callBack: () => handleSendCustomerLink(row.id),
                     });
 
                     setIsDialogOpen(true);
                   }}
                 >
-                  <Tooltip label="ارسال به مشتری">
+                  <Tooltip label="ارسال لینک به مشتری">
                     <Icon w={6} h={6} as={Send} />
                   </Tooltip>
                 </Link>

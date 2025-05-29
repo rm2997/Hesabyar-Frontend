@@ -71,25 +71,23 @@ export const CustomerDataTable = ({ HeadLables, DataRows, isDesktop }) => {
       .finally(setLoading(false));
   };
 
-  const updateCustomerInList = (updatedCustomer) => {
+  const updateCustomerInList = (id, updatedCustomer) => {
     setCustomersData((prev) =>
-      prev.map((customer) =>
-        customer.id === updatedCustomer.id ? updatedCustomer : customer
-      )
+      prev.map((c) => (c.id == id ? { ...updatedCustomer } : c))
     );
   };
 
   const deleteCustomerFromList = (id) => {
-    setCustomersData((prev) => prev.filter((customer) => customer.id !== id));
+    const customers = customersData.filter((customer) => customer.id !== id);
+    setCustomersData(customers);
   };
 
   const findCustomerFromList = (id) => {
-    customersData.map((customer) => (customer.id === id ? customer : null));
+    customersData.find((c) => (c.id == id ? c : null));
   };
 
   const handleEditCustomer = (id) => {
     if (id === 0) return;
-    console.log("accepted");
   };
 
   useEffect(() => {
@@ -102,7 +100,7 @@ export const CustomerDataTable = ({ HeadLables, DataRows, isDesktop }) => {
         columns={{ base: 1, md: 2, lg: 5 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
         spacing={4}
       >
-        {DataRows.map((row) => (
+        {customersData.map((row) => (
           <Card
             borderTopRadius={5}
             borderWidth={1}
@@ -165,7 +163,7 @@ export const CustomerDataTable = ({ HeadLables, DataRows, isDesktop }) => {
                     setDialogGears({
                       title: "ویرایش مشتری",
                       text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
-                      callBack: handleEditCustomer,
+                      callBack: () => handleEditCustomer(row.id),
                     });
                     onOpen();
                   }}
@@ -191,7 +189,7 @@ export const CustomerDataTable = ({ HeadLables, DataRows, isDesktop }) => {
                     setDialogGears({
                       title: "حذف پیش فاکتور",
                       text: "آیا واقعا می خواهید این مشتری حذف کنید؟",
-                      callBack: handleDeleteCustomer,
+                      callBack: () => handleDeleteCustomer(row.id),
                     });
                     setIsDialogOpen(true);
                   }}
@@ -219,9 +217,8 @@ export const CustomerDataTable = ({ HeadLables, DataRows, isDesktop }) => {
         <EditCustomer
           id={selectedID}
           isDesktop={isDesktop}
-          onClose={onclose}
-          onUpdate={dialogGears.callBack}
-          customer={findCustomerFromList(selectedID)}
+          onClose={onClose}
+          onUpdate={updateCustomerInList}
         />
       </MyModal>
     </Flex>

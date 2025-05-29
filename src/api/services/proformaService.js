@@ -1,5 +1,6 @@
 import axiosClient from "../axiosClient";
 import endpoints from "../endpoints";
+import { sendUpdateProformaSms } from "../smsUtils";
 
 export const CreateProforma = async (proformaData) => {
   try {
@@ -17,7 +18,7 @@ export const CreateProforma = async (proformaData) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
     }
   }
 };
@@ -35,7 +36,7 @@ export const ConvertProformaToInvoice = async (id) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
     }
   }
 };
@@ -56,7 +57,7 @@ export const UpdateProforma = async (id, proformaData) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
     }
   }
 };
@@ -76,7 +77,7 @@ export const RemoveProforma = async (id) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
     }
   }
 };
@@ -94,7 +95,7 @@ export const ShowUserAllProformas = async () => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
     }
   }
 };
@@ -112,7 +113,7 @@ export const ShowProformasByID = async (id) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
     }
   }
 };
@@ -133,7 +134,30 @@ export const ShowProformasByToken = async (token) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
+    }
+  }
+};
+
+export const UpdateProformCustomerFile = async (token, data) => {
+  try {
+    const response = await axiosClient.patch(
+      endpoints.proforma.updateProformCustomerFile(token),
+      data,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+    if (!response) throw new Error();
+    return response;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error?.response?.data?.message || "خطای سرور");
+    } else if (error?.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
     }
   }
 };
@@ -154,7 +178,25 @@ export const GenerateNewToken = async (id) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
+    }
+  }
+};
+
+export const SendUpdateProformaSms = async (customer, mobileNumber, link) => {
+  try {
+    const resp = await sendUpdateProformaSms(customer, mobileNumber, link);
+    return resp;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
     }
   }
 };

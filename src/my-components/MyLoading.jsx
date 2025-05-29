@@ -1,5 +1,6 @@
 import {
   AbsoluteCenter,
+  Box,
   Center,
   CircularProgress,
   CircularProgressLabel,
@@ -8,7 +9,7 @@ import {
 export const MyLoading = ({ showLoading }) => {
   if (!showLoading) return <></>;
   return (
-    <AbsoluteCenter>
+    <Box marginTop="180px" marginLeft="auto" marginRight="auto">
       <Center>
         <CircularProgress
           color="green.400"
@@ -21,6 +22,6 @@ export const MyLoading = ({ showLoading }) => {
           </CircularProgressLabel>
         </CircularProgress>
       </Center>
-    </AbsoluteCenter>
+    </Box>
   );
 };

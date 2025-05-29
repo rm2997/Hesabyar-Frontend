@@ -37,7 +37,22 @@ export const sendLocationSms = async (mobileNumber, userName) => {
       },
     ],
   };
-  return await axiosClient.post(endpoints.sms.verify, reqBody);
+  try {
+    const response = await axiosClient.post(endpoints.sms.verify, reqBody);
+    return response;
+    if (!response) throw new Error();
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error?.response?.data?.message || "خطای سرور");
+    } else if (error?.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
+    }
+  }
 };
 
 export const sendValidationKeySms = async (mobileNumber, key) => {
@@ -52,4 +67,35 @@ export const sendValidationKeySms = async (mobileNumber, key) => {
     ],
   };
   return await axiosClient.post(endpoints.sms.verify, reqBody);
+};
+
+export const sendUpdateProformaSms = async (customer, mobileNumber, link) => {
+  const reqBody = {
+    mobile: mobileNumber,
+    templateId: 763246,
+    parameters: [
+      {
+        name: "CUSTOMER",
+        value: customer,
+        name: "LINK",
+        value: link,
+      },
+    ],
+  };
+  try {
+    const response = await axiosClient.post(endpoints.sms.verify, reqBody);
+    if (!response) throw new Error();
+    return response;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error?.response?.data?.message || "خطای سرور");
+    } else if (error?.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد,${error.message}`);
+    }
+  }
 };

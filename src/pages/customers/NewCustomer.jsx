@@ -8,6 +8,7 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  Select,
   SimpleGrid,
   Textarea,
   VStack,
@@ -46,6 +47,7 @@ export const NewCustomer = ({ isDesktop }) => {
         customerAddress: "",
         customerMobile: "",
         customerPostalCode: "",
+        customerGender: "",
       });
       toast({
         title: "ثبت شد",
@@ -68,6 +70,7 @@ export const NewCustomer = ({ isDesktop }) => {
   };
 
   const handleChangeFormData = (e) => {
+    console.log(e.target.name, e.target.value);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -91,6 +94,25 @@ export const NewCustomer = ({ isDesktop }) => {
             columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
             spacing={4}
           >
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  هویت
+                </FormLabel>
+                <Select
+                  dir="ltr"
+                  name="customerGender"
+                  placeholder="هویت را انتخاب کنید"
+                  value={formData.customerGender}
+                  onChange={handleChangeFormData}
+                >
+                  <option>شرکت</option>
+                  <option>آقای</option>
+                  <option>خانم</option>
+                </Select>
+              </HStack>
+            </FormControl>
+
             <FormControl isRequired>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="150px">

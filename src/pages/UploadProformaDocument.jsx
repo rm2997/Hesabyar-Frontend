@@ -25,11 +25,18 @@ import {
   IconButton,
   Image,
   Box,
+  Heading,
+  SimpleGrid,
+  Stack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { MyLoading } from "../my-components/MyLoading";
-import { ShowProformasByToken } from "../api/services/proformaService";
+import {
+  ShowProformasByToken,
+  UpdateProformCustomerFile,
+  UpdateProforma,
+} from "../api/services/proformaService";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { CheckCircle2, CircleX } from "lucide-react";
@@ -87,11 +94,8 @@ export const UploadProformaDocument = ({}) => {
           duration: 3000,
           isClosable: false,
         });
-        setTimeout(() => {
-          //navigate("/login");
-        }, 1000);
-
-        //return;
+        navigate("/NotFound");
+        return;
       }
       setLoading(true);
 
@@ -112,9 +116,8 @@ export const UploadProformaDocument = ({}) => {
             duration: 3000,
             isClosable: false,
           });
-          setTimeout(() => {
-            //navigate("/login");
-          }, 1000);
+
+          navigate("/NotFound");
         })
         .finally(setLoading(false));
     };
@@ -123,48 +126,32 @@ export const UploadProformaDocument = ({}) => {
   }, []);
 
   const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     const data = { ...formData };
-    //     setFormData(data);
-    //     setLoading(true);
-    //     try {
-    //       const response = await CreateProforma(data);
-    //       if (!response.data) return;
-    //       setFormData({
-    //         title: "",
-    //         customer: 0,
-    //         totalAmount: 0,
-    //         paymentStatus: 0,
-    //         chequeAmount: 0,
-    //         chequeSerial: 0,
-    //         chequeDate: "",
-    //         paperMoneyDate: "",
-    //         paperMoneyAmount: 0,
-    //         paperMoneySerial: 0,
-    //         trustIssueDate: "",
-    //         proformaGoods: [],
-    //         description: "",
-    //       });
-    //       setProformaItems([]);
-    //       recalculateTotal();
-    //       toast({
-    //         title: "ثبت موفق",
-    //         description: "فایل تاییدیه ثبت و ارسال گردید",
-    //         status: "success",
-    //         duration: 3000,
-    //         isClosable: true,
-    //       });
-    //     } catch (err) {
-    //       toast({
-    //         title: "خطایی رخ داد",
-    //         description: `${err}`,
-    //         status: "error",
-    //         duration: 3000,
-    //         isClosable: true,
-    //       });
-    //     } finally {
-    //       setLoading(false);
-    //     }
+    e.preventDefault();
+    setLoading(true);
+    const form = new FormData();
+    form.append("image", formData.approvedFile);
+
+    console.log(form);
+    UpdateProformCustomerFile(token, form)
+      .then((res) => {
+        toast({
+          title: "توجه",
+          description: "تاییدیه شما ارسال گردید",
+          status: "success",
+          duration: 3000,
+          isClosable: false,
+        });
+      })
+      .catch((err) => {
+        toast({
+          title: "خطا",
+          description: err.message,
+          status: "error",
+          duration: 3000,
+          isClosable: false,
+        });
+      })
+      .finally(setLoading(false));
   };
 
   if (loading) return <MyLoading showLoading={true} />;
@@ -179,126 +166,144 @@ export const UploadProformaDocument = ({}) => {
           borderTopRadius={5}
           textAlign="center"
         >
-          اطلاعات پیش فاکتور
-          {" " +
-            formData.customer.customerFName +
-            " " +
-            formData.customer.customerLName}
+          <Heading size="lg">{formData.title}</Heading>
         </CardHeader>
         <CardBody>
-          <VStack spacing={5} align="stretch" dir="rtl" mb={10}>
-            <HStack>
-              <Text>عنوان فاکتور : </Text>
-              <Text name="title">{formData.title}</Text>
-            </HStack>
-
-            <HStack>
-              <Text>نام خریدار : </Text>
-              <Text name="customer">
-                {formData.customer.customerFName +
-                  " " +
-                  formData.customer.customerLName}
-              </Text>
-            </HStack>
-            <HStack>
-              <Text>تاریخ :</Text>
-              <Text name="createdAt">
-                {dayjs(formData.createdAt).locale("fa").format("YYYY/MM/DD")}
-              </Text>
-            </HStack>
-            <HStack>
-              <Text>ساعت :</Text>
-              <Text name="createdAt">
-                {dayjs(formData.createdAt).locale("fa").format("HH:mm:ss")}
-              </Text>
-            </HStack>
-            <HStack>
-              <Text>نوع پرداخت :</Text>
-              <Text name="paymentStatus">{formData.paymentStatus}</Text>
-            </HStack>
-
+          <SimpleGrid
+            columns={{ base: 1, md: 1, lg: 1 }}
+            dir="rtl"
+            mb={10}
+            rowGap={3}
+            as="form"
+            onSubmit={handleSubmit}
+          >
+            <Stack align="stretch" rowGap={2} spacing={4}>
+              <HStack>
+                <Text>نام خریدار : </Text>
+                <Text name="customer">
+                  {formData?.customer?.customerGender +
+                    " " +
+                    formData.customer.customerFName +
+                    " " +
+                    formData.customer.customerLName}
+                </Text>
+              </HStack>
+              <HStack>
+                <Text>تاریخ :</Text>
+                <Text name="createdAt">
+                  {dayjs(formData.createdAt).locale("fa").format("YYYY/MM/DD")}
+                </Text>
+              </HStack>
+              <HStack>
+                <Text>ساعت :</Text>
+                <Text name="createdAt">
+                  {dayjs(formData.createdAt).locale("fa").format("HH:mm:ss")}
+                </Text>
+              </HStack>
+              <HStack>
+                <Text>نوع پرداخت :</Text>
+                <Text name="paymentStatus">{formData.paymentStatus}</Text>
+              </HStack>
+            </Stack>
             <Divider mb={5} />
-
-            <TableContainer dir="rtl">
-              <Table size="sm" variant="simple">
-                <Thead>
-                  <Tr>
-                    <Th>ردیف</Th>
-                    <Th>نام کالا</Th>
-                    <Th>تعداد</Th>
-                    <Th>واحد</Th>
-                    <Th>قیمت واحد</Th>
-                    <Th>جمع کل</Th>
-                    <Th>توضیحات کالا</Th>
-                    <Th></Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {formData?.proformaGoods?.map((item, index) => (
-                    <Tr key={item.no}>
-                      <Td>
-                        <HStack>
-                          <Text>{index + 1} </Text>
-                        </HStack>
-                      </Td>
-                      <Td>
-                        <HStack>
-                          <Text>{item.good.goodName}</Text>
-                        </HStack>
-                      </Td>
-                      <Td>
-                        <HStack>
-                          <Text>{item.quantity}</Text>
-                        </HStack>
-                      </Td>
-                      <Td>
-                        <HStack>
-                          <Text>{item?.good?.goodName}</Text>
-                        </HStack>
-                      </Td>
-                      <Td>
-                        <HStack>
-                          <Text>{item.price} </Text>
-                        </HStack>
-                      </Td>
-                      <Td>
-                        <HStack>
-                          <Text>{item.quantity * item.price}</Text>
-                        </HStack>
-                      </Td>
-                      <Td>
-                        <HStack>
-                          <Text>{item.description}</Text>
-                        </HStack>
-                      </Td>
-                      <Td></Td>
+            <Stack align="stretch">
+              <TableContainer dir="rtl">
+                <Table size="sm" variant="simple">
+                  <Thead borderBottomWidth={2}>
+                    <Tr>
+                      <Th>ردیف</Th>
+                      <Th>نام کالا</Th>
+                      <Th>تعداد</Th>
+                      <Th>واحد</Th>
+                      <Th>قیمت واحد</Th>
+                      <Th>جمع کل</Th>
+                      <Th>توضیحات کالا</Th>
+                      <Th></Th>
                     </Tr>
-                  ))}
-                </Tbody>
-                <Tfoot>
-                  <Tr>
-                    <Th>جمع کل</Th>
-                    <Th></Th>
-                    <Th>
-                      <Text> {itemsCount}</Text>
-                    </Th>
-                    <Th></Th>
-                    <Th></Th>
-                    <Th>
-                      <Text> {formData.totalAmount}</Text>
-                    </Th>
-                    <Th></Th>
-                    <Th></Th>
-                  </Tr>
-                </Tfoot>
-              </Table>
-            </TableContainer>
+                  </Thead>
+                  <Tbody>
+                    {formData?.proformaGoods?.map((item, index) => (
+                      <Tr key={item.no}>
+                        <Td>
+                          <HStack>
+                            <Text>{index + 1} </Text>
+                          </HStack>
+                        </Td>
+                        <Td>
+                          <HStack>
+                            <Text>{item.good.goodName}</Text>
+                          </HStack>
+                        </Td>
+                        <Td>
+                          <HStack>
+                            <Text>{item.quantity}</Text>
+                          </HStack>
+                        </Td>
+                        <Td>
+                          <HStack>
+                            <Text>{item?.good?.goodUnit?.unitName}</Text>
+                          </HStack>
+                        </Td>
+
+                        <Td>
+                          <HStack>
+                            <Text>{Number(item.price).toLocaleString()} </Text>
+                          </HStack>
+                        </Td>
+                        <Td>
+                          <HStack>
+                            <Text>
+                              {Number(
+                                item.quantity * item.price
+                              ).toLocaleString()}
+                            </Text>
+                          </HStack>
+                        </Td>
+                        <Td>
+                          <HStack>
+                            <Text>{item.description}</Text>
+                          </HStack>
+                        </Td>
+                        <Td></Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+
+                  <Tfoot borderTopWidth={2}>
+                    <Tr>
+                      <Th></Th>
+                      <Th></Th>
+                      <Th></Th>
+                      <Th></Th>
+                      <Th></Th>
+                      <Th></Th>
+                      <Th>
+                        <VStack mt="5px" align="stretch" spacing={0}>
+                          <HStack p={2} bg="gray.100" spacing={10}>
+                            <Heading size="xs">تعداد کل : </Heading>
+                            <Text>{itemsCount}</Text>
+                          </HStack>
+                          <HStack p={2} bg="gray.100" spacing={5}>
+                            <Heading size="xs">مبلغ نهایی :</Heading>
+                            <Text>
+                              {Number(formData.totalAmount).toLocaleString()}
+                            </Text>
+                          </HStack>
+                        </VStack>
+                      </Th>
+                      <Th></Th>
+                    </Tr>
+                  </Tfoot>
+                </Table>
+              </TableContainer>
+            </Stack>
+            <Divider />
             <HStack>
               <label>توضیحات فاکتور :</label>
               <Text value={formData.description} />
             </HStack>
-            <Divider mb={5} />
-            <HStack>
+            <Divider />
+            <SimpleGrid spacing={1} columns={{ base: 1, md: 2, lg: 3 }}>
               <Text>
                 لطفا بنویسید اطلاعات را قبول دارم - امضا کرده - عکس بگیرید و
                 اینجا قرار دهید.
@@ -315,6 +320,7 @@ export const UploadProformaDocument = ({}) => {
                   />
                 </InputLeftElement>
                 <Input
+                  accept="image/*"
                   pt="5px"
                   pb="5px"
                   type="file"
@@ -333,7 +339,7 @@ export const UploadProformaDocument = ({}) => {
                 hidden={
                   formData.approvedFile == null || formData.approvedFile == ""
                 }
-                boxSize="10"
+                boxSize="20"
               >
                 <Image
                   src={imagePreview}
@@ -341,7 +347,8 @@ export const UploadProformaDocument = ({}) => {
                   alt={formData.approvedFile}
                 />
               </Box>
-            </HStack>
+            </SimpleGrid>
+            <Divider />
             <HStack>
               <Checkbox
                 isDisabled={
@@ -362,6 +369,7 @@ export const UploadProformaDocument = ({}) => {
                 فاکتور را مطالعه کرده و اطلاعات آن را قبول دارم.
               </Checkbox>
             </HStack>
+            <Divider />
             <Button
               isDisabled={!formData.isAccepted}
               type="submit"
@@ -370,7 +378,7 @@ export const UploadProformaDocument = ({}) => {
             >
               تایید
             </Button>
-          </VStack>
+          </SimpleGrid>
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
