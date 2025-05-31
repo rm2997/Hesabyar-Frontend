@@ -24,6 +24,7 @@ import { NewUnit } from "../pages/units/NewUnit";
 import { ProformaDataTable } from "./proformas/ProformaDataTable";
 import { InvoiceDataTable } from "./invoices/InvoiceDataTable";
 import { Users } from "../pages/users/Users";
+import { UploadGoods } from "./goods/UploadGoods";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -41,6 +42,7 @@ const validContents = [
   { name: "customers", value: "لیست مشتریان" },
   { name: "newGood", value: "ثبت کالای جدید" },
   { name: "goods", value: "لیست کالاها" },
+  { name: "uploadGoods", value: "آپلود دسته ای کالاها" },
   { name: "newUnit", value: "ثبت واحد جدید" },
   { name: "units", value: "لیست واحدها" },
   { name: "newNotification", value: "ارسال پیام " },
@@ -101,6 +103,8 @@ export const MainContents = ({ activeContent, isDesktop }) => {
           return <NewGood isDesktop={isDesktop} />;
         case "goods":
           return <Goods isDesktop={isDesktop} />;
+        case "uploadGoods":
+          return <UploadGoods isDesktop={isDesktop} />;
         case "newUnit":
           return <NewUnit isDesktop={isDesktop} />;
         case "units":

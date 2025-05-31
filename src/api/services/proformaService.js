@@ -62,6 +62,27 @@ export const UpdateProforma = async (id, proformaData) => {
   }
 };
 
+export const SetProformaIsSent = async (id) => {
+  try {
+    const resp = await axiosClient.patch(
+      endpoints.proforma.setProformaIsSent(id)
+    );
+    if (!resp) throw new Error();
+    return resp;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
+    }
+  }
+};
+
 export const RemoveProforma = async (id) => {
   try {
     console.log(id);
@@ -186,6 +207,26 @@ export const GenerateNewToken = async (id) => {
 export const SendUpdateProformaSms = async (customer, mobileNumber, link) => {
   try {
     const resp = await sendUpdateProformaSms(customer, mobileNumber, link);
+    return resp;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
+    }
+  }
+};
+
+export const ShowProformaApprovedFile = async (id) => {
+  try {
+    const resp = await axiosClient.get(endpoints.proforma.getApprovedFile(id), {
+      responseType: "blob",
+    });
     return resp;
   } catch (error) {
     if (error.response) {

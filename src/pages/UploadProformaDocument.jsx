@@ -66,6 +66,8 @@ export const UploadProformaDocument = ({}) => {
     proformaGoods: [],
     description: "",
     isAccepted: false,
+    isAcceptedByCustomer: false,
+    imageFile: 0,
   });
   const [proformaItems, setProformaItems] = useState([
     {
@@ -101,7 +103,7 @@ export const UploadProformaDocument = ({}) => {
 
       ShowProformasByToken(token)
         .then((res) => {
-          setFormData({ ...res.data });
+          setFormData({ ...res.data, approvedFile: "" });
           let items = 0;
           res.data.proformaGoods.forEach((element) => {
             items += element.quantity;
@@ -129,7 +131,7 @@ export const UploadProformaDocument = ({}) => {
     e.preventDefault();
     setLoading(true);
     const form = new FormData();
-    form.append("image", formData.approvedFile);
+    form.append("image", formData.imageFile);
 
     console.log(form);
     UpdateProformCustomerFile(token, form)
@@ -315,19 +317,28 @@ export const UploadProformaDocument = ({}) => {
                     variant="ghost"
                     icon={<CircleX />}
                     onClick={() =>
-                      setFormData({ ...formData, approvedFile: "" })
+                      setFormData({
+                        ...formData,
+                        approvedFile: "",
+                        isAcceptedByCustomer: false,
+                      })
                     }
                   />
                 </InputLeftElement>
                 <Input
                   accept="image/*"
+                  capture="environment"
                   pt="5px"
                   pb="5px"
                   type="file"
                   name="approvedFile"
                   value={formData.approvedFile}
                   onChange={(e) => {
-                    setFormData({ ...formData, approvedFile: e.target.value });
+                    setFormData({
+                      ...formData,
+                      approvedFile: e.target.value,
+                      imageFile: e.target.files[0],
+                    });
                     setImagePreview(URL.createObjectURL(e.target.files[0]));
                   }}
                 />
@@ -354,10 +365,13 @@ export const UploadProformaDocument = ({}) => {
                 isDisabled={
                   formData.approvedFile == null || formData.approvedFile == ""
                 }
-                name="isAccepted"
-                isChecked={formData.isAccepted}
+                name="isAcceptedByCustomer"
+                isChecked={formData.isAcceptedByCustomer}
                 onChange={(e) =>
-                  setFormData({ ...formData, isAccepted: e.target.checked })
+                  setFormData({
+                    ...formData,
+                    isAcceptedByCustomer: e.target.checked,
+                  })
                 }
               >
                 اینجانب
@@ -371,7 +385,7 @@ export const UploadProformaDocument = ({}) => {
             </HStack>
             <Divider />
             <Button
-              isDisabled={!formData.isAccepted}
+              isDisabled={!formData.isAcceptedByCustomer}
               type="submit"
               colorScheme="blue"
               leftIcon={<CheckCircle2 />}

@@ -3,6 +3,7 @@ import { Accordion, Box, Divider, Heading, Link, Text } from "@chakra-ui/react";
 import { SidebarItem } from "./SIdebarItem";
 import { PieChart } from "./PieChart";
 import {
+  ArrowUpFromLine,
   BookUser,
   Boxes,
   Coins,
@@ -198,6 +199,12 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
               name: "لیست کالاها",
               type: "text",
               icon: <Boxes />,
+            },
+            {
+              id: "uploadGoods",
+              name: "آپلود دسته ای کالا",
+              type: "text",
+              icon: <ArrowUpFromLine />,
             },
           ]}
           onMenuItemClick={onMenuItemClick}

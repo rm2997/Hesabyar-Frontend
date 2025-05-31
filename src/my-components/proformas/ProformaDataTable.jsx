@@ -30,6 +30,7 @@ import {
   SimpleGrid,
   Tooltip,
   Icon,
+  Image,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -41,6 +42,11 @@ import {
   CircleFadingArrowUp,
   Replace,
   Link2,
+  Handshake,
+  UserRoundCheck,
+  MailCheck,
+  UserLock,
+  ShieldUser,
 } from "lucide-react";
 
 import { EditProforma } from "./EditProforma";
@@ -49,13 +55,13 @@ import {
   GenerateNewToken,
   RemoveProforma,
   SendUpdateProformaSms,
+  SetProformaIsSent,
   ShowUserAllProformas,
 } from "../../api/services/proformaService";
 import { useEffect, useState } from "react";
 import { CreateInvoice } from "../../api/services/invoiceService";
 import { MyModal } from "../MyModal";
 import { MyAlert } from "../MyAlert";
-import { sendUpdateProformaSms } from "../../api/smsUtils";
 
 export const ProformaDataTable = ({ isDesktop }) => {
   const [proformas, setProformas] = useState([]);
@@ -84,6 +90,10 @@ export const ProformaDataTable = ({ isDesktop }) => {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    console.log(proformas);
+  }, [proformas]);
 
   dayjs.extend(jalali);
 
@@ -127,12 +137,16 @@ export const ProformaDataTable = ({ isDesktop }) => {
       });
       return;
     }
+    SetProformaIsSent(proforma.id)
+      .then((res) => updateProformainList(id, "isSent", "true"))
+      .catch((err) => console.log(err.message));
     const customer =
       proforma?.customer?.customerGender +
       " " +
       proforma?.customer?.customerFName +
       " " +
       proforma?.customer?.customerLName;
+
     SendUpdateProformaSms(
       customer,
       proforma?.customer?.customerMobile,
@@ -150,7 +164,9 @@ export const ProformaDataTable = ({ isDesktop }) => {
             proforma.customer.customerFName +
             " " +
             proforma.customer.customerLName +
-            " ارسال شد. ",
+            " ارسال شد. " +
+            "www.hesab-yaar.ir/upload-proforma-document?token=" +
+            proforma?.customerLink,
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -165,6 +181,12 @@ export const ProformaDataTable = ({ isDesktop }) => {
           isClosable: true,
         })
       );
+  };
+
+  const updateProformainList = (id, key, value) => {
+    setProformas((prev) =>
+      prev.map((p) => (p.id == id ? { ...p, [key]: value } : p))
+    );
   };
 
   const handleConvertToInvoice = (id) => {
@@ -198,10 +220,11 @@ export const ProformaDataTable = ({ isDesktop }) => {
       .then((res) => {
         if (res.status == 200 || res.status == 201) {
           ConvertProformaToInvoice(proforma.id).then((res) => {
-            const newProformas = proformas.filter((p) => p.id != proforma.id);
-            proforma.isConverted = true;
-            newProformas.push(proforma);
-            setProformas(newProformas);
+            // const newProformas = proformas.filter((p) => p.id != proforma.id);
+            // proforma.isConverted = true;
+            // newProformas.push(proforma);
+            // setProformas(newProformas);
+            updateProformainList(proforma.id, "isConverted", "true");
           });
           toast({
             title: "توجه",
@@ -237,7 +260,16 @@ export const ProformaDataTable = ({ isDesktop }) => {
           isClosable: true,
         });
         setProformas((prev) =>
-          prev.map((p) => (p.id == id ? { ...p, customerLink: res.data } : p))
+          prev.map((p) =>
+            p.id == id
+              ? {
+                  ...p,
+                  customerLink: res.data,
+                  isSent: false,
+                  approvedFile: "",
+                }
+              : p
+          )
         );
       })
       .catch((err) => {
@@ -287,6 +319,7 @@ export const ProformaDataTable = ({ isDesktop }) => {
     // setModalContetnt(<EditProforma id={id} onClose={onClose} />);
     onOpen();
   };
+
   if (proformas)
     return (
       <SimpleGrid
@@ -296,47 +329,63 @@ export const ProformaDataTable = ({ isDesktop }) => {
       >
         {proformas.map((row) => (
           <Card
-            maxW="350px"
+            maxW="370px"
             _hover={{
               cursor: "",
-              borderColor: "green.500",
+              borderColor: "orange.300",
             }}
             borderWidth="1px"
             borderColor="gray.300"
           >
             <CardHeader
               borderTopRadius={5}
-              bg={row?.isConverted ? "green.200" : "orange.200"}
+              bg={
+                !row.isConverted
+                  ? row?.isAccepted
+                    ? "green.400"
+                    : "blue.200"
+                  : "gray.400"
+              }
             >
               <HStack>
-                <Text> پیش فاکتور شماره :{row.id}</Text>
+                <Text> شماره :{row.id}</Text>
                 <Box mr="auto">
                   <HStack>
-                    {row.isSent ? (
-                      <SquareArrowUp color="green" />
-                    ) : (
-                      <Tooltip label="منتظر ارسال">
-                        <Icon
-                          as={CircleFadingArrowUp}
-                          color="orange"
-                          _hover={{
-                            color: "green",
-                          }}
-                        />
-                      </Tooltip>
-                    )}
                     {row.isConverted ? (
                       <Tooltip label="فاکتور شده">
-                        <Icon
-                          color="purple.500"
-                          as={Replace}
-                          _hover={{
-                            color: "green",
-                          }}
-                        />
+                        <Replace color="purple" />
                       </Tooltip>
                     ) : (
                       <></>
+                    )}
+                    {row.isAccepted ? (
+                      <Tooltip label="تایید کاربر ارشد">
+                        <ShieldUser color="green" />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip label="منتظر تایید کاربر ارشد ">
+                        <UserLock color="yellow" _hover={{ color: "green" }} />
+                      </Tooltip>
+                    )}
+
+                    {row.approvedFile ? (
+                      <Tooltip label="تایید مشتری">
+                        <UserRoundCheck color="green" />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip label="منتظر تایید مشتری">
+                        <Handshake color="white" />
+                      </Tooltip>
+                    )}
+
+                    {row.isSent ? (
+                      <Tooltip label="لینک به مشتری ارسال شده است">
+                        <MailCheck color="green" />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip label="منتظر ارسال">
+                        <CircleFadingArrowUp color="orange" />
+                      </Tooltip>
                     )}
                   </HStack>
                 </Box>
@@ -390,57 +439,63 @@ export const ProformaDataTable = ({ isDesktop }) => {
                 align={"stretch"}
                 mr="auto"
               >
-                <Link
-                  _hover={{
-                    color: "orange",
-                  }}
-                  color="blue.600"
-                  onClick={(e) => handleEditProforma(row.id)}
-                >
-                  <Tooltip label="ویرایش">
-                    <Icon w={6} h={6} as={FilePenLine} />
-                  </Tooltip>
-                </Link>
+                {!row.isConverted && (
+                  <Link
+                    _hover={{
+                      color: "orange",
+                    }}
+                    color="blue.600"
+                    onClick={(e) => handleEditProforma(row.id)}
+                  >
+                    <Tooltip label="ویرایش">
+                      <Icon w={6} h={6} as={FilePenLine} />
+                    </Tooltip>
+                  </Link>
+                )}
 
-                <Link
-                  _hover={{
-                    color: "orange",
-                  }}
-                  color="blue.600"
-                  onClick={(e) => handleGenerateNewLink(row.id)}
-                >
-                  <Tooltip label="تولید لینک جدید">
-                    <Icon w={6} h={6} as={Link2} />
-                  </Tooltip>
-                </Link>
+                {!row.isConverted && (
+                  <Link
+                    _hover={{
+                      color: "orange",
+                    }}
+                    color="blue.600"
+                    onClick={(e) => handleGenerateNewLink(row.id)}
+                  >
+                    <Tooltip label="تولید لینک جدید">
+                      <Icon w={6} h={6} as={Link2} />
+                    </Tooltip>
+                  </Link>
+                )}
 
-                <Link
-                  _disabled={true}
-                  _hover={{ color: "#ffd54f" }}
-                  color="green.600"
-                  onClick={(e) => {
-                    setSelectedID(row.id);
-                    setDialogGears({
-                      title: "ارسال لینک به مشتری",
-                      text: `آیا می خواهید لینک به شماره ${
-                        row.customer.customerMobile
-                      } به نام ${
-                        row.customer.customerGender +
-                        " " +
-                        row.customer.customerFName +
-                        " " +
-                        row.customer.customerLName
-                      } ارسال گردد؟`,
-                      callBack: () => handleSendCustomerLink(row.id),
-                    });
+                {!row.isConverted && row?.isSent == false && (
+                  <Link
+                    _hover={{ color: "#ffd54f" }}
+                    color="green.600"
+                    onClick={(e) => {
+                      setSelectedID(row.id);
+                      setDialogGears({
+                        title: "ارسال لینک به مشتری",
+                        text: `آیا می خواهید لینک به شماره ${
+                          row.customer.customerMobile
+                        } به نام ${
+                          row.customer.customerGender +
+                          " " +
+                          row.customer.customerFName +
+                          " " +
+                          row.customer.customerLName
+                        } ارسال گردد؟`,
+                        callBack: () => handleSendCustomerLink(row.id),
+                      });
 
-                    setIsDialogOpen(true);
-                  }}
-                >
-                  <Tooltip label="ارسال لینک به مشتری">
-                    <Icon w={6} h={6} as={Send} />
-                  </Tooltip>
-                </Link>
+                      setIsDialogOpen(true);
+                    }}
+                  >
+                    <Tooltip label="ارسال لینک به مشتری">
+                      <Icon w={6} h={6} as={Send} />
+                    </Tooltip>
+                  </Link>
+                )}
+
                 {!row.isConverted && (
                   <Link
                     _hover={{ color: "#ffd54f" }}
@@ -452,23 +507,26 @@ export const ProformaDataTable = ({ isDesktop }) => {
                     </Tooltip>
                   </Link>
                 )}
-                <Link
-                  _hover={{ color: "#ffd54f" }}
-                  color="red.600"
-                  onClick={(e) => {
-                    setSelectedID(row.id);
-                    setDialogGears({
-                      title: "حذف پیش فاکتور",
-                      text: "آیا واقعا می خواهید این پیش فاکتور را حذف کنید؟",
-                      callBack: handleDeleteProforma,
-                    });
-                    setIsDialogOpen(true);
-                  }}
-                >
-                  <Tooltip label="حذف">
-                    <Icon w={6} h={6} as={Trash2} />
-                  </Tooltip>
-                </Link>
+
+                {!row.isConverted && (
+                  <Link
+                    _hover={{ color: "#ffd54f" }}
+                    color="red.600"
+                    onClick={(e) => {
+                      setSelectedID(row.id);
+                      setDialogGears({
+                        title: "حذف پیش فاکتور",
+                        text: "آیا واقعا می خواهید این پیش فاکتور را حذف کنید؟",
+                        callBack: handleDeleteProforma,
+                      });
+                      setIsDialogOpen(true);
+                    }}
+                  >
+                    <Tooltip label="حذف">
+                      <Icon w={6} h={6} as={Trash2} />
+                    </Tooltip>
+                  </Link>
+                )}
               </Stack>
             </CardFooter>
           </Card>

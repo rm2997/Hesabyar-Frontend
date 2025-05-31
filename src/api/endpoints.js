@@ -18,6 +18,7 @@ const endpoints = {
   },
   proforma: {
     listAll: "/proforma/user/my",
+    getApprovedFile: (id) => `/proforma/file/${id}`,
     convert: (id) => `/proforma/convert/${id}`,
     listByToken: (token) => `/proforma/token/${token}`,
     updateProformCustomerFile: (token) => `/proforma/token/${token}`,
@@ -27,6 +28,7 @@ const endpoints = {
     detail: (id) => `/proforma/${id}`,
     create: "/proforma/",
     delete: (id) => `/proforma/${id}`,
+    setProformaIsSent: (id) => `/proforma/sent/${id}`,
   },
   invoice: {
     listAll: "/invoice/user/my",
@@ -61,6 +63,7 @@ const endpoints = {
     listOne: (id) => `/goods/${id}`,
     detail: (id) => `/goods/${id}`,
     create: "/goods/",
+    uploadExcel: "/goods/upload-excel",
     delete: (id) => `/goods/${id}`,
   },
   unit: {

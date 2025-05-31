@@ -39,13 +39,17 @@ import {
   Box,
   Divider,
   SimpleGrid,
+  Image,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import { Minus, Plus, Trash2, UserRoundPlus, UserSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import { UpdateProforma } from "../../api/services/proformaService";
+import {
+  ShowProformaApprovedFile,
+  UpdateProforma,
+} from "../../api/services/proformaService";
 import { useNavigate } from "react-router-dom";
 import {
   ShowAllCustomers,
@@ -98,6 +102,7 @@ export const EditProforma = ({
   ]);
 
   const [totalQuantity, setTotalQuantity] = useState(0);
+  const [approvedFile, setApprovedFile] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
   const [formError, setFormError] = useState(null);
 
@@ -114,6 +119,14 @@ export const EditProforma = ({
       setLoading(true);
       await ShowAllCustomers().then((res) => setCustomers(res.data));
       await ShowAllGoods().then((res) => setAllGoods(res.data));
+      await ShowProformaApprovedFile(proforma.id)
+        .then((res) => {
+          if (!res.data) return;
+          console.log(res.data);
+          const url = URL.createObjectURL(res.data);
+          setApprovedFile(url);
+        })
+        .catch((err) => console.log(err.message));
       setFormData({ ...proforma, proformaGoods: [...proforma.proformaGoods] });
     };
     loadData().finally(setLoading(false));
@@ -151,6 +164,7 @@ export const EditProforma = ({
           paperMoneySerial: 0,
           trustIssueDate: "",
           proformaGoods: [],
+          approvedFile: "",
           description: "",
         });
         setProformaItems([
@@ -589,6 +603,26 @@ export const EditProforma = ({
                   </Tfoot>
                 </Table>
               </TableContainer>
+              <HStack marginTop="5px" marginRight="auto">
+                <Text>فایل تاییدیه مشتری: </Text>
+                {approvedFile ? (
+                  <Box
+                    borderRadius="6px"
+                    hidden={approvedFile == null || approvedFile == ""}
+                    boxSize="20"
+                  >
+                    <Image
+                      src={approvedFile ? approvedFile : ""}
+                      objectFit="cover"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      alt={formData.approvedFile}
+                    />
+                  </Box>
+                ) : (
+                  <Text>ندارد </Text>
+                )}
+              </HStack>
             </Box>
             <Input
               placeholder=" توضیحات فاکتور"
@@ -596,8 +630,9 @@ export const EditProforma = ({
               value={formData.description}
               onChange={handleChangeFormData}
             />
+
             <Button colorScheme="blue" type="submit" isLoading={loading}>
-              ثبت فاکتور
+              ثبت تغییرات پیش فاکتور
             </Button>
             <Modal
               dir="rtl"

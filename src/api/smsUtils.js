@@ -77,8 +77,13 @@ export const sendUpdateProformaSms = async (customer, mobileNumber, link) => {
       {
         name: "CUSTOMER",
         value: customer,
-        name: "LINK",
-        value: link,
+        name: "TOKEN1",
+        value: link.length > 25 ? link.substring(0, 25) : link,
+        name: "TOKEN2",
+        value:
+          link.length > 25 && link.length <= 50
+            ? link.substring(26, 25)
+            : link.substring(26),
       },
     ],
   };
@@ -95,7 +100,7 @@ export const sendUpdateProformaSms = async (customer, mobileNumber, link) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد,${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد${error.message}`);
     }
   }
 };
