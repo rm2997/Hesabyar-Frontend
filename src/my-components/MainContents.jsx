@@ -5,6 +5,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Flex,
   Text,
 } from "@chakra-ui/react";
 
@@ -25,6 +26,7 @@ import { ProformaDataTable } from "./proformas/ProformaDataTable";
 import { InvoiceDataTable } from "./invoices/InvoiceDataTable";
 import { Users } from "../pages/users/Users";
 import { UploadGoods } from "./goods/UploadGoods";
+import { GoodsDataTable } from "./goods/GoodsDataTable";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -102,7 +104,7 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         case "newGood":
           return <NewGood isDesktop={isDesktop} />;
         case "goods":
-          return <Goods isDesktop={isDesktop} />;
+          return <GoodsDataTable isDesktop={isDesktop} />;
         case "uploadGoods":
           return <UploadGoods isDesktop={isDesktop} />;
         case "newUnit":
@@ -120,19 +122,31 @@ export const MainContents = ({ activeContent, isDesktop }) => {
   }, [activeContent]);
 
   return (
-    <Card w="98%" m={1} bg="#efefef">
-      <CardHeader
+    <Flex w="98%" m={1} bg="#efefef" direction="column" height="100vh">
+      {/* <Card w="98%" m={1} bg="#efefef"> */}
+      {/* <CardHeader
         bg="#0A9DBB"
         borderBottomColor="gray.100"
         borderBottomWidth="1px"
         color="white"
+      > */}
+      <Box
+        borderBottomRadius={5}
+        bg="#0A9DBB"
+        borderBottomColor="gray.100"
+        borderBottomWidth="1px"
+        color="white"
+        p={2}
       >
         <Text fontSize={"2xl"}>{pageTitle}</Text>
-      </CardHeader>
-      <CardBody overflow="scroll" color="gray.200">
+      </Box>
+      {/* </CardHeader> */}
+      {/* <CardBody overflow="scroll" color="gray.200"> */}
+      <Box flex="1" overflowY="auto" p={2}>
         <Box>{shouldRender}</Box>
-      </CardBody>
-      <CardFooter bg="#dedcdd"></CardFooter>
-    </Card>
+      </Box>
+
+      {/* <CardFooter bg="#dedcdd"></CardFooter> */}
+    </Flex>
   );
 };
