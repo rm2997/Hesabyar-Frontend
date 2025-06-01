@@ -95,9 +95,11 @@ export const ShowGoodByID = async (id) => {
   }
 };
 
-export const ShowAllGoods = async () => {
+export const ShowAllGoods = async (page, limit, search) => {
   try {
-    const response = await axiosClient.get(endpoints.good.listAll);
+    const response = await axiosClient.get(
+      endpoints.good.listAll(page, limit, search)
+    );
     return response;
   } catch (error) {
     if (error.response) {
@@ -108,7 +110,25 @@ export const ShowAllGoods = async () => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
+    }
+  }
+};
+
+export const ShowGoodsByCount = async (count) => {
+  try {
+    const response = await axiosClient.get(endpoints.good.listCount(count));
+    return response;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };

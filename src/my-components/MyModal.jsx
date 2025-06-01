@@ -7,7 +7,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Spinner,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 
