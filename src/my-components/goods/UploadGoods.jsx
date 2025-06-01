@@ -24,7 +24,10 @@ import {
   Binoculars,
   CircleX,
   FileChartColumn,
+<<<<<<< HEAD
   FolderOpen,
+=======
+>>>>>>> 57113f35a119b3462a5822f6140bb4ee72f2b14b
   SquareCheckBig,
 } from "lucide-react";
 import { useState } from "react";
@@ -192,8 +195,15 @@ export const UploadGoods = ({ isDesktop }) => {
                   _hover={{ bg: "purple.600" }}
                 >
                   {loading && <Spinner />}
+<<<<<<< HEAD
                   <FolderOpen style={{ margin: "2px", marginLeft: "10px" }} />
                   <Text>انتخاب فایل</Text>
+=======
+                  <FileChartColumn
+                    style={{ margin: "2px", marginLeft: "10px" }}
+                  />
+                  <Text>آپلود فایل</Text>
+>>>>>>> 57113f35a119b3462a5822f6140bb4ee72f2b14b
                 </Box>
               </label>
               <HStack
