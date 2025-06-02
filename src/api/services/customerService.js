@@ -17,7 +17,7 @@ export const CreateCustomer = async (customerData) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -38,7 +38,7 @@ export const UpdateCustomer = async (id, customerData) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -56,7 +56,7 @@ export const RemoveCustomer = async (id) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -74,14 +74,17 @@ export const ShowCustomerByID = async (id) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
 
-export const ShowAllCustomers = async () => {
+export const ShowAllCustomers = async (page, limit, search) => {
   try {
-    const response = await axiosClient.get(endpoints.customer.listAll);
+    const response = await axiosClient.get(
+      endpoints.customer.listAll(page, limit, search)
+    );
+    if (!response) throw new Error("اطلاعاتی دریافت نشد");
     return response;
   } catch (error) {
     if (error.response) {
@@ -92,7 +95,7 @@ export const ShowAllCustomers = async () => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };

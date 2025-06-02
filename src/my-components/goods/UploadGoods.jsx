@@ -21,13 +21,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import {
+  ArrowUpFromLine,
   Binoculars,
   CircleX,
+  ClipboardCheck,
   FileChartColumn,
-<<<<<<< HEAD
   FolderOpen,
-=======
->>>>>>> 57113f35a119b3462a5822f6140bb4ee72f2b14b
   SquareCheckBig,
 } from "lucide-react";
 import { useState } from "react";
@@ -183,27 +182,24 @@ export const UploadGoods = ({ isDesktop }) => {
               />
               <label htmlFor="uploadFile" disabled={loading}>
                 <Box
+                  maxHeight={10}
+                  maxWidth={160}
                   as="span"
                   display="inline-flex"
                   alignItems="center"
                   justifyContent="center"
                   p="10px 20px"
-                  bg="purple.400"
-                  color="white"
+                  bg=" #ffee5f "
+                  color="black"
                   borderRadius="md"
+                  borderWidth="1px"
+                  borderColor="gray.300"
                   cursor={loading ? "not-allowed" : "pointer"}
-                  _hover={{ bg: "purple.600" }}
+                  _hover={{ bg: "yellow.400" }}
                 >
                   {loading && <Spinner />}
-<<<<<<< HEAD
                   <FolderOpen style={{ margin: "2px", marginLeft: "10px" }} />
                   <Text>انتخاب فایل</Text>
-=======
-                  <FileChartColumn
-                    style={{ margin: "2px", marginLeft: "10px" }}
-                  />
-                  <Text>آپلود فایل</Text>
->>>>>>> 57113f35a119b3462a5822f6140bb4ee72f2b14b
                 </Box>
               </label>
               <HStack
@@ -235,7 +231,7 @@ export const UploadGoods = ({ isDesktop }) => {
           <FormControl>
             <HStack>
               <Button
-                leftIcon={<Binoculars />}
+                leftIcon={<ClipboardCheck />}
                 colorScheme="green"
                 disabled={!selectedFileName || loading}
                 onClick={handlePreviewFile}
@@ -244,6 +240,7 @@ export const UploadGoods = ({ isDesktop }) => {
                 بررسی فایل
               </Button>
               <Text>تعداد رکورد : </Text>
+
               <Text>{recordCount}</Text>
             </HStack>
           </FormControl>
@@ -263,13 +260,13 @@ export const UploadGoods = ({ isDesktop }) => {
             />
           </Flex>
           <Button
-            leftIcon={<SquareCheckBig />}
+            leftIcon={<ArrowUpFromLine />}
             colorScheme="blue"
             type="submit"
             isLoading={loading}
             disabled={fileRecords <= 0 || loading}
           >
-            تایید
+            شروع ارسال اطلاعات
           </Button>
         </VStack>
       </CardBody>

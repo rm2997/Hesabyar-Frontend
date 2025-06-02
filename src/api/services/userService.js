@@ -53,9 +53,9 @@ export const logout = async () => {
   }
 };
 
-export const GetAllUsers = async () => {
+export const GetAllUsers = async (page, limit, search) => {
   try {
-    return await axiosClient.get(endpoints.user.listAll);
+    return await axiosClient.get(endpoints.user.listAll(page, limit, search));
   } catch (error) {
     if (error.response) {
       // پاسخ از سمت سرور (۴xx یا ۵xx)

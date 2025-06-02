@@ -1,8 +1,10 @@
 import {
+  AbsoluteCenter,
   Button,
   FormControl,
   FormLabel,
   HStack,
+  Spinner,
   VStack,
 } from "@chakra-ui/react";
 import { Captions, Hash, ScrollText, User } from "lucide-react";
@@ -41,6 +43,13 @@ export const ShowUserNotification = ({ id, notifications, onClose }) => {
     };
     loadData();
   }, [id]);
+
+  if (loading)
+    return (
+      <AbsoluteCenter>
+        <Spinner size="xl" colorScheme="red" />
+      </AbsoluteCenter>
+    );
 
   return (
     <VStack as="form" spacing={5} dir="rtl">

@@ -37,11 +37,11 @@ export const PieChart = ({ sidebarWidth }) => {
       await ShowUserAllInvoices().then((i) =>
         data.push({ name: "فاکتورها", value: i.data.length })
       );
-      await ShowUserRcvAllNotifications().then((n) =>
-        data.push({ name: "پیام های دریافتی", value: n.data.length })
+      await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
+        data.push({ name: "پیام های دریافتی", value: n.data.total })
       );
-      await ShowUserRcvAllNotifications().then((n) =>
-        data.push({ name: "پیام های ارسالی", value: n.data.length })
+      await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
+        data.push({ name: "پیام های ارسالی", value: n.data.total })
       );
       setPieData(data);
     };

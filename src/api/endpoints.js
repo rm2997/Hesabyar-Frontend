@@ -14,7 +14,8 @@ const endpoints = {
     changePass: (id) => `/users/changePass/${id}`,
     sendSms: (id) => `/users/sms/${id}`,
     setLocation: "/users/location/",
-    listAll: "/users/",
+    listAll: (page, limit, search) =>
+      `/users?page=${page}&limit=${limit}&search=${search}`,
   },
   proforma: {
     listAll: "/proforma/user/my",
@@ -39,7 +40,8 @@ const endpoints = {
     delete: (id) => `/invoice/${id}`,
   },
   customer: {
-    listAll: "/customer/",
+    listAll: (page, limit, search) =>
+      `/customer?page=${page}&limit=${limit}&search=${search}`,
     update: (id) => `/customer/${id}`,
     listOne: (id) => `/customer/${id}`,
     detail: (id) => `/customer/${id}`,
@@ -50,8 +52,10 @@ const endpoints = {
     unreadCount: "notifications/unread",
     markAsRead: (id) => `notifications/${id}/read`,
     markAsunread: (id) => `notifications/${id}/unread`,
-    listSent: "/notifications/sent",
-    listReceived: "/notifications/received",
+    listSent: (page, limit, search) =>
+      `/notifications/sent?page=${page}&limit=${limit}&search=${search}`,
+    listReceived: (page, limit, search) =>
+      `/notifications/received?page=${page}&limit=${limit}&search=${search}`,
     listOne: (id) => `/notifications/${id}`,
     create: "/notifications/",
     delete: (id) => `/notifications/${id}`,
@@ -69,7 +73,8 @@ const endpoints = {
     delete: (id) => `/goods/${id}`,
   },
   unit: {
-    listAll: "/units/",
+    listAll: (page, limit, search) =>
+      `/units?page=${page}&limit=${limit}&search=${search}`,
     update: (id) => `/units/${id}`,
     listOne: (id) => `/units/${id}`,
     detail: (id) => `/units/${id}`,

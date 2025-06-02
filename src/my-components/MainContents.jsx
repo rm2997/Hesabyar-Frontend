@@ -27,6 +27,10 @@ import { InvoiceDataTable } from "./invoices/InvoiceDataTable";
 import { Users } from "../pages/users/Users";
 import { UploadGoods } from "./goods/UploadGoods";
 import { GoodsDataTable } from "./goods/GoodsDataTable";
+import { CustomerDataTable } from "./customers/CustomerDataTable";
+import { UnitsDataTable } from "./units/UnitsDataTable";
+import { NotificationSentDataTable } from "./notifications/NotificationSentDataTable";
+import { NotificationReceivedDataTable } from "./notifications/NotificationReceivedDataTable";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -92,15 +96,15 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         case "user":
           return <>User</>;
         case "incomeNotifications":
-          return <UserReceivedNotifications isDesktop={isDesktop} />;
+          return <NotificationReceivedDataTable isDesktop={isDesktop} />;
         case "outgoNotifications":
-          return <UserSentdNotifications isDesktop={isDesktop} />;
+          return <NotificationSentDataTable isDesktop={isDesktop} />;
         case "newNotification":
           return <NewNotification isDesktop={isDesktop} />;
         case "newCustomer":
           return <NewCustomer isDesktop={isDesktop} />;
         case "customers":
-          return <Customers isDesktop={isDesktop} />;
+          return <CustomerDataTable isDesktop={isDesktop} />;
         case "newGood":
           return <NewGood isDesktop={isDesktop} />;
         case "goods":
@@ -110,7 +114,7 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         case "newUnit":
           return <NewUnit isDesktop={isDesktop} />;
         case "units":
-          return <Units isDesktop={isDesktop} />;
+          return <UnitsDataTable isDesktop={isDesktop} />;
         case "َchangeUsers":
           return <Users isDesktop={isDesktop} />;
         default:

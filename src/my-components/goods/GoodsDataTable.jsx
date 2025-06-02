@@ -37,6 +37,7 @@ import { MyAlert } from "../MyAlert";
 import { RemoveGood, ShowAllGoods } from "../../api/services/goodsService";
 
 import { Pagination } from "../Pagination";
+import { SearchBar } from "../SerachBar";
 
 export const GoodsDataTable = ({ isDesktop }) => {
   const [goodsData, setGoodsData] = useState([]);
@@ -148,45 +149,14 @@ export const GoodsDataTable = ({ isDesktop }) => {
 
   return (
     <Flex direction="column" height="100vh">
-      <Box
-        margin="0"
-        bg="#efefef"
-        color="white"
-        p={2}
-        position="sticky"
-        top="0"
-        zIndex="1"
-      >
-        <Flex mb={4} gap={1}>
-          <Input
-            borderWidth="1px"
-            borderColor="black"
-            color="gray.600"
-            placeholder="جستجوی کالا..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-          />
-          <IconButton
-            hidden={!search}
-            variant="ghost"
-            colorScheme="red"
-            icon={<CircleX />}
-            onClick={() => {
-              handleResetSearch(true);
-            }}
-          />
-          <Button
-            variant="outline"
-            colorScheme="orange"
-            leftIcon={<Search />}
-            onClick={() => loadData()}
-          >
-            جستجو
-          </Button>
-        </Flex>
-      </Box>
+      <SearchBar
+        search={search}
+        setSearch={setSearch}
+        handleResetSearch={handleResetSearch}
+        loadData={loadData}
+        userInfo="جستجوی کالا"
+      />
+
       <Box flex="1" overflowY="auto" p={5}>
         <Flex direction="column" gap={4}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
@@ -280,7 +250,15 @@ export const GoodsDataTable = ({ isDesktop }) => {
           </SimpleGrid>
         </Flex>
       </Box>
-      <Box position="sticky" bottom="80px" bg="#efefef" p={2} zIndex="1">
+      <Box
+        position="sticky"
+        bottom="80px"
+        bg="#efefef"
+        p={1}
+        zIndex="1"
+        borderTopColor="gray.400"
+        borderTopWidth="1px"
+      >
         <Flex justify="center" align="center">
           <Pagination
             currentPage={currentPage}

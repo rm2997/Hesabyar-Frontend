@@ -18,9 +18,10 @@ import { LocationProvider } from "./contexts/LocationContext";
 import { UserProvider } from "./contexts/UserContext";
 import { SecondLogin } from "./pages/SecondLogin";
 import { UploadProformaDocument } from "./pages/UploadProformaDocument";
+import { theme } from "./theme/theme";
 function App() {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <Router>
         {/* <AuthProvider> */}
         <Routes>

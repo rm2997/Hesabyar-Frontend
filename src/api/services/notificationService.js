@@ -1,9 +1,11 @@
 import axiosClient from "../axiosClient";
 import endpoints from "../endpoints";
 
-export const ShowUserSndNotifications = async () => {
+export const ShowUserSndNotifications = async (page, limit, search) => {
   try {
-    const response = await axiosClient.get(endpoints.notifications.listSent);
+    const response = await axiosClient.get(
+      endpoints.notifications.listSent(page, limit, search)
+    );
     console.log(response);
     return response;
   } catch (error) {
@@ -20,10 +22,10 @@ export const ShowUserSndNotifications = async () => {
   }
 };
 
-export const ShowUserRcvAllNotifications = async () => {
+export const ShowUserRcvAllNotifications = async (page, limit, search) => {
   try {
     const response = await axiosClient.get(
-      endpoints.notifications.listReceived
+      endpoints.notifications.listReceived(page, limit, search)
     );
     return response;
   } catch (error) {

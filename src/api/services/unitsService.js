@@ -73,9 +73,11 @@ export const ShowUnitByID = async (id) => {
   }
 };
 
-export const ShowAllUnits = async () => {
+export const ShowAllUnits = async (page, limit, search) => {
   try {
-    const response = await axiosClient.get(endpoints.unit.listAll);
+    const response = await axiosClient.get(
+      endpoints.unit.listAll(page, limit, search)
+    );
     return response;
   } catch (error) {
     if (error.response) {
