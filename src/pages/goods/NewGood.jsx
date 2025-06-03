@@ -37,7 +37,7 @@ export const NewGood = ({ isDesktop }) => {
     const loadData = async () => {
       setLoading(true);
       await ShowAllUnits()
-        .then((res) => setUnits(res.data))
+        .then((res) => setUnits(res?.data?.items))
         .finally(setLoading(false));
     };
 

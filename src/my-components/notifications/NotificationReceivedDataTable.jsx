@@ -71,7 +71,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
         .then((res) => {
           if (!res.data || res?.data.items == []) return;
 
-          setUserData(res?.data?.items);
+          setUserMessages(res?.data?.items);
           setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
         })
         .catch((error) => {

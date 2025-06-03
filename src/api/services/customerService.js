@@ -79,7 +79,7 @@ export const ShowCustomerByID = async (id) => {
   }
 };
 
-export const ShowAllCustomers = async (page, limit, search) => {
+export const ShowAllCustomers = async (page = 1, limit = 10, search = "") => {
   try {
     const response = await axiosClient.get(
       endpoints.customer.listAll(page, limit, search)

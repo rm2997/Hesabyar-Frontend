@@ -44,7 +44,7 @@ export const NewNotification = ({ isDesktop }) => {
     const fetchUsersData = async () => {
       setLoading(true);
       await GetAllUsers().then((res) => {
-        setUsersData(res.data);
+        setUsersData(res?.data?.items);
         setLoading(false);
       });
     };

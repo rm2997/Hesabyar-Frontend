@@ -33,11 +33,15 @@ export const ChangePassword = ({ isDesktop }) => {
   const toast = useToast();
 
   useEffect(() => {
+    console.log("users:", users);
+  }, [users]);
+
+  useEffect(() => {
     const loadData = () => {
       setLoading(true);
       GetAllUsers()
         .then((res) => {
-          setUsers(res.data);
+          setUsers(res?.data?.items);
         })
         .catch((err) => {})
         .finally(setLoading(false));

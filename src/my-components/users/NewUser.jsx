@@ -45,7 +45,7 @@ export const NewUser = ({ isDesktop }) => {
       setLoading(true);
       GetAllUsers()
         .then((res) => {
-          setUsers(res.data);
+          setUsers(res?.data?.items);
         })
         .catch((err) => {})
         .finally(setLoading(false));

@@ -1,7 +1,11 @@
 import axiosClient from "../axiosClient";
 import endpoints from "../endpoints";
 
-export const ShowUserSndNotifications = async (page, limit, search) => {
+export const ShowUserSndNotifications = async (
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
   try {
     const response = await axiosClient.get(
       endpoints.notifications.listSent(page, limit, search)
@@ -22,7 +26,11 @@ export const ShowUserSndNotifications = async (page, limit, search) => {
   }
 };
 
-export const ShowUserRcvAllNotifications = async (page, limit, search) => {
+export const ShowUserRcvAllNotifications = async (
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
   try {
     const response = await axiosClient.get(
       endpoints.notifications.listReceived(page, limit, search)

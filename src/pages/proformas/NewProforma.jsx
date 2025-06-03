@@ -16,7 +16,6 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
   useToast,
   Text,
   Spinner,
@@ -44,7 +43,6 @@ import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import { Minus, Plus, Trash2, UserRoundPlus, UserSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateProforma } from "../../api/services/proformaService";
-import { useNavigate } from "react-router-dom";
 import { ShowAllCustomers } from "../../api/services/customerService";
 import { ShowAllGoods } from "../../api/services/goodsService";
 import { MyLoading } from "../../my-components/MyLoading";
@@ -96,13 +94,12 @@ export const NewProforma = ({ isDesktop }) => {
   const [customerLoading, setCustomerLoading] = useState(false);
   const [proformaLoading, setProformaLoading] = useState(false);
   const [goodLoading, setGoodLoading] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllCustomers().then((res) => setCustomers(res.data));
-      await ShowAllGoods().then((res) => setAllGoods(res.data));
+      await ShowAllCustomers().then((res) => setCustomers(res?.data?.items));
+      await ShowAllGoods().then((res) => setAllGoods(res?.data?.items));
     };
 
     loadData().finally(setLoading(false));

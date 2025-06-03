@@ -164,7 +164,7 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
         setSearch={setSearch}
         handleResetSearch={handleResetSearch}
         loadData={loadData}
-        userInfo="جستجوی اعلان"
+        userInfo="جستجوی اعلان ارسالی"
       />
       <Box flex="1" overflowY="auto" p={5}>
         <Flex direction="column" gap={4}>

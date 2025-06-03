@@ -103,9 +103,15 @@ export const RemoveProforma = async (id) => {
   }
 };
 
-export const ShowUserAllProformas = async () => {
+export const ShowUserAllProformas = async (
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
   try {
-    const response = await axiosClient.get(endpoints.proforma.listAll);
+    const response = await axiosClient.get(
+      endpoints.proforma.listAll(page, limit, search)
+    );
     return response;
   } catch (error) {
     if (error.response) {

@@ -73,7 +73,7 @@ export const ShowUnitByID = async (id) => {
   }
 };
 
-export const ShowAllUnits = async (page, limit, search) => {
+export const ShowAllUnits = async (page = 1, limit = 10, search = "") => {
   try {
     const response = await axiosClient.get(
       endpoints.unit.listAll(page, limit, search)

@@ -22,21 +22,18 @@ import {
 } from "@chakra-ui/react";
 import {
   ArrowUpFromLine,
-  Binoculars,
   CircleX,
   ClipboardCheck,
-  FileChartColumn,
   FolderOpen,
-  SquareCheckBig,
 } from "lucide-react";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 
 import { useNavigate } from "react-router-dom";
-import { CreateGood, UploadGoodsFile } from "../../api/services/goodsService";
-import { MyModal } from "../MyModal";
 
-export const UploadGoods = ({ isDesktop }) => {
+import { CreateCustomer } from "../../api/services/customerService";
+
+export const UploadCustomers = ({ isDesktop }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -74,17 +71,29 @@ export const UploadGoods = ({ isDesktop }) => {
     for (let i = 0; i < fileRecords.length; i++) {
       const record = fileRecords[i];
       const fieldNames = Object.keys(record);
-      const sepidarId = record[fieldNames[2]];
-      const goodName = record[fieldNames[3]];
-      const goodData = {
+      const sepidarId = record[fieldNames[11]];
+      const customerFName = record[fieldNames[1]];
+      const customerLName = record[fieldNames[2]];
+      const customerNatCode = record[fieldNames[10]];
+      const customerPhone = record[fieldNames[13]];
+      const customerPostalCode = record[fieldNames[18]];
+      const customerAddress =
+        record[fieldNames[19]] + " " + record[fieldNames[19]];
+
+      const customerData = {
+        customerFName: customerFName,
+        customerLName: customerLName,
+        customerNationalCode: customerNatCode,
+        customerPhone: customerPhone,
+        customerMobile: "",
+        customerAddress: customerAddress,
+        customerPostalCode: customerPostalCode,
+        customerGender: "",
         sepidarId: sepidarId,
-        goodName: goodName,
-        goodUnit: 1,
-        goodPrice: 0,
         goodInfo: "ورودی سپیدار",
       };
 
-      await CreateGood(goodData)
+      await CreateCustomer(customerData)
         .then((res) => {
           const count = Math.round(((i + 1) / fileRecords.length) * 100);
           setProgress(count);
@@ -153,7 +162,7 @@ export const UploadGoods = ({ isDesktop }) => {
         borderTopRadius={5}
         color="black"
       >
-        آپلود دسته ای کالاها
+        آپلود دسته ای مشتریان
       </CardHeader>
       <CardBody borderTopWidth={2}>
         <VStack
@@ -266,7 +275,7 @@ export const UploadGoods = ({ isDesktop }) => {
             isLoading={loading}
             disabled={fileRecords <= 0 || loading}
           >
-            شروع ارسال اطلاعات کالاها
+            شروع ارسال اطلاعات مشتریان
           </Button>
         </VStack>
       </CardBody>

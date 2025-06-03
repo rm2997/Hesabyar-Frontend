@@ -32,16 +32,16 @@ export const PieChart = ({ sidebarWidth }) => {
     const loadData = async () => {
       const data = [];
       await ShowUserAllProformas().then((p) =>
-        data.push({ name: "پیش فاکتورها", value: p.data.length })
+        data.push({ name: "پیش فاکتورها", value: p?.data?.total })
       );
       await ShowUserAllInvoices().then((i) =>
-        data.push({ name: "فاکتورها", value: i.data.length })
+        data.push({ name: "فاکتورها", value: i?.data?.total })
       );
       await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
-        data.push({ name: "پیام های دریافتی", value: n.data.total })
+        data.push({ name: "پیام های دریافتی", value: n?.data?.total })
       );
       await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
-        data.push({ name: "پیام های ارسالی", value: n.data.total })
+        data.push({ name: "پیام های ارسالی", value: n?.data?.total })
       );
       setPieData(data);
     };

@@ -53,7 +53,7 @@ export const logout = async () => {
   }
 };
 
-export const GetAllUsers = async (page, limit, search) => {
+export const GetAllUsers = async (page = 1, limit = 10, search = "") => {
   try {
     return await axiosClient.get(endpoints.user.listAll(page, limit, search));
   } catch (error) {

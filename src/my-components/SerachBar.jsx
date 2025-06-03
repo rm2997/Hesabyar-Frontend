@@ -14,12 +14,13 @@ export const SearchBar = ({
       bg="#efefef"
       color="white"
       position="sticky"
-      top="-5px"
+      top="-8px"
       zIndex="1"
       borderBottomColor="gray.300"
     >
       <Flex mb={1} gap={1}>
         <Input
+          mr="20px"
           borderWidth="1px"
           borderColor="gray.400"
           color="gray.600"
@@ -39,8 +40,10 @@ export const SearchBar = ({
           }}
         />
         <Button
+          ml="20px"
+          maxWidth="100px"
           variant="outline"
-          colorScheme="orange"
+          colorScheme="cyan"
           leftIcon={<Search />}
           onClick={() => loadData()}
         >

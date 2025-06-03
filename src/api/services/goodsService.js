@@ -95,7 +95,7 @@ export const ShowGoodByID = async (id) => {
   }
 };
 
-export const ShowAllGoods = async (page, limit, search) => {
+export const ShowAllGoods = async (page = 1, limit = 10, search = "") => {
   try {
     const response = await axiosClient.get(
       endpoints.good.listAll(page, limit, search)

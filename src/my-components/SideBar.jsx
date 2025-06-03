@@ -178,6 +178,12 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
               type: "text",
               icon: <Users />,
             },
+            {
+              id: "uploadCustomers",
+              name: "آپلود دسته ای مشتریان",
+              type: "text",
+              icon: <ArrowUpFromLine />,
+            },
           ]}
           onMenuItemClick={onMenuItemClick}
         />

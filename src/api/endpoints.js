@@ -18,7 +18,8 @@ const endpoints = {
       `/users?page=${page}&limit=${limit}&search=${search}`,
   },
   proforma: {
-    listAll: "/proforma/user/my",
+    listAll: (page, limit, search) =>
+      `/proforma/user/my?page=${page}&limit=${limit}&search=${search}`,
     getApprovedFile: (id) => `/proforma/file/${id}`,
     convert: (id) => `/proforma/convert/${id}`,
     listByToken: (token) => `/proforma/token/${token}`,
@@ -32,7 +33,8 @@ const endpoints = {
     setProformaIsSent: (id) => `/proforma/sent/${id}`,
   },
   invoice: {
-    listAll: "/invoice/user/my",
+    listAll: (page, limit, search) =>
+      `/invoice/user/my?page=${page}&limit=${limit}&search=${search}`,
     update: (id) => `/invoice/${id}`,
     listOne: (id) => `/invoice/${id}`,
     detail: (id) => `/invoice/${id}`,

@@ -64,9 +64,15 @@ export const RemoveInvoice = async (id) => {
   }
 };
 
-export const ShowUserAllInvoices = async () => {
+export const ShowUserAllInvoices = async (
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
   try {
-    const response = await axiosClient.get(endpoints.invoice.listAll);
+    const response = await axiosClient.get(
+      endpoints.invoice.listAll(page, limit, search)
+    );
     return response;
   } catch (error) {
     if (error.response) {

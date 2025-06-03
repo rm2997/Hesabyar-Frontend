@@ -88,9 +88,11 @@ export const NewInvoice = ({ isDesktop }) => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllCustomers().then((res) => setCustomers(res.data));
-      await ShowUserAllProformas().then((res) => setProformas(res.data));
-      await ShowAllGoods().then((res) => setAllGoods(res.data));
+      await ShowAllCustomers().then((res) => setCustomers(res?.data?.items));
+      await ShowUserAllProformas().then((res) =>
+        setProformas(res?.data?.items)
+      );
+      await ShowAllGoods().then((res) => setAllGoods(res?.data?.items));
     };
 
     loadData().finally(setLoading(false));

@@ -31,6 +31,7 @@ import { CustomerDataTable } from "./customers/CustomerDataTable";
 import { UnitsDataTable } from "./units/UnitsDataTable";
 import { NotificationSentDataTable } from "./notifications/NotificationSentDataTable";
 import { NotificationReceivedDataTable } from "./notifications/NotificationReceivedDataTable";
+import { UploadCustomers } from "./customers/UploadCustomers";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -46,6 +47,7 @@ const validContents = [
   { name: "user", value: "کاربران" },
   { name: "newCustomer", value: "ثبت مشتری جدید" },
   { name: "customers", value: "لیست مشتریان" },
+  { name: "uploadCustomers", value: "آپلود دسته ای مشتریان" },
   { name: "newGood", value: "ثبت کالای جدید" },
   { name: "goods", value: "لیست کالاها" },
   { name: "uploadGoods", value: "آپلود دسته ای کالاها" },
@@ -105,6 +107,8 @@ export const MainContents = ({ activeContent, isDesktop }) => {
           return <NewCustomer isDesktop={isDesktop} />;
         case "customers":
           return <CustomerDataTable isDesktop={isDesktop} />;
+        case "uploadCustomers":
+          return <UploadCustomers isDesktop={isDesktop} />;
         case "newGood":
           return <NewGood isDesktop={isDesktop} />;
         case "goods":
