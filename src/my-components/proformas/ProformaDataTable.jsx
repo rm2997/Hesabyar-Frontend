@@ -518,17 +518,20 @@ export const ProformaDataTable = ({ isDesktop }) => {
                       </Link>
                     )}
 
-                    {!row.isConverted && (
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="purple.600"
-                        onClick={() => handleConvertToInvoice(row.id)}
-                      >
-                        <Tooltip label="تبدیل به فاکتور">
-                          <Icon w={6} h={6} as={Replace} />
-                        </Tooltip>
-                      </Link>
-                    )}
+                    {!row.isConverted &&
+                      row?.isSent &&
+                      row?.approvedFile &&
+                      row?.isAccepted && (
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="purple.600"
+                          onClick={() => handleConvertToInvoice(row.id)}
+                        >
+                          <Tooltip label="تبدیل به فاکتور">
+                            <Icon w={6} h={6} as={Replace} />
+                          </Tooltip>
+                        </Link>
+                      )}
 
                     {!row.isConverted && (
                       <Link

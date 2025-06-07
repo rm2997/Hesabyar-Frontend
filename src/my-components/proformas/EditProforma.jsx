@@ -40,9 +40,18 @@ import {
   Divider,
   SimpleGrid,
   Image,
+  AbsoluteCenter,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
-import { Minus, Plus, Trash2, UserRoundPlus, UserSearch } from "lucide-react";
+import {
+  CircleX,
+  Minus,
+  PackageSearch,
+  Plus,
+  Trash2,
+  UserRoundPlus,
+  UserSearch,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -51,16 +60,15 @@ import {
   UpdateProforma,
 } from "../../api/services/proformaService";
 import { useNavigate } from "react-router-dom";
-import {
-  ShowAllCustomers,
-  ShowCustomerByID,
-} from "../../api/services/customerService";
+import { ShowAllCustomers } from "../../api/services/customerService";
 import { ShowAllGoods } from "../../api/services/goodsService";
 import { MyLoading } from "../../my-components/MyLoading";
 import { ChequeInput } from "../../my-components/paymentStatus/ChequeInput";
 import { PaperMoneyInput } from "../../my-components/paymentStatus/PaperMoneyInput";
 import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
 import { NewCustomer } from "../../pages/customers/NewCustomer";
+import { SearchGoods } from "../SearchGood";
+import { SearchCustomer } from "../SearchCustomer";
 
 export const EditProforma = ({
   isDesktop,
@@ -106,6 +114,10 @@ export const EditProforma = ({
   const [totalPrice, setTotalPrice] = useState(0);
   const [formError, setFormError] = useState(null);
 
+  const [selectedItem, setSelectedItem] = useState(0);
+  const [showSearchCustomer, setShowSearchCustomer] = useState(false);
+  const [showSearchGood, setShowSearchGood] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [customerLoading, setCustomerLoading] = useState(false);
   const [proformaLoading, setProformaLoading] = useState(false);
@@ -117,19 +129,25 @@ export const EditProforma = ({
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllCustomers().then((res) => setCustomers(res.data));
-      await ShowAllGoods().then((res) => setAllGoods(res.data));
+      await ShowAllCustomers(1, -1, "").then((res) =>
+        setCustomers(res?.data?.items)
+      );
+      await ShowAllGoods(1, -1, "").then((res) =>
+        setAllGoods(res?.data?.items)
+      );
       await ShowProformaApprovedFile(proforma.id)
         .then((res) => {
           if (!res.data) return;
-          console.log(res.data);
           const url = URL.createObjectURL(res.data);
+          console.log(url);
           setApprovedFile(url);
         })
         .catch((err) => console.log(err.message));
       setFormData({ ...proforma, proformaGoods: [...proforma.proformaGoods] });
+      console.log(proforma);
+      setLoading(false);
     };
-    loadData().finally(setLoading(false));
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -202,6 +220,7 @@ export const EditProforma = ({
   };
 
   const handleItemChange = (index, field, value) => {
+    console.log(index, field, value);
     const newItems = formData.proformaGoods;
     if (!newItems || newItems?.length === 0) return;
 
@@ -223,6 +242,7 @@ export const EditProforma = ({
       const prc = field === "price" ? value : newItems[index].price;
       newItems[index].total = qty * prc;
     }
+    console.log(formData.proformaGoods);
     setFormData({ ...formData, proformaGoods: newItems });
   };
 
@@ -287,10 +307,26 @@ export const EditProforma = ({
   const handleAddNewUser = () => {
     onOpen();
   };
+  const handleSearchCustomers = async (query) => {
+    const response = await ShowAllCustomers(1, 10, query);
+
+    return response.data.items;
+  };
+
+  const handleSearchGoods = async (query) => {
+    const response = await ShowAllGoods(1, 10, query);
+
+    return response.data.items;
+  };
 
   const handleSearchUser = () => {};
 
-  if (loading) return <MyLoading showLoading={true} />;
+  if (loading)
+    return (
+      <AbsoluteCenter>
+        <Spinner size="xl" color="red" />
+      </AbsoluteCenter>
+    );
   else
     return (
       <Card m={10}>
@@ -324,10 +360,10 @@ export const EditProforma = ({
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} width="300px">
                         نام مشتری
                       </FormLabel>
-                      <Select
+                      {/* <Select
                         disabled={customerLoading}
                         w={250}
                         dir="ltr"
@@ -343,19 +379,47 @@ export const EditProforma = ({
                             {p.customerFName + " " + p.customerLName}
                           </option>
                         ))}
-                      </Select>
-                      {customerLoading && (
-                        <Spinner color="red.500" size={"sm"} />
+                      </Select> */}
+                      <Input
+                        placeholder="لطفا یک مشتری انتخاب کنید"
+                        maxW="300px"
+                        onClick={() => setShowSearchCustomer(true)}
+                        value={
+                          formData.customer !== null
+                            ? formData?.customer?.customerGender +
+                              " " +
+                              formData?.customer?.customerFName +
+                              " " +
+                              formData?.customer?.customerLName
+                            : ""
+                        }
+                        name="customer"
+                        readOnly={true}
+                      />
+                      {formData.customer && (
+                        <IconButton
+                          mr="-10px"
+                          size="md"
+                          icon={<CircleX />}
+                          colorScheme="red"
+                          title="انصراف"
+                          variant="ghost"
+                          onClick={() =>
+                            setFormData({ ...formData, customer: null })
+                          }
+                        />
                       )}
+                      <IconButton
+                        size={"md"}
+                        icon={<UserSearch />}
+                        colorScheme="orange"
+                        onClick={() => setShowSearchCustomer(true)}
+                        title="جستجوی مشتری "
+                      />
                       <IconButton
                         size={"md"}
                         icon={<UserRoundPlus />}
                         onClick={handleAddNewUser}
-                      />
-                      <IconButton
-                        size={"md"}
-                        icon={<UserSearch />}
-                        onClick={handleSearchUser}
                       />
                     </HStack>
                   </FormControl>
@@ -461,7 +525,7 @@ export const EditProforma = ({
                         </Td>
                         <Td>
                           <HStack>
-                            <Select
+                            {/* <Select
                               disabled={goodLoading}
                               name="good"
                               key={"good" + index}
@@ -478,14 +542,32 @@ export const EditProforma = ({
                                   {i.goodName}
                                 </option>
                               ))}
-                            </Select>
-                            {goodLoading && (
-                              <Spinner
-                                key={"spiner" + item.id}
-                                size={"sm"}
-                                color="red.500"
-                              />
-                            )}
+                            </Select> */}
+                            <Input
+                              placeholder="انتخاب کنید"
+                              maxW="250px"
+                              onClick={() =>
+                                item?.good === null
+                                  ? setShowSearchGood(true)
+                                  : ""
+                              }
+                              value={
+                                item?.good !== null ? item?.good?.goodName : ""
+                              }
+                              name="good"
+                              readOnly={true}
+                            />
+
+                            <IconButton
+                              size={"md"}
+                              colorScheme="orange"
+                              icon={<PackageSearch />}
+                              onClick={() => {
+                                setSelectedItem(index);
+                                setShowSearchGood(true);
+                              }}
+                              title="جستجوی کالا "
+                            />
                           </HStack>
                         </Td>
                         <Td>
@@ -655,6 +737,26 @@ export const EditProforma = ({
           </Flex>
         </CardBody>
         <CardFooter></CardFooter>
+        <SearchCustomer
+          searchItems={handleSearchCustomers}
+          isOpen={showSearchCustomer}
+          onClose={() => setShowSearchCustomer(false)}
+          onSelect={(g) => {
+            handleChangeFormData({
+              target: { name: "customer", value: g },
+            });
+            setShowSearchCustomer(false);
+          }}
+        />
+        <SearchGoods
+          searchItems={handleSearchGoods}
+          isOpen={showSearchGood}
+          onClose={() => setShowSearchGood(false)}
+          onSelect={(g) => {
+            handleItemChange(selectedItem, "good", g.id);
+            setShowSearchGood(false);
+          }}
+        />
       </Card>
     );
 };

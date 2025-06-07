@@ -3,6 +3,7 @@ import { Accordion, Box, Divider, Heading, Link, Text } from "@chakra-ui/react";
 import { SidebarItem } from "./SIdebarItem";
 import { PieChart } from "./PieChart";
 import {
+  ArrowDownLeft,
   ArrowUpFromLine,
   BookUser,
   Boxes,
@@ -25,6 +26,8 @@ import {
   Ruler,
   Send,
   Sheet,
+  ShieldCheck,
+  ShieldUser,
   ShoppingBag,
   Table,
   UserRoundPlus,
@@ -265,7 +268,22 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           ]}
           onMenuItemClick={onMenuItemClick}
         />
-
+        <SidebarItem
+          id={8}
+          title="درخواست ها"
+          justIcon={sidebarWidth === 300 ? false : true}
+          color="yellow.400"
+          icon={<ShieldUser />}
+          children={[
+            {
+              id: "acceptRequest",
+              name: "درخواست های تایید",
+              type: "text",
+              icon: <ShieldCheck />,
+            },
+          ]}
+          onMenuItemClick={onMenuItemClick}
+        />
         {/* <SidebarItem
           id={6}
           title="نمودار وضعیت"

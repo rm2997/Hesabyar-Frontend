@@ -40,7 +40,18 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
-import { Minus, Plus, Trash2, UserRoundPlus, UserSearch } from "lucide-react";
+import {
+  CircleX,
+  Delete,
+  Minus,
+  PackageSearch,
+  Plus,
+  Trash2,
+  User2,
+  UserRoundPlus,
+  UserRoundX,
+  UserSearch,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateProforma } from "../../api/services/proformaService";
 import { ShowAllCustomers } from "../../api/services/customerService";
@@ -50,6 +61,8 @@ import { ChequeInput } from "../../my-components/paymentStatus/ChequeInput";
 import { PaperMoneyInput } from "../../my-components/paymentStatus/PaperMoneyInput";
 import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
 import { NewCustomer } from "../customers/NewCustomer";
+import { SearchCustomer } from "../../my-components/SearchCustomer";
+import { SearchGoods } from "../../my-components/SearchGood";
 
 export const NewProforma = ({ isDesktop }) => {
   const toast = useToast();
@@ -59,7 +72,7 @@ export const NewProforma = ({ isDesktop }) => {
   console.log(isDesktop);
   const [formData, setFormData] = useState({
     title: "",
-    customer: 0,
+    customer: null,
     totalAmount: 0,
     paymentStatus: 0,
     chequeAmount: 0,
@@ -85,11 +98,13 @@ export const NewProforma = ({ isDesktop }) => {
       description: "",
     },
   ]);
-
+  const [selectedItem, setSelectedItem] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [formError, setFormError] = useState(null);
 
+  const [showSearchCustomer, setShowSearchCustomer] = useState(false);
+  const [showSearchGood, setShowSearchGood] = useState(false);
   const [loading, setLoading] = useState(false);
   const [customerLoading, setCustomerLoading] = useState(false);
   const [proformaLoading, setProformaLoading] = useState(false);
@@ -98,12 +113,28 @@ export const NewProforma = ({ isDesktop }) => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllCustomers().then((res) => setCustomers(res?.data?.items));
-      await ShowAllGoods().then((res) => setAllGoods(res?.data?.items));
+      await ShowAllCustomers(1, -1, "").then((res) =>
+        setCustomers(res?.data?.items)
+      );
+      await ShowAllGoods(1, -1, "").then((res) =>
+        setAllGoods(res?.data?.items)
+      );
     };
 
     loadData().finally(setLoading(false));
   }, []);
+
+  const handleSearchCustomers = async (query) => {
+    const response = await ShowAllCustomers(1, 10, query);
+
+    return response.data.items;
+  };
+
+  const handleSearchGoods = async (query) => {
+    const response = await ShowAllGoods(1, 10, query);
+
+    return response.data.items;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -117,7 +148,7 @@ export const NewProforma = ({ isDesktop }) => {
       if (!response.data) return;
       setFormData({
         title: "",
-        customer: 0,
+        customer: null,
         totalAmount: 0,
         paymentStatus: 0,
         chequeAmount: 0,
@@ -153,6 +184,7 @@ export const NewProforma = ({ isDesktop }) => {
   };
 
   const handleItemChange = (index, field, value) => {
+    console.log(index, field, value);
     const newItems = [...proformaItems];
     newItems[index][field] =
       field === "quantity" || field === "goodPrice" ? Number(value) : value;
@@ -173,6 +205,7 @@ export const NewProforma = ({ isDesktop }) => {
       const prc = field === "price" ? value : newItems[index].goodPrice;
       newItems[index].total = qty * prc;
     }
+
     setProformaItems(newItems);
     recalculateTotal();
   };
@@ -223,6 +256,7 @@ export const NewProforma = ({ isDesktop }) => {
   };
 
   const handleChangeFormData = (e) => {
+    console.log(e);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -272,7 +306,7 @@ export const NewProforma = ({ isDesktop }) => {
                       <FormLabel hidden={!isDesktop} width="120px">
                         نام مشتری
                       </FormLabel>
-                      <Select
+                      {/* <Select
                         disabled={customerLoading}
                         w={250}
                         dir="ltr"
@@ -286,19 +320,49 @@ export const NewProforma = ({ isDesktop }) => {
                             {p.customerFName + " " + p.customerLName}
                           </option>
                         ))}
-                      </Select>
-                      {customerLoading && (
-                        <Spinner color="red.500" size={"sm"} />
+                      </Select> */}
+                      <Input
+                        placeholder="لطفا یک مشتری انتخاب کنید"
+                        maxW="250px"
+                        onClick={() => setShowSearchCustomer(true)}
+                        value={
+                          formData.customer !== null
+                            ? formData?.customer?.customerGender +
+                              " " +
+                              formData?.customer?.customerFName +
+                              " " +
+                              formData?.customer?.customerLName
+                            : ""
+                        }
+                        name="customer"
+                        readOnly={true}
+                      />
+                      {formData.customer && (
+                        <IconButton
+                          mr="-10px"
+                          size="md"
+                          icon={<CircleX />}
+                          colorScheme="red"
+                          title="انصراف"
+                          variant="ghost"
+                          onClick={() =>
+                            setFormData({ ...formData, customer: null })
+                          }
+                        />
                       )}
                       <IconButton
                         size={"md"}
-                        icon={<UserRoundPlus />}
-                        onClick={handleAddNewUser}
+                        icon={<UserSearch />}
+                        colorScheme="orange"
+                        onClick={() => setShowSearchCustomer(true)}
+                        title="جستجوی مشتری "
                       />
                       <IconButton
                         size={"md"}
-                        icon={<UserSearch />}
-                        onClick={handleSearchUser}
+                        colorScheme="green"
+                        icon={<UserRoundPlus />}
+                        onClick={handleAddNewUser}
+                        title="ثبت مشتری جدید"
                       />
                     </HStack>
                   </FormControl>
@@ -395,7 +459,7 @@ export const NewProforma = ({ isDesktop }) => {
                         </Td>
                         <Td>
                           <HStack>
-                            <Select
+                            {/* <Select
                               disabled={goodLoading}
                               name="id"
                               key={item.good}
@@ -412,10 +476,28 @@ export const NewProforma = ({ isDesktop }) => {
                                   {i.goodName}
                                 </option>
                               ))}
-                            </Select>
-                            {goodLoading && (
-                              <Spinner size={"sm"} color="red.500" />
-                            )}
+                            </Select> */}
+                            <Input
+                              placeholder="انتخاب کنید"
+                              maxW="250px"
+                              onClick={() =>
+                                item === null ? setShowSearchGood(true) : ""
+                              }
+                              value={item !== null ? item?.goodName : ""}
+                              name="good"
+                              readOnly={true}
+                            />
+
+                            <IconButton
+                              size={"md"}
+                              colorScheme="orange"
+                              icon={<PackageSearch />}
+                              onClick={() => {
+                                setSelectedItem(index);
+                                setShowSearchGood(true);
+                              }}
+                              title="جستجوی کالا "
+                            />
                           </HStack>
                         </Td>
                         <Td>
@@ -559,6 +641,26 @@ export const NewProforma = ({ isDesktop }) => {
           </Flex>
         </CardBody>
         <CardFooter></CardFooter>
+        <SearchCustomer
+          searchItems={handleSearchCustomers}
+          isOpen={showSearchCustomer}
+          onClose={() => setShowSearchCustomer(false)}
+          onSelect={(g) => {
+            handleChangeFormData({
+              target: { name: "customer", value: g },
+            });
+            setShowSearchCustomer(false);
+          }}
+        />
+        <SearchGoods
+          searchItems={handleSearchGoods}
+          isOpen={showSearchGood}
+          onClose={() => setShowSearchGood(false)}
+          onSelect={(g) => {
+            handleItemChange(selectedItem, "good", g.id);
+            setShowSearchGood(false);
+          }}
+        />
       </Card>
     );
 };

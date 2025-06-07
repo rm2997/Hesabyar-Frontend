@@ -32,6 +32,7 @@ import { UnitsDataTable } from "./units/UnitsDataTable";
 import { NotificationSentDataTable } from "./notifications/NotificationSentDataTable";
 import { NotificationReceivedDataTable } from "./notifications/NotificationReceivedDataTable";
 import { UploadCustomers } from "./customers/UploadCustomers";
+import { RequestsDataTable } from "./requests/RequestsDataTable";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -59,6 +60,7 @@ const validContents = [
   { name: "userSettings", value: "تنظیمات کاربر" },
   { name: "userUnreadMessages", value: "پیام های خوانده نشده" },
   { name: "َchangeUsers", value: "کاربران" },
+  { name: "acceptRequest", value: "درخواست های تایید" },
   { name: "logout", value: "خروج" },
 ];
 
@@ -121,6 +123,8 @@ export const MainContents = ({ activeContent, isDesktop }) => {
           return <UnitsDataTable isDesktop={isDesktop} />;
         case "َchangeUsers":
           return <Users isDesktop={isDesktop} />;
+        case "acceptRequest":
+          return <RequestsDataTable isDesktop={isDesktop} />;
         default:
           break;
       }

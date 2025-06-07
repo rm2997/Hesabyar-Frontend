@@ -14,10 +14,10 @@ export const MyModal = ({ children, isOpen, onClose, modalHeader }) => {
   useEffect(() => {}, [children]);
 
   return (
-    <Modal dir="rtl" onClose={onClose} size={"full"} isOpen={isOpen}>
+    <Modal dir="rtl" onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader bg="blue.400" color="white">
+        <ModalHeader bg="#61BB46" color="white" mb="25px">
           {modalHeader}
         </ModalHeader>
         <ModalCloseButton />

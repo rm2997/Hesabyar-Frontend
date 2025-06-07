@@ -167,7 +167,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
           setSearch={setSearch}
           handleResetSearch={handleResetSearch}
           loadData={loadData}
-          userInfo="جستجوی پیش فاکتور"
+          userInfo="جستجوی فاکتور"
         />
         <Box flex="1" overflowY="auto" p={5}>
           <SimpleGrid
