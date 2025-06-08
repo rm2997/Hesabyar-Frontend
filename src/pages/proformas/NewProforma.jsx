@@ -18,7 +18,6 @@ import {
   Tr,
   useToast,
   Text,
-  Spinner,
   Tfoot,
   NumberInput,
   NumberInputField,
@@ -42,14 +41,11 @@ import {
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import {
   CircleX,
-  Delete,
   Minus,
   PackageSearch,
   Plus,
   Trash2,
-  User2,
   UserRoundPlus,
-  UserRoundX,
   UserSearch,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -82,14 +78,14 @@ export const NewProforma = ({ isDesktop }) => {
     paperMoneyAmount: 0,
     paperMoneySerial: 0,
     trustIssueDate: "",
-    proformaGoods: {},
+    proformaGoods: null,
     description: "",
   });
   const [proformaItems, setProformaItems] = useState([
     {
       uniqueId: Date.now().toString(),
       no: 1,
-      good: 0,
+      good: null,
       goodName: 0,
       price: 0,
       goodUnitName: "",
@@ -101,21 +97,17 @@ export const NewProforma = ({ isDesktop }) => {
   const [selectedItem, setSelectedItem] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [formError, setFormError] = useState(null);
 
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
   const [showSearchGood, setShowSearchGood] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [customerLoading, setCustomerLoading] = useState(false);
-  const [proformaLoading, setProformaLoading] = useState(false);
-  const [goodLoading, setGoodLoading] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllCustomers(1, -1, "").then((res) =>
-        setCustomers(res?.data?.items)
-      );
+      // await ShowAllCustomers(1, -1, "").then((res) =>
+      // setCustomers(res?.data?.items)
+      // );
       await ShowAllGoods(1, -1, "").then((res) =>
         setAllGoods(res?.data?.items)
       );
@@ -126,7 +118,6 @@ export const NewProforma = ({ isDesktop }) => {
 
   const handleSearchCustomers = async (query) => {
     const response = await ShowAllCustomers(1, 10, query);
-
     return response.data.items;
   };
 
@@ -134,6 +125,27 @@ export const NewProforma = ({ isDesktop }) => {
     const response = await ShowAllGoods(1, 10, query);
 
     return response.data.items;
+  };
+
+  const initForm = () => {
+    setFormData({
+      title: "",
+      customer: null,
+      totalAmount: 0,
+      paymentStatus: 0,
+      chequeAmount: 0,
+      chequeSerial: 0,
+      chequeDate: "",
+      paperMoneyDate: "",
+      paperMoneyAmount: 0,
+      paperMoneySerial: 0,
+      trustIssueDate: "",
+      proformaGoods: null,
+      description: "",
+    });
+    setProformaItems([]);
+    setTotalQuantity(0);
+    setTotalPrice(0);
   };
 
   const handleSubmit = async (e) => {
@@ -146,23 +158,7 @@ export const NewProforma = ({ isDesktop }) => {
     try {
       const response = await CreateProforma(data);
       if (!response.data) return;
-      setFormData({
-        title: "",
-        customer: null,
-        totalAmount: 0,
-        paymentStatus: 0,
-        chequeAmount: 0,
-        chequeSerial: 0,
-        chequeDate: "",
-        paperMoneyDate: "",
-        paperMoneyAmount: 0,
-        paperMoneySerial: 0,
-        trustIssueDate: "",
-        proformaGoods: [],
-        description: "",
-      });
-      setProformaItems([]);
-      recalculateTotal();
+      initForm();
       toast({
         title: "ثبت شد",
         description: `اطلاعات پیش فاکتور شما ذخیره شد`,
@@ -184,7 +180,6 @@ export const NewProforma = ({ isDesktop }) => {
   };
 
   const handleItemChange = (index, field, value) => {
-    console.log(index, field, value);
     const newItems = [...proformaItems];
     newItems[index][field] =
       field === "quantity" || field === "goodPrice" ? Number(value) : value;
@@ -219,7 +214,6 @@ export const NewProforma = ({ isDesktop }) => {
 
   const handleAddNewItem = () => {
     const items = [...proformaItems];
-    console.log(Date.now().toString());
     const newItem = {
       uniqueId: Date.now().toString(),
       no: items?.length > 0 ? items[items.length - 1]?.no + 1 : 1,
@@ -267,6 +261,10 @@ export const NewProforma = ({ isDesktop }) => {
     onOpen();
   };
 
+  const handleShowSearchGood = async (id) => {
+    setSelectedItem(id);
+    setShowSearchGood(true);
+  };
   const handleSearchUser = () => {};
 
   if (loading) return <MyLoading showLoading={true} />;
@@ -335,7 +333,7 @@ export const NewProforma = ({ isDesktop }) => {
                             : ""
                         }
                         name="customer"
-                        readOnly={true}
+                        readOnly
                       />
                       {formData.customer && (
                         <IconButton
@@ -450,6 +448,7 @@ export const NewProforma = ({ isDesktop }) => {
                       <Tr key={item.no}>
                         <Td>
                           <Input
+                            readOnly
                             value={item.no}
                             onChange={(e) =>
                               handleItemChange(index, "no", e.target.value)
@@ -481,20 +480,39 @@ export const NewProforma = ({ isDesktop }) => {
                               placeholder="انتخاب کنید"
                               maxW="250px"
                               onClick={() =>
-                                item === null ? setShowSearchGood(true) : ""
+                                !item?.goodName
+                                  ? handleShowSearchGood(index)
+                                  : ""
                               }
-                              value={item !== null ? item?.goodName : ""}
+                              value={item?.goodName ? item?.goodName : ""}
                               name="good"
-                              readOnly={true}
+                              readOnly
                             />
-
+                            {item?.goodName && (
+                              <IconButton
+                                mr="-10px"
+                                size="md"
+                                icon={<CircleX />}
+                                colorScheme="red"
+                                title="انصراف"
+                                variant="ghost"
+                                onClick={() => {
+                                  setProformaItems((prev) =>
+                                    prev.map((i) =>
+                                      i.uniqueId == item?.uniqueId
+                                        ? { ...i, goodName: "", good: null }
+                                        : i
+                                    )
+                                  );
+                                }}
+                              />
+                            )}
                             <IconButton
                               size={"md"}
                               colorScheme="orange"
                               icon={<PackageSearch />}
                               onClick={() => {
-                                setSelectedItem(index);
-                                setShowSearchGood(true);
+                                handleShowSearchGood(index);
                               }}
                               title="جستجوی کالا "
                             />

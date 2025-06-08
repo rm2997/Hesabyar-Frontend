@@ -9,7 +9,6 @@ import {
   Stack,
   Text,
   VStack,
-  useDisclosure,
   Box,
   useToast,
   SimpleGrid,
@@ -21,47 +20,60 @@ import {
   GridItem,
   AbsoluteCenter,
   Spinner,
+  Image,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import {
-  FilePenLine,
-  Send,
   Trash2,
   CircleFadingArrowUp,
   Replace,
-  Link2,
   Handshake,
   UserRoundCheck,
   MailCheck,
   UserLock,
   ShieldUser,
+  SquareArrowUp,
+  ScanEye,
+  ShieldCheck,
 } from "lucide-react";
 
 import {
-  ConvertProformaToInvoice,
-  GenerateNewToken,
   RemoveProforma,
-  SendUpdateProformaSms,
-  SetProformaIsSent,
+  SetProformaIsAccepted,
+  ShowProformaApprovedFile,
   ShowUserAllProformas,
 } from "../../api/services/proformaService";
 import { useEffect, useState } from "react";
 
-import { MyModal } from "../MyModal";
 import { MyAlert } from "../MyAlert";
+import { MyModal } from "../MyModal";
 import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
-
+import {
+  RemoveInvoice,
+  SetInvoiceIsAccepted,
+  ShowInvoiceApprovedFile,
+  ShowUserAllInvoices,
+} from "../../api/services/invoiceService";
 export const RequestsDataTable = ({ isDesktop }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [currentProformaPage, setCurrentProformaPage] = useState(1);
+  const [currentInvoicePage, setCurrentInvoicePage] = useState(1);
+  const [proformaSearch, setProformaSearch] = useState("");
+  const [invoiceSearch, setInvoiceSearch] = useState("");
+  const [totalProformaPages, setTotalProformaPages] = useState(0);
+  const [totalInvoicePages, setTotalInvoicePages] = useState(0);
   const itemsPerPage = 10;
-  const [totalPages, setTotalPages] = useState(0);
+
+  const [approvedFile, setApprovedFile] = useState(null);
+
   const [proformas, setProformas] = useState([]);
-  const [showLoading, setShowLoading] = useState(true);
-  const [selectedID, setSelectedID] = useState(0);
+  const [invoices, setInvoices] = useState([]);
+
+  const [proformaSelectedID, setProformaSelectedID] = useState(0);
+  const [invoiceSelectedID, setInvoiceSelectedID] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
@@ -71,21 +83,21 @@ export const RequestsDataTable = ({ isDesktop }) => {
     callBack: null,
   });
 
-  useEffect(() => {
-    console.log(proformas);
-  }, [proformas]);
-
-  const loadData = async (resetPage = false) => {
+  const loadProformaData = async (resetPage = false) => {
     setLoading(true);
     await ShowUserAllProformas(
-      resetPage ? 1 : currentPage,
+      resetPage ? 1 : currentProformaPage,
       itemsPerPage,
-      resetPage ? "" : search
+      resetPage ? "" : proformaSearch
     )
       .then((res) => {
         if (!res?.data) return;
-        setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
-        setProformas(res?.data?.items);
+        setTotalProformaPages(Math.ceil(res?.data?.total / itemsPerPage));
+        const newProformas = res.data.items.filter(
+          (p) =>
+            p.isAccepted == false && p.isSent == true && p.approvedFle !== null
+        );
+        setProformas(newProformas);
       })
       .catch((err) => {
         toast({
@@ -99,151 +111,89 @@ export const RequestsDataTable = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleResetSearch = () => {
-    setSearch("");
-    loadData(true);
-  };
-
-  useEffect(() => {
-    loadData();
-    console.log("Hello");
-  }, [currentPage]);
-
-  dayjs.extend(jalali);
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const handleDialogClose = (result) => {
-    setIsDialogOpen(false);
-    if (result === "Confirm") dialogGears.callBack(selectedID);
-  };
-
-  const handleSendCustomerLink = (id) => {
-    const proforma = proformas.find((p) => p.id == id);
-    console.log(proforma);
-    if (!proforma) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "اطلاعات مشتری در دسترس نیست",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    if (!proforma?.customer?.customerMobile) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "شماره موبایل مشتری ثبت نشده است",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    if (!proforma?.customerLink) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "لینک موقت مشتری ساخته نشده است",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    SetProformaIsSent(proforma.id)
-      .then((res) => updateProformainList(id, "isSent", "true"))
-      .catch((err) => console.log(err.message));
-    const customer =
-      proforma?.customer?.customerGender +
-      " " +
-      proforma?.customer?.customerFName +
-      " " +
-      proforma?.customer?.customerLName;
-
-    SendUpdateProformaSms(
-      customer,
-      proforma?.customer?.customerMobile,
-      "www.hesab-yaar.ir/upload-proforma-document?token=" +
-        proforma?.customerLink
+  const loadInvoiceData = async (resetPage = false) => {
+    setLoading(true);
+    await ShowUserAllInvoices(
+      resetPage ? 1 : currentInvoicePage,
+      itemsPerPage,
+      resetPage ? "" : invoiceSearch
     )
       .then((res) => {
-        toast({
-          title: "توجه",
-          description:
-            "لینک تاییدیه به شماره موبایل" +
-            " " +
-            proforma.customer.customerMobile +
-            " به نام " +
-            proforma.customer.customerFName +
-            " " +
-            proforma.customer.customerLName +
-            " ارسال شد. " +
-            "www.hesab-yaar.ir/upload-proforma-document?token=" +
-            proforma?.customerLink,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
+        if (!res?.data) return;
+        setTotalInvoicePages(Math.ceil(res?.data?.total / itemsPerPage));
+        const invoices = res.data.items.filter(
+          (i) =>
+            i.isAccepted == false && i.isSent == true && i.approvedFle !== null
+        );
+        setInvoices(invoices);
       })
-      .catch((err) =>
+      .catch((err) => {
         toast({
-          title: "خطا بعد از ارسال",
+          title: "خطا در دریافت داده‌ها",
           description: err.message,
           status: "error",
           duration: 3000,
           isClosable: true,
-        })
-      );
+        });
+      });
+    setLoading(false);
   };
 
-  const updateProformainList = (id, key, value) => {
-    setProformas((prev) =>
-      prev.map((p) => (p.id == id ? { ...p, [key]: value } : p))
-    );
+  const handleResetProformaSearch = () => {
+    setProformaSearch("");
+    loadProformaData(true);
   };
 
-  const handleGenerateNewLink = (id) => {
-    setSelectedID(id);
+  const handleResetInvoiceSearch = () => {
+    setInvoiceSearch("");
+    loadInvoiceData(true);
+  };
+
+  const handleShowProformaPicture = async (id) => {
     setLoading(true);
-    GenerateNewToken(id)
+    await ShowProformaApprovedFile(id)
       .then((res) => {
-        toast({
-          title: "توجه",
-          description: ` لینک جدید ساخته شد می توانید آن را دوباره به مشتری ارسال کنید`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        setProformas((prev) =>
-          prev.map((p) =>
-            p.id == id
-              ? {
-                  ...p,
-                  customerLink: res.data,
-                  isSent: false,
-                  approvedFile: "",
-                }
-              : p
-          )
-        );
+        if (!res.data) return;
+        const url = URL.createObjectURL(res.data);
+        setApprovedFile(url);
+        setShowModal(true);
       })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(setLoading(false));
+      .catch((err) => console.log(err.message));
+    setLoading(false);
   };
 
-  const handleDeleteProforma = (id) => {
-    setSelectedID(id);
+  const handleShowInvoicePicture = async (id) => {
     setLoading(true);
-    RemoveProforma(id)
+    await ShowInvoiceApprovedFile(id)
+      .then((res) => {
+        if (!res.data) return;
+        const url = URL.createObjectURL(res.data);
+        setApprovedFile(url);
+        setShowModal(true);
+      })
+      .catch((err) => console.log(err.message));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadProformaData();
+  }, [currentProformaPage]);
+
+  useEffect(() => {
+    loadInvoiceData();
+  }, [currentInvoicePage]);
+
+  dayjs.extend(jalali);
+
+  const handleDialogClose = (result) => {
+    setIsDialogOpen(false);
+    if (result === "Confirm") dialogGears.callBack(proformaSelectedID);
+  };
+
+  const handleDeleteProforma = async (id) => {
+    setProformaSelectedID(id);
+    setLoading(true);
+    await RemoveProforma(id)
       .then(() => {
         const newProformas = proformas.filter((p) => p.id != id);
         setProformas(newProformas);
@@ -263,19 +213,97 @@ export const RequestsDataTable = ({ isDesktop }) => {
           duration: 3000,
           isClosable: true,
         })
-      )
-      .finally(setLoading(false));
-    // setModalHeader("آیا از حذف پیش فاکتور زیر اطمینان دارید؟");
-    // setModalContetnt(<DeleteProforma id={id} onClose={AlertOnClose} />);
+      );
+    setLoading(false);
   };
 
-  const handleEditProforma = (id) => {
-    if (id === 0) return;
-    setSelectedID(id);
-    // setModalHeader("ویرایش پیش فاکتور");
-    // setModalContetnt(<EditProforma id={id} onClose={onClose} />);
-    onOpen();
+  const handleDeleteInvoice = async (id) => {
+    setInvoiceSelectedID(id);
+    setLoading(true);
+    await RemoveInvoice(id)
+      .then(() => {
+        const newInvoices = invoices.filter((p) => p.id != id);
+        setInvoices(newInvoices);
+        toast({
+          title: "توجه",
+          description: `اطلاعات فاکتور شما حذف شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) =>
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      );
+    setLoading(false);
   };
+
+  const updateProformainList = (id) => {
+    const newProformas = proformas.filter((p) => p.id != id);
+    setInvoices(newProformas);
+  };
+
+  const updateInvoiceList = (id) => {
+    const newInvoices = invoices.filter((i) => i.id != id);
+    setInvoices(newInvoices);
+  };
+
+  const handleAcceptInvoice = async (id) => {
+    setLoading(true);
+    await SetInvoiceIsAccepted(id)
+      .then((res) => {
+        updateInvoiceList(id);
+        toast({
+          title: "توجه",
+          description: `فاکتور شما تایید شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) => {
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+    setLoading(false);
+  };
+
+  const handleAcceptProforma = async (id) => {
+    setLoading(true);
+    await SetProformaIsAccepted(id)
+      .then((res) => {
+        updateProformainList(id);
+        toast({
+          title: "توجه",
+          description: `پیش فاکتور شما تایید شد`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) => {
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+    setLoading(false);
+  };
+
   if (loading)
     <AbsoluteCenter>
       <Spinner colorScheme="red" size="xl" />
@@ -289,6 +317,8 @@ export const RequestsDataTable = ({ isDesktop }) => {
       >
         <GridItem>
           <Box
+            position="sticky"
+            top="0px"
             textAlign="center"
             alignContent="center"
             height="25px"
@@ -300,16 +330,17 @@ export const RequestsDataTable = ({ isDesktop }) => {
           </Box>
           <Flex direction="column" height="100vh">
             <SearchBar
-              search={search}
-              setSearch={setSearch}
-              handleResetSearch={handleResetSearch}
-              loadData={loadData}
+              yTop="26px"
+              search={proformaSearch}
+              setSearch={setProformaSearch}
+              handleResetSearch={handleResetProformaSearch}
+              loadData={loadProformaData}
               userInfo="جستجوی پیش فاکتور"
             />
             <Box flex="1" overflowY="auto" p={5}>
               <SimpleGrid
                 mr={1}
-                columns={{ base: 1, md: 2, lg: 3 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+                columns={{ base: 1, md: 2, lg: 3 }}
                 spacing={3}
               >
                 {proformas.map((row) => (
@@ -429,111 +460,62 @@ export const RequestsDataTable = ({ isDesktop }) => {
                         align={"stretch"}
                         mr="auto"
                       >
-                        {!row.isConverted && (
+                        {row.approvedFile && (
                           <Link
-                            _hover={{
-                              color: "orange",
+                            _hover={{ color: "#ffd54f" }}
+                            color="orange.300"
+                            onClick={(e) => {
+                              setProformaSelectedID(row.id);
+                              setDialogGears({
+                                title: "تایید پیش فاکتور",
+                                text: "آیا واقعا این پیش فاکتور را تایید میکنید؟",
+                                callBack: () => handleAcceptProforma(row.id),
+                              });
+                              setIsDialogOpen(true);
                             }}
-                            color="blue.600"
-                            onClick={(e) => handleEditProforma(row.id)}
                           >
-                            <Tooltip label="ویرایش">
-                              <Icon w={6} h={6} as={FilePenLine} />
+                            <Tooltip label="تایید">
+                              <Icon w={6} h={6} as={ShieldCheck} />
                             </Tooltip>
                           </Link>
                         )}
 
-                        {!row.isConverted && (
-                          <Link
-                            _hover={{
-                              color: "orange",
-                            }}
-                            color="blue.600"
-                            onClick={(e) => handleGenerateNewLink(row.id)}
-                          >
-                            <Tooltip label="تولید لینک جدید">
-                              <Icon w={6} h={6} as={Link2} />
-                            </Tooltip>
-                          </Link>
-                        )}
-
-                        {!row.isConverted && row?.isSent == false && (
+                        {row.approvedFile && (
                           <Link
                             _hover={{ color: "#ffd54f" }}
                             color="green.600"
                             onClick={(e) => {
-                              setSelectedID(row.id);
-                              setDialogGears({
-                                title: "ارسال لینک به مشتری",
-                                text: `آیا می خواهید لینک به شماره ${
-                                  row.customer.customerMobile
-                                } به نام ${
-                                  row.customer.customerGender +
-                                  " " +
-                                  row.customer.customerFName +
-                                  " " +
-                                  row.customer.customerLName
-                                } ارسال گردد؟`,
-                                callBack: () => handleSendCustomerLink(row.id),
-                              });
-
-                              setIsDialogOpen(true);
+                              setProformaSelectedID(row.id);
+                              handleShowProformaPicture(row.id);
                             }}
                           >
-                            <Tooltip label="ارسال لینک به مشتری">
-                              <Icon w={6} h={6} as={Send} />
+                            <Tooltip label="مشاهده مدارک مشتری">
+                              <Icon w={6} h={6} as={ScanEye} />
                             </Tooltip>
                           </Link>
                         )}
 
-                        {!row.isConverted &&
-                          row?.isSent &&
-                          row?.approvedFile &&
-                          row?.isAccepted && (
-                            <Link
-                              _hover={{ color: "#ffd54f" }}
-                              color="purple.600"
-                            >
-                              <Tooltip label="تبدیل به فاکتور">
-                                <Icon w={6} h={6} as={Replace} />
-                              </Tooltip>
-                            </Link>
-                          )}
-
-                        {!row.isConverted && (
-                          <Link
-                            _hover={{ color: "#ffd54f" }}
-                            color="red.600"
-                            onClick={(e) => {
-                              setSelectedID(row.id);
-                              setDialogGears({
-                                title: "حذف پیش فاکتور",
-                                text: "آیا واقعا می خواهید این پیش فاکتور را حذف کنید؟",
-                                callBack: handleDeleteProforma,
-                              });
-                              setIsDialogOpen(true);
-                            }}
-                          >
-                            <Tooltip label="حذف">
-                              <Icon w={6} h={6} as={Trash2} />
-                            </Tooltip>
-                          </Link>
-                        )}
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="red.600"
+                          onClick={(e) => {
+                            setProformaSelectedID(row.id);
+                            setDialogGears({
+                              title: "حذف پیش فاکتور",
+                              text: "آیا واقعا می خواهید این پیش فاکتور را حذف کنید؟",
+                              callBack: handleDeleteProforma,
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="حذف">
+                            <Icon w={6} h={6} as={Trash2} />
+                          </Tooltip>
+                        </Link>
                       </Stack>
                     </CardFooter>
                   </Card>
                 ))}
-                <MyModal
-                  modalHeader="ویرایش پیش فاکتور"
-                  onClose={onClose}
-                  isOpen={isOpen}
-                ></MyModal>
-                <MyAlert
-                  onClose={handleDialogClose}
-                  isOpen={isDialogOpen}
-                  AlertHeader={dialogGears.title}
-                  AlertMessage={dialogGears.text}
-                />
               </SimpleGrid>
             </Box>
             <Box
@@ -547,14 +529,15 @@ export const RequestsDataTable = ({ isDesktop }) => {
             >
               <Flex justify="center" align="center">
                 <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={(page) => setCurrentPage(page)}
+                  currentPage={currentProformaPage}
+                  totalPages={totalProformaPages}
+                  onPageChange={(page) => setCurrentProformaPage(page)}
                 />
               </Flex>
             </Box>
           </Flex>
         </GridItem>
+
         <GridItem>
           <Center
             height={isDesktop ? "100vh" : "1px"}
@@ -565,8 +548,11 @@ export const RequestsDataTable = ({ isDesktop }) => {
             ml="auto"
           />
         </GridItem>
+
         <GridItem>
           <Box
+            position="sticky"
+            top="0"
             textAlign="center"
             alignContent="center"
             height="25px"
@@ -578,82 +564,48 @@ export const RequestsDataTable = ({ isDesktop }) => {
           </Box>
           <Flex direction="column" height="100vh" ml="auto">
             <SearchBar
-              search={search}
-              setSearch={setSearch}
-              handleResetSearch={handleResetSearch}
-              loadData={loadData}
+              yTop="26px"
+              search={invoiceSearch}
+              setSearch={setInvoiceSearch}
+              handleResetSearch={handleResetInvoiceSearch}
+              loadData={loadInvoiceData}
               userInfo="جستجوی فاکتور"
             />
             <Box flex="1" overflowY="auto" p={5}>
               <SimpleGrid
                 mr={1}
-                columns={{ base: 1, md: 2, lg: 3 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+                columns={{ base: 1, md: 2, lg: 5 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
                 spacing={3}
               >
-                {proformas.map((row) => (
+                {invoices.map((row) => (
                   <Card
-                    maxW="370px"
+                    maxW="350px"
                     _hover={{
                       cursor: "",
-                      borderColor: "orange.300",
+                      borderColor: "green.500",
                     }}
                     borderWidth="1px"
                     borderColor="gray.300"
                   >
                     <CardHeader
                       borderTopRadius={5}
-                      bg={
-                        !row.isConverted
-                          ? row?.isAccepted
-                            ? "green.400"
-                            : "blue.200"
-                          : "gray.400"
-                      }
+                      bg={row?.isAccepted ? "green.200" : "orange.200"}
                     >
                       <HStack>
-                        <Text> شماره :{row.id}</Text>
+                        <Text> پیش فاکتور شماره :{row.id}</Text>
                         <Box mr="auto">
-                          <HStack>
-                            {row.isConverted ? (
-                              <Tooltip label="فاکتور شده">
-                                <Replace color="purple" />
-                              </Tooltip>
-                            ) : (
-                              <></>
-                            )}
-                            {row.isAccepted ? (
-                              <Tooltip label="تایید کاربر ارشد">
-                                <ShieldUser color="green" />
-                              </Tooltip>
-                            ) : (
-                              <Tooltip label="منتظر تایید کاربر ارشد ">
-                                <UserLock
-                                  color="yellow"
-                                  _hover={{ color: "green" }}
-                                />
-                              </Tooltip>
-                            )}
-
-                            {row.approvedFile ? (
-                              <Tooltip label="تایید مشتری">
-                                <UserRoundCheck color="green" />
-                              </Tooltip>
-                            ) : (
-                              <Tooltip label="منتظر تایید مشتری">
-                                <Handshake color="white" />
-                              </Tooltip>
-                            )}
-
-                            {row.isSent ? (
-                              <Tooltip label="لینک به مشتری ارسال شده است">
-                                <MailCheck color="green" />
-                              </Tooltip>
-                            ) : (
-                              <Tooltip label="منتظر ارسال">
-                                <CircleFadingArrowUp color="orange" />
-                              </Tooltip>
-                            )}
-                          </HStack>
+                          {row.isSent ? (
+                            <SquareArrowUp color="green" />
+                          ) : (
+                            <Tooltip label="منتظر ارسال">
+                              <Icon
+                                as={CircleFadingArrowUp}
+                                _hover={{
+                                  color: "green",
+                                }}
+                              />
+                            </Tooltip>
+                          )}
                         </Box>
                       </HStack>
                     </CardHeader>
@@ -707,111 +659,85 @@ export const RequestsDataTable = ({ isDesktop }) => {
                         align={"stretch"}
                         mr="auto"
                       >
-                        {!row.isConverted && (
+                        {row.approvedFile && (
                           <Link
-                            _hover={{
-                              color: "orange",
+                            _hover={{ color: "#ffd54f" }}
+                            color="orange.300"
+                            onClick={(e) => {
+                              setInvoiceSelectedID(row.id);
+                              setDialogGears({
+                                title: "تایید  فاکتور",
+                                text: "آیا واقعا این  فاکتور را تایید میکنید؟",
+                                callBack: () => handleAcceptInvoice(row.id),
+                              });
+                              setIsDialogOpen(true);
                             }}
-                            color="blue.600"
-                            onClick={(e) => handleEditProforma(row.id)}
                           >
-                            <Tooltip label="ویرایش">
-                              <Icon w={6} h={6} as={FilePenLine} />
+                            <Tooltip label="تایید">
+                              <Icon w={6} h={6} as={ShieldCheck} />
                             </Tooltip>
                           </Link>
                         )}
-
-                        {!row.isConverted && (
-                          <Link
-                            _hover={{
-                              color: "orange",
-                            }}
-                            color="blue.600"
-                            onClick={(e) => handleGenerateNewLink(row.id)}
-                          >
-                            <Tooltip label="تولید لینک جدید">
-                              <Icon w={6} h={6} as={Link2} />
-                            </Tooltip>
-                          </Link>
-                        )}
-
-                        {!row.isConverted && row?.isSent == false && (
+                        {row.approvedFile && (
                           <Link
                             _hover={{ color: "#ffd54f" }}
                             color="green.600"
                             onClick={(e) => {
-                              setSelectedID(row.id);
-                              setDialogGears({
-                                title: "ارسال لینک به مشتری",
-                                text: `آیا می خواهید لینک به شماره ${
-                                  row.customer.customerMobile
-                                } به نام ${
-                                  row.customer.customerGender +
-                                  " " +
-                                  row.customer.customerFName +
-                                  " " +
-                                  row.customer.customerLName
-                                } ارسال گردد؟`,
-                                callBack: () => handleSendCustomerLink(row.id),
-                              });
-
-                              setIsDialogOpen(true);
+                              setInvoiceSelectedID(row.id);
                             }}
                           >
-                            <Tooltip label="ارسال لینک به مشتری">
-                              <Icon w={6} h={6} as={Send} />
+                            <Tooltip label="مشاهده مدارک مشتری">
+                              <Icon w={6} h={6} as={ScanEye} />
                             </Tooltip>
                           </Link>
                         )}
-
-                        {!row.isConverted &&
-                          row?.isSent &&
-                          row?.approvedFile &&
-                          row?.isAccepted && (
-                            <Link
-                              _hover={{ color: "#ffd54f" }}
-                              color="purple.600"
-                            >
-                              <Tooltip label="تبدیل به فاکتور">
-                                <Icon w={6} h={6} as={Replace} />
-                              </Tooltip>
-                            </Link>
-                          )}
-
-                        {!row.isConverted && (
-                          <Link
-                            _hover={{ color: "#ffd54f" }}
-                            color="red.600"
-                            onClick={(e) => {
-                              setSelectedID(row.id);
-                              setDialogGears({
-                                title: "حذف پیش فاکتور",
-                                text: "آیا واقعا می خواهید این پیش فاکتور را حذف کنید؟",
-                                callBack: handleDeleteProforma,
-                              });
-                              setIsDialogOpen(true);
-                            }}
-                          >
-                            <Tooltip label="حذف">
-                              <Icon w={6} h={6} as={Trash2} />
-                            </Tooltip>
-                          </Link>
-                        )}
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="red.600"
+                          onClick={(e) => {
+                            setInvoiceSelectedID(row.id);
+                            setDialogGears({
+                              title: "حذف فاکتور",
+                              text: "آیا واقعا می خواهید این فاکتور را حذف کنید؟",
+                              callBack: handleDeleteInvoice,
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="حذف">
+                            <Icon w={6} h={6} as={Trash2} />
+                          </Tooltip>
+                        </Link>
                       </Stack>
                     </CardFooter>
                   </Card>
                 ))}
-                <MyModal
-                  modalHeader="ویرایش پیش فاکتور"
-                  onClose={onClose}
-                  isOpen={isOpen}
-                ></MyModal>
                 <MyAlert
                   onClose={handleDialogClose}
                   isOpen={isDialogOpen}
                   AlertHeader={dialogGears.title}
                   AlertMessage={dialogGears.text}
                 />
+                <MyModal
+                  modalHeader="نمایش فایل تاییدیه مشتری"
+                  onClose={() => setShowModal(false)}
+                  isOpen={showModal}
+                  size="xl"
+                >
+                  <Box
+                    borderRadius="6px"
+                    hidden={approvedFile == null || approvedFile == ""}
+                    boxSize="xl"
+                  >
+                    <Image
+                      src={approvedFile ? approvedFile : ""}
+                      objectFit="cover"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      alt="تاییدیه"
+                    />
+                  </Box>
+                </MyModal>
               </SimpleGrid>
             </Box>
             <Box
@@ -825,9 +751,9 @@ export const RequestsDataTable = ({ isDesktop }) => {
             >
               <Flex justify="center" align="center">
                 <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={(page) => setCurrentPage(page)}
+                  currentPage={currentInvoicePage}
+                  totalPages={totalInvoicePages}
+                  onPageChange={(page) => setCurrentInvoicePage(page)}
                 />
               </Flex>
             </Box>

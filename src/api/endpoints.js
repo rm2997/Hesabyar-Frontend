@@ -31,6 +31,7 @@ const endpoints = {
     create: "/proforma/",
     delete: (id) => `/proforma/${id}`,
     setProformaIsSent: (id) => `/proforma/sent/${id}`,
+    setProformaIsAccepted: (id) => `/proforma/accept/${id}`,
   },
   invoice: {
     listAll: (page, limit, search) =>
@@ -40,6 +41,9 @@ const endpoints = {
     detail: (id) => `/invoice/${id}`,
     create: "/invoice/",
     delete: (id) => `/invoice/${id}`,
+    setInvoiceIsSent: (id) => `/invoice/sent/${id}`,
+    setInvoiceIsAccepted: (id) => `/invoice/accept/${id}`,
+    getApprovedFile: (id) => `/invoice/file/${id}`,
   },
   customer: {
     listAll: (page, limit, search) =>

@@ -105,3 +105,44 @@ export const ShowInvoicesByID = async (id) => {
     }
   }
 };
+
+export const SetInvoiceIsAccepted = async (id) => {
+  try {
+    const resp = await axiosClient.patch(
+      endpoints.invoice.setInvoiceIsAccepted(id)
+    );
+    if (!resp) throw new Error();
+    return resp;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
+    }
+  }
+};
+
+export const ShowInvoiceApprovedFile = async (id) => {
+  try {
+    const resp = await axiosClient.get(endpoints.invoice.getApprovedFile(id), {
+      responseType: "blob",
+    });
+    return resp;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
+    }
+  }
+};

@@ -59,10 +59,9 @@ import {
   ShowProformaApprovedFile,
   UpdateProforma,
 } from "../../api/services/proformaService";
-import { useNavigate } from "react-router-dom";
+
 import { ShowAllCustomers } from "../../api/services/customerService";
 import { ShowAllGoods } from "../../api/services/goodsService";
-import { MyLoading } from "../../my-components/MyLoading";
 import { ChequeInput } from "../../my-components/paymentStatus/ChequeInput";
 import { PaperMoneyInput } from "../../my-components/paymentStatus/PaperMoneyInput";
 import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
@@ -75,9 +74,11 @@ export const EditProforma = ({
   proforma,
   setProformas,
   proformas,
+  isOpen,
+  onClose,
 }) => {
   const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [customers, setCustomers] = useState([]);
   const [allGoods, setAllGoods] = useState([]);
   dayjs.extend(jalali);
@@ -96,33 +97,17 @@ export const EditProforma = ({
     proformaGoods: [],
     description: "",
   });
-  const [proformaItems, setProformaItems] = useState([
-    {
-      uniqueId: Date.now().toString(),
-      createdAt: "",
-      description: "",
-      good: {},
-      id: 0,
-      price: 0,
-      quantity: 0,
-      total: 0,
-    },
-  ]);
 
+  const [proformaItems, setProformaItems] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [approvedFile, setApprovedFile] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [formError, setFormError] = useState(null);
 
   const [selectedItem, setSelectedItem] = useState(0);
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
   const [showSearchGood, setShowSearchGood] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [customerLoading, setCustomerLoading] = useState(false);
-  const [proformaLoading, setProformaLoading] = useState(false);
-  const [goodLoading, setGoodLoading] = useState(false);
-  const navigate = useNavigate();
 
   const items = proforma.proformaGoods;
 
@@ -139,64 +124,67 @@ export const EditProforma = ({
         .then((res) => {
           if (!res.data) return;
           const url = URL.createObjectURL(res.data);
-          console.log(url);
           setApprovedFile(url);
         })
         .catch((err) => console.log(err.message));
       setFormData({ ...proforma, proformaGoods: [...proforma.proformaGoods] });
-      console.log(proforma);
+      setProformaItems(proforma.proformaGoods);
       setLoading(false);
     };
     loadData();
   }, []);
 
-  useEffect(() => {
-    setFormData({ ...formData, proformaGoods: [...items] });
-  }, [items]);
+  // useEffect(() => {
+  //   setFormData({ ...formData, proformaGoods: [...items] });
+  // }, [items]);
 
   useEffect(() => {
     recalculateTotal();
   }, [formData]);
 
+  const initForm = () => {
+    setFormData({
+      title: "",
+      customer: {},
+      totalAmount: 0,
+      paymentStatus: 0,
+      chequeAmount: 0,
+      chequeSerial: 0,
+      chequeDate: "",
+      paperMoneyDate: "",
+      paperMoneyAmount: 0,
+      paperMoneySerial: 0,
+      trustIssueDate: "",
+      proformaGoods: null,
+      approvedFile: "",
+      description: "",
+    });
+    setProformaItems([
+      {
+        uniqueId: Date.now().toString(),
+        createdAt: "",
+        description: "",
+        good: null,
+        id: 0,
+        price: 0,
+        quantity: 0,
+        total: 0,
+      },
+    ]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setFormData({ ...formData, proformaGoods: [...proformaItems] });
 
     await UpdateProforma(formData.id, { ...formData, totalAmount: totalPrice })
       .then((res) => {
         if (res.status !== 200) return;
-        console.log("formData", formData);
         const newProformas = proformas.filter((p) => p.id != formData.id);
         newProformas.push(formData);
         setProformas(newProformas);
-        setFormData({
-          title: "",
-          customer: {},
-          totalAmount: 0,
-          paymentStatus: 0,
-          chequeAmount: 0,
-          chequeSerial: 0,
-          chequeDate: "",
-          paperMoneyDate: "",
-          paperMoneyAmount: 0,
-          paperMoneySerial: 0,
-          trustIssueDate: "",
-          proformaGoods: [],
-          approvedFile: "",
-          description: "",
-        });
-        setProformaItems([
-          {
-            uniqueId: Date.now().toString(),
-            createdAt: "",
-            description: "",
-            good: {},
-            id: 0,
-            price: 0,
-            quantity: 0,
-            total: 0,
-          },
-        ]);
+        initForm();
 
         toast({
           title: "ثبت شد",
@@ -215,13 +203,13 @@ export const EditProforma = ({
           duration: 3000,
           isClosable: true,
         });
-      })
-      .finally(setLoading(false));
+      });
+    setLoading(false);
+    onClose();
   };
 
   const handleItemChange = (index, field, value) => {
-    console.log(index, field, value);
-    const newItems = formData.proformaGoods;
+    const newItems = [...proformaItems];
     if (!newItems || newItems?.length === 0) return;
 
     newItems[index][field] =
@@ -242,12 +230,12 @@ export const EditProforma = ({
       const prc = field === "price" ? value : newItems[index].price;
       newItems[index].total = qty * prc;
     }
-    console.log(formData.proformaGoods);
-    setFormData({ ...formData, proformaGoods: newItems });
+    setProformaItems(newItems);
   };
 
   const recalculateTotal = () => {
-    const items = formData.proformaGoods;
+    const items = [...proformaItems];
+    if (!items) return;
     const total = items.reduce((sum, i) => sum + i.total, 0);
     const count = items.reduce((sum, i) => sum + i.quantity, 0);
 
@@ -256,7 +244,8 @@ export const EditProforma = ({
   };
 
   const handleAddNewItem = () => {
-    const items = [...formData.proformaGoods];
+    const items = [...proformaItems];
+    if (!items) return;
     const newItem = {
       uniqueId: Date.now().toString(),
       createdAt: "",
@@ -266,28 +255,26 @@ export const EditProforma = ({
       price: 0,
       total: 0,
       no: items?.length > 0 ? items[items.length - 1]?.no + 1 : 1,
-      good: 0,
-      goodName: 0,
-      goodPrice: 0,
-      goodUnitName: "",
+      good: {},
     };
     items.push(newItem);
-    setFormData({ ...formData, proformaGoods: items });
+    setProformaItems(items);
   };
 
   const handleRemoveItem = (item) => {
-    const items = [...formData.proformaGoods];
+    const items = [...proformaItems];
+    if (!items) return;
     const updated = items.filter((i) => i.uniqueId !== item.uniqueId);
 
     for (let i = 0; i < updated.length; i++) {
       updated[i].no = i + 1;
     }
 
-    setFormData({ ...formData, proformaGoods: updated });
+    setProformaItems(updated);
   };
 
   const handleDeleteAllItems = () => {
-    setFormData({ ...formData, proformaGoods: [] });
+    setProformaItems([]);
     setTotalPrice(0);
     setTotalQuantity(0);
   };
@@ -299,27 +286,20 @@ export const EditProforma = ({
     });
   };
 
-  const handleChangeCustomerData = (id) => {
-    const newCustomer = customers.find((c) => c.id == id);
-    if (newCustomer) setFormData({ ...formData, customer: newCustomer });
-  };
-
-  const handleAddNewUser = () => {
-    onOpen();
-  };
   const handleSearchCustomers = async (query) => {
     const response = await ShowAllCustomers(1, 10, query);
-
-    return response.data.items;
+    return response?.data?.items;
   };
 
   const handleSearchGoods = async (query) => {
     const response = await ShowAllGoods(1, 10, query);
-
-    return response.data.items;
+    return response?.data?.items;
   };
 
-  const handleSearchUser = () => {};
+  const handleShowSearchGood = async (id) => {
+    setSelectedItem(id);
+    setShowSearchGood(true);
+  };
 
   if (loading)
     return (
@@ -363,23 +343,6 @@ export const EditProforma = ({
                       <FormLabel hidden={!isDesktop} width="300px">
                         نام مشتری
                       </FormLabel>
-                      {/* <Select
-                        disabled={customerLoading}
-                        w={250}
-                        dir="ltr"
-                        name="customer.id"
-                        placeholder="یک نفر را انتخاب کنید"
-                        value={formData.customer.id}
-                        onChange={(e) =>
-                          handleChangeCustomerData(e.target.value)
-                        }
-                      >
-                        {customers.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.customerFName + " " + p.customerLName}
-                          </option>
-                        ))}
-                      </Select> */}
                       <Input
                         placeholder="لطفا یک مشتری انتخاب کنید"
                         maxW="300px"
@@ -394,7 +357,7 @@ export const EditProforma = ({
                             : ""
                         }
                         name="customer"
-                        readOnly={true}
+                        readOnly
                       />
                       {formData.customer && (
                         <IconButton
@@ -415,11 +378,6 @@ export const EditProforma = ({
                         colorScheme="orange"
                         onClick={() => setShowSearchCustomer(true)}
                         title="جستجوی مشتری "
-                      />
-                      <IconButton
-                        size={"md"}
-                        icon={<UserRoundPlus />}
-                        onClick={handleAddNewUser}
                       />
                     </HStack>
                   </FormControl>
@@ -503,17 +461,18 @@ export const EditProforma = ({
                       <Th>
                         <IconButton
                           icon={<Plus />}
-                          onClick={handleAddNewItem}
+                          onClick={() => handleAddNewItem()}
                           colorScheme="green"
                         />
                       </Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {formData.proformaGoods.map((item, index) => (
+                    {proformaItems.map((item, index) => (
                       <Tr key={"row" + index}>
                         <Td>
                           <Input
+                            readOnly
                             name="no"
                             key={"Field_no" + item.id}
                             value={index + 1}
@@ -547,24 +506,39 @@ export const EditProforma = ({
                               placeholder="انتخاب کنید"
                               maxW="250px"
                               onClick={() =>
-                                item?.good === null
-                                  ? setShowSearchGood(true)
+                                !item?.good?.goodName
+                                  ? handleShowSearchGood(index)
                                   : ""
                               }
                               value={
-                                item?.good !== null ? item?.good?.goodName : ""
+                                item?.good?.goodName ? item?.good?.goodName : ""
                               }
                               name="good"
-                              readOnly={true}
+                              readOnly
                             />
-
+                            {item?.good?.goodName && (
+                              <IconButton
+                                mr="-10px"
+                                size="md"
+                                icon={<CircleX />}
+                                colorScheme="red"
+                                title="انصراف"
+                                variant="ghost"
+                                onClick={() => {
+                                  setProformaItems((prev) =>
+                                    prev.map((i) =>
+                                      i.id == item.id ? { ...i, good: null } : i
+                                    )
+                                  );
+                                }}
+                              />
+                            )}
                             <IconButton
                               size={"md"}
                               colorScheme="orange"
                               icon={<PackageSearch />}
                               onClick={() => {
-                                setSelectedItem(index);
-                                setShowSearchGood(true);
+                                handleShowSearchGood(index);
                               }}
                               title="جستجوی کالا "
                             />

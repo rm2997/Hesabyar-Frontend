@@ -133,7 +133,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
         setInvoices(newInvoices);
         toast({
           title: "توجه",
-          description: `اطلاعات پیش فاکتور شما حذف شد`,
+          description: `اطلاعات فاکتور شما حذف شد`,
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -170,11 +170,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
           userInfo="جستجوی فاکتور"
         />
         <Box flex="1" overflowY="auto" p={5}>
-          <SimpleGrid
-            mr={1}
-            columns={{ base: 1, md: 2, lg: 5 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
-            spacing={3}
-          >
+          <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
             {invoices.map((row) => (
               <Card
                 maxW="350px"
@@ -190,7 +186,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
                   bg={row?.isAccepted ? "green.200" : "orange.200"}
                 >
                   <HStack>
-                    <Text> پیش فاکتور شماره :{row.id}</Text>
+                    <Text> فاکتور شماره :{row.id}</Text>
                     <Box mr="auto">
                       {row.isSent ? (
                         <SquareArrowUp color="green" />
@@ -292,8 +288,8 @@ export const InvoiceDataTable = ({ isDesktop }) => {
                       onClick={(e) => {
                         setSelectedID(row.id);
                         setDialogGears({
-                          title: "حذف پیش فاکتور",
-                          text: "آیا واقعا می خواهید این پیش فاکتور را حذف کنید؟",
+                          title: "حذف فاکتور",
+                          text: "آیا واقعا می خواهید این فاکتور را حذف کنید؟",
                           callBack: handleDeleteInvoice,
                         });
                         setIsDialogOpen(true);

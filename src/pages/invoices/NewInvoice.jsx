@@ -446,6 +446,7 @@ export const NewInvoice = ({ isDesktop }) => {
                       <Tr key={item.no}>
                         <Td>
                           <Input
+                            readOnly
                             isDisabled={!invoiceGoodsStatus}
                             value={item.no}
                             onChange={(e) =>

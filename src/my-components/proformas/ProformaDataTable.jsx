@@ -563,6 +563,8 @@ export const ProformaDataTable = ({ isDesktop }) => {
             >
               <EditProforma
                 isDesktop={isDesktop}
+                onClose={onClose}
+                onOpen={onOpen}
                 setProformas={setProformas}
                 proformas={proformas}
                 proforma={proformas.find(

@@ -7,6 +7,7 @@ export const SearchBar = ({
   setSearch,
   handleResetSearch,
   loadData,
+  yTop = "-8px",
 }) => {
   return (
     <Box
@@ -14,7 +15,7 @@ export const SearchBar = ({
       bg="#efefef"
       color="white"
       position="sticky"
-      top="-8px"
+      top={yTop}
       zIndex="1"
       borderBottomColor="gray.300"
     >
