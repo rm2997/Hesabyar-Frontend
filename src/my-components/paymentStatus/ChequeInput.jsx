@@ -15,11 +15,13 @@ import {
   TagLabel,
   Text,
   Flex,
+  Button,
 } from "@chakra-ui/react";
 import { Datepicker } from "@ijavad805/react-datepicker";
-import { Banknote } from "lucide-react";
+import { Banknote, Database } from "lucide-react";
 
 import { useEffect } from "react";
+import { Label } from "recharts";
 
 export const ChequeInput = ({
   title,
@@ -94,6 +96,7 @@ export const ChequeInput = ({
                 <FormLabel hidden={!isDesktop} w="50px">
                   تاریخ
                 </FormLabel>
+
                 <Box
                   alignItems="end"
                   borderWidth={1}
@@ -101,15 +104,11 @@ export const ChequeInput = ({
                   bg="gray.100"
                 >
                   <Datepicker
+                    input={<input placeholder="تاریخ را انتخاب کنید..." />}
+                    id="chequeDate"
                     closeWhenSelectADay={true}
                     format={"YYYY/MM/DD"}
-                    adjustPosition={"auto"}
-                    input={
-                      <input
-                        placeholder="انتخاب تاریخ"
-                        width={isDesktop ? "240px" : "200px"}
-                      />
-                    }
+                    adjustPosition="auto"
                     theme="green"
                     allowClear={true}
                     name="chequeDate"

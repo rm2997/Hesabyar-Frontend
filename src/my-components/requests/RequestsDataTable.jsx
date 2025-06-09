@@ -95,7 +95,7 @@ export const RequestsDataTable = ({ isDesktop }) => {
         setTotalProformaPages(Math.ceil(res?.data?.total / itemsPerPage));
         const newProformas = res.data.items.filter(
           (p) =>
-            p.isAccepted == false && p.isSent == true && p.approvedFle !== null
+            p.isAccepted == false && p.isSent == true && p.approvedFile !== null
         );
         setProformas(newProformas);
       })
@@ -121,11 +121,11 @@ export const RequestsDataTable = ({ isDesktop }) => {
       .then((res) => {
         if (!res?.data) return;
         setTotalInvoicePages(Math.ceil(res?.data?.total / itemsPerPage));
-        const invoices = res.data.items.filter(
+        const newInvoices = res.data.items.filter(
           (i) =>
-            i.isAccepted == false && i.isSent == true && i.approvedFle !== null
+            i.isAccepted == false && i.isSent == true && i.approvedFile !== null
         );
-        setInvoices(invoices);
+        setInvoices(newInvoices);
       })
       .catch((err) => {
         toast({
@@ -552,18 +552,20 @@ export const RequestsDataTable = ({ isDesktop }) => {
         <GridItem>
           <Box
             position="sticky"
-            top="0"
+            top="0px"
             textAlign="center"
             alignContent="center"
             height="25px"
             m="5px 20px 10px 20px"
             bg="pink.500"
             borderRadius="3px"
+            zIndex={3}
           >
             درخواست تایید فاکتورها
           </Box>
           <Flex direction="column" height="100vh" ml="auto">
             <SearchBar
+              zIndex="2"
               yTop="26px"
               search={invoiceSearch}
               setSearch={setInvoiceSearch}
@@ -571,10 +573,10 @@ export const RequestsDataTable = ({ isDesktop }) => {
               loadData={loadInvoiceData}
               userInfo="جستجوی فاکتور"
             />
-            <Box flex="1" overflowY="auto" p={5}>
+            <Box flex="1" overflowY="auto" p={5} zIndex={0}>
               <SimpleGrid
                 mr={1}
-                columns={{ base: 1, md: 2, lg: 5 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+                columns={{ base: 1, md: 2, lg: 3 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
                 spacing={3}
               >
                 {invoices.map((row) => (
@@ -667,7 +669,7 @@ export const RequestsDataTable = ({ isDesktop }) => {
                               setInvoiceSelectedID(row.id);
                               setDialogGears({
                                 title: "تایید  فاکتور",
-                                text: "آیا واقعا این  فاکتور را تایید میکنید؟",
+                                text: "آیا واقعا این فاکتور را تایید میکنید؟",
                                 callBack: () => handleAcceptInvoice(row.id),
                               });
                               setIsDialogOpen(true);
@@ -684,6 +686,7 @@ export const RequestsDataTable = ({ isDesktop }) => {
                             color="green.600"
                             onClick={(e) => {
                               setInvoiceSelectedID(row.id);
+                              handleShowInvoicePicture(row.id);
                             }}
                           >
                             <Tooltip label="مشاهده مدارک مشتری">

@@ -6,25 +6,10 @@ import {
   Divider,
   HStack,
   Link,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Stack,
   Text,
   VStack,
   useDisclosure,
-  Button,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogCloseButton,
-  AlertDialogBody,
-  AlertDialogFooter,
   Box,
   useToast,
   SimpleGrid,
@@ -40,12 +25,20 @@ import {
   Trash2,
   SquareArrowUp,
   CircleFadingArrowUp,
-  Replace,
+  MailCheck,
+  Handshake,
+  UserRoundCheck,
+  UserLock,
+  ShieldUser,
+  Link2,
 } from "lucide-react";
 
 import { EditInvoice } from "./EditInvoice";
 import {
+  GenerateNewToken,
   RemoveInvoice,
+  SendUpdateInvoiceSms,
+  SetInvoiceIsSent,
   ShowUserAllInvoices,
 } from "../../api/services/invoiceService";
 import { useEffect, useState } from "react";
@@ -60,7 +53,6 @@ export const InvoiceDataTable = ({ isDesktop }) => {
   const itemsPerPage = 10;
   const [totalPages, setTotalPages] = useState(0);
   const [invoices, setInvoices] = useState([]);
-  const [showLoading, setShowLoading] = useState(true);
   const [selectedID, setSelectedID] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -71,6 +63,10 @@ export const InvoiceDataTable = ({ isDesktop }) => {
     text: "",
     callBack: null,
   });
+
+  useEffect(() => {
+    console.log(invoices);
+  }, [invoices]);
 
   const loadData = async (resetPage = false) => {
     setLoading(true);
@@ -92,8 +88,8 @@ export const InvoiceDataTable = ({ isDesktop }) => {
           duration: 3000,
           isClosable: true,
         });
-      })
-      .finally(setLoading(false));
+      });
+    setLoading(false);
   };
 
   const handleResetSearch = () => {
@@ -114,14 +110,88 @@ export const InvoiceDataTable = ({ isDesktop }) => {
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
 
+  const updateInvoiceInList = (id, key, value) => {
+    setInvoices((prev) =>
+      prev.map((i) => (i.id == id ? { ...i, [key]: value } : i))
+    );
+  };
+
   const handleSendCustomerLink = (id) => {
-    toast({
-      title: "توجه",
-      description: `لینک تاییدیه به مشتری ارسال شد`,
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
+    const invoice = invoices.find((i) => i.id == id);
+
+    if (!invoice) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "اطلاعات مشتری در دسترس نیست",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (!invoice?.customer?.customerMobile) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "شماره موبایل مشتری ثبت نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (!invoice?.customerLink) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "لینک موقت مشتری ساخته نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    SetInvoiceIsSent(invoice.id)
+      .then((res) => updateInvoiceInList(id, "isSent", "true"))
+      .catch((err) => console.log(err.message));
+    const customer =
+      invoice?.customer?.customerGender +
+      " " +
+      invoice?.customer?.customerFName +
+      " " +
+      invoice?.customer?.customerLName;
+
+    SendUpdateInvoiceSms(
+      customer,
+      invoice?.customer?.customerMobile,
+      "www.hesab-yaar.ir/upload-invoice-document?token=" + invoice?.customerLink
+    )
+      .then((res) => {
+        toast({
+          title: "توجه",
+          description:
+            "لینک تاییدیه به شماره موبایل" +
+            " " +
+            invoice.customer.customerMobile +
+            " به نام " +
+            invoice.customer.customerFName +
+            " " +
+            invoice.customer.customerLName +
+            " ارسال شد. " +
+            "www.hesab-yaar.ir/upload-invoice-document?token=" +
+            invoice?.customerLink,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .catch((err) =>
+        toast({
+          title: "خطا بعد از ارسال",
+          description: err.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      );
   };
 
   const handleDeleteInvoice = (id) => {
@@ -152,6 +222,44 @@ export const InvoiceDataTable = ({ isDesktop }) => {
     // setModalHeader("آیا از حذف پیش فاکتور زیر اطمینان دارید؟");
     // setModalContetnt(<DeleteInvoice id={id} onClose={AlertOnClose} />);
   };
+
+  const handleGenerateNewLink = (id) => {
+    setSelectedID(id);
+    setLoading(true);
+    GenerateNewToken(id)
+      .then((res) => {
+        toast({
+          title: "توجه",
+          description: ` لینک جدید ساخته شد می توانید آن را دوباره به مشتری ارسال کنید`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        setInvoices((prev) =>
+          prev.map((p) =>
+            p.id == id
+              ? {
+                  ...p,
+                  customerLink: res.data,
+                  isSent: false,
+                  approvedFile: "",
+                }
+              : p
+          )
+        );
+      })
+      .catch((err) => {
+        toast({
+          title: "خطایی رخ داد",
+          description: `${err}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      })
+      .finally(setLoading(false));
+  };
+
   const handleEditInvoice = (id) => {
     if (id === 0) return;
     setSelectedID(id);
@@ -159,6 +267,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
     // setModalContetnt(<EditInvoice id={id} onClose={onClose} />);
     onOpen();
   };
+
   if (invoices)
     return (
       <Flex direction="column" height="100vh">
@@ -183,23 +292,45 @@ export const InvoiceDataTable = ({ isDesktop }) => {
               >
                 <CardHeader
                   borderTopRadius={5}
-                  bg={row?.isAccepted ? "green.200" : "orange.200"}
+                  bg={row?.isAccepted ? "green.400" : "blue.200"}
                 >
                   <HStack>
-                    <Text> فاکتور شماره :{row.id}</Text>
+                    <Text>شماره :{row.id}</Text>
                     <Box mr="auto">
-                      {row.isSent ? (
-                        <SquareArrowUp color="green" />
-                      ) : (
-                        <Tooltip label="منتظر ارسال">
-                          <Icon
-                            as={CircleFadingArrowUp}
-                            _hover={{
-                              color: "green",
-                            }}
-                          />
-                        </Tooltip>
-                      )}
+                      <HStack>
+                        {row.isAccepted ? (
+                          <Tooltip label="تایید کاربر ارشد">
+                            <ShieldUser color="green" />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip label="منتظر تایید کاربر ارشد ">
+                            <UserLock
+                              color="yellow"
+                              _hover={{ color: "green" }}
+                            />
+                          </Tooltip>
+                        )}
+
+                        {row.approvedFile ? (
+                          <Tooltip label="تایید مشتری">
+                            <UserRoundCheck color="green" />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip label="منتظر تایید مشتری">
+                            <Handshake color="white" />
+                          </Tooltip>
+                        )}
+
+                        {row.isSent ? (
+                          <Tooltip label="لینک به مشتری ارسال شده است">
+                            <MailCheck color="green" />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip label="منتظر ارسال">
+                            <CircleFadingArrowUp color="orange" />
+                          </Tooltip>
+                        )}
+                      </HStack>
                     </Box>
                   </HStack>
                 </CardHeader>
@@ -262,25 +393,40 @@ export const InvoiceDataTable = ({ isDesktop }) => {
                         <Icon w={6} h={6} as={FilePenLine} />
                       </Tooltip>
                     </Link>
-                    <Link
-                      _disabled={true}
-                      _hover={{ color: "#ffd54f" }}
-                      color="green.600"
-                      onClick={(e) => {
-                        setSelectedID(row.id);
-                        setDialogGears({
-                          title: "ارسال لینک به مشتری",
-                          text: `آیا می خواهید لینک به شماره ${row.customer.customerPhone} به نام ${row.customer.customerLName} ارسال گردد؟`,
-                          callBack: handleSendCustomerLink,
-                        });
 
-                        setIsDialogOpen(true);
+                    <Link
+                      _hover={{
+                        color: "orange",
                       }}
+                      color="blue.600"
+                      onClick={(e) => handleGenerateNewLink(row.id)}
                     >
-                      <Tooltip label="ارسال به مشتری">
-                        <Icon w={6} h={6} as={Send} />
+                      <Tooltip label="تولید لینک جدید">
+                        <Icon w={6} h={6} as={Link2} />
                       </Tooltip>
                     </Link>
+
+                    {!row.isSent && (
+                      <Link
+                        _disabled={true}
+                        _hover={{ color: "#ffd54f" }}
+                        color="green.600"
+                        onClick={(e) => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "ارسال لینک به مشتری",
+                            text: `آیا می خواهید لینک به شماره ${row.customer.customerPhone} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                            callBack: handleSendCustomerLink,
+                          });
+
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        <Tooltip label="ارسال به مشتری">
+                          <Icon w={6} h={6} as={Send} />
+                        </Tooltip>
+                      </Link>
+                    )}
 
                     <Link
                       _hover={{ color: "#ffd54f" }}
@@ -311,10 +457,11 @@ export const InvoiceDataTable = ({ isDesktop }) => {
             >
               <EditInvoice
                 isDesktop={isDesktop}
+                onClose={onClose}
+                onOpen={onOpen}
                 setInvoices={setInvoices}
                 invoices={invoices}
                 invoice={invoices.find((invoice) => invoice.id === selectedID)}
-                onClose={onclose}
               />
             </MyModal>
             <MyAlert

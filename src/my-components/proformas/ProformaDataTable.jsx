@@ -67,10 +67,6 @@ export const ProformaDataTable = ({ isDesktop }) => {
     callBack: null,
   });
 
-  useEffect(() => {
-    console.log(proformas);
-  }, [proformas]);
-
   const loadData = async (resetPage = false) => {
     setLoading(true);
     await ShowUserAllProformas(

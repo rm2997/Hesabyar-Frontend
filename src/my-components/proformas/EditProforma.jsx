@@ -127,6 +127,11 @@ export const EditProforma = ({
           setApprovedFile(url);
         })
         .catch((err) => console.log(err.message));
+      for (let i = 0; i < proforma.proformaGoods.length; i++) {
+        proforma.proformaGoods[i].no = i + 1;
+        proforma.proformaGoods[i].uniqueId = Date.now().toString();
+      }
+
       setFormData({ ...proforma, proformaGoods: [...proforma.proformaGoods] });
       setProformaItems(proforma.proformaGoods);
       setLoading(false);
@@ -163,6 +168,7 @@ export const EditProforma = ({
       {
         uniqueId: Date.now().toString(),
         createdAt: "",
+        createdBy: {},
         description: "",
         good: null,
         id: 0,
@@ -176,9 +182,13 @@ export const EditProforma = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setFormData({ ...formData, proformaGoods: [...proformaItems] });
-
-    await UpdateProforma(formData.id, { ...formData, totalAmount: totalPrice })
+    const submitData = {
+      ...formData,
+      proformaGoods: [...proformaItems],
+      totalAmount: totalPrice,
+    };
+    console.log(submitData);
+    await UpdateProforma(formData.id, submitData)
       .then((res) => {
         if (res.status !== 200) return;
         const newProformas = proformas.filter((p) => p.id != formData.id);
@@ -230,11 +240,13 @@ export const EditProforma = ({
       const prc = field === "price" ? value : newItems[index].price;
       newItems[index].total = qty * prc;
     }
+    recalculateTotal(newItems);
     setProformaItems(newItems);
   };
 
-  const recalculateTotal = () => {
-    const items = [...proformaItems];
+  const recalculateTotal = (goods) => {
+    const items = goods ? [...goods] : [...proformaItems];
+
     if (!items) return;
     const total = items.reduce((sum, i) => sum + i.total, 0);
     const count = items.reduce((sum, i) => sum + i.quantity, 0);
@@ -243,12 +255,13 @@ export const EditProforma = ({
     setTotalQuantity(count);
   };
 
-  const handleAddNewItem = () => {
+  const handleAddNewItem = async () => {
     const items = [...proformaItems];
     if (!items) return;
     const newItem = {
       uniqueId: Date.now().toString(),
       createdAt: "",
+      createdBy: {},
       description: "",
       id: 0,
       quantity: 0,
@@ -259,18 +272,15 @@ export const EditProforma = ({
     };
     items.push(newItem);
     setProformaItems(items);
+    recalculateTotal(items);
   };
 
-  const handleRemoveItem = (item) => {
-    const items = [...proformaItems];
+  const handleRemoveItem = (indexToremove, item) => {
+    const items = proformaItems.filter((_, index) => index !== indexToremove);
     if (!items) return;
-    const updated = items.filter((i) => i.uniqueId !== item.uniqueId);
-
-    for (let i = 0; i < updated.length; i++) {
-      updated[i].no = i + 1;
-    }
-
-    setProformaItems(updated);
+    for (let i = 0; i < items.length; i++) items[i].no = i + 1;
+    setProformaItems(items);
+    recalculateTotal(items);
   };
 
   const handleDeleteAllItems = () => {
@@ -625,7 +635,7 @@ export const EditProforma = ({
                           <IconButton
                             icon={<Minus />}
                             key={"delete" + item.no}
-                            onClick={() => handleRemoveItem(item)}
+                            onClick={() => handleRemoveItem(index, item)}
                             colorScheme="red"
                           />
                         </Td>

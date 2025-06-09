@@ -104,3 +104,39 @@ export const sendUpdateProformaSms = async (customer, mobileNumber, link) => {
     }
   }
 };
+
+export const sendUpdateInvoiceSms = async (customer, mobileNumber, link) => {
+  const reqBody = {
+    mobile: mobileNumber,
+    templateId: 763246,
+    parameters: [
+      {
+        name: "CUSTOMER",
+        value: customer,
+        name: "TOKEN1",
+        value: link.length > 25 ? link.substring(0, 25) : link,
+        name: "TOKEN2",
+        value:
+          link.length > 25 && link.length <= 50
+            ? link.substring(26, 25)
+            : link.substring(26),
+      },
+    ],
+  };
+  try {
+    const response = await axiosClient.post(endpoints.sms.verify, reqBody);
+    if (!response) throw new Error();
+    return response;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error?.response?.data?.message || "خطای سرور");
+    } else if (error?.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد${error.message}`);
+    }
+  }
+};

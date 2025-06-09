@@ -19,6 +19,7 @@ import { UserProvider } from "./contexts/UserContext";
 import { SecondLogin } from "./pages/SecondLogin";
 import { UploadProformaDocument } from "./pages/UploadProformaDocument";
 import { theme } from "./theme/theme";
+import { UploadInvoiceDocument } from "./pages/UploadInvoiceDocument";
 function App() {
   return (
     <ChakraProvider theme={theme}>
@@ -54,7 +55,11 @@ function App() {
           <Route path="/second-login" element={<SecondLogin />} />
           <Route
             path="/upload-proforma-document"
-            element={<UploadProformaDocument proformaId={17} />}
+            element={<UploadProformaDocument />}
+          />
+          <Route
+            path="/upload-invoice-document"
+            element={<UploadInvoiceDocument />}
           />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

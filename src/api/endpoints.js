@@ -44,6 +44,9 @@ const endpoints = {
     setInvoiceIsSent: (id) => `/invoice/sent/${id}`,
     setInvoiceIsAccepted: (id) => `/invoice/accept/${id}`,
     getApprovedFile: (id) => `/invoice/file/${id}`,
+    listByToken: (token) => `/invoice/token/${token}`,
+    updateProformCustomerFile: (token) => `/invoice/token/${token}`,
+    generateNewToken: (id) => `/invoice/generateNewToken/${id}`,
   },
   customer: {
     listAll: (page, limit, search) =>
