@@ -13,14 +13,9 @@ import { NewProforma } from "../pages/proformas/NewProforma";
 import { useEffect, useState } from "react";
 
 import { NewInvoice } from "../pages/invoices/NewInvoice";
-import { UserReceivedNotifications } from "../pages/notifications/UserReceivedNotifications";
-import { UserSentdNotifications } from "../pages/notifications/UserSentNotifications";
 import { NewNotification } from "../pages/notifications/NewNotification";
 import { NewCustomer } from "../pages/customers/NewCustomer";
-import { Customers } from "../pages/customers/Customers";
-import { Goods } from "../pages/goods/Goods";
 import { NewGood } from "../pages/goods/NewGood";
-import { Units } from "../pages/units/Units";
 import { NewUnit } from "../pages/units/NewUnit";
 import { ProformaDataTable } from "./proformas/ProformaDataTable";
 import { InvoiceDataTable } from "./invoices/InvoiceDataTable";
@@ -33,7 +28,7 @@ import { NotificationSentDataTable } from "./notifications/NotificationSentDataT
 import { NotificationReceivedDataTable } from "./notifications/NotificationReceivedDataTable";
 import { UploadCustomers } from "./customers/UploadCustomers";
 import { RequestsDataTable } from "./requests/RequestsDataTable";
-
+import { Logout } from "./Logout";
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
   { name: "myProformas", value: " پیش فاکتور های من" },
@@ -125,6 +120,8 @@ export const MainContents = ({ activeContent, isDesktop }) => {
           return <Users isDesktop={isDesktop} />;
         case "acceptRequest":
           return <RequestsDataTable isDesktop={isDesktop} />;
+        case "logout":
+          return <Logout />;
         default:
           break;
       }

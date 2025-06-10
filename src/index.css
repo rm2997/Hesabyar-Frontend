@@ -1,9 +1,3 @@
-@font-face {
-  font-family: "Vazir";
-  src: url("./assets/fonts/Vazir.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-}
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",

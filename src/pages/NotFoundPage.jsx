@@ -28,7 +28,11 @@ export const NotFoundPage = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <Image src="/images/404.svg" alt="404 Illustration" maxW="400px" />
+        <Image
+          src="/assets/images/404.svg"
+          alt="404 Illustration"
+          maxW="400px"
+        />
       </MotionBox>
 
       <Heading fontSize="4xl" color={useColorModeValue("teal.600", "teal.300")}>

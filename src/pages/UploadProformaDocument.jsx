@@ -101,7 +101,7 @@ export const UploadProformaDocument = ({}) => {
       }
       setLoading(true);
 
-      ShowProformasByToken(token)
+      await ShowProformasByToken(token)
         .then((res) => {
           setFormData({ ...res.data, approvedFile: "" });
           let items = 0;
@@ -120,8 +120,8 @@ export const UploadProformaDocument = ({}) => {
           });
 
           navigate("/NotFound");
-        })
-        .finally(setLoading(false));
+        });
+      setLoading(false);
     };
 
     loadProformaData();
@@ -133,8 +133,7 @@ export const UploadProformaDocument = ({}) => {
     const form = new FormData();
     form.append("image", formData.imageFile);
 
-    console.log(form);
-    UpdateProformCustomerFile(token, form)
+    await UpdateProformCustomerFile(token, form)
       .then((res) => {
         toast({
           title: "توجه",
@@ -143,6 +142,7 @@ export const UploadProformaDocument = ({}) => {
           duration: 3000,
           isClosable: false,
         });
+        navigate("/home");
       })
       .catch((err) => {
         toast({
@@ -152,8 +152,8 @@ export const UploadProformaDocument = ({}) => {
           duration: 3000,
           isClosable: false,
         });
-      })
-      .finally(setLoading(false));
+      });
+    setLoading(false);
   };
 
   if (loading) return <MyLoading showLoading={true} />;

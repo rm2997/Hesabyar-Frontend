@@ -19,7 +19,23 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { FilePenLine, MapPin, Trash2, User2 } from "lucide-react";
+import {
+  Ban,
+  CircleUser,
+  FilePenLine,
+  Locate,
+  Map,
+  MapPin,
+  MapPinned,
+  Navigation,
+  Pin,
+  ShieldUser,
+  Trash2,
+  User,
+  User2,
+  UserRound,
+  UsersRound,
+} from "lucide-react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { useEffect, useState } from "react";
@@ -195,7 +211,7 @@ export const UsersDataTable = ({ isDesktop }) => {
       />
       <Box flex="1" overflowY="auto" p={5}>
         <Flex direction="column" gap={4}>
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
             {usersData.map((row) => (
               <Card
                 borderTopRadius={5}
@@ -204,12 +220,12 @@ export const UsersDataTable = ({ isDesktop }) => {
               >
                 <CardHeader bg="green.500" borderTopRadius={5} color="white">
                   <HStack>
-                    <User2 color="purple" />
+                    <UsersRound size="25px" color="#F6AB49" strokeWidth={2} />
                     <Text mr="auto">{row.username}</Text>
                   </HStack>
                 </CardHeader>
                 <CardBody>
-                  <VStack align={"stretch"} spacing={2}>
+                  <VStack align={"stretch"} spacing={1}>
                     <HStack>
                       <Text>نام :</Text>
                       <Text mr="auto">{row.userfname}</Text>
@@ -227,8 +243,14 @@ export const UsersDataTable = ({ isDesktop }) => {
                     <Divider />
                     <HStack>
                       <Text>نقش :</Text>
-                      <Text color="green.300" mr="auto">
-                        {row.role}
+                      <Text mr="auto">
+                        <Tooltip label={row.role}>
+                          {row.role == "admin" ? (
+                            <ShieldUser size="30px" color="green" />
+                          ) : (
+                            <User size="30px" color="#97D540" />
+                          )}
+                        </Tooltip>
                       </Text>
                     </HStack>
                     <Divider />
@@ -252,11 +274,15 @@ export const UsersDataTable = ({ isDesktop }) => {
                         href={row.userLocation}
                         isExternal
                       >
-                        {!row?.userLocation
-                          ? "ندارد"
-                          : row.userLocation?.length > 19
-                          ? row.userLocation?.substring(0, 19) + "..."
-                          : row.userLocation}
+                        <Tooltip label={row.userLocation}>
+                          {row.userLocation == "Denied" ? (
+                            <Ban color="red" />
+                          ) : (
+                            <HStack>
+                              <Map /> <MapPin color="tomato" />
+                            </HStack>
+                          )}
+                        </Tooltip>
                       </Link>
                     </HStack>
                   </VStack>
@@ -292,14 +318,14 @@ export const UsersDataTable = ({ isDesktop }) => {
                         setSelectedID(row.id);
                         setDialogGears({
                           title: "ارسال درخواست موقعیت مکانی",
-                          text: "آیا واقعا می خواهید این کاربر موقعیت مکانی خود را ارسال کند؟",
+                          text: "کاربر موقعیت مکانی خود را ارسال کند؟",
                           callBack: () => handleSendLocationRequest(row.id),
                         });
                         setIsDialogOpen(true);
                       }}
                     >
                       <Tooltip label="درخواست موقعیت مکانی">
-                        <Icon w={6} h={6} as={MapPin} />
+                        <Icon w={6} h={6} as={Locate} />
                       </Tooltip>
                     </Link>
                     <Link

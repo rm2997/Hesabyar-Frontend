@@ -120,6 +120,22 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
         />
         <SidebarItem
           id={3}
+          title="درخواست ها"
+          justIcon={sidebarWidth === 300 ? false : true}
+          color="yellow.400"
+          icon={<ShieldUser />}
+          children={[
+            {
+              id: "acceptRequest",
+              name: "درخواست های تایید",
+              type: "text",
+              icon: <ShieldCheck />,
+            },
+          ]}
+          onMenuItemClick={onMenuItemClick}
+        />
+        <SidebarItem
+          id={4}
           title="فروش"
           color="#957871"
           justIcon={sidebarWidth === 300 ? false : true}
@@ -141,7 +157,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
-          id={4}
+          id={5}
           title="انبار"
           color="orange.400"
           justIcon={sidebarWidth === 300 ? false : true}
@@ -163,7 +179,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
-          id={5}
+          id={6}
           title="مشتریان"
           justIcon={sidebarWidth === 300 ? false : true}
           color="red.400"
@@ -191,7 +207,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
-          id={5}
+          id={7}
           title="کالاها"
           justIcon={sidebarWidth === 300 ? false : true}
           color="maroon"
@@ -219,7 +235,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
-          id={6}
+          id={8}
           title="واحدها"
           justIcon={sidebarWidth === 300 ? false : true}
           color="white"
@@ -241,7 +257,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           onMenuItemClick={onMenuItemClick}
         />
         <SidebarItem
-          id={7}
+          id={9}
           title="پیام ها"
           justIcon={sidebarWidth === 300 ? false : true}
           color="#4f7ede"
@@ -268,22 +284,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           ]}
           onMenuItemClick={onMenuItemClick}
         />
-        <SidebarItem
-          id={8}
-          title="درخواست ها"
-          justIcon={sidebarWidth === 300 ? false : true}
-          color="yellow.400"
-          icon={<ShieldUser />}
-          children={[
-            {
-              id: "acceptRequest",
-              name: "درخواست های تایید",
-              type: "text",
-              icon: <ShieldCheck />,
-            },
-          ]}
-          onMenuItemClick={onMenuItemClick}
-        />
+
         {/* <SidebarItem
           id={6}
           title="نمودار وضعیت"

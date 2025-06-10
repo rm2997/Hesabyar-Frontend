@@ -20,6 +20,7 @@ import { SecondLogin } from "./pages/SecondLogin";
 import { UploadProformaDocument } from "./pages/UploadProformaDocument";
 import { theme } from "./theme/theme";
 import { UploadInvoiceDocument } from "./pages/UploadInvoiceDocument";
+import { Home } from "./pages/Home";
 function App() {
   return (
     <ChakraProvider theme={theme}>
@@ -29,6 +30,7 @@ function App() {
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/forget-password" element={<ForgotPasswordForm />} />
           <Route
             path="/dashbord"
@@ -39,7 +41,7 @@ function App() {
             }
           />
           <Route
-            path="/home"
+            path="/myhome"
             element={
               <PrivateRoute>
                 <NotificationProvider>

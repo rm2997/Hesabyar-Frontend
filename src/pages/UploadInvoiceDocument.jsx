@@ -87,6 +87,7 @@ export const UploadInvoiceDocument = ({}) => {
 
   useEffect(() => {
     const loadInvoiceData = async () => {
+      setLoading(true);
       if (!token || token.length < 10) {
         toast({
           title: "خطا",
@@ -98,9 +99,7 @@ export const UploadInvoiceDocument = ({}) => {
         navigate("/NotFound");
         return;
       }
-      setLoading(true);
-
-      ShowInvoiceByToken(token)
+      await ShowInvoiceByToken(token)
         .then((res) => {
           console.log(res.data);
           setFormData({ ...res.data, approvedFile: "" });
@@ -118,10 +117,9 @@ export const UploadInvoiceDocument = ({}) => {
             duration: 3000,
             isClosable: false,
           });
-
-          //navigate("/NotFound");
-        })
-        .finally(setLoading(false));
+          navigate("/NotFound");
+        });
+      setLoading(false);
     };
 
     loadInvoiceData();
@@ -134,7 +132,7 @@ export const UploadInvoiceDocument = ({}) => {
     form.append("image", formData.imageFile);
 
     console.log(form);
-    UpdateInvoiceCustomerFile(token, form)
+    await UpdateInvoiceCustomerFile(token, form)
       .then((res) => {
         toast({
           title: "توجه",
@@ -143,6 +141,7 @@ export const UploadInvoiceDocument = ({}) => {
           duration: 3000,
           isClosable: false,
         });
+        navigate("/home");
       })
       .catch((err) => {
         toast({
@@ -152,8 +151,8 @@ export const UploadInvoiceDocument = ({}) => {
           duration: 3000,
           isClosable: false,
         });
-      })
-      .finally(setLoading(false));
+      });
+    setLoading(false);
   };
 
   if (loading) return <MyLoading showLoading={true} />;
@@ -307,8 +306,8 @@ export const UploadInvoiceDocument = ({}) => {
             <Divider />
             <SimpleGrid spacing={1} columns={{ base: 1, md: 2, lg: 3 }}>
               <Text>
-                لطفا بنویسید اطلاعات را قبول دارم - امضا کرده - عکس بگیرید و
-                اینجا قرار دهید.
+                لطفا از فیش واریزی یا هر سندی که تایید می کند مبلغ فاکتور پرداخت
+                کرده اید عکس بگیرید و اینجا قرار دهید.
               </Text>
               <InputGroup maxW="500px">
                 <InputLeftElement>
@@ -385,6 +384,7 @@ export const UploadInvoiceDocument = ({}) => {
             </HStack>
             <Divider />
             <Button
+              isLoading={loading}
               isDisabled={!formData.isAcceptedByCustomer}
               type="submit"
               colorScheme="blue"
