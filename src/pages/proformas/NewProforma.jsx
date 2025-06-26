@@ -304,21 +304,7 @@ export const NewProforma = ({ isDesktop }) => {
                       <FormLabel hidden={!isDesktop} width="120px">
                         نام مشتری
                       </FormLabel>
-                      {/* <Select
-                        disabled={customerLoading}
-                        w={250}
-                        dir="ltr"
-                        name="customer"
-                        placeholder="یک نفر را انتخاب کنید"
-                        value={formData.customer}
-                        onChange={handleChangeFormData}
-                      >
-                        {customers.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.customerFName + " " + p.customerLName}
-                          </option>
-                        ))}
-                      </Select> */}
+
                       <Input
                         placeholder="لطفا یک مشتری انتخاب کنید"
                         maxW="250px"
@@ -427,13 +413,27 @@ export const NewProforma = ({ isDesktop }) => {
                 <Table size="sm" variant="simple">
                   <Thead>
                     <Tr>
-                      <Th width="100px">ردیف</Th>
-                      <Th width="400px">نام کالا</Th>
-                      <Th width="100px">تعداد</Th>
-                      <Th width="100px">واحد</Th>
-                      <Th width="200px">قیمت واحد</Th>
-                      <Th width="300px">قیمت کل</Th>
-                      <Th width="300px">توضیحات</Th>
+                      <Th fontFamily="Vaziri" width="100px">
+                        ردیف
+                      </Th>
+                      <Th fontFamily="Vaziri" width="400px">
+                        نام کالا
+                      </Th>
+                      <Th fontFamily="Vaziri" width="100px">
+                        تعداد
+                      </Th>
+                      <Th fontFamily="Vaziri" width="100px">
+                        واحد
+                      </Th>
+                      <Th fontFamily="Vaziri" width="200px">
+                        قیمت واحد
+                      </Th>
+                      <Th fontFamily="Vaziri" width="300px">
+                        قیمت کل
+                      </Th>
+                      <Th fontFamily="Vaziri" width="300px">
+                        توضیحات
+                      </Th>
                       <Th>
                         <IconButton
                           icon={<Plus />}

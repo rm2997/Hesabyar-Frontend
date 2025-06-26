@@ -1,6 +1,6 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { LoginForm } from "./pages/LoginForm";
-import { ForgotPasswordForm } from "./pages/ForgetPasswordForm";
+import { ForgotPasswordForm } from "./pages/password/ForgetPasswordForm";
 import { NotificationProvider } from "./contexts/NotificationContext";
 
 import {

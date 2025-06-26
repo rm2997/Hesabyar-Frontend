@@ -461,13 +461,27 @@ export const EditProforma = ({
                 <Table size="sm" variant="simple">
                   <Thead>
                     <Tr>
-                      <Th width="100px">ردیف</Th>
-                      <Th width="400px">نام کالا</Th>
-                      <Th width="100px">تعداد</Th>
-                      <Th width="100px">واحد</Th>
-                      <Th width="200px">قیمت واحد</Th>
-                      <Th width="300px">قیمت کل</Th>
-                      <Th width="300px">توضیحات</Th>
+                      <Th fontFamily="Vaziri" width="100px">
+                        ردیف
+                      </Th>
+                      <Th fontFamily="Vaziri" width="400px">
+                        نام کالا
+                      </Th>
+                      <Th fontFamily="Vaziri" width="100px">
+                        تعداد
+                      </Th>
+                      <Th fontFamily="Vaziri" width="100px">
+                        واحد
+                      </Th>
+                      <Th fontFamily="Vaziri" width="200px">
+                        قیمت واحد
+                      </Th>
+                      <Th fontFamily="Vaziri" width="300px">
+                        قیمت کل
+                      </Th>
+                      <Th fontFamily="Vaziri" width="300px">
+                        توضیحات
+                      </Th>
                       <Th>
                         <IconButton
                           icon={<Plus />}

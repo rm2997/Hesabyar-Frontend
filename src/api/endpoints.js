@@ -16,6 +16,7 @@ const endpoints = {
     setLocation: "/users/location/",
     listAll: (page, limit, search) =>
       `/users?page=${page}&limit=${limit}&search=${search}`,
+    findByMobile: (mobile) => `/users/forgetpassword/${mobile}`,
   },
   proforma: {
     listAll: (page, limit, search) =>

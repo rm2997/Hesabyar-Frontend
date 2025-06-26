@@ -55,6 +55,34 @@ export const sendLocationSms = async (mobileNumber, userName) => {
   }
 };
 
+export const sendForgetPassSms = async (mobileNumber, token) => {
+  const reqBody = {
+    mobile: mobileNumber,
+    templateId: 123456,
+    parameters: [
+      {
+        token: token,
+      },
+    ],
+  };
+  try {
+    const response = await axiosClient.post(endpoints.sms.verify, reqBody);
+    return response;
+    if (!response) throw new Error();
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error?.response?.data?.message || "خطای سرور");
+    } else if (error?.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
+    }
+  }
+};
+
 export const sendValidationKeySms = async (mobileNumber, key) => {
   const reqBody = {
     mobile: mobileNumber,

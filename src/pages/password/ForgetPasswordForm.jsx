@@ -14,18 +14,30 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { sendResetLink } from "../api/services/authService"; // فرض بر اینکه داریمش
+import { sendResetLink } from "../../api/services/authService"; // فرض بر اینکه داریمش
 import { useNavigate } from "react-router-dom";
 import { LinkIcon } from "@chakra-ui/icons";
 import { Send, UserLock } from "lucide-react";
+import {
+  GetUserByMobileNumber,
+  SendForgetPassSms,
+} from "../../api/services/userService";
 
 export const ForgotPasswordForm = () => {
   const isDesktop = useBreakpointValue({ base: false, md: true });
   const toast = useToast();
   const [mobile, setMobile] = useState("");
+  const [enableSend, setEnableSend] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const handleChangeMobileNumber = async (mobile) => {
+    if (mobile.length <= 11) setMobile(mobile);
+    if (mobile.length == 11) {
+      setEnableSend(true);
+      return;
+    } else setEnableSend(false);
+  };
   const handleClick = (e) => {
     e.preventDefault();
     navigate("/login");
@@ -35,15 +47,32 @@ export const ForgotPasswordForm = () => {
     setIsLoading(true);
 
     try {
-      await sendResetLink(mobile); // سرویس فرستادن لینک ایمیل
+      const user = await GetUserByMobileNumber(mobile);
+      setMobile("");
+      if (!user) {
+        toast({
+          title: "خطا در ارسال بیامک",
+          description: "کاربری با این شماره همراه ثبت نشده است",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
+        return;
+      }
+      await SendForgetPassSms(user.usermobilenumber, user.token);
       toast({
         title: "لینک بازیابی ارسال شد.",
-        description: "لطفاً گوشی همراه خود را بررسی کنید.",
+        description: "لطفاً تلفن همراه خود را بررسی کنید.",
         status: "success",
         duration: 5000,
         isClosable: true,
       });
-      setMobile("");
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
     } catch (err) {
       toast({
         title: "خطا در ارسال بیامک",
@@ -52,31 +81,31 @@ export const ForgotPasswordForm = () => {
         duration: 5000,
         isClosable: true,
       });
-    } finally {
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (
     <SimpleGrid
-      bgImage="url(/assets/images/bg/forgetPassword.jpg)"
-      bgSize={isDesktop ? "contain" : "auto"}
-      bgRepeat="no-repeat"
-      bgPosition="left"
+      mr={isDesktop ? "auto" : "1"}
+      ml={isDesktop ? "auto" : "1"}
       height="100vh"
       spacing={0}
       columns={{ base: 1, md: 2, lg: 2 }}
       p={5}
-      width="100%"
-      m={1}
+      width={isDesktop ? "50%" : "99%"}
     >
       <Box
+        bgImage="url(/assets/images/bg/forgetPassword.jpg)"
+        bgSize={isDesktop ? "strech" : "auto"}
+        bgRepeat="no-repeat"
+        bgPosition="left"
         hidden={!isDesktop}
         p={8}
         borderWidth={1}
         borderRightWidth={0}
         borderLeftRadius="lg"
-        bg="whiteAlpha.500"
+        //bg="blackAlpha.100"
       ></Box>
       <Box
         p={8}
@@ -88,10 +117,20 @@ export const ForgotPasswordForm = () => {
       >
         <VStack spacing={5} as="form" onSubmit={handleSubmit}>
           <UserLock size={100} color="#74CEF7" strokeWidth={1} />
-          <Heading hidden={!isDesktop} size="md">
+          <Heading
+            color="blackAlpha.800"
+            fontFamily="Vaziri"
+            hidden={!isDesktop}
+            size="lg"
+          >
             فراموشی رمز عبور
           </Heading>
-          <Text fontSize="sm" color="gray.500" textAlign="center">
+          <Text
+            fontFamily="Vaziri"
+            fontSize="xs"
+            color="blackAlpha.500"
+            textAlign="center"
+          >
             شماره همراه خود را وارد کنید تا لینک بازیابی برایتان ارسال شود
           </Text>
 
@@ -103,7 +142,7 @@ export const ForgotPasswordForm = () => {
               type="number"
               placeholder="09xxxxxxxxx"
               value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
+              onChange={(e) => handleChangeMobileNumber(e.target.value)}
             />
           </FormControl>
 
@@ -113,6 +152,7 @@ export const ForgotPasswordForm = () => {
             type="submit"
             colorScheme="blue"
             isLoading={isLoading}
+            isDisabled={!enableSend}
             width="full"
           >
             ارسال لینک بازیابی

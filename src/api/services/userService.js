@@ -1,6 +1,6 @@
 import axiosClient from "../axiosClient";
 import endpoints from "../endpoints";
-import { sendLocationSms } from "../smsUtils";
+import { sendForgetPassSms, sendLocationSms } from "../smsUtils";
 
 export const login = async (data) => {
   try {
@@ -56,6 +56,23 @@ export const logout = async () => {
 export const GetAllUsers = async (page = 1, limit = 10, search = "") => {
   try {
     return await axiosClient.get(endpoints.user.listAll(page, limit, search));
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+    }
+  }
+};
+
+export const GetUserByMobileNumber = async (mobile) => {
+  try {
+    return await axiosClient.get(endpoints.user.findByMobile(mobile));
   } catch (error) {
     if (error.response) {
       // پاسخ از سمت سرور (۴xx یا ۵xx)
@@ -158,6 +175,24 @@ export const UpdateUserLocation = async (location) => {
 export const SendLocationSms = async (mobileNumber, userName) => {
   try {
     const resp = await sendLocationSms(mobileNumber, userName);
+    return resp;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+    }
+  }
+};
+
+export const SendForgetPassSms = async (mobileNumber, token) => {
+  try {
+    const resp = await sendForgetPassSms(mobileNumber, token);
     return resp;
   } catch (error) {
     if (error.response) {

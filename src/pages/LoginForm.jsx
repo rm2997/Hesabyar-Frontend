@@ -101,7 +101,10 @@ export const LoginForm = () => {
     e.preventDefault();
     navigate("/forget-password");
   };
-
+  const handleHomeClick = (e) => {
+    e.preventDefault();
+    navigate("/Home");
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -173,7 +176,7 @@ export const LoginForm = () => {
       spacing={0}
       columns={{ base: 1, md: 2, lg: 4 }}
       p={5}
-      width="100%"
+      width="99%"
       m={1}
     >
       <Box></Box>
@@ -183,7 +186,7 @@ export const LoginForm = () => {
         borderWidth={1}
         borderRightWidth={0}
         borderLeftRadius="lg"
-        bg="whiteAlpha.500"
+        bg="blackAlpha.200"
       ></Box>
       <Box
         p={8}
@@ -207,10 +210,22 @@ export const LoginForm = () => {
           />
 
           <Box>
-            <Heading size="xl" mb={3} textAlign="center" color="blackAlpha.800">
+            <Heading
+              fontFamily="Vaziri"
+              size="lg"
+              mb={3}
+              textAlign="center"
+              color="blackAlpha.800"
+            >
               به حسابیار خوش آمدید
             </Heading>
-            <Heading size="xs" mb={1} textAlign="center" color="blackAlpha.600">
+            <Heading
+              fontFamily="Vaziri"
+              size="xs"
+              mb={1}
+              textAlign="center"
+              color="blackAlpha.300"
+            >
               سامانه دستیار سیستم های حسابداری
             </Heading>
           </Box>
@@ -229,16 +244,7 @@ export const LoginForm = () => {
 
           <FormControl isRequired>
             <FormLabel hidden={!isDesktop}>کلمه عبور</FormLabel>
-            {/* <Input
-            dir="ltr"
-            colorScheme="blue"
-            name="password"
-            type="password"
-            variant="flushed"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="Password"
-          /> */}
+
             <MyInputBox
               colorScheme="blue"
               type="password"
@@ -297,11 +303,26 @@ export const LoginForm = () => {
         </VStack>
         <Divider marginTop={10} marginBottom={5} />
 
-        <HStack dir="ltr" spacing={2}>
-          <Link href="#" onClick={handleClick} textColor="blue.300">
+        <VStack spacing={2}>
+          <Link
+            mr="auto"
+            ml="auto"
+            href="#"
+            onClick={handleClick}
+            textColor="blue.300"
+          >
             فراموشی نام کاربری/رمز عبور
           </Link>
-        </HStack>
+          <Link
+            mr="auto"
+            ml="auto"
+            href="#"
+            onClick={handleHomeClick}
+            textColor="blue.300"
+          >
+            خانه
+          </Link>
+        </VStack>
       </Box>
       <Box></Box>
     </SimpleGrid>
