@@ -12,11 +12,13 @@ const endpoints = {
     profile: "/users/profile",
     update: (id) => `/users/${id}`,
     changePass: (id) => `/users/changePass/${id}`,
+    changePassExternal: "/users/changePassExternal",
     sendSms: (id) => `/users/sms/${id}`,
     setLocation: "/users/location/",
     listAll: (page, limit, search) =>
       `/users?page=${page}&limit=${limit}&search=${search}`,
     findByMobile: (mobile) => `/users/forgetpassword/${mobile}`,
+    findByToken: (token) => `/users/token/${token}`,
   },
   proforma: {
     listAll: (page, limit, search) =>

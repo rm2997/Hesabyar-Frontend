@@ -14,7 +14,7 @@ export const login = async (data) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -31,7 +31,7 @@ export const register = async (data) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -48,7 +48,7 @@ export const logout = async () => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -65,7 +65,26 @@ export const GetAllUsers = async (page = 1, limit = 10, search = "") => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
+    }
+  }
+};
+
+export const GetUserByToken = async (token) => {
+  try {
+    const response = await axiosClient.get(endpoints.user.findByToken(token));
+    if (!response) throw new Error(response.statusText);
+    return response;
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -82,7 +101,7 @@ export const GetUserByMobileNumber = async (mobile) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -99,7 +118,7 @@ export const CreateUser = async (userData) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -116,7 +135,7 @@ export const RemoveUser = async (id) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -133,7 +152,27 @@ export const UpdateUser = async (id, userData) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
+    }
+  }
+};
+
+export const ChangePassFromOut = async (passwordData) => {
+  try {
+    return await axiosClient.put(
+      endpoints.user.changePassExternal,
+      passwordData
+    );
+  } catch (error) {
+    if (error.response) {
+      // پاسخ از سمت سرور (۴xx یا ۵xx)
+      throw new Error(error.response.data?.message || "خطای سرور");
+    } else if (error.request) {
+      // درخواست فرستاده شده ولی پاسخی نیومده
+      throw new Error("پاسخی از سرور دریافت نشد");
+    } else {
+      // خطای دیگر (مثلاً در خود کد)
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -150,7 +189,7 @@ export const ChangePass = async (id, userData) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -167,7 +206,7 @@ export const UpdateUserLocation = async (location) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -185,7 +224,7 @@ export const SendLocationSms = async (mobileNumber, userName) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };
@@ -203,7 +242,7 @@ export const SendForgetPassSms = async (mobileNumber, token) => {
       throw new Error("پاسخی از سرور دریافت نشد");
     } else {
       // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
     }
   }
 };

@@ -55,10 +55,9 @@ export const Home = () => {
     arrows: true,
   };
 
-  const position = [35.67646, 51.327177]; // مختصات تهران به عنوان نمونه
-
+  const position = [35.67646, 51.327177];
   return (
-    <Box>
+    <Box fontFamily="Vaziri">
       {/* نوار بالا */}
       <Flex
         as="header"
@@ -86,7 +85,9 @@ export const Home = () => {
           />
         </Flex>
         <Flex>
-          <Heading fontSize="lg">حسابیار</Heading>
+          <Heading fontFamily="Vaziri" fontSize="lg">
+            حسابیار
+          </Heading>
         </Flex>
       </Flex>
 
@@ -138,7 +139,9 @@ export const Home = () => {
         px={8}
         p={10}
       >
-        <Heading fontSize="2xl">بهترین خدمات‌ آسانسور در ایران</Heading>
+        <Heading fontFamily="Vaziri" fontSize="2xl">
+          بهترین خدمات‌ آسانسور در ایران
+        </Heading>
         <Text fontSize="md">با ما تماس بگیرید</Text>
         <Text fontWeight="medium">تلفن: 0912000000</Text>
         <Text fontWeight="medium">ایمیل: info@example.com</Text>
@@ -172,7 +175,9 @@ export const Home = () => {
         px={4}
         p={10}
       >
-        <Heading fontSize="2xl">بهترین خدمات‌ آسانسور در ایران</Heading>
+        <Heading fontFamily="Vaziri" fontSize="2xl">
+          بهترین خدمات‌ آسانسور در ایران
+        </Heading>
         <Text fontSize="md">با ما تماس بگیرید</Text>
         <Text fontWeight="medium">تلفن: 0912000000</Text>
         <Text fontWeight="medium">ایمیل: info@example.com</Text>

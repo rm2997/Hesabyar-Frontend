@@ -35,7 +35,6 @@ import { MyLoading } from "../my-components/MyLoading";
 import {
   ShowProformasByToken,
   UpdateProformCustomerFile,
-  UpdateProforma,
 } from "../api/services/proformaService";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
