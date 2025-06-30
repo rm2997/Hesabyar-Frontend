@@ -1,5 +1,6 @@
 import axios from "axios";
 import endpoints from "./endpoints";
+import { replace } from "react-router-dom";
 
 const axiosClient = axios.create({
   headers: {
@@ -55,20 +56,89 @@ export const sendLocationSms = async (mobileNumber, userName) => {
   }
 };
 
-export const sendForgetPassSms = async (mobileNumber, token) => {
+export const sendForgetPassSms = async (userInfo, mobileNumber, token) => {
+  let tokenBase = token;
+  console.log(tokenBase);
+  const token1 =
+    tokenBase.length >= 25
+      ? tokenBase.substring(0, 25)
+      : tokenBase.substring(0);
+  tokenBase = tokenBase.replace(token1, "");
+  console.log("token1", token1);
+  const token2 =
+    tokenBase.length >= 25
+      ? tokenBase.substring(0, 25)
+      : tokenBase.substring(0);
+  tokenBase = tokenBase.replace(token2, "");
+  const token3 =
+    tokenBase.length >= 25
+      ? tokenBase.substring(0, 25)
+      : tokenBase.substring(0);
+  tokenBase = tokenBase.replace(token3, "");
+  const token4 =
+    tokenBase.length >= 25
+      ? tokenBase.substring(0, 25)
+      : tokenBase.substring(0);
+  tokenBase = tokenBase.replace(token4, "");
+  const token5 =
+    tokenBase.length >= 25
+      ? tokenBase.substring(0, 25)
+      : tokenBase.substring(0);
+  tokenBase = tokenBase.replace(token5, "");
+  const token6 =
+    tokenBase.length >= 25
+      ? tokenBase.substring(0, 25)
+      : tokenBase.substring(0);
+  tokenBase = tokenBase.replace(token6, "");
+  console.log("tokenBase", tokenBase);
   const reqBody = {
     mobile: mobileNumber,
-    templateId: 123456,
+    templateId: 764363,
     parameters: [
       {
-        token: token,
+        name: "USER",
+        value: userInfo,
+      },
+      {
+        name: "TOKEN1",
+        value: token1,
+      },
+      {
+        name: "TOKEN2",
+        value: token2,
+      },
+      {
+        name: "TOKEN3",
+        value: token3,
+      },
+      {
+        name: "TOKEN4",
+        value: token4,
+      },
+      {
+        name: "TOKEN5",
+        value: token5,
+      },
+      {
+        name: "TOKEN6",
+        value: token6,
       },
     ],
   };
+
   try {
+    // const response = await axiosClient.post(
+    //   endpoints.sms.url(
+    //     "9124491423",
+    //     "7uyRcCHDKpobMJz0B0G3kOX4fO4gyTuwrrsSuWrgIrr50qvy",
+    //     "300021150479",
+    //     mobileNumber,
+    //     smsText
+    //   )
+    // );
     const response = await axiosClient.post(endpoints.sms.verify, reqBody);
-    return response;
     if (!response) throw new Error();
+    return response;
   } catch (error) {
     if (error.response) {
       // پاسخ از سمت سرور (۴xx یا ۵xx)

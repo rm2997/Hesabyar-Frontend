@@ -1,7 +1,11 @@
 import axios from "axios";
 import { clearTokens, loadTokens } from "./tokenUtils";
 
-const BASE_URL = "http://localhost:3001";
+//const BASE_URL = "http://localhost:3001";
+const BASE_URL =
+  process.env.NODE_ENV == "production"
+    ? "https://api.hesab-yaar.ir"
+    : "http://localhost:3001";
 const axiosClient = axios.create({
   baseURL: `${BASE_URL}`,
   headers: {
@@ -11,11 +15,13 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use((config) => {
   const { accessToken } = loadTokens();
+
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
   return config;
 });
+
 axiosClient.interceptors.response.use(
   (response) => response,
   async (err) => {
@@ -29,6 +35,56 @@ axiosClient.interceptors.response.use(
     }
   }
 );
+
+export const apiRequest = async ({
+  method,
+  url,
+  data = {},
+  params = {},
+  headers = {},
+}) => {
+  try {
+    const response = await axiosClient({
+      method,
+      url,
+      data,
+      params,
+      headers,
+    });
+    console.log(response);
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.log("error", error);
+    let errorMessage = "خطای ناشناخته‌ای رخ داده است.";
+    let statusCode = null;
+    let serverErrorData = null;
+
+    if (error.response) {
+      // سرور پاسخ داده ولی با وضعیت خطا
+      statusCode = error.response.status;
+      serverErrorData = error.response.data;
+      errorMessage = serverErrorData?.message || `خطا با کد ${statusCode}`;
+    } else if (error.request) {
+      // درخواست ارسال شده ولی پاسخی دریافت نشده
+      errorMessage =
+        "پاسخی از سرور دریافت نشد. ممکن است اتصال اینترنت شما مشکل داشته باشد.";
+    } else {
+      // خطا در تنظیمات Axios
+      errorMessage = error.message;
+    }
+
+    return {
+      success: false,
+      error: errorMessage,
+      status: statusCode,
+      data: serverErrorData, // اینجا هم می‌تونیم محتوای خطای سرور رو برگردونیم
+    };
+  }
+};
+
 // axiosClient.interceptors.response.use(
 //   (response) => response,
 //   async (error) => {

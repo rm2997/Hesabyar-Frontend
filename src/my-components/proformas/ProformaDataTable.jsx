@@ -111,7 +111,7 @@ export const ProformaDataTable = ({ isDesktop }) => {
 
   const handleSendCustomerLink = (id) => {
     const proforma = proformas.find((p) => p.id == id);
-    console.log(proforma);
+
     if (!proforma) {
       toast({
         title: "امکان ارسال وجود ندارد",

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  Box,
   Button,
   Divider,
   Flex,
@@ -8,30 +9,39 @@ import {
   Heading,
   PinInput,
   PinInputField,
-  Stack,
+  SimpleGrid,
+  useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
-import { UnlockIcon } from "@chakra-ui/icons";
+
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { TimerReset } from "lucide-react";
+import { DoorOpen, TimerReset } from "lucide-react";
 import { saveTokens } from "../api/tokenUtils";
 import { sendValidationKeySms } from "../api/smsUtils";
 
 export const SecondLogin = ({}) => {
+  const isDesktop = useBreakpointValue({ base: false, md: false, lg: true });
   const toast = useToast();
   const [timeLeft, setTimeLeft] = useState(59);
   const [key, setKey] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [isFormDisabled, setIsFormDisabled] = useState(false);
   const [form, setForm] = useState({
     key: "",
   });
   const inputRef = useRef(null);
   const [searchParams] = useSearchParams();
+
   const token = searchParams.get("token");
   const mobile = searchParams.get("mobile");
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!token || !mobile) {
+      //navigate("/login");
+      return;
+    }
     const newKey = generateRandomNumber();
     setKey(newKey);
     sendValidationKeySms(mobile, newKey);
@@ -48,16 +58,22 @@ export const SecondLogin = ({}) => {
 
   const generateRandomNumber = () => {
     const rnd = Math.floor(10000 + Math.random() * 90000);
-    console.log(rnd);
+
     return rnd;
   };
 
   const handleChange = (e) => {
     setForm({ key: e });
+    if (e.length >= 5) setIsFormDisabled(false);
+    else setIsFormDisabled(true);
   };
 
   const handleClickTimerButton = () => {
     if (timeLeft > 0) return;
+    if (!token || !mobile) {
+      //navigate("/login");
+      return;
+    }
     const newKey = generateRandomNumber();
     setKey(newKey);
 
@@ -75,14 +91,22 @@ export const SecondLogin = ({}) => {
     inputRef.current.focus();
   };
 
+  const handleClickReturn = (e) => {
+    e.preventDefault();
+    navigate("/login");
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!key || key.length < 5) return;
     if (timeLeft === 0) {
       return;
     }
+    setLoading(true);
+    setIsFormDisabled(true);
     if (form.key == key) {
       saveTokens(token);
-      navigate("/home");
+      navigate("/myhome");
     } else {
       setForm({ key: "" });
       toast({
@@ -93,55 +117,101 @@ export const SecondLogin = ({}) => {
         isClosable: false,
       });
       inputRef.current.focus();
+      setIsFormDisabled(false);
+      setLoading(false);
     }
   };
 
   return (
-    <Stack
-      maxW="600px"
-      mx="auto"
-      mt="100px"
-      p={8}
-      borderWidth={1}
-      borderRadius="lg"
-      boxShadow="lg"
-      align="stretch"
+    <SimpleGrid
+      filter={loading ? "blur(10px)" : ""}
+      spacing={0}
+      columns={{ base: 1, md: 1, lg: 4 }}
+      height="98vh"
+      width="99%"
+      m={"auto"}
+      mt={2}
+      mb={2}
+      p={isDesktop ? 5 : 0}
+      borderWidth={!isDesktop ? "1px" : ""}
+      borderRadius={!isDesktop ? "lg" : ""}
     >
-      <Heading size={"lg"} mb={6} textAlign="center">
-        لطفا کد ارسال شده به شماره همراهتان را وارد کنید
-      </Heading>
-      <Flex direction="column" gap={6} as="form" onSubmit={handleSubmit}>
-        <FormControl isRequired>
-          <HStack justify="center">
-            <PinInput value={form.key} onChange={handleChange}>
-              <PinInputField ref={inputRef} />
-              <PinInputField />
-              <PinInputField />
-              <PinInputField />
-              <PinInputField />
-            </PinInput>
-          </HStack>
-        </FormControl>
-        <Divider />
-        <Button
-          colorScheme="blue"
-          rightIcon={<UnlockIcon />}
-          type="submit"
-          width="full"
-          disabled={timeLeft <= 0}
-        >
-          ورود
-        </Button>
-        <Button
-          onClick={handleClickTimerButton}
-          leftIcon={<TimerReset />}
-          width="full"
-          disabled={timeLeft > 0}
-          colorScheme="green"
-        >
-          {timeLeft > 0 ? timeLeft : "ارسال مجدد"}
-        </Button>
-      </Flex>
-    </Stack>
+      <Box />
+      <Box
+        bg="blackAlpha.100"
+        bgImage="url(/assets/images/bg/secondLogin.svg)"
+        bgSize={"contain"}
+        bgRepeat="no-repeat"
+        bgPosition={"center"}
+        p={8}
+        borderWidth={isDesktop ? 1 : 0}
+        borderRightWidth={0}
+        borderLeftRadius={isDesktop ? "lg" : ""}
+      />
+      <Box
+        p={8}
+        borderWidth={isDesktop ? 1 : 0}
+        borderLeftWidth={isDesktop ? 1 : 0}
+        borderRightRadius={isDesktop ? "lg" : ""}
+        borderLeftRadius={isDesktop ? "" : "lg"}
+        dir="rtl"
+      >
+        <Flex direction="column" gap={6} as="form" onSubmit={handleSubmit}>
+          <Heading
+            color="blackAlpha.500"
+            fontFamily="Vaziri"
+            size={"lg"}
+            textAlign="center"
+          >
+            لطفا کد ارسال شده به تلفن همراهتان را وارد کنید
+          </Heading>
+          <FormControl isRequired>
+            <HStack justify="center" dir="ltr">
+              <PinInput
+                placeholder="_"
+                autoFocus={true}
+                value={form.key}
+                onChange={handleChange}
+              >
+                <PinInputField ref={inputRef} />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+              </PinInput>
+            </HStack>
+          </FormControl>
+          <Divider />
+          <Button
+            colorScheme="blue"
+            rightIcon={<DoorOpen />}
+            type="submit"
+            width="full"
+            disabled={timeLeft <= 0 || isFormDisabled}
+            isLoading={loading}
+          >
+            ورود
+          </Button>
+          <Button
+            onClick={handleClickTimerButton}
+            rightIcon={timeLeft <= 0 ? <TimerReset /> : ""}
+            width="full"
+            disabled={timeLeft > 0}
+            colorScheme="green"
+          >
+            {timeLeft > 0 ? timeLeft : "کد جدید"}
+          </Button>
+          <Divider />
+          <Button
+            variant="link"
+            colorScheme="blue"
+            onClick={handleClickReturn}
+            width="full"
+          >
+            انصراف
+          </Button>
+        </Flex>
+      </Box>
+    </SimpleGrid>
   );
 };

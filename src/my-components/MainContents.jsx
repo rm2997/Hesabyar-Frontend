@@ -1,13 +1,5 @@
 // components/MainContent.jsx
-import {
-  Box,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Flex,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 
 import { NewProforma } from "../pages/proformas/NewProforma";
 import { useEffect, useState } from "react";
@@ -29,6 +21,8 @@ import { NotificationReceivedDataTable } from "./notifications/NotificationRecei
 import { UploadCustomers } from "./customers/UploadCustomers";
 import { RequestsDataTable } from "./requests/RequestsDataTable";
 import { Logout } from "./Logout";
+import { ChangePassword } from "./users/ChangePassword";
+
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
   { name: "myProformas", value: " پیش فاکتور های من" },
@@ -57,9 +51,10 @@ const validContents = [
   { name: "َchangeUsers", value: "کاربران" },
   { name: "acceptRequest", value: "درخواست های تایید" },
   { name: "logout", value: "خروج" },
+  { name: "َchangePassword", value: "تغییر رمز عبور" },
 ];
 
-export const MainContents = ({ activeContent, isDesktop }) => {
+export const MainContents = ({ activeContent, isDesktop, user }) => {
   const [pageTitle, setPageTitle] = useState("");
   const [shouldRender, setShouldRender] = useState(null);
 
@@ -68,7 +63,6 @@ export const MainContents = ({ activeContent, isDesktop }) => {
       if (!item || item === "") return;
       const valid = validContents.find((i) => i.name === item);
       if (!valid || valid.name === "") return;
-      console.log("valid", activeContent);
       setPageTitle(valid.value);
       const element = SetActiveElement(valid.name);
       setShouldRender(element);
@@ -117,7 +111,9 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         case "units":
           return <UnitsDataTable isDesktop={isDesktop} />;
         case "َchangeUsers":
-          return <Users isDesktop={isDesktop} />;
+          return <Users isDesktop={isDesktop} user={user} />;
+        case "َchangePassword":
+          return <ChangePassword isDesktop={isDesktop} user={user} />;
         case "acceptRequest":
           return <RequestsDataTable isDesktop={isDesktop} />;
         case "logout":

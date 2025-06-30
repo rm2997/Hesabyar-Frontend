@@ -64,10 +64,6 @@ export const InvoiceDataTable = ({ isDesktop }) => {
     callBack: null,
   });
 
-  useEffect(() => {
-    console.log(invoices);
-  }, [invoices]);
-
   const loadData = async (resetPage = false) => {
     setLoading(true);
     await ShowUserAllInvoices(

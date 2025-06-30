@@ -65,7 +65,7 @@ export const NewProforma = ({ isDesktop }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [customers, setCustomers] = useState([]);
   const [allGoods, setAllGoods] = useState([]);
-  console.log(isDesktop);
+
   const [formData, setFormData] = useState({
     title: "",
     customer: null,
@@ -250,7 +250,6 @@ export const NewProforma = ({ isDesktop }) => {
   };
 
   const handleChangeFormData = (e) => {
-    console.log(e);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,

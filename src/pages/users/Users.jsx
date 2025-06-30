@@ -11,7 +11,7 @@ import { ChangePassword } from "../../my-components/users/ChangePassword";
 import { NewUser } from "../../my-components/users/NewUser";
 import { UsersDataTable } from "../../my-components/users/UsersDataTable";
 
-export const Users = ({ isDesktop }) => {
+export const Users = ({ isDesktop, user }) => {
   return (
     <SimpleGrid>
       <Tabs
@@ -40,7 +40,7 @@ export const Users = ({ isDesktop }) => {
             <NewUser isDesktop={isDesktop} />
           </TabPanel>
           <TabPanel>
-            <ChangePassword isDesktop={isDesktop} />
+            <ChangePassword isDesktop={isDesktop} user={user} />
           </TabPanel>
           <TabPanel>
             <UsersDataTable isDesktop={isDesktop} />

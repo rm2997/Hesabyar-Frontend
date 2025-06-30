@@ -1,4 +1,3 @@
-// UserContext.js
 import { createContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { loadTokens } from "../api/tokenUtils";
@@ -12,7 +11,6 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(initialUser);
 
   useEffect(() => {
-    const token = loadTokens().accessToken;
     if (token) {
       const decoded = jwtDecode(token);
       setUser(decoded);

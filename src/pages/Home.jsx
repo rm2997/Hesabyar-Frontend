@@ -14,6 +14,9 @@ import {
   DrawerContent,
   DrawerCloseButton,
   Link,
+  SimpleGrid,
+  Image,
+  Divider,
 } from "@chakra-ui/react";
 import { Menu, User, User2 } from "lucide-react"; // Lucide icon
 import Slider from "react-slick";
@@ -36,9 +39,9 @@ L.Icon.Default.mergeOptions({
 });
 
 const images = [
-  "/assets/images/bg/login.jpg",
-  "/asstes/images/bg/forgetPassword.jpg",
-  "assets/images/bg/login.jpg",
+  "/assets/images/slider/datis.jpg",
+  "/assets/images/slider/motor1.jpg",
+  "/assets/images/slider/motor2.jpg",
 ];
 
 export const Home = () => {
@@ -61,7 +64,7 @@ export const Home = () => {
       {/* نوار بالا */}
       <Flex
         as="header"
-        bg="blue.600"
+        bg="black"
         color="white"
         px={4}
         py={3}
@@ -84,19 +87,39 @@ export const Home = () => {
             onClick={() => navigate("/myhome")}
           />
         </Flex>
-        <Flex>
+        <Flex
+          direction="row"
+          alignContent="center"
+          alignItems="center"
+          columnGap={5}
+        >
           <Heading fontFamily="Vaziri" fontSize="lg">
-            حسابیار
+            حسابیار علیایی
           </Heading>
+          <Box
+            bgImg="url(/assets/images/logos/logoMedium.jpg)"
+            boxSize={70}
+            bgSize="contain"
+            bgRepeat="no-repeat"
+            bgPosition="center"
+          />
         </Flex>
       </Flex>
 
       {/* منوی کناری */}
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent bg="blackAlpha.700" color="white">
+        <DrawerContent bg="blackAlpha.500" color="white">
           <DrawerCloseButton />
-          <DrawerHeader>حسابیار لوگو</DrawerHeader>
+          <DrawerHeader>
+            <Box
+              bgImg="url(/assets/images/logos/logo1.jpg)"
+              boxSize={20}
+              bgSize="contain"
+              bgRepeat="no-repeat"
+              bgPosition="center"
+            />
+          </DrawerHeader>
           <DrawerBody>
             <VStack align="start" spacing={4}>
               <Link href="#">خانه</Link>
@@ -109,7 +132,7 @@ export const Home = () => {
       </Drawer>
 
       {/* اسلایدر */}
-      <Box maxW="900px" mx="auto" mt={8}>
+      <Box maxW="900px" mx="auto" mb={8} mt={8}>
         <Slider {...sliderSettings}>
           {images.map((img, i) => (
             <Box key={i} h="600px">
@@ -130,21 +153,73 @@ export const Home = () => {
 
       {/* بخش تبلیغاتی */}
       <VStack
-        bg="#47405D"
-        borderTopRadius="lg"
-        mt={10}
+        mb={1}
+        mt={1}
+        bg="blackAlpha.800"
         color="white"
-        spacing={4}
-        textAlign="center"
-        px={8}
-        p={10}
+        bgImage="url(/assets/images/bg/world.png)"
+        bgSize="auto"
+        bgRepeat="no-repeat"
+        bgPosition="left"
       >
-        <Heading fontFamily="Vaziri" fontSize="2xl">
-          بهترین خدمات‌ آسانسور در ایران
-        </Heading>
-        <Text fontSize="md">با ما تماس بگیرید</Text>
-        <Text fontWeight="medium">تلفن: 0912000000</Text>
-        <Text fontWeight="medium">ایمیل: info@example.com</Text>
+        <Box bg="blackAlpha.500" width="full">
+          <SimpleGrid
+            spacing={50}
+            color="white"
+            p={10}
+            columns={{ base: 1, md: 2, lg: 3 }}
+          >
+            <VStack textAlign="right" alignItems="end">
+              <Box boxSize={200} mr="auto" ml="auto" bg="blue.600" p={1}>
+                <Image
+                  objectFit="cover"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  src="/assets/images/slider/motor2.jpg"
+                ></Image>
+              </Box>
+              <Text fontWeight="medium">
+                موتور خفن با پایه های چرخنده زرد رنگ انقلابی در موتور های
+                آسانسور به پا کرد
+              </Text>
+            </VStack>
+
+            <VStack textAlign="right" alignItems="end">
+              <Box boxSize={200} mr="auto" ml="auto" bg="blue.600" p={1}>
+                <Image
+                  objectFit="cover"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  src="/assets/images/slider/motor1.jpg"
+                ></Image>
+              </Box>
+              <Text fontWeight="medium">
+                موتور خفن با پایه های چرخنده نارنجی رنگ انقلابی در موتور های
+                آسانسور به پا کرد که نمونه اش در دنیا وجود ندارد
+              </Text>
+            </VStack>
+
+            <VStack textAlign="right" alignItems="end">
+              <Box boxSize={200} mr="auto" ml="auto" bg="blue.600" p={1}>
+                <Image
+                  objectFit="cover"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  src="/assets/images/slider/datis.jpg"
+                ></Image>
+              </Box>
+              <Text fontWeight="medium">
+                {" "}
+                تابلو برق داتیس رو نگم براتون که هوا رو چرخ میکنه و برق میگیره
+                این تابلو برق بدون نیاز به دست آسانسور رو بالا و پایین میکند
+              </Text>
+            </VStack>
+          </SimpleGrid>
+
+          <Box width="full" color="whiteAlpha.700" textAlign="center">
+            <Divider color="white" />
+          </Box>
+        </Box>
       </VStack>
 
       {/* نقشه */}
@@ -165,22 +240,91 @@ export const Home = () => {
         </MapContainer>
       </Box>
 
+      {/* فوتر  پایین صفحه */}
       <VStack
-        bg="#0D0443"
-        borderBottomRadius="lg"
-        mt={10}
+        mt={1}
+        bg="blackAlpha.800"
         color="white"
-        spacing={4}
-        textAlign="center"
-        px={4}
-        p={10}
+        bgImage="url(/assets/images/bg/world.png)"
+        bgSize="auto"
+        bgRepeat="no-repeat"
+        bgPosition="left"
       >
-        <Heading fontFamily="Vaziri" fontSize="2xl">
-          بهترین خدمات‌ آسانسور در ایران
-        </Heading>
-        <Text fontSize="md">با ما تماس بگیرید</Text>
-        <Text fontWeight="medium">تلفن: 0912000000</Text>
-        <Text fontWeight="medium">ایمیل: info@example.com</Text>
+        <Box bg="blackAlpha.500" width="full">
+          <SimpleGrid
+            spacing={50}
+            color="white"
+            p={10}
+            columns={{ base: 1, md: 2, lg: 4 }}
+          >
+            <VStack
+              textAlign="right"
+              alignItems="end"
+              backdropFilter="opacity(50%)"
+            >
+              <Heading fontFamily="Vaziri" fontSize="2xl" mb={5}>
+                سایر لینک ها
+              </Heading>
+              <Text fontWeight="medium">کاتالوگ آسانسور</Text>
+              <Text fontWeight="medium">کاتالوگ رزومه</Text>
+              <Text fontWeight="medium">کاتالوگ قطعات</Text>
+              <Text fontWeight="medium">فرصت های شغلی</Text>
+            </VStack>
+
+            <VStack textAlign="right" alignItems="end">
+              <Heading fontFamily="Vaziri" fontSize="2xl" mb={5}>
+                لینک های مفید
+              </Heading>
+              <Text fontWeight="medium">نمونه کار</Text>
+              <Text fontWeight="medium">تماس با ما</Text>
+              <Text fontWeight="medium">درباره ما</Text>
+              <Text fontWeight="medium">فروش آسانسور</Text>
+              <Text fontWeight="medium">قیمت ها</Text>
+            </VStack>
+
+            <VStack textAlign="right" alignItems="end">
+              <Heading fontFamily="Vaziri" fontSize="2xl" mb={5}>
+                راه های ارتباطی
+              </Heading>
+              <Text fontWeight="medium">
+                ‌info@hesab-yaar.ir : پست الکترونیک
+              </Text>
+              <Text fontWeight="medium">‌09121234567 : مدیریت</Text>
+              <Text fontWeight="medium">‌09121234567 : مدیر فروش</Text>
+              <Text fontWeight="medium">‌09121234567 : حسابداری</Text>
+            </VStack>
+
+            <VStack textAlign="right" alignItems="end">
+              <Box
+                bg="orange"
+                boxSize={100}
+                maxH={10}
+                mb={8}
+                mr="auto"
+                ml="auto"
+              >
+                <Image
+                  src="/assets/images/logos/logoMedium.jpg"
+                  objectFit="cover"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              </Box>
+              <Text fontWeight="medium" textAlign="right">
+                شرکت آسانسور علیایی با بیش از دو دهه تجربه در صنعت آسانسور ایران
+                جزو بهترین شرکت‌های آسانسور در ایران بوده و همراه تلاش ما برای
+                ارائه بهترین خدمات به شما مشتریان گرامی می‌باشد
+              </Text>
+            </VStack>
+          </SimpleGrid>
+
+          <Box width="full" color="whiteAlpha.700" textAlign="center">
+            <Divider color="white" />
+            <Heading fontFamily="Vaziri" fontSize="2xs" m={2}>
+              Designed & developed by R.Mirasgari 09125213288
+            </Heading>
+          </Box>
+        </Box>
       </VStack>
     </Box>
   );

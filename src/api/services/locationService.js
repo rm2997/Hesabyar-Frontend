@@ -6,7 +6,7 @@ export const getCurrentLocation = () => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
           const googleMapLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-          console.log("موقعیت", latitude);
+
           resolve({
             latitude,
             longitude,

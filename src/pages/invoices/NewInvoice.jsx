@@ -147,10 +147,6 @@ export const NewInvoice = ({ isDesktop }) => {
 
   const handleItemChange = (index, field, value) => {
     const newItems = formData.invoiceGoods;
-    console.log(index, field, value);
-    console.log("beforeNewItems", newItems);
-    // if (!newItems || newItems?.length === 0) return;
-
     if (newItems.length === 0)
       newItems.push({
         uniqueId: Date.now().toString(),

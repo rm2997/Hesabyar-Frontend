@@ -22,7 +22,7 @@ import { login } from "../api/services/authService";
 import { useNavigate } from "react-router-dom";
 import { loadTokens, saveTokens } from "../api/tokenUtils";
 import { MyInputBox } from "../my-components/MyInputBox";
-import { CircleUserRound, KeyRound } from "lucide-react";
+import { CircleUserRound, DoorOpen, KeyRound } from "lucide-react";
 
 export const LoginForm = () => {
   const [showCaptcha, setShowCaptcha] = useState(false);
@@ -97,14 +97,17 @@ export const LoginForm = () => {
   const handleGeneratCaptcha = async () => {
     await createCaptchaImage();
   };
+
   const handleClick = (e) => {
     e.preventDefault();
     navigate("/forget-password");
   };
+
   const handleHomeClick = (e) => {
     e.preventDefault();
     navigate("/Home");
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -168,31 +171,35 @@ export const LoginForm = () => {
 
   return (
     <SimpleGrid
-      bgImage="url(/assets/images/bg/login.jpg)"
-      bgSize={isDesktop ? "contain" : "auto"}
-      bgRepeat="no-repeat"
-      bgPosition="left"
-      height="100vh"
+      filter={isFormDisabled ? "blur(10px)" : ""}
       spacing={0}
-      columns={{ base: 1, md: 2, lg: 4 }}
-      p={5}
+      columns={{ base: 1, md: 1, lg: 4 }}
+      height="98vh"
       width="99%"
-      m={1}
+      m={"auto"}
+      mt={2}
+      mb={2}
+      p={isDesktop ? 5 : 0}
+      borderWidth={!isDesktop ? "1px" : ""}
+      borderRadius={!isDesktop ? "lg" : ""}
     >
       <Box></Box>
       <Box
-        hidden={!isDesktop}
+        bg="blackAlpha.100"
+        bgImage="url(/assets/images/bg/login.svg)"
+        bgSize={"contain"}
+        bgRepeat="no-repeat"
+        bgPosition={"center"}
         p={8}
-        borderWidth={1}
+        borderWidth={isDesktop ? 1 : 0}
         borderRightWidth={0}
-        borderLeftRadius="lg"
-        bg="blackAlpha.200"
+        borderLeftRadius={isDesktop ? "lg" : ""}
       ></Box>
       <Box
         p={8}
-        borderWidth={1}
-        borderLeftWidth={isDesktop ? 0 : 1}
-        borderRightRadius="lg"
+        borderWidth={isDesktop ? 1 : 0}
+        borderLeftWidth={isDesktop ? 1 : 0}
+        borderRightRadius={isDesktop ? "lg" : ""}
         borderLeftRadius={isDesktop ? "" : "lg"}
         dir="rtl"
       >
@@ -293,7 +300,7 @@ export const LoginForm = () => {
           <Button
             colorScheme="blue"
             variant="outline"
-            leftIcon={<KeyRound />}
+            leftIcon={<DoorOpen />}
             type="submit"
             width="full"
             disabled={isFormDisabled}
@@ -311,7 +318,7 @@ export const LoginForm = () => {
             onClick={handleClick}
             textColor="blue.300"
           >
-            فراموشی نام کاربری/رمز عبور
+            فراموشی نام کاربری/رمز
           </Link>
           <Link
             mr="auto"

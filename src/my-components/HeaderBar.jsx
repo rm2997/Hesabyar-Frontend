@@ -12,12 +12,16 @@ import {
   Tooltip,
   HStack,
   Divider,
+  Image,
 } from "@chakra-ui/react";
 import {
   Bell,
   Mails,
   MenuIcon,
+  PencilLine,
+  Power,
   Settings,
+  ShieldUser,
   SquareEqual,
   User2,
   Users,
@@ -30,6 +34,7 @@ export const HeaderBar = ({
   sidebarWidth,
   OnItemClick,
   badgeCount,
+  user,
 }) => {
   const handleSideBarWith = () => {
     if (sidebarWidth === 300) setSidebarWidth(100);
@@ -45,10 +50,26 @@ export const HeaderBar = ({
       borderBottom="1px"
       borderColor="gray.700"
     >
-      <HStack spacing={sidebarWidth === 300 ? 190 : 50}>
-        <Text fontSize="xl" fontWeight="bold">
-          لوگو
-        </Text>
+      <HStack spacing={sidebarWidth === 300 ? 10 : 5}>
+        <HStack>
+          <Box
+            boxSize={20}
+            maxH={5}
+            bgSize="contain"
+            bgRepeat="no-repeat"
+            bgPosition="center"
+          >
+            <Image
+              src="/assets/images/logos/logo1.jpg"
+              objectFit="cover"
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          </Box>
+          <Text fontSize="xl" fontWeight="bold">
+            {sidebarWidth === 300 ? "حسابیار علیایی" : ""}
+          </Text>
+        </HStack>
         {isDesktop && (
           <IconButton
             color="white"
@@ -104,17 +125,42 @@ export const HeaderBar = ({
             variant=""
           />
           <MenuList color="black">
-            <MenuItem
-              color="orange.400"
-              onClick={() => OnItemClick("َchangeUsers")}
-            >
+            <MenuItem color="orange.400" isDisabled={true}>
               <HStack spacing={3}>
-                <Users />
-                <Text color="black">کاربران</Text>
+                {user?.role == "admin" ? (
+                  <ShieldUser color="green" />
+                ) : (
+                  <Users color="black" />
+                )}
+                <Text color="black">{user?.username}</Text>
               </HStack>
             </MenuItem>
 
             <Divider />
+
+            {user?.role == "admin" && (
+              <MenuItem
+                color="orange.400"
+                onClick={() => OnItemClick("َchangeUsers")}
+              >
+                <HStack spacing={3}>
+                  <Users />
+                  <Text color="black">کاربران</Text>
+                </HStack>
+              </MenuItem>
+            )}
+
+            {user?.role != "admin" && (
+              <MenuItem
+                color="orange.400"
+                onClick={() => OnItemClick("َchangePassword")}
+              >
+                <HStack spacing={3}>
+                  <PencilLine />
+                  <Text color="black">تغییر رمز</Text>
+                </HStack>
+              </MenuItem>
+            )}
 
             <MenuItem
               color="blue.400"
@@ -138,7 +184,7 @@ export const HeaderBar = ({
             <Divider />
             <MenuItem color="red.500" onClick={() => OnItemClick("logout")}>
               <HStack spacing={3}>
-                <Mails />
+                <Power />
                 <Text color="black"> خروج</Text>
               </HStack>
             </MenuItem>

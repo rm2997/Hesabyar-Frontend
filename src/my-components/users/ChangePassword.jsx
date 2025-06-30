@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { GetAllUsers } from "../../api/services/userService";
 
-export const ChangePassword = ({ isDesktop }) => {
+export const ChangePassword = ({ isDesktop, user }) => {
   const [formData, setFormData] = useState({
     id: 0,
     current: "",
@@ -33,18 +33,18 @@ export const ChangePassword = ({ isDesktop }) => {
   const toast = useToast();
 
   useEffect(() => {
-    console.log("users:", users);
-  }, [users]);
-
-  useEffect(() => {
     const loadData = () => {
       setLoading(true);
-      GetAllUsers()
-        .then((res) => {
-          setUsers(res?.data?.items);
-        })
-        .catch((err) => {})
-        .finally(setLoading(false));
+      if (user.role == "admin") {
+        GetAllUsers()
+          .then((res) => {
+            setUsers(res?.data?.items);
+          })
+          .catch((err) => {})
+          .finally(setLoading(false));
+      } else {
+        GetUser;
+      }
     };
     loadData();
   }, []);
@@ -121,11 +121,12 @@ export const ChangePassword = ({ isDesktop }) => {
                 کاربر
               </FormLabel>
               <Select
+                disabled={user?.role != "admin"}
                 dir="ltr"
                 placeholder="انتخاب کنید"
                 maxW="425px"
                 name="user.id"
-                value={formData?.user?.id}
+                value={user?.role == "admin" ? formData?.user?.id : user?.id}
                 onChange={(e) => handleChangeUser(e.target.value)}
               >
                 {users.map((item) => (

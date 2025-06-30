@@ -1,32 +1,42 @@
 import {
+  Box,
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
+  Divider,
   Flex,
   FormControl,
   FormLabel,
   HStack,
+  Heading,
+  Image,
   Select,
+  SimpleGrid,
   Text,
   VStack,
   useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
-import { Info, SquareCheckBig } from "lucide-react";
+import {
+  Info,
+  KeySquare,
+  RotateCcwKey,
+  SquareCheckBig,
+  UserLock,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import {
-  ChangePass,
   ChangePassFromOut,
   GetUserByToken,
 } from "../../api/services/userService";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
-import { GetAllUsers } from "../../api/services/userService";
 
 export const ChangeUserPassword = () => {
   const isDesktop = useBreakpointValue({ base: false, md: true });
+
   const [formData, setFormData] = useState({
     new: "",
     confirm: "",
@@ -42,7 +52,21 @@ export const ChangeUserPassword = () => {
 
   useEffect(() => {
     const loadUserData = async () => {
-      if (!token || token.length < 10) {
+      if (!token) {
+        toast({
+          title: "عدم دسترسی",
+          description: "شما برای ورود به این بخش مجاز نیستید",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+
+        return;
+      }
+      if (token.length < 10) {
         toast({
           title: "خطا",
           description: "توکن شما در سیستم وجود ندارد",
@@ -56,6 +80,7 @@ export const ChangeUserPassword = () => {
           return;
         }, 3000);
       }
+
       setLoading(true);
       try {
         await GetUserByToken(token)
@@ -102,10 +127,28 @@ export const ChangeUserPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    await ChangePassFromOut(formData)
-      .then((res) => {
-        if (!res.data) return;
+    if (!token) {
+      toast({
+        title: "عدم دسترسی",
+        description: "شما برای ورود به این بخش مجاز نیستید",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/login");
+      return;
+    }
+    try {
+      const res = await ChangePassFromOut(formData);
+      if (!res.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: `${res.error}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
         setFormData({
           id: 0,
           current: "",
@@ -122,16 +165,16 @@ export const ChangeUserPassword = () => {
         setTimeout(() => {
           navigate("/login");
         }, 3000);
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      );
+      }
+    } catch (error) {
+      toast({
+        title: "خطایی رخ داد",
+        description: `${error.error}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
     setLoading(false);
   };
 
@@ -143,34 +186,57 @@ export const ChangeUserPassword = () => {
   };
 
   return (
-    <Card dir="rtl" m={10}>
-      <CardHeader
-        bg="#68C15A"
-        borderBottomColor="gray.400"
-        borderBottomWidth="1px"
-        borderTopRadius={5}
-        color="black"
+    <SimpleGrid
+      filter={loading ? "blur(10px)" : ""}
+      mr={isDesktop ? "auto" : "1"}
+      ml={isDesktop ? "auto" : "1"}
+      height="100vh"
+      spacing={0}
+      columns={{ base: 1, md: 2, lg: 2 }}
+      p={5}
+      width={isDesktop ? "50%" : "99%"}
+    >
+      <Box
+        bg="blackAlpha.200"
+        bgImage="url(/assets/images/bg/changePassword.svg)"
+        bgSize={isDesktop ? "fill" : "auto"}
+        bgRepeat="no-repeat"
+        bgPosition="left"
+        hidden={!isDesktop}
+        borderWidth={1}
+        borderRightWidth={0}
+        borderLeftRadius="lg"
+        width="full"
+      ></Box>
+      <Box
+        p={8}
+        borderWidth={1}
+        borderLeftWidth={isDesktop ? 0 : 1}
+        borderRightRadius="lg"
+        borderLeftRadius={isDesktop ? "" : "lg"}
+        dir="rtl"
       >
-        تغییر کلمه عبور
-        {user.userfname} {user.userlname}
-      </CardHeader>
-      <CardBody borderTopWidth={2}>
-        <VStack
-          align={"stretch"}
-          direction={["column", "row"]}
-          as="form"
-          spacing={8}
-          onSubmit={handleSubmit}
-        >
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="125px">
-                کاربر
-              </FormLabel>
-              <Text>{user.username}</Text>
-            </HStack>
-          </FormControl>
-
+        <VStack spacing={8} as="form" onSubmit={handleSubmit}>
+          <RotateCcwKey size={100} color="#74CEF7" strokeWidth={1} />
+          <Heading
+            color="blackAlpha.800"
+            fontFamily="Vaziri"
+            hidden={!isDesktop}
+            size="lg"
+          >
+            تغییر رمز عبور
+          </Heading>
+          <Text
+            fontFamily="Vaziri"
+            fontSize="sm"
+            color="blackAlpha.500"
+            textAlign="center"
+          >
+            کاربر گرامی
+            {" " + user.userfname + " " + user.userlname + " "}
+            شما در حال تغییر رمز عبور خود می باشید
+          </Text>
+          <Divider />
           <FormControl isRequired as={Flex}>
             <HStack>
               <FormLabel hidden={!isDesktop} width="170px">
@@ -203,18 +269,18 @@ export const ChangeUserPassword = () => {
               />
             </HStack>
           </FormControl>
-
+          <Divider />
           <Button
-            leftIcon={<SquareCheckBig />}
-            colorScheme="blue"
+            leftIcon={<KeySquare />}
             type="submit"
+            colorScheme="blue"
             isLoading={loading}
+            width="full"
           >
-            تایید
+            تغییر رمز
           </Button>
         </VStack>
-      </CardBody>
-      <CardFooter></CardFooter>
-    </Card>
+      </Box>
+    </SimpleGrid>
   );
 };

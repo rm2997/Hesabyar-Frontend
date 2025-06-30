@@ -65,6 +65,7 @@ export const MyHome = () => {
         sidebarWidth={sidebarWidth}
         OnItemClick={(e) => setActiveContent(e)}
         badgeCount={notificationCount}
+        user={user}
       />
 
       <Flex flex={1} position="relative" overflow="hidden">
@@ -94,7 +95,11 @@ export const MyHome = () => {
           </Drawer>
         )}
 
-        <MainContents isDesktop={isDesktop} activeContent={activeContent} />
+        <MainContents
+          isDesktop={isDesktop}
+          activeContent={activeContent}
+          user={user}
+        />
       </Flex>
     </Flex>
   );

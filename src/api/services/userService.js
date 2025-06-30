@@ -1,4 +1,4 @@
-import axiosClient from "../axiosClient";
+import axiosClient, { apiRequest } from "../axiosClient";
 import endpoints from "../endpoints";
 import { sendForgetPassSms, sendLocationSms } from "../smsUtils";
 
@@ -157,24 +157,35 @@ export const UpdateUser = async (id, userData) => {
   }
 };
 
+// export const ChangePassFromOut = async (passwordData) => {
+//   try {
+//     const response = await axiosClient.put(
+//       endpoints.user.changePassExternal,
+//       passwordData
+//     );
+//     return response;
+//   } catch (error) {
+//     if (error.response) {
+//       // پاسخ از سمت سرور (۴xx یا ۵xx)
+//       throw new Error(error.response.data?.message || "خطای سرور");
+//     } else if (error.request) {
+//       // درخواست فرستاده شده ولی پاسخی نیومده
+//       throw new Error("پاسخی از سرور دریافت نشد");
+//     } else {
+//       // خطای دیگر (مثلاً در خود کد)
+//       console.log(error);
+//       throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
+//     }
+//   }
+// };
+
 export const ChangePassFromOut = async (passwordData) => {
-  try {
-    return await axiosClient.put(
-      endpoints.user.changePassExternal,
-      passwordData
-    );
-  } catch (error) {
-    if (error.response) {
-      // پاسخ از سمت سرور (۴xx یا ۵xx)
-      throw new Error(error.response.data?.message || "خطای سرور");
-    } else if (error.request) {
-      // درخواست فرستاده شده ولی پاسخی نیومده
-      throw new Error("پاسخی از سرور دریافت نشد");
-    } else {
-      // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
-    }
-  }
+  const result = await apiRequest({
+    method: "PUT",
+    url: endpoints.user.changePassExternal,
+    data: passwordData,
+  });
+  return result;
 };
 
 export const ChangePass = async (id, userData) => {
@@ -229,9 +240,10 @@ export const SendLocationSms = async (mobileNumber, userName) => {
   }
 };
 
-export const SendForgetPassSms = async (mobileNumber, token) => {
+export const SendForgetPassSms = async (userInfo, mobileNumber, token) => {
   try {
-    const resp = await sendForgetPassSms(mobileNumber, token);
+    const resp = await sendForgetPassSms(userInfo, mobileNumber, token);
+    if (!resp) throw new Error();
     return resp;
   } catch (error) {
     if (error.response) {

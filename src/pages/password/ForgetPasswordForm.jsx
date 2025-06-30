@@ -14,9 +14,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { sendResetLink } from "../../api/services/authService"; // فرض بر اینکه داریمش
 import { useNavigate } from "react-router-dom";
-import { LinkIcon } from "@chakra-ui/icons";
 import { Send, UserLock } from "lucide-react";
 import {
   GetUserByMobileNumber,
@@ -24,7 +22,7 @@ import {
 } from "../../api/services/userService";
 
 export const ForgotPasswordForm = () => {
-  const isDesktop = useBreakpointValue({ base: false, md: true });
+  const isDesktop = useBreakpointValue({ base: false, md: false, lg: true });
   const toast = useToast();
   const [mobile, setMobile] = useState("");
   const [enableSend, setEnableSend] = useState(false);
@@ -49,7 +47,7 @@ export const ForgotPasswordForm = () => {
     try {
       const user = await GetUserByMobileNumber(mobile);
       setMobile("");
-      if (!user) {
+      if (!user.data) {
         toast({
           title: "خطا در ارسال بیامک",
           description: "کاربری با این شماره همراه ثبت نشده است",
@@ -62,7 +60,13 @@ export const ForgotPasswordForm = () => {
         }, 3000);
         return;
       }
-      await SendForgetPassSms(user.usermobilenumber, user.token);
+      const userInfo = user.data.userfname + " " + user.data.userlname;
+      console.log(userInfo);
+      await SendForgetPassSms(
+        userInfo,
+        user.data.usermobilenumber,
+        user.data.token
+      );
       toast({
         title: "لینک بازیابی ارسال شد.",
         description: "لطفاً تلفن همراه خود را بررسی کنید.",
@@ -87,31 +91,35 @@ export const ForgotPasswordForm = () => {
 
   return (
     <SimpleGrid
-      mr={isDesktop ? "auto" : "1"}
-      ml={isDesktop ? "auto" : "1"}
-      height="100vh"
+      filter={isLoading ? "blur(10px)" : ""}
       spacing={0}
-      columns={{ base: 1, md: 2, lg: 2 }}
-      p={5}
-      width={isDesktop ? "50%" : "99%"}
+      columns={{ base: 1, md: 1, lg: 4 }}
+      height="98vh"
+      width="99%"
+      m={"auto"}
+      mt={2}
+      mb={2}
+      p={isDesktop ? 5 : 0}
+      borderWidth={!isDesktop ? "1px" : ""}
+      borderRadius={!isDesktop ? "lg" : ""}
     >
+      <Box></Box>
       <Box
-        bgImage="url(/assets/images/bg/forgetPassword.jpg)"
-        bgSize={isDesktop ? "strech" : "auto"}
+        bg="blackAlpha.100"
+        bgImage="url(/assets/images/bg/forgetPassword.svg)"
+        bgSize={"contain"}
         bgRepeat="no-repeat"
-        bgPosition="left"
-        hidden={!isDesktop}
+        bgPosition={"center"}
         p={8}
-        borderWidth={1}
+        borderWidth={isDesktop ? 1 : 0}
         borderRightWidth={0}
-        borderLeftRadius="lg"
-        //bg="blackAlpha.100"
-      ></Box>
+        borderLeftRadius={isDesktop ? "lg" : ""}
+      />
       <Box
         p={8}
-        borderWidth={1}
-        borderLeftWidth={isDesktop ? 0 : 1}
-        borderRightRadius="lg"
+        borderWidth={isDesktop ? 1 : 0}
+        borderLeftWidth={isDesktop ? 1 : 0}
+        borderRightRadius={isDesktop ? "lg" : ""}
         borderLeftRadius={isDesktop ? "" : "lg"}
         dir="rtl"
       >
@@ -159,13 +167,12 @@ export const ForgotPasswordForm = () => {
           </Button>
           <Divider />
           <Button
-            variant="outline"
-            leftIcon={<LinkIcon />}
-            colorScheme="pink"
+            variant="link"
+            colorScheme="blue"
             onClick={handleClick}
             width="full"
           >
-            ورود به سیستم
+            انصراف
           </Button>
         </VStack>
       </Box>

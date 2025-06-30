@@ -3,20 +3,15 @@ import { Accordion, Box, Divider, Heading, Link, Text } from "@chakra-ui/react";
 import { SidebarItem } from "./SIdebarItem";
 import { PieChart } from "./PieChart";
 import {
-  ArrowDownLeft,
   ArrowUpFromLine,
-  BookUser,
   Boxes,
   Coins,
   DecimalsArrowRight,
   FileSpreadsheet,
-  FileUser,
   House,
   Layers,
   LucideLayers,
-  Mail,
   Mails,
-  MessageCircleCode,
   MessageSquare,
   MessageSquareShare,
   Newspaper,
