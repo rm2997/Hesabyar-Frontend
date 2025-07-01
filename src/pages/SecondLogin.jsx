@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -18,9 +18,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { DoorOpen, TimerReset } from "lucide-react";
 import { saveTokens } from "../api/tokenUtils";
 import { sendValidationKeySms } from "../api/smsUtils";
+import { UserContext } from "../contexts/UserContext";
+import { jwtDecode } from "jwt-decode";
 
 export const SecondLogin = ({}) => {
   const isDesktop = useBreakpointValue({ base: false, md: false, lg: true });
+  const { setUser } = useContext(UserContext);
   const toast = useToast();
   const [timeLeft, setTimeLeft] = useState(59);
   const [key, setKey] = useState(0);
@@ -39,7 +42,7 @@ export const SecondLogin = ({}) => {
 
   useEffect(() => {
     if (!token || !mobile) {
-      //navigate("/login");
+      navigate("/login");
       return;
     }
     const newKey = generateRandomNumber();
@@ -71,7 +74,7 @@ export const SecondLogin = ({}) => {
   const handleClickTimerButton = () => {
     if (timeLeft > 0) return;
     if (!token || !mobile) {
-      //navigate("/login");
+      navigate("/login");
       return;
     }
     const newKey = generateRandomNumber();
@@ -106,6 +109,7 @@ export const SecondLogin = ({}) => {
     setIsFormDisabled(true);
     if (form.key == key) {
       saveTokens(token);
+      setUser(jwtDecode(token));
       navigate("/myhome");
     } else {
       setForm({ key: "" });

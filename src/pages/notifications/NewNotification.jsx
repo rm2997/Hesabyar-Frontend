@@ -43,10 +43,14 @@ export const NewNotification = ({ isDesktop }) => {
   useEffect(() => {
     const fetchUsersData = async () => {
       setLoading(true);
-      await GetAllUsers().then((res) => {
-        setUsersData(res?.data?.items);
+      const res = await GetAllUsers();
+      if (!res.success) {
+        console.log(res.error);
         setLoading(false);
-      });
+        return;
+      }
+      setUsersData(res?.data?.items);
+      setLoading(false);
     };
     fetchUsersData();
   }, []);
@@ -103,7 +107,7 @@ export const NewNotification = ({ isDesktop }) => {
   };
 
   return (
-    <Card m={10}>
+    <Card m={10} filter={loading ? "blur(10px)" : ""}>
       <CardHeader
         bg="#68C15A"
         borderBottomColor="gray.400"

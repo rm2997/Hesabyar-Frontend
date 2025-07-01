@@ -1,21 +1,14 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { loadTokens } from "../api/tokenUtils";
 
-export const UserContext = createContext();
-
-const token = loadTokens().accessToken;
-const initialUser = token ? jwtDecode(token) : null;
+export const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(initialUser);
-
-  useEffect(() => {
-    if (token) {
-      const decoded = jwtDecode(token);
-      setUser(decoded);
-    }
-  }, []);
+  const [user, setUser] = useState(() => {
+    const saved = loadTokens().accessToken;
+    return saved ? jwtDecode(saved) : null;
+  });
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

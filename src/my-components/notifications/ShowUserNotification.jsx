@@ -1,17 +1,8 @@
-import {
-  AbsoluteCenter,
-  Button,
-  FormControl,
-  FormLabel,
-  HStack,
-  Spinner,
-  VStack,
-} from "@chakra-ui/react";
-import { Captions, Hash, ScrollText, User } from "lucide-react";
+import { FormControl, FormLabel, HStack, VStack } from "@chakra-ui/react";
+import { Captions, ScrollText, User } from "lucide-react";
 import { useEffect, useState } from "react";
-import { MyLoading } from "../MyLoading";
+
 import { MyInputBox } from "../MyInputBox";
-import { ShowNotifictionById } from "../../api/services/notificationService";
 import { GetAllUsers } from "../../api/services/userService";
 
 export const ShowUserNotification = ({ id, notifications, onClose }) => {
@@ -22,15 +13,14 @@ export const ShowUserNotification = ({ id, notifications, onClose }) => {
   useEffect(() => {
     const fetchUsersData = async () => {
       setLoading(true);
-      try {
-        GetAllUsers().then((res) => {
-          setUsersData(res.data);
-        });
-      } catch (err) {
-        console.log(err);
-      } finally {
+      const users = await GetAllUsers();
+      if (!users.success) {
+        console.log(users.error);
         setLoading(false);
+        return;
       }
+      setUsersData(users.data);
+      setLoading(false);
     };
 
     fetchUsersData();
@@ -44,16 +34,13 @@ export const ShowUserNotification = ({ id, notifications, onClose }) => {
     loadData();
   }, [id]);
 
-  if (loading)
-    return (
-      <AbsoluteCenter>
-        <Spinner size="xl" colorScheme="red" />
-      </AbsoluteCenter>
-    );
-
   return (
-    <VStack as="form" spacing={5} dir="rtl">
-      {loading} && <MyLoading />
+    <VStack
+      as="form"
+      spacing={5}
+      dir="rtl"
+      filter={loading ? "blur(10px)" : ""}
+    >
       <FormControl isDisabled>
         <HStack>
           <FormLabel width={110}>عنوان</FormLabel>

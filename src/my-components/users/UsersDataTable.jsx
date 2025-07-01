@@ -21,19 +21,13 @@ import {
 } from "@chakra-ui/react";
 import {
   Ban,
-  CircleUser,
   FilePenLine,
   Locate,
   Map,
   MapPin,
-  MapPinned,
-  Navigation,
-  Pin,
   ShieldUser,
   Trash2,
   User,
-  User2,
-  UserRound,
   UsersRound,
 } from "lucide-react";
 import dayjs from "dayjs";
@@ -72,26 +66,26 @@ export const UsersDataTable = ({ isDesktop }) => {
 
   const loadData = async (resetPage = false) => {
     setLoading(true);
-    await GetAllUsers(
+    const res = await GetAllUsers(
       resetPage ? 1 : currentPage,
       itemsPerPage,
       resetPage ? "" : search
-    )
-      .then((res) => {
-        if (!res?.data) return;
-        setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
-        setUsersData(res?.data?.items);
-      })
-      .catch((err) => {
-        toast({
-          title: "خطا در دریافت داده‌ها",
-          description: err.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(setLoading(false));
+    );
+
+    if (!res.success) {
+      toast({
+        title: "خطا در دریافت داده‌ها",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
+    setUsersData(res?.data?.items);
+    setLoading(false);
   };
 
   const handleDialogClose = (result) => {
@@ -155,34 +149,40 @@ export const UsersDataTable = ({ isDesktop }) => {
       .finally(setLoading(false));
   };
 
-  const handleDeleteUser = (id) => {
+  const handleDeleteUser = async (id) => {
     if (id === 0) return;
     setLoading(true);
-    RemoveUser(selectedID)
-      .then((res) => {
-        deleteUserFromList(selectedID);
+    try {
+      const res = await RemoveUser(id);
+      if (!res.success) {
         toast({
-          title: "توجه",
-          description: `کاربر حذف شد`,
+          title: "خطا",
+          description: `${res.error}`,
           status: "success",
           duration: 3000,
           isClosable: true,
         });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
-  };
-
-  const handleEditUser = () => {
-    if (selectedID === 0) return;
+        setLoading(false);
+        return;
+      }
+      deleteUserFromList(id);
+      toast({
+        title: "توجه",
+        description: `کاربر حذف شد`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "خطایی رخ داد",
+        description: `${error.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    setLoading(false);
   };
 
   const handleResetSearch = () => {
@@ -194,14 +194,18 @@ export const UsersDataTable = ({ isDesktop }) => {
     loadData();
   }, [currentPage]);
 
-  if (loading)
-    return (
-      <AbsoluteCenter>
-        <Spinner size="xl" colorScheme="red" />
-      </AbsoluteCenter>
-    );
+  // if (loading)
+  //   return (
+  //     <AbsoluteCenter>
+  //       <Spinner size="xl" colorScheme="red" />
+  //     </AbsoluteCenter>
+  //   );
   return (
-    <Flex direction="column" height="100vh">
+    <Flex
+      direction="column"
+      height="100vh"
+      filter={loading ? "blur(10px)" : ""}
+    >
       <SearchBar
         search={search}
         setSearch={setSearch}

@@ -32,7 +32,6 @@ export const MyHome = () => {
 
   useEffect(() => {
     loadUnreadeNotif();
-
     loadLocation().then((res) => {
       let userLocation = "";
       if (res === undefined || res == "") userLocation = "Denied";
@@ -95,11 +94,7 @@ export const MyHome = () => {
           </Drawer>
         )}
 
-        <MainContents
-          isDesktop={isDesktop}
-          activeContent={activeContent}
-          user={user}
-        />
+        <MainContents isDesktop={isDesktop} activeContent={activeContent} />
       </Flex>
     </Flex>
   );

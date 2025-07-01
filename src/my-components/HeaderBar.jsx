@@ -13,6 +13,7 @@ import {
   HStack,
   Divider,
   Image,
+  Button,
 } from "@chakra-ui/react";
 import {
   Bell,
@@ -26,6 +27,7 @@ import {
   User2,
   Users,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const HeaderBar = ({
   isDesktop,
@@ -36,6 +38,8 @@ export const HeaderBar = ({
   badgeCount,
   user,
 }) => {
+  const navigate = useNavigate();
+
   const handleSideBarWith = () => {
     if (sidebarWidth === 300) setSidebarWidth(100);
     else setSidebarWidth(300);
@@ -66,9 +70,11 @@ export const HeaderBar = ({
               rel="noopener noreferrer"
             />
           </Box>
-          <Text fontSize="xl" fontWeight="bold">
-            {sidebarWidth === 300 ? "حسابیار علیایی" : ""}
-          </Text>
+          <Button variant="link" onClick={() => navigate("/home")}>
+            <Text fontSize="xl" fontWeight="bold">
+              {sidebarWidth === 300 ? "حسابیار علیایی" : ""}
+            </Text>
+          </Button>
         </HStack>
         {isDesktop && (
           <IconButton
@@ -101,7 +107,7 @@ export const HeaderBar = ({
             cursor="pointer"
             aria-label="Notifications"
             variant=""
-            onClick={(e) => OnItemClick(e.target.parentNode.id)}
+            onClick={(e) => OnItemClick("userUnreadMessages")}
           />
           <Badge
             colorScheme="red"
@@ -127,11 +133,8 @@ export const HeaderBar = ({
           <MenuList color="black">
             <MenuItem color="orange.400" isDisabled={true}>
               <HStack spacing={3}>
-                {user?.role == "admin" ? (
-                  <ShieldUser color="green" />
-                ) : (
-                  <Users color="black" />
-                )}
+                {user?.role == "admin" && <ShieldUser color="green" />}
+                {user?.role != "admin" && <Users color="black" />}
                 <Text color="black">{user?.username}</Text>
               </HStack>
             </MenuItem>

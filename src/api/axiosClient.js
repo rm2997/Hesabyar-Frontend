@@ -1,5 +1,5 @@
 import axios from "axios";
-import { clearTokens, loadTokens } from "./tokenUtils";
+import { loadTokens } from "./tokenUtils";
 
 //const BASE_URL = "http://localhost:3001";
 const BASE_URL =
@@ -26,13 +26,12 @@ axiosClient.interceptors.response.use(
   (response) => response,
   async (err) => {
     if (err.response.status === 401) {
-      clearTokens();
-
-      if (window.location.href.endsWith("/login") === false)
-        window.location.href = "/login";
-
-      return Promise.reject(err);
+      //clearTokens();
+      // if (window.location.href.endsWith("/login") === false)
+      //   window.location.href = "/login";
+      //return Promise.reject(err);
     }
+    return Promise.reject(err);
   }
 );
 
@@ -51,13 +50,11 @@ export const apiRequest = async ({
       params,
       headers,
     });
-    console.log(response);
     return {
       success: true,
       data: response.data,
     };
   } catch (error) {
-    console.log("error", error);
     let errorMessage = "خطای ناشناخته‌ای رخ داده است.";
     let statusCode = null;
     let serverErrorData = null;
@@ -80,7 +77,7 @@ export const apiRequest = async ({
       success: false,
       error: errorMessage,
       status: statusCode,
-      data: serverErrorData, // اینجا هم می‌تونیم محتوای خطای سرور رو برگردونیم
+      data: serverErrorData,
     };
   }
 };

@@ -47,7 +47,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
             fontSize={sidebarWidth === 300 ? "2xl" : "medium"}
             fontFamily={""}
           >
-            حسابیار
+            امکانات
           </Text>
         </Link>
       </Box>

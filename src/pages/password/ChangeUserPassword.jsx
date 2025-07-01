@@ -82,45 +82,25 @@ export const ChangeUserPassword = () => {
       }
 
       setLoading(true);
-      try {
-        await GetUserByToken(token)
-          .then((res) => {
-            setUser(res.data);
-            setFormData({ ...formData, token: token });
-          })
-          .catch((err) => {
-            toast({
-              title: "خطا",
-              description: err.message,
-              status: "error",
-              duration: 3000,
-              isClosable: false,
-            });
-
-            setTimeout(() => {
-              navigate("/NotFound");
-              setLoading(false);
-              return;
-            }, 3000);
-          });
-        setLoading(false);
-      } catch (error) {
+      const user = await GetUserByToken(token);
+      if (!user.success) {
         toast({
           title: "خطا",
-          description: error.message,
+          description: user.error,
           status: "error",
           duration: 3000,
           isClosable: false,
         });
-
         setTimeout(() => {
           navigate("/NotFound");
           setLoading(false);
-          return;
         }, 3000);
+        return;
       }
+      setUser(user.data);
+      setFormData({ ...formData, token: token });
+      setLoading(false);
     };
-
     loadUserData();
   }, [token]);
 

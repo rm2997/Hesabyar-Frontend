@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
-  Center,
   Divider,
   Flex,
   FormControl,
   FormLabel,
-  HStack,
   Heading,
   Image,
   Input,
@@ -22,13 +20,16 @@ import { login } from "../api/services/authService";
 import { useNavigate } from "react-router-dom";
 import { loadTokens, saveTokens } from "../api/tokenUtils";
 import { MyInputBox } from "../my-components/MyInputBox";
-import { CircleUserRound, DoorOpen, KeyRound } from "lucide-react";
+import { CircleUserRound, DoorOpen } from "lucide-react";
+import { UserContext } from "../contexts/UserContext";
+import { jwtDecode } from "jwt-decode";
 
 export const LoginForm = () => {
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [captchaImage, setCaptchaImage] = useState("");
   const [inputCaptha, setInputCaptha] = useState("");
+  const { setUser } = useContext(UserContext);
 
   const toast = useToast();
   const isDesktop = useBreakpointValue({ base: false, md: true });
@@ -43,7 +44,7 @@ export const LoginForm = () => {
   const { accessToken } = loadTokens();
 
   useEffect(() => {
-    if (accessToken) navigate("/home");
+    if (accessToken) navigate("/myhome");
   }, []);
 
   useEffect(() => {
@@ -125,47 +126,60 @@ export const LoginForm = () => {
       return;
     }
     setIsFormDisabled(true);
-    await login(form)
-      .then((res) => {
-        if (!res.status.toString().startsWith("2")) return;
-        toast({
-          title: !res?.data?.twoFactorAuthntication
-            ? "ورود موفقیت‌آمیز"
-            : "ورود دو مرحله ای",
-          description: !res?.data?.twoFactorAuthntication
-            ? `خوش آمدید ${form.username}`
-            : "لطفا مراحل ورود دو مرحله ای را دنبال کنید",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-
-        if (res?.data?.twoFactorAuthntication === false) {
-          saveTokens(res.data.accessToken);
-          navigate("/myhome");
-        } else {
-          navigate(
-            "/second-login?token=" +
-              res.data.accessToken +
-              "&mobile=" +
-              res?.data?.mobilnumber
-          );
-        }
-      })
-      .catch((err) => {
+    try {
+      const res = await login(form);
+      if (!res.success) {
         setShowCaptcha(true);
         setInputCaptha("");
         setForm({ username: "", password: "", userLocation: "" });
         handleGeneratCaptcha();
-
+        setIsFormDisabled(false);
         toast({
           title: "خطا",
-          description: err.message,
+          description: res.error,
           status: "error",
           duration: 3000,
           isClosable: false,
         });
+        return;
+      }
+      toast({
+        title: !res?.data?.twoFactorAuthntication
+          ? "ورود موفقیت‌آمیز"
+          : "ورود دو مرحله ای",
+        description: !res?.data?.twoFactorAuthntication
+          ? `خوش آمدید ${form.username}`
+          : "لطفا مراحل ورود دو مرحله ای را دنبال کنید",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
       });
+      if (res?.data?.twoFactorAuthntication === false) {
+        saveTokens(res.data.accessToken);
+        setUser(jwtDecode(res.data.accessToken));
+        navigate("/myhome");
+      } else {
+        navigate(
+          "/second-login?token=" +
+            res.data.accessToken +
+            "&mobile=" +
+            res?.data?.mobilnumber
+        );
+      }
+    } catch (error) {
+      setShowCaptcha(true);
+      setInputCaptha("");
+      setForm({ username: "", password: "", userLocation: "" });
+      handleGeneratCaptcha();
+
+      toast({
+        title: "خطا",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: false,
+      });
+    }
     setIsFormDisabled(false);
   };
 

@@ -2,7 +2,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 
 import { NewProforma } from "../pages/proformas/NewProforma";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { NewInvoice } from "../pages/invoices/NewInvoice";
 import { NewNotification } from "../pages/notifications/NewNotification";
@@ -22,6 +22,8 @@ import { UploadCustomers } from "./customers/UploadCustomers";
 import { RequestsDataTable } from "./requests/RequestsDataTable";
 import { Logout } from "./Logout";
 import { ChangePassword } from "./users/ChangePassword";
+import { ChangePasswordByUser } from "./users/ChangePasswordByUser";
+import { UserContext } from "../contexts/UserContext";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -54,9 +56,10 @@ const validContents = [
   { name: "َchangePassword", value: "تغییر رمز عبور" },
 ];
 
-export const MainContents = ({ activeContent, isDesktop, user }) => {
+export const MainContents = ({ activeContent, isDesktop }) => {
   const [pageTitle, setPageTitle] = useState("");
   const [shouldRender, setShouldRender] = useState(null);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     const findActiveContent = (item) => {
@@ -89,6 +92,7 @@ export const MainContents = ({ activeContent, isDesktop, user }) => {
         case "user":
           return <>User</>;
         case "incomeNotifications":
+        case "userUnreadMessages":
           return <NotificationReceivedDataTable isDesktop={isDesktop} />;
         case "outgoNotifications":
           return <NotificationSentDataTable isDesktop={isDesktop} />;
@@ -113,7 +117,7 @@ export const MainContents = ({ activeContent, isDesktop, user }) => {
         case "َchangeUsers":
           return <Users isDesktop={isDesktop} user={user} />;
         case "َchangePassword":
-          return <ChangePassword isDesktop={isDesktop} user={user} />;
+          return <ChangePasswordByUser isDesktop={isDesktop} />;
         case "acceptRequest":
           return <RequestsDataTable isDesktop={isDesktop} />;
         case "logout":

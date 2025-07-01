@@ -1,25 +1,8 @@
 import endpoints from "../endpoints";
-import axiosClient from "../axiosClient";
-import { clearTokens, saveTokens } from "../tokenUtils";
+import axiosClient, { apiRequest } from "../axiosClient";
 
 export const login = async (data) => {
-  try {
-    clearTokens();
-    const response = await axiosClient.post(endpoints.auth.login, data);
-
-    return response;
-  } catch (error) {
-    if (error.response) {
-      // پاسخ از سمت سرور (۴xx یا ۵xx)
-      throw new Error(error.response.data?.message || "خطای سرور");
-    } else if (error.request) {
-      // درخواست فرستاده شده ولی پاسخی نیومده
-      throw new Error("پاسخی از سرور دریافت نشد");
-    } else {
-      // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
-    }
-  }
+  return apiRequest({ method: "POST", url: endpoints.auth.login, data: data });
 };
 
 export const sendResetLink = async (mobile) => {

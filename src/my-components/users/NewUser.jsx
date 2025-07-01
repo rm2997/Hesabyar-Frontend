@@ -14,7 +14,16 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { IdCard, Info, Phone, SquareCheckBig } from "lucide-react";
+import {
+  IdCard,
+  Info,
+  KeyRound,
+  Phone,
+  Smartphone,
+  SquareCheckBig,
+  User,
+  UserPlus,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
@@ -41,20 +50,22 @@ export const NewUser = ({ isDesktop }) => {
   const toast = useToast();
 
   useEffect(() => {
-    const loadUsersData = () => {
-      setLoading(true);
-      GetAllUsers()
-        .then((res) => {
-          setUsers(res?.data?.items);
-        })
-        .catch((err) => {})
-        .finally(setLoading(false));
+    const loadUsersData = async () => {
+      const usersData = await GetAllUsers();
+      if (!usersData.success) {
+        console.log(usersData.error);
+        setLoading(false);
+        return;
+      }
+      setUsers(usersData?.data?.items);
+      setLoading(false);
     };
 
     loadUsersData();
   }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirm) {
       toast({
         title: "خطایی رخ داد",
@@ -67,44 +78,34 @@ export const NewUser = ({ isDesktop }) => {
     }
 
     setLoading(true);
-    CreateUser(formData)
-      .then((res) => {
-        setFormData({
-          role: "",
-          username: "",
-          userfname: "",
-          userlname: "",
-          usermobilenumber: "",
-          twoFactorAuthntication: false,
-          password: "",
-          confirm: "",
-        });
-        toast({
-          title: "ثبت شد",
-          description: `اطلاعات کاربر ذخیره شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
-  };
-
-  const handleChangeUser = (id) => {
-    if (id === 0 || id === "") setFormData({ ...formData, user: {} });
-    const user = users.find((u) => u.id == id);
-
-    if (!user || id === 0 || id === "") setFormData({ ...formData, user: {} });
-    else setFormData({ ...formData, user: user });
+    const res = await CreateUser(formData);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: `${res.error}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    setFormData({
+      role: "",
+      username: "",
+      userfname: "",
+      userlname: "",
+      usermobilenumber: "",
+      twoFactorAuthntication: false,
+      password: "",
+      confirm: "",
+    });
+    toast({
+      title: "ثبت شد",
+      description: `اطلاعات کاربر ذخیره شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
   };
 
   const handleChangeFormData = (e) => {
@@ -115,7 +116,7 @@ export const NewUser = ({ isDesktop }) => {
   };
 
   return (
-    <Card m={10}>
+    <Card m={10} filter={loading ? "blur(10px)" : ""}>
       <CardHeader
         bg="#68C15A"
         borderBottomColor="gray.400"
@@ -139,7 +140,7 @@ export const NewUser = ({ isDesktop }) => {
                   نام کاربری
                 </FormLabel>
                 <MyInputBox
-                  icon={IdCard}
+                  icon={User}
                   name="username"
                   title="نام کاربری"
                   size={30}
@@ -206,7 +207,7 @@ export const NewUser = ({ isDesktop }) => {
                   شماره موبایل
                 </FormLabel>
                 <MyInputBox
-                  icon={Phone}
+                  icon={Smartphone}
                   name="usermobilenumber"
                   title="شماره موبایل"
                   size={30}
@@ -223,7 +224,7 @@ export const NewUser = ({ isDesktop }) => {
                 </FormLabel>
                 <MyInputBox
                   type="password"
-                  icon={Info}
+                  icon={KeyRound}
                   name="password"
                   title="کلمه عبور"
                   size={30}
@@ -239,7 +240,7 @@ export const NewUser = ({ isDesktop }) => {
                   تکرار کلمه عبور
                 </FormLabel>
                 <MyInputBox
-                  icon={Info}
+                  icon={KeyRound}
                   type="password"
                   name="confirm"
                   title="تکرار کلمه عبور"
@@ -265,7 +266,7 @@ export const NewUser = ({ isDesktop }) => {
             </FormControl>
           </SimpleGrid>
           <Button
-            leftIcon={<SquareCheckBig />}
+            leftIcon={<UserPlus />}
             colorScheme="blue"
             type="submit"
             isLoading={loading}

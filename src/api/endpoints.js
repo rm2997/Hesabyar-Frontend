@@ -19,6 +19,8 @@ const endpoints = {
       `/users?page=${page}&limit=${limit}&search=${search}`,
     findByMobile: (mobile) => `/users/forgetpassword/${mobile}`,
     findByToken: (token) => `/users/token/${token}`,
+    findById: (id) => `/users/profile/${id}`,
+    checkPassword: (id) => `/users/checkPassword/${id}`,
   },
   proforma: {
     listAll: (page, limit, search) =>

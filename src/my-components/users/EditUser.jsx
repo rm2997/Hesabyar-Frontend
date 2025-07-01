@@ -11,22 +11,17 @@ import {
   Select,
   SimpleGrid,
   Switch,
-  VStack,
   useToast,
 } from "@chakra-ui/react";
-import { IdCard, Info, Phone, Ruler, SquareCheckBig } from "lucide-react";
+import { IdCard, Phone, SquareCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
-import {
-  CreateUser,
-  GetAllUsers,
-  UpdateUser,
-} from "../../api/services/userService";
+import { GetAllUsers, UpdateUser } from "../../api/services/userService";
 import { UserRoles } from "../../api/services/enums/roles.enum";
 
-export const EditUser = ({ isDesktop, user, onClose }) => {
+export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
   const [formData, setFormData] = useState({
     id: 0,
     role: "",
@@ -36,7 +31,7 @@ export const EditUser = ({ isDesktop, user, onClose }) => {
     twoFactorAuthntication: false,
     usermobilenumber: "",
   });
-  const [users, setUsers] = useState([]);
+  //const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -44,66 +39,43 @@ export const EditUser = ({ isDesktop, user, onClose }) => {
   const toast = useToast();
 
   useEffect(() => {
-    const loadUsersData = () => {
-      setLoading(true);
-      GetAllUsers()
-        .then((res) => {
-          setUsers(res.data);
-        })
-        .catch((err) => {})
-        .finally(setLoading(false));
-    };
-
-    loadUsersData();
-  }, []);
-
-  useEffect(() => {
-    console.log("user:", user);
     setFormData({ ...user });
   }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setLoading(true);
-    UpdateUser(formData.id, formData)
-      .then((res) => {
-        setFormData({
-          id: 0,
-          role: "",
-          username: "",
-          userfname: "",
-          userlname: "",
-          twoFactorAuthntication: false,
-          usermobilenumber: "",
-        });
-        toast({
-          title: "ثبت شد",
-          description: `اطلاعات کاربر ذخیره شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        onClose();
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
-  };
-
-  const handleChangeUser = (id) => {
-    if (id === 0 || id === "") setFormData({ ...formData, user: {} });
-    const user = users.find((u) => u.id == id);
-
-    if (!user || id === 0 || id === "") setFormData({ ...formData, user: {} });
-    else setFormData({ ...formData, user: user });
+    const res = await UpdateUser(formData.id, formData);
+    if (!res.success) {
+      setLoading(false);
+      toast({
+        title: "خطا",
+        description: `${res.error}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    onUpdate(res.data);
+    setFormData({
+      id: 0,
+      role: "",
+      username: "",
+      userfname: "",
+      userlname: "",
+      twoFactorAuthntication: false,
+      usermobilenumber: "",
+    });
+    toast({
+      title: "ثبت شد",
+      description: `اطلاعات کاربر ذخیره شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    onClose();
+    setLoading(false);
   };
 
   const handleChangeFormData = (e) => {
@@ -121,7 +93,7 @@ export const EditUser = ({ isDesktop, user, onClose }) => {
   };
 
   return (
-    <Card m={10}>
+    <Card m={10} filter={loading ? "blur(10px)" : ""}>
       <CardHeader
         bg="#68C15A"
         borderBottomColor="gray.400"

@@ -43,14 +43,13 @@ export const ForgotPasswordForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
       const user = await GetUserByMobileNumber(mobile);
       setMobile("");
-      if (!user.data) {
+      if (!user.success) {
         toast({
           title: "خطا در ارسال بیامک",
-          description: "کاربری با این شماره همراه ثبت نشده است",
+          description: `کاربری با این شماره همراه ثبت نشده است - ${user.error}`,
           status: "error",
           duration: 3000,
           isClosable: true,

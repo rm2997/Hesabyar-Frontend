@@ -12,7 +12,7 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { Info, SquareCheckBig } from "lucide-react";
+import { Info, Key, KeyRound, SquareCheckBig, UserPen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ChangePass } from "../../api/services/userService";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,6 @@ import { GetAllUsers } from "../../api/services/userService";
 export const ChangePassword = ({ isDesktop, user }) => {
   const [formData, setFormData] = useState({
     id: 0,
-    current: "",
     new: "",
     confirm: "",
   });
@@ -33,52 +32,57 @@ export const ChangePassword = ({ isDesktop, user }) => {
   const toast = useToast();
 
   useEffect(() => {
-    const loadData = () => {
+    const loadData = async () => {
       setLoading(true);
-      if (user.role == "admin") {
-        GetAllUsers()
-          .then((res) => {
-            setUsers(res?.data?.items);
-          })
-          .catch((err) => {})
-          .finally(setLoading(false));
-      } else {
-        GetUser;
+      const usersData = await GetAllUsers();
+      if (!usersData.success) {
+        console.log(usersData.error);
+        setLoading(false);
+        return;
       }
+      setUsers(usersData?.data?.items);
+      setLoading(false);
     };
     loadData();
   }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    ChangePass(formData.id, formData)
-      .then((res) => {
-        if (!res.data) return;
-        setFormData({
-          id: 0,
-          current: "",
-          new: "",
-          confirm: "",
-        });
+    try {
+      const res = await ChangePass(formData.id, formData);
+      if (!res.data) {
         toast({
-          title: "ثبت شد",
-          description: `اطلاعات ذخیره شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
+          title: "خطا",
+          description: res.error,
           status: "error",
           duration: 3000,
           isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
+        });
+        setLoading(false);
+        return;
+      }
+      setFormData({
+        id: 0,
+        new: "",
+        confirm: "",
+      });
+      toast({
+        title: "ثبت شد",
+        description: "کلمه عبور تغییر کرد",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "خطایی رخ داد",
+        description: `${error.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    setLoading(false);
   };
 
   const handleChangeUser = (id) => {
@@ -97,7 +101,7 @@ export const ChangePassword = ({ isDesktop, user }) => {
   };
 
   return (
-    <Card m={10}>
+    <Card m={10} filter={loading ? "blur(10px)" : ""}>
       <CardHeader
         bg="#68C15A"
         borderBottomColor="gray.400"
@@ -124,9 +128,9 @@ export const ChangePassword = ({ isDesktop, user }) => {
                 disabled={user?.role != "admin"}
                 dir="ltr"
                 placeholder="انتخاب کنید"
-                maxW="425px"
-                name="user.id"
-                value={user?.role == "admin" ? formData?.user?.id : user?.id}
+                maxW="397px"
+                name="id"
+                value={formData.id}
                 onChange={(e) => handleChangeUser(e.target.value)}
               >
                 {users.map((item) => (
@@ -137,32 +141,17 @@ export const ChangePassword = ({ isDesktop, user }) => {
               </Select>
             </HStack>
           </FormControl>
-          <FormControl as={Flex}>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                کلمه عبور فعلی
-              </FormLabel>
-              <MyInputBox
-                type="password"
-                icon={Info}
-                name="current"
-                title="کلمه عبور فعلی"
-                size={30}
-                value={formData.current}
-                onChange={handleChangeFormData}
-              />
-            </HStack>
-          </FormControl>
+
           <FormControl isRequired as={Flex}>
             <HStack>
               <FormLabel hidden={!isDesktop} width="170px">
-                کلمه عبور جدید
+                رمز جدید
               </FormLabel>
               <MyInputBox
                 type="password"
-                icon={Info}
+                icon={KeyRound}
                 name="new"
-                title="کلمه عبور جدید"
+                title="رمز جدید"
                 size={30}
                 value={formData.new}
                 onChange={handleChangeFormData}
@@ -172,13 +161,13 @@ export const ChangePassword = ({ isDesktop, user }) => {
           <FormControl isRequired as={Flex}>
             <HStack>
               <FormLabel hidden={!isDesktop} width="170px">
-                تکرار کلمه عبور
+                تکرار رمز
               </FormLabel>
               <MyInputBox
-                icon={Info}
+                icon={KeyRound}
                 type="password"
                 name="confirm"
-                title="تکرار کلمه عبور"
+                title="تکرار رمز"
                 size={30}
                 value={formData.confirm}
                 onChange={handleChangeFormData}
@@ -187,7 +176,7 @@ export const ChangePassword = ({ isDesktop, user }) => {
           </FormControl>
 
           <Button
-            leftIcon={<SquareCheckBig />}
+            leftIcon={<UserPen />}
             colorScheme="blue"
             type="submit"
             isLoading={loading}
