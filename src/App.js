@@ -12,7 +12,7 @@ import {
 
 import { PrivateRoute } from "./my-components/PrivateRoute";
 import { NotFoundPage } from "./pages/NotFoundPage";
-import { MyHome } from "./pages/HomePage";
+
 import { Logout } from "./my-components/Logout";
 import { LocationProvider } from "./contexts/LocationContext";
 import { UserProvider } from "./contexts/UserContext";
@@ -22,6 +22,7 @@ import { theme } from "./theme/theme";
 import { UploadInvoiceDocument } from "./pages/UploadInvoiceDocument";
 import { Home } from "./pages/Home";
 import { ChangeUserPassword } from "./pages/password/ChangeUserPassword";
+import { MyHome } from "./pages/MyHome";
 function App() {
   return (
     <ChakraProvider theme={theme}>

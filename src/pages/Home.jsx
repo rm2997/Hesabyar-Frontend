@@ -1,31 +1,29 @@
-import React from "react";
 import {
   Box,
-  Flex,
-  IconButton,
-  Heading,
-  Text,
-  VStack,
-  useDisclosure,
   Drawer,
   DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  Link,
-  SimpleGrid,
+  Flex,
+  Heading,
+  HStack,
+  IconButton,
   Image,
-  Divider,
+  Link,
+  Text,
+  useBreakpointValue,
+  useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
-import { Menu, User, User2 } from "lucide-react"; // Lucide icon
-import Slider from "react-slick";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { Menu, User2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { useNavigate } from "react-router-dom";
+import Slider from "react-slick";
 
 // تنظیم آیکون پیش‌فرض مارکر در leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -45,8 +43,10 @@ const images = [
 ];
 
 export const Home = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const isDesktop = useBreakpointValue({ base: false, lg: true });
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -58,28 +58,43 @@ export const Home = () => {
     arrows: true,
   };
 
-  const position = [35.67646, 51.327177];
   return (
-    <Box fontFamily="Vaziri">
-      {/* نوار بالا */}
-      <Flex
-        as="header"
-        bg="black"
-        color="white"
-        px={4}
-        py={3}
-        align="center"
-        justify="space-between"
-      >
-        <Flex>
+    <Box bg="gray.600">
+      {/* top menu */}
+      {isDesktop ? (
+        <Flex
+          columnGap={8}
+          dir="rtl"
+          as="header"
+          bg="gray"
+          color="white"
+          px={4}
+          py={3}
+          align="center"
+          justify="space-between"
+          borderWidth="1px"
+          borderBottomRadius="20px"
+          borderColor="gray.700"
+          ml="auto"
+          mr="auto"
+          w={1000}
+          h={70}
+        >
+          <Link>صفحه اصلی</Link>
+          <Link>محصولات</Link>
+          <Link>محصولات بازرگانی</Link>
+          <Link>کاتالوگ</Link>
+          <Link>ارتباط با ما</Link>
+          <Link>تماس با ما</Link>
+
+          <Box mt="-15px" w="180px" textAlign="center" h="45px" mr="auto">
+            <VStack rowGap={-2}>
+              <Heading fontFamily="arial"> OLIFT</Heading>
+              <Text fontSize="xs"> بزرگترین وارد کننده قطعات آسانسور</Text>
+            </VStack>
+          </Box>
           <IconButton
-            icon={<Menu size={24} />}
-            variant="ghost"
-            color="white"
-            aria-label="باز کردن منو"
-            onClick={onOpen}
-          />
-          <IconButton
+            mr="auto"
             icon={<User2 size={24} />}
             variant="ghost"
             color="white"
@@ -87,45 +102,67 @@ export const Home = () => {
             onClick={() => navigate("/myhome")}
           />
         </Flex>
+      ) : (
         <Flex
-          direction="row"
-          alignContent="center"
-          alignItems="center"
-          columnGap={5}
+          as="header"
+          bg="gray"
+          color="white"
+          px={4}
+          py={3}
+          align="center"
+          justify="space-between"
         >
-          <Heading fontFamily="Vaziri" fontSize="lg">
-            حسابیار علیایی
-          </Heading>
-          <Box
-            bgImg="url(/assets/images/logos/logoMedium.jpg)"
-            boxSize={70}
-            bgSize="contain"
-            bgRepeat="no-repeat"
-            bgPosition="center"
-          />
+          <Flex>
+            <IconButton
+              icon={<Menu size={24} />}
+              variant="ghost"
+              color="white"
+              aria-label="باز کردن منو"
+              onClick={onOpen}
+            />
+            <IconButton
+              icon={<User2 size={24} />}
+              variant="ghost"
+              color="white"
+              aria-label="ورود به سیستم"
+              onClick={() => navigate("/myhome")}
+            />
+          </Flex>
+          <Flex
+            direction="row"
+            alignContent="center"
+            alignItems="center"
+            columnGap={5}
+          >
+            <VStack rowGap={-2}>
+              <Heading fontFamily="arial"> OLIFT</Heading>
+            </VStack>
+          </Flex>
         </Flex>
-      </Flex>
+      )}
 
       {/* منوی کناری */}
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+      <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent bg="blackAlpha.500" color="white">
+        <DrawerContent bg="blackAlpha.100" color="white">
           <DrawerCloseButton />
           <DrawerHeader>
-            <Box
+            {/* <Box
               bgImg="url(/assets/images/logos/logo1.jpg)"
               boxSize={20}
               bgSize="contain"
               bgRepeat="no-repeat"
               bgPosition="center"
-            />
+            /> */}
           </DrawerHeader>
           <DrawerBody>
             <VStack align="start" spacing={4}>
-              <Link href="#">خانه</Link>
-              <Link href="#">خدمات</Link>
-              <Link href="#">پروژه‌ها</Link>
-              <Link href="#">تماس با ما</Link>
+              <Link>صفحه اصلی</Link>
+              <Link>محصولات</Link>
+              <Link>محصولات بازرگانی</Link>
+              <Link>کاتالوگ</Link>
+              <Link>ارتباط با ما</Link>
+              <Link>تماس با ما</Link>
             </VStack>
           </DrawerBody>
         </DrawerContent>
@@ -150,182 +187,6 @@ export const Home = () => {
           ))}
         </Slider>
       </Box>
-
-      {/* بخش تبلیغاتی */}
-      <VStack
-        mb={1}
-        mt={1}
-        bg="blackAlpha.800"
-        color="white"
-        bgImage="url(/assets/images/bg/world.png)"
-        bgSize="auto"
-        bgRepeat="no-repeat"
-        bgPosition="left"
-      >
-        <Box bg="blackAlpha.500" width="full">
-          <SimpleGrid
-            spacing={50}
-            color="white"
-            p={10}
-            columns={{ base: 1, md: 2, lg: 3 }}
-          >
-            <VStack textAlign="right" alignItems="end">
-              <Box boxSize={200} mr="auto" ml="auto" bg="blue.600" p={1}>
-                <Image
-                  objectFit="cover"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  src="/assets/images/slider/motor2.jpg"
-                ></Image>
-              </Box>
-              <Text fontWeight="medium">
-                موتور خفن با پایه های چرخنده زرد رنگ انقلابی در موتور های
-                آسانسور به پا کرد
-              </Text>
-            </VStack>
-
-            <VStack textAlign="right" alignItems="end">
-              <Box boxSize={200} mr="auto" ml="auto" bg="blue.600" p={1}>
-                <Image
-                  objectFit="cover"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  src="/assets/images/slider/motor1.jpg"
-                ></Image>
-              </Box>
-              <Text fontWeight="medium">
-                موتور خفن با پایه های چرخنده نارنجی رنگ انقلابی در موتور های
-                آسانسور به پا کرد که نمونه اش در دنیا وجود ندارد
-              </Text>
-            </VStack>
-
-            <VStack textAlign="right" alignItems="end">
-              <Box boxSize={200} mr="auto" ml="auto" bg="blue.600" p={1}>
-                <Image
-                  objectFit="cover"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  src="/assets/images/slider/datis.jpg"
-                ></Image>
-              </Box>
-              <Text fontWeight="medium">
-                {" "}
-                تابلو برق داتیس رو نگم براتون که هوا رو چرخ میکنه و برق میگیره
-                این تابلو برق بدون نیاز به دست آسانسور رو بالا و پایین میکند
-              </Text>
-            </VStack>
-          </SimpleGrid>
-
-          <Box width="full" color="whiteAlpha.700" textAlign="center">
-            <Divider color="white" />
-          </Box>
-        </Box>
-      </VStack>
-
-      {/* نقشه */}
-      <Box h="550px" w="100%">
-        <MapContainer
-          center={position}
-          zoom={16}
-          scrollWheelZoom={false}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Marker position={position}>
-            <Popup>اینجا موقعیت ماست</Popup>
-          </Marker>
-        </MapContainer>
-      </Box>
-
-      {/* فوتر  پایین صفحه */}
-      <VStack
-        mt={1}
-        bg="blackAlpha.800"
-        color="white"
-        bgImage="url(/assets/images/bg/world.png)"
-        bgSize="auto"
-        bgRepeat="no-repeat"
-        bgPosition="left"
-      >
-        <Box bg="blackAlpha.500" width="full">
-          <SimpleGrid
-            spacing={50}
-            color="white"
-            p={10}
-            columns={{ base: 1, md: 2, lg: 4 }}
-          >
-            <VStack
-              textAlign="right"
-              alignItems="end"
-              backdropFilter="opacity(50%)"
-            >
-              <Heading fontFamily="Vaziri" fontSize="2xl" mb={5}>
-                سایر لینک ها
-              </Heading>
-              <Text fontWeight="medium">کاتالوگ آسانسور</Text>
-              <Text fontWeight="medium">کاتالوگ رزومه</Text>
-              <Text fontWeight="medium">کاتالوگ قطعات</Text>
-              <Text fontWeight="medium">فرصت های شغلی</Text>
-            </VStack>
-
-            <VStack textAlign="right" alignItems="end">
-              <Heading fontFamily="Vaziri" fontSize="2xl" mb={5}>
-                لینک های مفید
-              </Heading>
-              <Text fontWeight="medium">نمونه کار</Text>
-              <Text fontWeight="medium">تماس با ما</Text>
-              <Text fontWeight="medium">درباره ما</Text>
-              <Text fontWeight="medium">فروش آسانسور</Text>
-              <Text fontWeight="medium">قیمت ها</Text>
-            </VStack>
-
-            <VStack textAlign="right" alignItems="end">
-              <Heading fontFamily="Vaziri" fontSize="2xl" mb={5}>
-                راه های ارتباطی
-              </Heading>
-              <Text fontWeight="medium">
-                ‌info@hesab-yaar.ir : پست الکترونیک
-              </Text>
-              <Text fontWeight="medium">‌09121234567 : مدیریت</Text>
-              <Text fontWeight="medium">‌09121234567 : مدیر فروش</Text>
-              <Text fontWeight="medium">‌09121234567 : حسابداری</Text>
-            </VStack>
-
-            <VStack textAlign="right" alignItems="end">
-              <Box
-                bg="orange"
-                boxSize={100}
-                maxH={10}
-                mb={8}
-                mr="auto"
-                ml="auto"
-              >
-                <Image
-                  src="/assets/images/logos/logoMedium.jpg"
-                  objectFit="cover"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-              </Box>
-              <Text fontWeight="medium" textAlign="right">
-                شرکت آسانسور علیایی با بیش از دو دهه تجربه در صنعت آسانسور ایران
-                جزو بهترین شرکت‌های آسانسور در ایران بوده و همراه تلاش ما برای
-                ارائه بهترین خدمات به شما مشتریان گرامی می‌باشد
-              </Text>
-            </VStack>
-          </SimpleGrid>
-
-          <Box width="full" color="whiteAlpha.700" textAlign="center">
-            <Divider color="white" />
-            <Heading fontFamily="Vaziri" fontSize="2xs" m={2}>
-              Designed & developed by R.Mirasgari 09125213288
-            </Heading>
-          </Box>
-        </Box>
-      </VStack>
     </Box>
   );
 };
