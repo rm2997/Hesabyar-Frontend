@@ -18,7 +18,7 @@ import {
   Image,
   Divider,
 } from "@chakra-ui/react";
-import { Menu, User, User2 } from "lucide-react"; // Lucide icon
+import { Menu, User2 } from "lucide-react";
 import Slider from "react-slick";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "slick-carousel/slick/slick.css";
@@ -30,12 +30,9 @@ import { useNavigate } from "react-router-dom";
 // تنظیم آیکون پیش‌فرض مارکر در leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  iconRetinaUrl: "url(/asstets/images/objects/marker-icon-2x.png)",
+  iconUrl: "url(/asstets/images/objects/marker-icon.png)",
+  shadowUrl: "url(/asstets/images/objects/images/marker-shadow.png",
 });
 
 const images = [

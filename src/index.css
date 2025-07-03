@@ -3,6 +3,24 @@
   src: url("/public/assets/fonts/Vazir.woff2") format("woff2");
 }
 
+@font-face {
+  font-family: "EnglishHeader";
+  src: url("/public/assets/fonts/FjallaOne-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Beiruti";
+  src: url("/public/assets/fonts/Beiruti-VariableFont_wght.ttf")
+    format("truetype");
+}
+
+@font-face {
+  font-family: "IRANSans";
+  src: url("/public/assets/fonts/gaseman.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 * {
   font-family: "Vaziri";
 }

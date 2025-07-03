@@ -1,10 +1,10 @@
 #!/bin/bash
 
-DEPLOY_DIR="./hesabyaar_front_deploy"
+DEPLOY_DIR="../hesabyaar_front_deploy"
 
 echo "Start deploying..."
 pattern=`date  '+%Y-%m-%d_%H%M%S'`
-mv  ./build/ build_${pattern}
+mv  ./build/ ../build_${pattern}
 npm run build
 
 rm -rf $DEPLOY_DIR
