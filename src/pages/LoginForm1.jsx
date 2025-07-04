@@ -1,3 +1,4 @@
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -8,26 +9,29 @@ import {
   Heading,
   Image,
   Input,
+  Link,
+  SimpleGrid,
+  VStack,
   useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
 
-import { MyInputBox } from "../my-components/MyInputBox";
-import { useContext, useEffect, useState } from "react";
+import { login } from "../api/services/authService";
 import { useNavigate } from "react-router-dom";
-import { saveTokens, loadTokens } from "../api/tokenUtils";
+import { loadTokens, saveTokens } from "../api/tokenUtils";
+import { MyInputBox } from "../my-components/MyInputBox";
+import { CircleUserRound, DoorOpen } from "lucide-react";
 import { UserContext } from "../contexts/UserContext";
 import { jwtDecode } from "jwt-decode";
-import { CircleUserRound, DoorOpen } from "lucide-react";
-import { login } from "../api/services/authService";
 
-export const LoginForm = () => {
+export const LoginForm1 = () => {
   const isDesktop = useBreakpointValue({ base: false, md: true });
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [captcha, setCaptcha] = useState("");
   const [captchaImage, setCaptchaImage] = useState("");
   const [inputCaptha, setInputCaptha] = useState("");
   const { setUser } = useContext(UserContext);
+
   const toast = useToast();
   const [form, setForm] = useState({
     username: "",
@@ -158,6 +162,8 @@ export const LoginForm = () => {
         setUser(jwtDecode(res.data.accessToken));
         navigate("/myhome");
       } else {
+        console.log(res.data.accessToken, res?.data?.mobilnumber);
+
         navigate(
           "/second-login?token=" +
             res?.data?.accessToken +
@@ -183,36 +189,81 @@ export const LoginForm = () => {
   };
 
   return (
-    <Box p="10px" w="full" h="100vh" bg="gray.700">
-      <Flex
-        mx="auto"
-        px="10px"
-        color="white"
-        borderWidh="1px"
-        borderRadius="lg"
-        bg="gray"
-        w={isDesktop ? "800px" : "500px"}
-        h={isDesktop ? "500px" : "100px"}
-        direction="column"
-        alignContent="center"
-        rowGap={5}
+    <SimpleGrid
+      bg="#2E2E2E"
+      filter={isFormDisabled ? "blur(10px)" : ""}
+      spacing={0}
+      columns={{ base: 1, md: 1, lg: 4 }}
+      height="98vh"
+      width="99%"
+      m={"auto"}
+      mt={2}
+      mb={2}
+      p={isDesktop ? 5 : 0}
+      borderColor="teal"
+      borderWidth={!isDesktop ? "1px" : ""}
+      borderRadius={!isDesktop ? "lg" : ""}
+    >
+      <Box />
+      <Box
+        boxShadow="#138d75 0px 5px 10px 0px"
+        bgImage="url(/assets/images/bg/login.svg)"
+        bgSize={"contain"}
+        bgRepeat="no-repeat"
+        bgPosition={"center"}
+        p={8}
+        borderWidth={isDesktop ? 1 : 0}
+        borderRightWidth={0}
+        borderLeftRadius={isDesktop ? "lg" : ""}
+        borderColor="teal.400"
+      />
+      <Box
+        boxShadow="#138d75 0px 5px 10px 0px"
+        p={8}
+        borderWidth={isDesktop ? 1 : 0}
+        borderLeftWidth={isDesktop ? 1 : 0}
+        borderRightRadius={isDesktop ? "lg" : ""}
+        borderLeftRadius={isDesktop ? "" : "lg"}
+        dir="rtl"
+        borderColor="teal.400"
       >
-        <Flex
-          dir="rtl"
-          as="form"
-          alignItems="center"
-          direction="column"
-          rowGap={3}
-        >
-          <CircleUserRound size={100} strokeWidth={1} />
-          <Heading>ورود به حسابیار</Heading>
-          <Heading fontFamily="Beiruti" size="xs" color="whiteAlpha.500">
-            سامانه دستیار سیستم های حسابداری
-          </Heading>
-          <Divider />
+        <VStack as="form" spacing={5} onSubmit={handleSubmit}>
+          <CircleUserRound
+            size={100}
+            color="teal"
+            strokeWidth={1}
+            style={{ transition: "0.3s", filter: "" }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.filter =
+                "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))")
+            }
+            onMouseOut={(e) => (e.currentTarget.style.filter = "")}
+          />
+
+          <Box>
+            <Heading
+              fontFamily="Vaziri"
+              size="lg"
+              mb={3}
+              textAlign="center"
+              color="white"
+            >
+              به حسابیار خوش آمدید
+            </Heading>
+            <Heading
+              fontFamily="Vaziri"
+              size="xs"
+              mb={1}
+              textAlign="center"
+              color="whiteAlpha.500"
+            >
+              سامانه دستیار سیستم های حسابداری
+            </Heading>
+          </Box>
           <FormControl textColor="white" isRequired>
             <FormLabel hidden={!isDesktop}>نام کاربری</FormLabel>
             <Input
+              colorScheme="teal"
               name="username"
               type="text"
               variant="flushed"
@@ -226,6 +277,7 @@ export const LoginForm = () => {
             <FormLabel hidden={!isDesktop}>کلمه عبور</FormLabel>
 
             <MyInputBox
+              colorScheme="teal"
               type="password"
               variant="flushed"
               name="password"
@@ -242,6 +294,7 @@ export const LoginForm = () => {
                 <Input
                   dir="ltr"
                   width="50%"
+                  colorScheme="blue"
                   name="captcha"
                   type="text"
                   variant="flushed"
@@ -268,8 +321,8 @@ export const LoginForm = () => {
               </Flex>
             </FormControl>
           )}
-          <Divider />
           <Button
+            colorScheme="teal"
             variant="outline"
             leftIcon={<DoorOpen />}
             type="submit"
@@ -278,8 +331,31 @@ export const LoginForm = () => {
           >
             ورودبه حسابیار
           </Button>
-        </Flex>
-      </Flex>
-    </Box>
+        </VStack>
+        <Divider marginTop={10} marginBottom={5} />
+
+        <VStack spacing={2}>
+          <Link
+            mr="auto"
+            ml="auto"
+            href="#"
+            onClick={handleClick}
+            textColor="blue.300"
+          >
+            فراموشی نام کاربری/رمز
+          </Link>
+          <Link
+            mr="auto"
+            ml="auto"
+            href="#"
+            onClick={handleHomeClick}
+            textColor="blue.300"
+          >
+            خانه
+          </Link>
+        </VStack>
+      </Box>
+      <Box></Box>
+    </SimpleGrid>
   );
 };
