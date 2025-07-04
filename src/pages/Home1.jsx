@@ -317,9 +317,9 @@ export const Home1 = () => {
 
           <Box width="full" color="whiteAlpha.700" textAlign="center">
             <Divider color="white" />
-            <Heading fontFamily="Vaziri" fontSize="2xs" m={2}>
-              Designed & developed by R.Mirasgari 09125213288
-            </Heading>
+            <Text fontSize="xs" m={2}>
+              کلیه حقوق مادی و معنی متعلق به گروه صنعتی علیایی می باشد
+            </Text>
           </Box>
         </Box>
       </VStack>

@@ -59,8 +59,31 @@ export const ForgotPasswordForm = () => {
         }, 3000);
         return;
       }
+
+      if (
+        !user.data.usermobilenumber ||
+        user.data.usermobilenumber.length < 1
+      ) {
+        const userFnameLname = user.data.userfname + " " + user.data.userlname;
+        const message =
+          userFnameLname +
+          "  " +
+          "عزیز , شماره موبایلی برای شما ثبت نشده است لطفا با مدیر سیستم تماس بگیرید";
+        toast({
+          title: "خطا در ارسال بیامک",
+          description: message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
+        return;
+      }
+
       const userInfo = user.data.userfname + " " + user.data.userlname;
-      console.log(userInfo);
+
       await SendForgetPassSms(
         userInfo,
         user.data.usermobilenumber,

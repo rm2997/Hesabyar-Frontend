@@ -136,9 +136,9 @@ export const LoginForm = () => {
         setIsFormDisabled(false);
         toast({
           title: "خطا",
-          description: res.error,
+          description: "شرح خطا: " + res?.error,
           status: "error",
-          duration: 3000,
+          duration: 5000,
           isClosable: false,
         });
         return;
@@ -154,14 +154,19 @@ export const LoginForm = () => {
         duration: 3000,
         isClosable: true,
       });
-      if (res?.data?.twoFactorAuthntication === false) {
+      if (
+        !res?.data?.twoFactorAuthntication ||
+        res?.data?.twoFactorAuthntication === false
+      ) {
         saveTokens(res.data.accessToken);
         setUser(jwtDecode(res.data.accessToken));
         navigate("/myhome");
       } else {
+        console.log(res.data.accessToken, res?.data?.mobilnumber);
+
         navigate(
           "/second-login?token=" +
-            res.data.accessToken +
+            res?.data?.accessToken +
             "&mobile=" +
             res?.data?.mobilnumber
         );

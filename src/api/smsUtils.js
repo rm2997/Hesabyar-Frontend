@@ -58,7 +58,6 @@ export const sendLocationSms = async (mobileNumber, userName) => {
 
 export const sendForgetPassSms = async (userInfo, mobileNumber, token) => {
   let tokenBase = token;
-  console.log(tokenBase);
   const token1 =
     tokenBase.length >= 25
       ? tokenBase.substring(0, 25)

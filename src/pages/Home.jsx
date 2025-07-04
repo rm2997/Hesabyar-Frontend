@@ -116,7 +116,7 @@ export const Home = () => {
           >
             OLIAEI GROUP
           </Heading>
-          <Text fontSize="small" fontFamily="Aseman" mb="5px">
+          <Text fontSize="md" fontFamily="Aseman" mb="5px">
             بزرگترین وارد کننده قطعات آسانسور
           </Text>
         </Flex>
@@ -636,11 +636,14 @@ export const Home = () => {
             </VStack>
           </SimpleGrid>
 
-          <Box width="full" color="whiteAlpha.700" textAlign="center">
-            <Divider color="white" />
-            <Heading fontFamily="Vaziri" fontSize="2xs" m={2}>
-              Designed & developed by R.Mirasgari 09125213288
+          <Box width="full" bg="#2E2E2E" color="gray" textAlign="center">
+            <Divider />
+            <Heading fontFamily="Vaziri" size="xs" m={2}>
+              کلیه حقوق مادی و معنی متعلق به گروه صنعتی علیایی می باشد
             </Heading>
+            <Text fontSize="xs" fontFamily="Aseman" fontSize="md" m={2}>
+              طراحی و توسعه داده شده توسط رضا میرعسگری - 09125213288
+            </Text>
           </Box>
         </Box>
       </VStack>
