@@ -8,6 +8,7 @@ import {
   Heading,
   Image,
   Input,
+  Text,
   useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
@@ -183,39 +184,52 @@ export const LoginForm = () => {
   };
 
   return (
-    <Box p="10px" w="full" h="100vh" bg="gray.700">
+    <Box
+      p="10px"
+      w="full"
+      h="100vh"
+      bg="gray.700"
+      alignItems="center"
+      alignContent="center"
+    >
       <Flex
+        bg="gray"
+        textColor="white"
         mx="auto"
         px="10px"
-        color="white"
-        borderWidh="1px"
+        borderWidh="2px"
         borderRadius="lg"
-        bg="gray"
+        borderColor="white"
         w={isDesktop ? "800px" : "500px"}
         h={isDesktop ? "500px" : "100px"}
         direction="column"
         alignContent="center"
-        rowGap={5}
+        alignItems="center"
+        rowGap={2}
+        dir="rtl"
+        boxShadow="red 0px 1px 5px 1px"
       >
-        <Flex
-          dir="rtl"
-          as="form"
-          alignItems="center"
-          direction="column"
-          rowGap={3}
+        <CircleUserRound size={100} strokeWidth={1} />
+        <Text color="white" fontSize="3xl">
+          ورود به حسابیار
+        </Text>
+        <Text
+          fontFamily="Beiruti"
+          size="xs"
+          color="whiteAlpha.500"
+          fontSize="sm"
         >
-          <CircleUserRound size={100} strokeWidth={1} />
-          <Heading>ورود به حسابیار</Heading>
-          <Heading fontFamily="Beiruti" size="xs" color="whiteAlpha.500">
-            سامانه دستیار سیستم های حسابداری
-          </Heading>
-          <Divider />
+          سامانه دستیار سیستم های حسابداری
+        </Text>
+        <Flex as="form" direction="column" rowGap={5}>
+          <Divider mb="20px" />
           <FormControl textColor="white" isRequired>
-            <FormLabel hidden={!isDesktop}>نام کاربری</FormLabel>
             <Input
+              borderColor="white"
+              textColor="white"
               name="username"
               type="text"
-              variant="flushed"
+              variant="outline"
               value={form.username}
               onChange={handleChange}
               placeholder="نام کاربری"
@@ -223,11 +237,11 @@ export const LoginForm = () => {
           </FormControl>
 
           <FormControl textColor="white" isRequired>
-            <FormLabel hidden={!isDesktop}>کلمه عبور</FormLabel>
-
             <MyInputBox
+              borderColor="white"
+              textColor="white"
               type="password"
-              variant="flushed"
+              variant="outline"
               name="password"
               title="کلمه عبور"
               size={30}
@@ -240,6 +254,7 @@ export const LoginForm = () => {
               <FormLabel hidden={!isDesktop}>رمز تصادفی</FormLabel>
               <Flex justify="space-between">
                 <Input
+                  textColor="white"
                   dir="ltr"
                   width="50%"
                   name="captcha"
@@ -268,9 +283,12 @@ export const LoginForm = () => {
               </Flex>
             </FormControl>
           )}
-          <Divider />
+          <Divider mt="20px" mb="20px" />
           <Button
-            variant="outline"
+            fontFamily="Beiruti"
+            fontSize={20}
+            colorScheme="teal"
+            variant="solid"
             leftIcon={<DoorOpen />}
             type="submit"
             width="full"
