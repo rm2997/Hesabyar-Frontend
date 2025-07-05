@@ -193,7 +193,7 @@ export const LoginForm = () => {
       alignItems="center"
       alignContent="center"
       bgSize="auto"
-      bgRepeat="no-repeat"
+      bgRepeat="repeat-x"
       bgPosition="left"
       bgImage="url(/assets/images/bg/world.png)"
     >
