@@ -641,7 +641,7 @@ export const Home = () => {
             <Heading fontFamily="Vaziri" size="xs" m={2}>
               کلیه حقوق مادی و معنی متعلق به گروه صنعتی علیایی می باشد
             </Heading>
-            <Text fontSize="xs" fontFamily="Aseman" fontSize="md" m={2}>
+            <Text fontSize="xs" fontFamily="Aseman" size="md" m={2}>
               طراحی و توسعه داده شده توسط رضا میرعسگری - 09125213288
             </Text>
           </Box>

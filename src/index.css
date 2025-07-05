@@ -1,15 +1,26 @@
 @font-face {
   font-family: "Vaziri";
+  font-weight: 300;
   src: url("/public/assets/fonts/Vazir.woff2") format("woff2");
 }
 
 @font-face {
+  font-family: "Yekan";
+  font-weight: 900;
+  src: url("/public/assets/fonts/Yekan.woff") format("woff2");
+}
+
+@font-face {
   font-family: "EnglishHeader";
+  font-weight: 400;
+  font-style: normal;
   src: url("/public/assets/fonts/FjallaOne-Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Beiruti";
+  font-weight: 400;
+  font-style: normal;
   src: url("/public/assets/fonts/Beiruti-VariableFont_wght.ttf")
     format("truetype");
 }

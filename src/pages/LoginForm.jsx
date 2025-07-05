@@ -8,6 +8,7 @@ import {
   Heading,
   Image,
   Input,
+  Link,
   Text,
   useBreakpointValue,
   useToast,
@@ -187,31 +188,37 @@ export const LoginForm = () => {
     <Box
       p="10px"
       w="full"
-      h="100vh"
+      minH="100vh"
       bg="gray.700"
       alignItems="center"
       alignContent="center"
+      bgSize="auto"
+      bgRepeat="no-repeat"
+      bgPosition="left"
+      bgImage="url(/assets/images/bg/world.png)"
     >
       <Flex
+        filter={isFormDisabled ? "blur(10px)" : ""}
         bg="gray"
         textColor="white"
         mx="auto"
-        px="10px"
         borderWidh="2px"
         borderRadius="lg"
-        borderColor="white"
-        w={isDesktop ? "800px" : "500px"}
-        h={isDesktop ? "500px" : "100px"}
+        w={isDesktop ? "600px" : "full"}
+        maxW={{ sm: "400", lg: "600px" }}
+        minH={isDesktop ? "600px" : "90vh"}
         direction="column"
         alignContent="center"
         alignItems="center"
-        rowGap={2}
+        rowGap={isDesktop ? 2 : 0}
         dir="rtl"
-        boxShadow="red 0px 1px 5px 1px"
+        borderColor="white"
+        boxShadow="1px 2px 15px 1px rgb(0, 0, 0)"
+        p={isDesktop ? "10px" : "5px"}
       >
-        <CircleUserRound size={100} strokeWidth={1} />
+        <CircleUserRound mt="15px" size={100} strokeWidth={1} />
         <Text color="white" fontSize="3xl">
-          ورود به حسابیار
+          ورود کاربران
         </Text>
         <Text
           fontFamily="Beiruti"
@@ -221,11 +228,16 @@ export const LoginForm = () => {
         >
           سامانه دستیار سیستم های حسابداری
         </Text>
-        <Flex as="form" direction="column" rowGap={5}>
-          <Divider mb="20px" />
+        <Flex as="form" direction="column" rowGap={5} onSubmit={handleSubmit}>
+          <Divider mb="10px" />
           <FormControl textColor="white" isRequired>
             <Input
-              borderColor="white"
+              autoComplete="off"
+              _placeholder={{ color: "blackAlpha.400" }}
+              _focus={{
+                boxShadow: "teal 0px 2px 5px 1px",
+                borderColor: "blackAlpha.400",
+              }}
               textColor="white"
               name="username"
               type="text"
@@ -238,7 +250,13 @@ export const LoginForm = () => {
 
           <FormControl textColor="white" isRequired>
             <MyInputBox
-              borderColor="white"
+              autoComplete="off"
+              _placeholder={{ color: "blackAlpha.400" }}
+              _focus={{
+                boxShadow: "teal 0px 2px 5px 1px",
+                borderColor: "blackAlpha.400",
+              }}
+              pr={3}
               textColor="white"
               type="password"
               variant="outline"
@@ -254,6 +272,9 @@ export const LoginForm = () => {
               <FormLabel hidden={!isDesktop}>رمز تصادفی</FormLabel>
               <Flex justify="space-between">
                 <Input
+                  autoComplete="off"
+                  colorScheme="teal"
+                  _placeholder={{ color: "blackAlpha.400" }}
                   textColor="white"
                   dir="ltr"
                   width="50%"
@@ -283,19 +304,38 @@ export const LoginForm = () => {
               </Flex>
             </FormControl>
           )}
-          <Divider mt="20px" mb="20px" />
+          <Divider mt="5px" mb="10px" />
           <Button
-            fontFamily="Beiruti"
-            fontSize={20}
+            fontFamily="Yekan"
+            size="lg"
             colorScheme="teal"
             variant="solid"
             leftIcon={<DoorOpen />}
             type="submit"
             width="full"
             disabled={isFormDisabled}
+            isLoading={isFormDisabled}
           >
             ورودبه حسابیار
           </Button>
+          <Link
+            fontFamily="Yekan"
+            mx="auto"
+            href="#"
+            onClick={handleClick}
+            textColor="yellow.400"
+          >
+            فراموشی نام کاربری/رمز
+          </Link>
+          <Link
+            fontFamily="Yekan"
+            mx="auto"
+            href="#"
+            onClick={handleHomeClick}
+            textColor="yellow.400"
+          >
+            خانه
+          </Link>
         </Flex>
       </Flex>
     </Box>
