@@ -1,6 +1,5 @@
 import axios from "axios";
 import endpoints from "./endpoints";
-import { replace } from "react-router-dom";
 
 const axiosClient = axios.create({
   headers: {

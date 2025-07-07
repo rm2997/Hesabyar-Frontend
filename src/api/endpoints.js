@@ -5,6 +5,8 @@ const endpoints = {
     logout: "/auth/logout",
     forgetPassword: "/auth/forgetPassword",
     refresh: "/auth/refresh",
+    resendValidationKey: "/auth/resendValidationKey",
+    secondLogin: "/auth/secondLogin",
   },
   user: {
     create: "/users",

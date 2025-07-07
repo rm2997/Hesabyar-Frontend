@@ -92,8 +92,13 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
   };
 
   return (
-    <VStack as="form" spacing={2} onSubmit={handleSubmit} dir="rtl">
-      {loading} && <MyLoading />
+    <VStack
+      as="form"
+      filter={loading ? "blur(10px)" : ""}
+      spacing={2}
+      onSubmit={handleSubmit}
+      dir="rtl"
+    >
       <FormControl isRequired>
         <HStack>
           <FormLabel width="100px">نام کالا</FormLabel>

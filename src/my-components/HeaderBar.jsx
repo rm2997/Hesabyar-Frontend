@@ -71,8 +71,8 @@ export const HeaderBar = ({
             />
           </Box>
           <Button variant="link" onClick={() => navigate("/home")}>
-            <Text fontSize="xl" fontWeight="bold">
-              {sidebarWidth === 300 ? "حسابیار علیایی" : ""}
+            <Text fontSize="md" fontWeight="bold">
+              {sidebarWidth === 300 ? "گروه صنعتی علیایی" : ""}
             </Text>
           </Button>
         </HStack>

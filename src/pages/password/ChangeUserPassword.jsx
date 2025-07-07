@@ -12,6 +12,7 @@ import {
   HStack,
   Heading,
   Image,
+  Link,
   Select,
   SimpleGrid,
   Text,
@@ -144,7 +145,7 @@ export const ChangeUserPassword = () => {
         });
         setTimeout(() => {
           navigate("/login");
-        }, 3000);
+        }, 200);
       }
     } catch (error) {
       toast({
@@ -164,103 +165,223 @@ export const ChangeUserPassword = () => {
       [e.target.name]: e.target.value,
     });
   };
+  const handleHomeClick = (e) => {
+    e.preventDefault();
+    navigate("/Home");
+  };
 
   return (
-    <SimpleGrid
-      filter={loading ? "blur(10px)" : ""}
-      mr={isDesktop ? "auto" : "1"}
-      ml={isDesktop ? "auto" : "1"}
-      height="100vh"
-      spacing={0}
-      columns={{ base: 1, md: 2, lg: 2 }}
-      p={5}
-      width={isDesktop ? "50%" : "99%"}
+    <Box
+      p="10px"
+      w="full"
+      minH="100vh"
+      bg="gray.700"
+      alignItems="center"
+      alignContent="center"
+      bgSize="auto"
+      bgRepeat="repeat-x"
+      bgPosition="left"
+      bgImage="url(/assets/images/bg/world.png)"
     >
-      <Box
-        bg="blackAlpha.200"
-        bgImage="url(/assets/images/bg/changePassword.svg)"
-        bgSize={isDesktop ? "fill" : "auto"}
-        bgRepeat="no-repeat"
-        bgPosition="left"
-        hidden={!isDesktop}
-        borderWidth={1}
-        borderRightWidth={0}
-        borderLeftRadius="lg"
-        width="full"
-      ></Box>
-      <Box
-        p={8}
-        borderWidth={1}
-        borderLeftWidth={isDesktop ? 0 : 1}
-        borderRightRadius="lg"
-        borderLeftRadius={isDesktop ? "" : "lg"}
+      <Flex
+        filter={loading ? "blur(10px)" : ""}
+        bg="gray"
+        textColor="white"
+        mx="auto"
+        borderWidh="2px"
+        borderRadius="lg"
+        w={isDesktop ? "600px" : "full"}
+        maxW={{ sm: "400", lg: "600px" }}
+        minH={isDesktop ? "600px" : "90vh"}
+        direction="column"
+        alignContent="center"
+        alignItems="center"
+        rowGap={isDesktop ? 2 : 0}
         dir="rtl"
+        borderColor="white"
+        boxShadow="1px 2px 15px 1px rgb(0, 0, 0)"
+        p={isDesktop ? "10px" : "5px"}
       >
-        <VStack spacing={8} as="form" onSubmit={handleSubmit}>
-          <RotateCcwKey size={100} color="#74CEF7" strokeWidth={1} />
-          <Heading
-            color="blackAlpha.800"
-            fontFamily="Vaziri"
-            hidden={!isDesktop}
-            size="lg"
-          >
-            تغییر رمز عبور
-          </Heading>
-          <Text
-            fontFamily="Vaziri"
-            fontSize="sm"
-            color="blackAlpha.500"
-            textAlign="center"
-          >
-            کاربر گرامی
-            {" " + user.userfname + " " + user.userlname + " "}
-            شما در حال تغییر رمز عبور خود می باشید
-          </Text>
-          <Divider />
-          <FormControl isRequired as={Flex}>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                کلمه عبور جدید
-              </FormLabel>
-              <MyInputBox
-                type="password"
-                icon={Info}
-                name="new"
-                title="کلمه عبور جدید"
-                size={30}
-                value={formData.new}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
+        <RotateCcwKey mt="15px" size={100} strokeWidth={1} />
+        <Text color="white" fontSize="3xl">
+          تغییر رمز عبور
+        </Text>
+        <Text
+          fontFamily="Beiruti"
+          size="xs"
+          color="whiteAlpha.500"
+          fontSize={isDesktop ? "md" : "sm"}
+        >
+          کاربر گرامی
+          {" " + user.userfname + " " + user.userlname + " "}
+          شما در حال تغییر رمز عبور خود می باشید
+        </Text>
+        <Flex
+          as="form"
+          direction="column"
+          width="70%"
+          rowGap={5}
+          onSubmit={handleSubmit}
+        >
+          <Divider mb="10px" />
+          <FormControl textColor="white" isRequired>
+            <MyInputBox
+              autoComplete="off"
+              _placeholder={{ color: "whiteAlpha.700" }}
+              _focus={{
+                boxShadow: "teal 0px 2px 5px 1px",
+                borderColor: "blackAlpha.400",
+              }}
+              pr={3}
+              textColor="white"
+              variant="outline"
+              type="password"
+              name="new"
+              title="کلمه عبور جدید"
+              size={30}
+              value={formData.new}
+              onChange={handleChangeFormData}
+            />
           </FormControl>
-          <FormControl isRequired as={Flex}>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                تکرار کلمه عبور
-              </FormLabel>
-              <MyInputBox
-                icon={Info}
-                type="password"
-                name="confirm"
-                title="تکرار کلمه عبور"
-                size={30}
-                value={formData.confirm}
-                onChange={handleChangeFormData}
-              />
-            </HStack>
+          <FormControl textColor="white" isRequired>
+            <MyInputBox
+              autoComplete="off"
+              _placeholder={{ color: "whiteAlpha.700" }}
+              _focus={{
+                boxShadow: "teal 0px 2px 5px 1px",
+                borderColor: "blackAlpha.400",
+              }}
+              pr={3}
+              textColor="white"
+              variant="outline"
+              type="password"
+              name="confirm"
+              title="تکرار کلمه عبور"
+              size={30}
+              value={formData.confirm}
+              onChange={handleChangeFormData}
+            />
           </FormControl>
-          <Divider />
+          <Divider mt="5px" mb="10px" />
           <Button
             leftIcon={<KeySquare />}
+            fontFamily="Yekan"
+            size="lg"
+            colorScheme="teal"
+            variant="solid"
             type="submit"
-            colorScheme="blue"
-            isLoading={loading}
             width="full"
+            isLoading={loading}
           >
             تغییر رمز
           </Button>
-        </VStack>
-      </Box>
-    </SimpleGrid>
+          <Link
+            fontFamily="Yekan"
+            mx="auto"
+            href="#"
+            onClick={handleHomeClick}
+            textColor="yellow.400"
+          >
+            خانه
+          </Link>
+        </Flex>
+      </Flex>
+    </Box>
+    // <SimpleGrid
+    //   filter={loading ? "blur(10px)" : ""}
+    //   mr={isDesktop ? "auto" : "1"}
+    //   ml={isDesktop ? "auto" : "1"}
+    //   height="100vh"
+    //   spacing={0}
+    //   columns={{ base: 1, md: 2, lg: 2 }}
+    //   p={5}
+    //   width={isDesktop ? "50%" : "99%"}
+    // >
+    //   <Box
+    //     bg="blackAlpha.200"
+    //     bgImage="url(/assets/images/bg/changePassword.svg)"
+    //     bgSize={isDesktop ? "fill" : "auto"}
+    //     bgRepeat="no-repeat"
+    //     bgPosition="left"
+    //     hidden={!isDesktop}
+    //     borderWidth={1}
+    //     borderRightWidth={0}
+    //     borderLeftRadius="lg"
+    //     width="full"
+    //   ></Box>
+    //   <Box
+    //     p={8}
+    //     borderWidth={1}
+    //     borderLeftWidth={isDesktop ? 0 : 1}
+    //     borderRightRadius="lg"
+    //     borderLeftRadius={isDesktop ? "" : "lg"}
+    //     dir="rtl"
+    //   >
+    //     <VStack spacing={8} as="form" onSubmit={handleSubmit}>
+    //       <RotateCcwKey size={100} color="#74CEF7" strokeWidth={1} />
+    //       <Heading
+    //         color="blackAlpha.800"
+    //         fontFamily="Vaziri"
+    //         hidden={!isDesktop}
+    //         size="lg"
+    //       >
+    //         تغییر رمز عبور
+    //       </Heading>
+    //       <Text
+    //         fontFamily="Vaziri"
+    //         fontSize="sm"
+    //         color="blackAlpha.500"
+    //         textAlign="center"
+    //       >
+    //         کاربر گرامی
+    //         {" " + user.userfname + " " + user.userlname + " "}
+    //         شما در حال تغییر رمز عبور خود می باشید
+    //       </Text>
+    //       <Divider />
+    //       <FormControl isRequired as={Flex}>
+    //         <HStack>
+    //           <FormLabel hidden={!isDesktop} width="170px">
+    //             کلمه عبور جدید
+    //           </FormLabel>
+    //           <MyInputBox
+    //             type="password"
+    //             icon={Info}
+    //             name="new"
+    //             title="کلمه عبور جدید"
+    //             size={30}
+    //             value={formData.new}
+    //             onChange={handleChangeFormData}
+    //           ></MyInputBox>
+    //         </HStack>
+    //       </FormControl>
+    //       <FormControl isRequired as={Flex}>
+    //         <HStack>
+    //           <FormLabel hidden={!isDesktop} width="170px">
+    //             تکرار کلمه عبور
+    //           </FormLabel>
+    //           <MyInputBox
+    //             icon={Info}
+    //             type="password"
+    //             name="confirm"
+    //             title="تکرار کلمه عبور"
+    //             size={30}
+    //             value={formData.confirm}
+    //             onChange={handleChangeFormData}
+    //           />
+    //         </HStack>
+    //       </FormControl>
+    //       <Divider />
+    //       <Button
+    //         leftIcon={<KeySquare />}
+    //         type="submit"
+    //         colorScheme="blue"
+    //         isLoading={loading}
+    //         width="full"
+    //       >
+    //         تغییر رمز
+    //       </Button>
+    //     </VStack>
+    //   </Box>
+    // </SimpleGrid>
   );
 };

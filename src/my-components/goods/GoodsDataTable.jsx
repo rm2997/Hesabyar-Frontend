@@ -140,15 +140,12 @@ export const GoodsDataTable = ({ isDesktop }) => {
     if (selectedID === 0) return;
   };
 
-  if (loading)
-    return (
-      <AbsoluteCenter>
-        <Spinner size="xl" color="red.500" />
-      </AbsoluteCenter>
-    );
-
   return (
-    <Flex direction="column" height="100vh">
+    <Flex
+      filter={loading ? "blur(10px)" : ""}
+      direction="column"
+      height="100vh"
+    >
       <SearchBar
         search={search}
         setSearch={setSearch}

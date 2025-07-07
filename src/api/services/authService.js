@@ -1,28 +1,33 @@
 import endpoints from "../endpoints";
-import axiosClient, { apiRequest } from "../axiosClient";
+import { apiRequest } from "../axiosClient";
 
 export const login = async (data) => {
   return apiRequest({ method: "POST", url: endpoints.auth.login, data: data });
 };
 
-export const sendResetLink = async (mobile) => {
-  try {
-    if (!mobile) return;
-    const response = await axiosClient.post(
-      endpoints.auth.forgetPassword,
-      mobile
-    );
-    return response;
-  } catch (error) {}
+export const sendValidationKeyAgain = async (data) => {
+  return await apiRequest({
+    method: "POST",
+    url: endpoints.auth.resendValidationKey,
+    data: data,
+  });
 };
 
-export const refreshTokens = async (oldRefreshToken) => {
-  try {
-    if (!oldRefreshToken) return;
-    const data = {
-      refreshToken: oldRefreshToken,
-    };
-    const response = await axiosClient.post(endpoints.auth.refresh, data);
-    return response;
-  } catch (error) {}
+export const secondLogin = async (data) => {
+  return await apiRequest({
+    method: "POST",
+    url: endpoints.auth.secondLogin,
+    data: data,
+  });
 };
+
+// export const refreshTokens = async (oldRefreshToken) => {
+//   try {
+//     if (!oldRefreshToken) return;
+//     const data = {
+//       refreshToken: oldRefreshToken,
+//     };
+//     const response = await axiosClient.post(endpoints.auth.refresh, data);
+//     return response;
+//   } catch (error) {}
+//};

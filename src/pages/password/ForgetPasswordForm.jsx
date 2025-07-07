@@ -12,6 +12,7 @@ import {
   Divider,
   SimpleGrid,
   useBreakpointValue,
+  Flex,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -60,35 +61,6 @@ export const ForgotPasswordForm = () => {
         return;
       }
 
-      if (
-        !user.data.usermobilenumber ||
-        user.data.usermobilenumber.length < 1
-      ) {
-        const userFnameLname = user.data.userfname + " " + user.data.userlname;
-        const message =
-          userFnameLname +
-          "  " +
-          "عزیز , شماره موبایلی برای شما ثبت نشده است لطفا با مدیر سیستم تماس بگیرید";
-        toast({
-          title: "خطا در ارسال بیامک",
-          description: message,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 3000);
-        return;
-      }
-
-      const userInfo = user.data.userfname + " " + user.data.userlname;
-
-      await SendForgetPassSms(
-        userInfo,
-        user.data.usermobilenumber,
-        user.data.token
-      );
       toast({
         title: "لینک بازیابی ارسال شد.",
         description: "لطفاً تلفن همراه خود را بررسی کنید.",
@@ -96,6 +68,7 @@ export const ForgotPasswordForm = () => {
         duration: 5000,
         isClosable: true,
       });
+
       setTimeout(() => {
         navigate("/login");
       }, 3000);
@@ -112,7 +85,109 @@ export const ForgotPasswordForm = () => {
   };
 
   return (
-    <SimpleGrid
+    <Box
+      p="10px"
+      w="full"
+      minH="100vh"
+      bg="gray.700"
+      alignItems="center"
+      alignContent="center"
+      bgSize="auto"
+      bgRepeat="repeat-x"
+      bgPosition="left"
+      bgImage="url(/assets/images/bg/world.png)"
+    >
+      <Flex
+        filter={isLoading ? "blur(10px)" : ""}
+        bg="gray"
+        textColor="white"
+        mx="auto"
+        borderWidh="1px"
+        borderRadius="lg"
+        w={isDesktop ? "600px" : "full"}
+        maxW={{ sm: "400", lg: "600px" }}
+        minH={isDesktop ? "600px" : "90vh"}
+        direction="column"
+        alignContent="center"
+        alignItems="center"
+        rowGap={isDesktop ? 5 : 3}
+        dir="rtl"
+        borderColor="white"
+        boxShadow="1px 2px 15px 1px rgb(0, 0, 0)"
+        pt={isDesktop ? "10px" : "5px"}
+      >
+        <UserLock mt="15px" size={100} strokeWidth={1} />
+        <Text color="white" fontSize="3xl">
+          فراموشی رمز/نام کاربری
+        </Text>
+        <Text
+          fontFamily="Beiruti"
+          size="xs"
+          color="whiteAlpha.500"
+          fontSize={isDesktop ? "md" : "sm"}
+        >
+          کاربر گرامی شماره همراه خود را وارد کنید تا لینک بازیابی برایتان ارسال
+          شود
+        </Text>
+        <Flex
+          as="form"
+          direction="column"
+          width="70%"
+          rowGap={5}
+          onSubmit={handleSubmit}
+        >
+          <Divider mb="10px" />
+          <FormControl isRequired>
+            <Input
+              autoComplete="off"
+              _placeholder={{ color: "whiteAlpha.700" }}
+              _focus={{
+                boxShadow: "teal 0px 2px 5px 1px",
+                borderColor: "blackAlpha.400",
+              }}
+              pr={3}
+              textColor="white"
+              variant="outline"
+              dir="ltr"
+              type="number"
+              placeholder="09xxxxxxxxx"
+              value={mobile}
+              onChange={(e) => handleChangeMobileNumber(e.target.value)}
+            />
+          </FormControl>
+
+          <Button
+            fontFamily="Yekan"
+            size="lg"
+            leftIcon={<Send />}
+            variant="solid"
+            type="submit"
+            colorScheme="teal"
+            isLoading={isLoading}
+            isDisabled={!enableSend}
+            width="full"
+          >
+            ارسال لینک بازیابی
+          </Button>
+          <Divider />
+          <Button
+            fontFamily="Yekan"
+            mx="auto"
+            href="#"
+            onClick={handleClick}
+            textColor="yellow.400"
+            variant="link"
+            colorScheme="blue"
+          >
+            انصراف
+          </Button>
+        </Flex>
+      </Flex>
+    </Box>
+  );
+};
+{
+  /* <SimpleGrid
       filter={isLoading ? "blur(10px)" : ""}
       spacing={0}
       columns={{ base: 1, md: 1, lg: 4 }}
@@ -161,7 +236,7 @@ export const ForgotPasswordForm = () => {
             color="blackAlpha.500"
             textAlign="center"
           >
-            شماره همراه خود را وارد کنید تا لینک بازیابی برایتان ارسال شود
+            کاربر گرامی شماره همراه خود را وارد کنید تا لینک بازیابی برایتان ارسال شود
           </Text>
 
           <FormControl isRequired>
@@ -198,6 +273,5 @@ export const ForgotPasswordForm = () => {
           </Button>
         </VStack>
       </Box>
-    </SimpleGrid>
-  );
-};
+    </SimpleGrid> */
+}
