@@ -264,7 +264,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
           />
         </Flex>
       </Box>
-      <MyModal modalHeader="مشاهده پیام" isOpen={isOpen} onClose={onClose}>
+      <MyModal modalHeader="مشاهده کالا" isOpen={isOpen} onClose={onClose}>
         <EditGood
           id={selectedID}
           onClose={onClose}

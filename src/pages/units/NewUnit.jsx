@@ -18,40 +18,40 @@ import { MyInputBox } from "../../my-components/MyInputBox";
 
 export const NewUnit = ({ isDesktop }) => {
   const [formData, setFormData] = useState({});
-  const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+
   const toast = useToast();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      const response = await CreateUnit(formData);
-      if (!response.data) return;
-      setFormData({
-        unitName: "",
-        unitUnit: "",
-        unitInfo: "",
-      });
-      toast({
-        title: "ثبت شد",
-        description: `اطلاعات واحد ذخیره شد`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (err) {
+    const response = await CreateUnit(formData);
+    setLoading(true);
+    if (!response.success) {
       toast({
         title: "خطایی رخ داد",
-        description: `${err}`,
+        description: response.error,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-    } finally {
       setLoading(false);
+      return;
     }
+    setFormData({
+      unitName: "",
+      unitUnit: "",
+      unitInfo: "",
+    });
+    toast({
+      title: "ثبت شد",
+      description: `اطلاعات واحد ذخیره شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
   };
 
   const handleChangeFormData = (e) => {
@@ -62,7 +62,7 @@ export const NewUnit = ({ isDesktop }) => {
   };
 
   return (
-    <Card m={10}>
+    <Card m={10} filter={loading ? "blur(10px)" : ""}>
       <CardHeader
         bg="#68C15A"
         borderBottomColor="gray.400"
@@ -77,7 +77,8 @@ export const NewUnit = ({ isDesktop }) => {
           align={"stretch"}
           direction={["column", "row"]}
           as="form"
-          spacing={5}
+          rowGap={8}
+          px={5}
           onSubmit={handleSubmit}
         >
           <FormControl isRequired>

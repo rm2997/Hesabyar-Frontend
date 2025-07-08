@@ -199,22 +199,6 @@ export const UpdateUserLocation = async (location) => {
     data: location,
   });
 };
-// export const UpdateUserLocation = async (location) => {
-//   try {
-//     return await axiosClient.put(endpoints.user.setLocation, location);
-//   } catch (error) {
-//     if (error.response) {
-//       // پاسخ از سمت سرور (۴xx یا ۵xx)
-//       throw new Error(error.response.data?.message || "خطای سرور");
-//     } else if (error.request) {
-//       // درخواست فرستاده شده ولی پاسخی نیومده
-//       throw new Error("پاسخی از سرور دریافت نشد");
-//     } else {
-//       // خطای دیگر (مثلاً در خود کد)
-//       throw new Error(`مشکلی در ارسال درخواست رخ داد-${error.message}`);
-//     }
-//   }
-// };
 
 export const SendLocationSms = async (mobileNumber, userName) => {
   try {

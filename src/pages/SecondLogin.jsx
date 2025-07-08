@@ -5,11 +5,8 @@ import {
   Divider,
   Flex,
   FormControl,
-  HStack,
-  Heading,
   PinInput,
   PinInputField,
-  SimpleGrid,
   Text,
   useBreakpointValue,
   useToast,
@@ -18,7 +15,6 @@ import {
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Send, TimerReset, UserLock } from "lucide-react";
 import { saveTokens } from "../api/tokenUtils";
-import { sendValidationKeySms } from "../api/smsUtils";
 import { UserContext } from "../contexts/UserContext";
 import { jwtDecode } from "jwt-decode";
 import {
@@ -31,28 +27,24 @@ export const SecondLogin = ({}) => {
   const { setUser } = useContext(UserContext);
   const toast = useToast();
   const [timeLeft, setTimeLeft] = useState(59);
-  const [key, setKey] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [isFormDisabled, setIsFormDisabled] = useState(false);
+  const [isFormDisabled, setIsFormDisabled] = useState(true);
   const [form, setForm] = useState({
     key: "",
+    token: "",
   });
   const inputRef = useRef(null);
   const [searchParams] = useSearchParams();
 
-  const token = searchParams.get("token");
+  const firstToken = searchParams.get("token");
   const mobile = searchParams.get("mobile");
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token || !mobile) {
+    if (!firstToken || !mobile) {
       navigate("/login");
       return;
     }
-    // const newKey = generateRandomNumber();
-    // setKey(newKey);
-    // sendValidationKeySms(mobile, newKey);
     inputRef.current.focus();
   }, []);
 
@@ -64,39 +56,43 @@ export const SecondLogin = ({}) => {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  // const generateRandomNumber = () => {
-  //   const rnd = Math.floor(10000 + Math.random() * 90000);
-  //   return rnd;
-  // };
+  useEffect(() => {
+    setForm({ key: form.key, token: firstToken });
+  }, [firstToken]);
 
   const handleChange = (e) => {
-    setForm({ key: e });
+    setForm({ ...form, key: e });
     if (e.length >= 5) setIsFormDisabled(false);
     else setIsFormDisabled(true);
   };
 
   const handleClickTimerButton = async () => {
     if (timeLeft > 0) return;
-    if (!token || !mobile) {
+    if (!form.token || !mobile) {
       navigate("/login");
       return;
     }
-    const data = { token: token, mobile: mobile };
-    await sendValidationKeyAgain(data);
-    // const newKey = generateRandomNumber();
-    // setKey(newKey);
 
-    // sendValidationKeySms(mobile, newKey).catch((err) => {
-    //   toast({
-    //     title: "خطا",
-    //     description: err.message,
-    //     status: "error",
-    //     duration: 3000,
-    //     isClosable: false,
-    //   });
-    // });
+    setLoading(true);
+    setIsFormDisabled(true);
+    const res = await sendValidationKeyAgain(form);
+    if (!res.success) {
+      toast({
+        title: "خطا",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: false,
+      });
+      navigate("/login");
+      setLoading(false);
+      setIsFormDisabled(false);
+      return;
+    }
+    setForm({ key: "", token: res.data?.accessToken });
     setTimeLeft(59);
-    setForm({ key: "" });
+    setLoading(false);
+    setIsFormDisabled(false);
     inputRef.current.focus();
   };
 
@@ -115,8 +111,7 @@ export const SecondLogin = ({}) => {
 
     setLoading(true);
     setIsFormDisabled(true);
-    const secondLoginData = { token: token, key: form.key };
-    const res = await secondLogin(secondLoginData);
+    const res = await secondLogin(form);
     if (!res.success) {
       toast({
         title: "خطا",
@@ -125,6 +120,9 @@ export const SecondLogin = ({}) => {
         duration: 3000,
         isClosable: false,
       });
+      setLoading(false);
+      setIsFormDisabled(false);
+      navigate("/login");
       return;
     }
 
@@ -217,7 +215,7 @@ export const SecondLogin = ({}) => {
             onClick={handleClickTimerButton}
             rightIcon={timeLeft <= 0 ? <TimerReset /> : ""}
             width="full"
-            disabled={timeLeft > 0 || isFormDisabled}
+            disabled={timeLeft > 0}
             colorScheme="green"
           >
             {timeLeft > 0 ? timeLeft : "کد جدید"}

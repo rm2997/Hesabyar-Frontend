@@ -41,8 +41,6 @@ export const UnitsDataTable = ({ isDesktop }) => {
   const [loading, setLoading] = useState(false);
   const [unitsData, setUnitsData] = useState([]);
   const [selectedID, setSelectedID] = useState(0);
-  const [modalContetnt, setModalContetnt] = useState(null);
-  const [modalHeader, setModalHeader] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -66,34 +64,31 @@ export const UnitsDataTable = ({ isDesktop }) => {
     unitsData.map((u) => (u.id === id ? u : null));
   };
 
-  const handleDeleteUnit = () => {
+  const handleDeleteUnit = async () => {
     if (selectedID === 0) return;
     setLoading(true);
-    RemoveUnit(selectedID)
-      .then((res) => {
-        deleteUnitFromList(selectedID);
-        toast({
-          title: "توجه",
-          description: ` ,واحد حذف شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
-  };
+    const res = await RemoveUnit(selectedID);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    deleteUnitFromList(selectedID);
+    toast({
+      title: "توجه",
+      description: "واحد حذف شد",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
 
-  const handleEditUnit = () => {
-    if (selectedID === 0) return;
+    setLoading(false);
   };
 
   const loadData = async (resetPage = false) => {
@@ -130,7 +125,11 @@ export const UnitsDataTable = ({ isDesktop }) => {
   }, [currentPage]);
 
   return (
-    <Flex direction="column" height="100vh">
+    <Flex
+      filter={loading ? "blur(10px)" : ""}
+      direction="column"
+      height="100vh"
+    >
       <SearchBar
         search={search}
         setSearch={setSearch}

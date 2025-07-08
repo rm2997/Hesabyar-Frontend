@@ -1,4 +1,3 @@
-// components/HeaderBar.jsx
 import {
   Flex,
   IconButton,
@@ -14,10 +13,11 @@ import {
   Divider,
   Image,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import {
   Bell,
-  Mails,
+  MapPinCheck,
   MenuIcon,
   PencilLine,
   Power,
@@ -28,6 +28,8 @@ import {
   Users,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "../contexts/LocationContext";
+import { UpdateUserLocation } from "../api/services/userService";
 
 export const HeaderBar = ({
   isDesktop,
@@ -39,7 +41,28 @@ export const HeaderBar = ({
   user,
 }) => {
   const navigate = useNavigate();
+  const toast = useToast();
+  const { location, loadLocation } = useLocation();
 
+  const saveLocation = async () => {
+    await loadLocation();
+    const response = await UpdateUserLocation({
+      location: location.googleMapLink,
+    });
+    if (!response.success) {
+      return;
+    }
+    toast({
+      title: "توجه",
+      description:
+        location.googleMapLink == "Denied"
+          ? "دسترسی به موقعیت مکانی داده نشد"
+          : "آخرین موقعیت مکانی ثبت شد",
+      status: location.googleMapLink == "Denied" ? "warning" : "success",
+      duration: 3000,
+      isClosable: true,
+    });
+  };
   const handleSideBarWith = () => {
     if (sidebarWidth === 300) setSidebarWidth(100);
     else setSidebarWidth(300);
@@ -175,13 +198,10 @@ export const HeaderBar = ({
               </HStack>
             </MenuItem>
 
-            <MenuItem
-              color="green.400"
-              onClick={() => OnItemClick("userUnreadMessages")}
-            >
+            <MenuItem color="green.400" onClick={() => saveLocation()}>
               <HStack spacing={3}>
-                <Mails />
-                <Text color="black"> پیام‌های مشاهده‌ نشده</Text>
+                <MapPinCheck color="indigo" />
+                <Text color="black">ثبت لوکیشن</Text>
               </HStack>
             </MenuItem>
             <Divider />

@@ -19,6 +19,7 @@ cp package-lock.json $DEPLOY_DIR/
 if [ -f .env ]; then
   cp .env $DEPLOY_DIR/
 fi
+chmod 755 -R $DEPLOY_DIR/assets
 echo "Compressing deploy..."
 zip -r ${DEPLOY_DIR}_${pattern}.zip $DEPLOY_DIR/
 echo "Deploying finished..."

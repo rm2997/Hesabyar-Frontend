@@ -20,6 +20,11 @@ export const LocationProvider = ({ children }) => {
       return googleMapLink;
     } catch (err) {
       console.log(err);
+      setLocation({
+        latitude: "Denied",
+        longitude: "Denied",
+        googleMapLink: "Denied",
+      });
     }
   };
 

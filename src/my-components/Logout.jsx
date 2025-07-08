@@ -9,6 +9,6 @@ export const Logout = () => {
   useEffect(() => {
     clearTokens();
     setUser(null);
-    navigate("/login");
+    navigate("/home");
   }, []);
 };

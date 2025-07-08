@@ -20,16 +20,20 @@ export const EditUnit = ({ id, onClose, onUpdate, Unit }) => {
   useEffect(() => {
     const loadFormData = async (id) => {
       setLoading(true);
-      await ShowUnitByID(id)
-        .then((result) => {
-          setFormData({ ...result.data });
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          setLoading(false);
+      const res = await ShowUnitByID(id);
+      if (!res.success) {
+        toast({
+          title: "خطایی در بارگزاری داده ها",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
         });
+        setLoading(false);
+        return;
+      }
+      setFormData({ ...res.data });
+      setLoading(false);
     };
     loadFormData(id);
   }, [id]);
@@ -77,8 +81,14 @@ export const EditUnit = ({ id, onClose, onUpdate, Unit }) => {
   };
 
   return (
-    <VStack as="form" spacing={2} onSubmit={handleSubmit} dir="rtl">
-      {loading} && <MyLoading />
+    <VStack
+      filter={loading ? "blur(10px)" : ""}
+      as="form"
+      rowGap={8}
+      onSubmit={handleSubmit}
+      dir="rtl"
+      px={10}
+    >
       <FormControl isRequired>
         <HStack>
           <FormLabel width="150px">نام واحد</FormLabel>
@@ -110,6 +120,7 @@ export const EditUnit = ({ id, onClose, onUpdate, Unit }) => {
         colorScheme="blue"
         type="submit"
         isLoading={loading}
+        width="full"
       >
         تایید
       </Button>

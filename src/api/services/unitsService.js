@@ -1,94 +1,39 @@
-import axiosClient from "../axiosClient";
+import { apiRequest } from "../axiosClient";
 import endpoints from "../endpoints";
 
 export const CreateUnit = async (unitData) => {
-  try {
-    const response = await axiosClient.post(endpoints.unit.create, unitData);
-    return response;
-  } catch (error) {
-    if (error.response) {
-      // پاسخ از سمت سرور (۴xx یا ۵xx)
-      throw new Error(error.response.data?.message || "خطای سرور");
-    } else if (error.request) {
-      // درخواست فرستاده شده ولی پاسخی نیومده
-      throw new Error("پاسخی از سرور دریافت نشد");
-    } else {
-      // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
-    }
-  }
+  return await apiRequest({
+    method: "POSTT",
+    url: endpoints.unit.create,
+    data: unitData,
+  });
 };
 
 export const UpdateUnit = async (id, unitData) => {
-  try {
-    const response = await axiosClient.put(endpoints.unit.update(id), unitData);
-    return response;
-  } catch (error) {
-    if (error.response) {
-      // پاسخ از سمت سرور (۴xx یا ۵xx)
-      throw new Error(error.response.data?.message || "خطای سرور");
-    } else if (error.request) {
-      // درخواست فرستاده شده ولی پاسخی نیومده
-      throw new Error("پاسخی از سرور دریافت نشد");
-    } else {
-      // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
-    }
-  }
+  return await apiRequest({
+    method: "PUT",
+    url: endpoints.unit.update(id),
+    data: unitData,
+  });
 };
 
 export const RemoveUnit = async (id) => {
-  try {
-    const response = await axiosClient.delete(endpoints.unit.delete(id));
-    return response;
-  } catch (error) {
-    if (error.response) {
-      // پاسخ از سمت سرور (۴xx یا ۵xx)
-      throw new Error(error.response.data?.message || "خطای سرور");
-    } else if (error.request) {
-      // درخواست فرستاده شده ولی پاسخی نیومده
-      throw new Error("پاسخی از سرور دریافت نشد");
-    } else {
-      // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
-    }
-  }
+  return await apiRequest({
+    method: "DELETE",
+    url: endpoints.unit.delete(id),
+  });
 };
 
 export const ShowUnitByID = async (id) => {
-  try {
-    const response = await axiosClient.get(endpoints.unit.listOne(id));
-    return response;
-  } catch (error) {
-    if (error.response) {
-      // پاسخ از سمت سرور (۴xx یا ۵xx)
-      throw new Error(error.response.data?.message || "خطای سرور");
-    } else if (error.request) {
-      // درخواست فرستاده شده ولی پاسخی نیومده
-      throw new Error("پاسخی از سرور دریافت نشد");
-    } else {
-      // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
-    }
-  }
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.unit.listOne(id),
+  });
 };
 
 export const ShowAllUnits = async (page = 1, limit = 10, search = "") => {
-  try {
-    const response = await axiosClient.get(
-      endpoints.unit.listAll(page, limit, search)
-    );
-    return response;
-  } catch (error) {
-    if (error.response) {
-      // پاسخ از سمت سرور (۴xx یا ۵xx)
-      throw new Error(error.response.data?.message || "خطای سرور");
-    } else if (error.request) {
-      // درخواست فرستاده شده ولی پاسخی نیومده
-      throw new Error("پاسخی از سرور دریافت نشد");
-    } else {
-      // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
-    }
-  }
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.unit.listAll(page, limit, search),
+  });
 };

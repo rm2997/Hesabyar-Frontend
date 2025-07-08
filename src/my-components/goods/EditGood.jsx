@@ -23,9 +23,20 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllUnits()
-        .then((res) => setUnits(res.data))
-        .finally(setLoading(false));
+      const res = await ShowAllUnits();
+      if (!res.success) {
+        toast({
+          title: "خطایی در بارگزاری واحدها",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
+      setUnits(res.data.items);
+      setLoading(false);
     };
     loadData();
   }, []);
@@ -95,9 +106,10 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
     <VStack
       as="form"
       filter={loading ? "blur(10px)" : ""}
-      spacing={2}
+      rowGap={8}
       onSubmit={handleSubmit}
       dir="rtl"
+      px={10}
     >
       <FormControl isRequired>
         <HStack>
@@ -106,7 +118,6 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
             icon={Package2}
             name="goodName"
             title="نام کالا"
-            size={19}
             value={formData.goodName}
             onChange={handleChangeFormData}
           ></MyInputBox>
@@ -114,10 +125,9 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
       </FormControl>
       <FormControl isRequired>
         <HStack>
-          <FormLabel width="80px">واحد</FormLabel>
+          <FormLabel width="100px">واحد</FormLabel>
           <Select
             dir="ltr"
-            w={290}
             placeholder="انتخاب کنید"
             value={formData.goodUnit?.id}
             name="goodUnit"
@@ -162,6 +172,7 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
         colorScheme="blue"
         type="submit"
         isLoading={loading}
+        width="full"
       >
         تایید
       </Button>
