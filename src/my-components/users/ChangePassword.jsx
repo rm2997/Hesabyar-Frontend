@@ -1,4 +1,6 @@
 import {
+  AbsoluteCenter,
+  Box,
   Button,
   Card,
   CardBody,
@@ -9,13 +11,14 @@ import {
   FormLabel,
   HStack,
   Select,
+  Spinner,
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { Info, Key, KeyRound, SquareCheckBig, UserPen } from "lucide-react";
+import { KeyRound, UserPen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ChangePass } from "../../api/services/userService";
-import { useNavigate } from "react-router-dom";
+
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { GetAllUsers } from "../../api/services/userService";
 
@@ -26,9 +29,8 @@ export const ChangePassword = ({ isDesktop, user }) => {
     confirm: "",
   });
   const [users, setUsers] = useState([]);
-  const [formError, setFormError] = useState(null);
+
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const toast = useToast();
 
   useEffect(() => {
@@ -101,91 +103,98 @@ export const ChangePassword = ({ isDesktop, user }) => {
   };
 
   return (
-    <Card m={10} filter={loading ? "blur(10px)" : ""}>
-      <CardHeader
-        bg="#68C15A"
-        borderBottomColor="gray.400"
-        borderBottomWidth="1px"
-        borderTopRadius={5}
-        color="black"
-      >
-        تغییر کلمه عبور
-      </CardHeader>
-      <CardBody borderTopWidth={2}>
-        <VStack
-          align={"stretch"}
-          direction={["column", "row"]}
-          as="form"
-          spacing={8}
-          onSubmit={handleSubmit}
+    <Box>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+      <Card m={10} filter={loading ? "blur(10px)" : ""}>
+        <CardHeader
+          bg="#68C15A"
+          borderBottomColor="gray.400"
+          borderBottomWidth="1px"
+          borderTopRadius={5}
+          color="black"
         >
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="125px">
-                کاربر
-              </FormLabel>
-              <Select
-                disabled={user?.role != "admin"}
-                dir="ltr"
-                placeholder="انتخاب کنید"
-                maxW="397px"
-                name="id"
-                value={formData.id}
-                onChange={(e) => handleChangeUser(e.target.value)}
-              >
-                {users.map((item) => (
-                  <option key={"user" + item.id} value={item.id}>
-                    {item.username}
-                  </option>
-                ))}
-              </Select>
-            </HStack>
-          </FormControl>
-
-          <FormControl isRequired as={Flex}>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                رمز جدید
-              </FormLabel>
-              <MyInputBox
-                type="password"
-                icon={KeyRound}
-                name="new"
-                title="رمز جدید"
-                size={30}
-                value={formData.new}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
-          <FormControl isRequired as={Flex}>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                تکرار رمز
-              </FormLabel>
-              <MyInputBox
-                icon={KeyRound}
-                type="password"
-                name="confirm"
-                title="تکرار رمز"
-                size={30}
-                value={formData.confirm}
-                onChange={handleChangeFormData}
-              />
-            </HStack>
-          </FormControl>
-
-          <Button
-            leftIcon={<UserPen />}
-            colorScheme="blue"
-            type="submit"
-            isLoading={loading}
+          تغییر کلمه عبور
+        </CardHeader>
+        <CardBody borderTopWidth={2}>
+          <VStack
+            align={"stretch"}
+            direction={["column", "row"]}
+            as="form"
+            spacing={8}
+            onSubmit={handleSubmit}
           >
-            تایید
-          </Button>
-        </VStack>
-      </CardBody>
-      <CardFooter></CardFooter>
-    </Card>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="125px">
+                  کاربر
+                </FormLabel>
+                <Select
+                  disabled={user?.role != "admin"}
+                  dir="ltr"
+                  placeholder="انتخاب کنید"
+                  maxW="397px"
+                  name="id"
+                  value={formData.id}
+                  onChange={(e) => handleChangeUser(e.target.value)}
+                >
+                  {users.map((item) => (
+                    <option key={"user" + item.id} value={item.id}>
+                      {item.username}
+                    </option>
+                  ))}
+                </Select>
+              </HStack>
+            </FormControl>
+
+            <FormControl isRequired as={Flex}>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  رمز جدید
+                </FormLabel>
+                <MyInputBox
+                  type="password"
+                  icon={KeyRound}
+                  name="new"
+                  title="رمز جدید"
+                  size={30}
+                  value={formData.new}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+            <FormControl isRequired as={Flex}>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  تکرار رمز
+                </FormLabel>
+                <MyInputBox
+                  icon={KeyRound}
+                  type="password"
+                  name="confirm"
+                  title="تکرار رمز"
+                  size={30}
+                  value={formData.confirm}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+            </FormControl>
+
+            <Button
+              leftIcon={<UserPen />}
+              colorScheme="blue"
+              type="submit"
+              isLoading={loading}
+            >
+              تایید
+            </Button>
+          </VStack>
+        </CardBody>
+        <CardFooter></CardFooter>
+      </Card>
+    </Box>
   );
 };

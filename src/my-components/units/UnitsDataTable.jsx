@@ -20,7 +20,6 @@ import { FilePenLine, Ruler, Trash2 } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { EditUnit } from "./EditUnit";
-import { DeleteUnit } from "./DeleteUnit";
 import { MyAlert } from "../MyAlert";
 import { MyModal } from "../MyModal";
 import { RemoveUnit, ShowAllUnits } from "../../api/services/unitsService";

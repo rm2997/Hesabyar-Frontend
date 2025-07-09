@@ -23,13 +23,19 @@ export const MyModal = ({
     <Modal dir="rtl" onClose={onClose} size={size} isOpen={isOpen}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader bg="#61BB46" color="white" mb="25px">
+        <ModalHeader
+          bg={modalHeader == "خطای دسترسی" ? "red.400" : "#61BB46"}
+          color="white"
+          mb="25px"
+        >
           {modalHeader}
         </ModalHeader>
-        <ModalCloseButton />
+        {modalHeader !== "خطای دسترسی" && <ModalCloseButton />}
         <ModalBody dir="rtl">{children}</ModalBody>
         <ModalFooter>
-          <Button onClick={onClose}>Close</Button>
+          {modalHeader !== "خطای دسترسی" && (
+            <Button onClick={onClose}>بستن</Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

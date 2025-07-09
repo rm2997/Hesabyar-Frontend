@@ -69,26 +69,28 @@ export const ProformaDataTable = ({ isDesktop }) => {
 
   const loadData = async (resetPage = false) => {
     setLoading(true);
-    await ShowUserAllProformas(
+    const res = await ShowUserAllProformas(
       resetPage ? 1 : currentPage,
       itemsPerPage,
       resetPage ? "" : search
-    )
-      .then((res) => {
-        if (!res?.data) return;
-        setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
-        setProformas(res?.data?.items);
-      })
-      .catch((err) => {
-        toast({
-          title: "خطا در دریافت داده‌ها",
-          description: err.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(setLoading(false));
+    );
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      setLoading(false);
+      return;
+    }
+
+    setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
+    setProformas(res?.data?.items);
+
+    setLoading(false);
   };
 
   const handleResetSearch = () => {
@@ -109,7 +111,7 @@ export const ProformaDataTable = ({ isDesktop }) => {
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
 
-  const handleSendCustomerLink = (id) => {
+  const handleSendCustomerLink = async (id) => {
     const proforma = proformas.find((p) => p.id == id);
 
     if (!proforma) {
@@ -142,50 +144,77 @@ export const ProformaDataTable = ({ isDesktop }) => {
       });
       return;
     }
-    SetProformaIsSent(proforma.id)
-      .then((res) => updateProformainList(id, "isSent", "true"))
-      .catch((err) => console.log(err.message));
-    const customer =
-      proforma?.customer?.customerGender +
-      " " +
-      proforma?.customer?.customerFName +
-      " " +
-      proforma?.customer?.customerLName;
+    setLoading(true);
+    const res = await SetProformaIsSent(proforma.id);
+    if (!res.success) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    updateProformainList(id, "isSent", "true");
+    toast({
+      title: "توجه",
+      description:
+        "لینک تاییدیه به شماره موبایل" +
+        " " +
+        proforma.customer.customerMobile +
+        " به نام " +
+        proforma.customer.customerFName +
+        " " +
+        proforma.customer.customerLName +
+        " ارسال شد. ",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
+    // const customer =
+    //   proforma?.customer?.customerGender +
+    //   " " +
+    //   proforma?.customer?.customerFName +
+    //   " " +
+    //   proforma?.customer?.customerLName;
 
-    SendUpdateProformaSms(
-      customer,
-      proforma?.customer?.customerMobile,
-      "www.hesab-yaar.ir/upload-proforma-document?token=" +
-        proforma?.customerLink
-    )
-      .then((res) => {
-        toast({
-          title: "توجه",
-          description:
-            "لینک تاییدیه به شماره موبایل" +
-            " " +
-            proforma.customer.customerMobile +
-            " به نام " +
-            proforma.customer.customerFName +
-            " " +
-            proforma.customer.customerLName +
-            " ارسال شد. " +
-            "www.hesab-yaar.ir/upload-proforma-document?token=" +
-            proforma?.customerLink,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطا بعد از ارسال",
-          description: err.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      );
+    // SendUpdateProformaSms(
+    //   customer,
+    //   proforma?.customer?.customerMobile,
+    //   "www.hesab-yaar.ir/upload-proforma-document?token=" +
+    //     proforma?.customerLink
+    // )
+    //   .then((res) => {
+    //     toast({
+    //       title: "توجه",
+    //       description:
+    //         "لینک تاییدیه به شماره موبایل" +
+    //         " " +
+    //         proforma.customer.customerMobile +
+    //         " به نام " +
+    //         proforma.customer.customerFName +
+    //         " " +
+    //         proforma.customer.customerLName +
+    //         " ارسال شد. " +
+    //         "www.hesab-yaar.ir/upload-proforma-document?token=" +
+    //         proforma?.customerLink,
+    //       status: "success",
+    //       duration: 3000,
+    //       isClosable: true,
+    //     });
+    //   })
+    //   .catch((err) =>
+    //     toast({
+    //       title: "خطا بعد از ارسال",
+    //       description: err.message,
+    //       status: "error",
+    //       duration: 3000,
+    //       isClosable: true,
+    //     })
+    //   );
   };
 
   const updateProformainList = (id, key, value) => {
@@ -194,25 +223,8 @@ export const ProformaDataTable = ({ isDesktop }) => {
     );
   };
 
-  const handleConvertToInvoice = (id) => {
+  const handleConvertToInvoice = async (id) => {
     const proforma = proformas.find((p) => (p.id = id));
-    // const newInvoice = {
-    //   chequeAmount: 0,
-    //   chequeDate: "",
-    //   chequeSerial: 0,
-    //   customer: {},
-    //   description: "",
-    //   id: 0,
-    //   invoiceGoods: [],
-    //   paperMoneyAmount: 0,
-    //   paperMoneySerial: 0,
-    //   paymentStatus: "",
-    //   proforma: {},
-    //   title: "",
-    //   totalAmount: 0,
-    //   trustIssueDate: "",
-    // };
-
     if (!proforma) return;
     const newInvoice = {
       ...proforma,
@@ -221,114 +233,108 @@ export const ProformaDataTable = ({ isDesktop }) => {
       proforma: { ...proforma },
     };
     setLoading(true);
-    CreateInvoice(newInvoice)
-      .then((res) => {
-        if (res.status == 200 || res.status == 201) {
-          ConvertProformaToInvoice(proforma.id).then((res) => {
-            // const newProformas = proformas.filter((p) => p.id != proforma.id);
-            // proforma.isConverted = true;
-            // newProformas.push(proforma);
-            // setProformas(newProformas);
-            updateProformainList(proforma.id, "isConverted", "true");
-          });
-          toast({
-            title: "توجه",
-            description: ` پیش فاکتور شما به فاکتور تبدیل شد`,
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
+    const res = await CreateInvoice(newInvoice);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    await ConvertProformaToInvoice(proforma.id);
+    updateProformainList(proforma.id, "isConverted", "true");
+    toast({
+      title: "توجه",
+      description: ` پیش فاکتور شما به فاکتور تبدیل شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
   };
 
-  const handleGenerateNewLink = (id) => {
+  const handleGenerateNewLink = async (id) => {
     setSelectedID(id);
     setLoading(true);
-    GenerateNewToken(id)
-      .then((res) => {
-        toast({
-          title: "توجه",
-          description: ` لینک جدید ساخته شد می توانید آن را دوباره به مشتری ارسال کنید`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        setProformas((prev) =>
-          prev.map((p) =>
-            p.id == id
-              ? {
-                  ...p,
-                  customerLink: res.data,
-                  isSent: false,
-                  approvedFile: "",
-                }
-              : p
-          )
-        );
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(setLoading(false));
+    const res = await GenerateNewToken(id);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+
+    toast({
+      title: "توجه",
+      description: ` لینک جدید ساخته شد می توانید آن را دوباره به مشتری ارسال کنید`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setProformas((prev) =>
+      prev.map((p) =>
+        p.id == id
+          ? {
+              ...p,
+              customerLink: res.data,
+              isSent: false,
+              approvedFile: "",
+            }
+          : p
+      )
+    );
+    setLoading(false);
   };
 
-  const handleDeleteProforma = (id) => {
+  const handleDeleteProforma = async (id) => {
     setSelectedID(id);
     setLoading(true);
-    RemoveProforma(id)
-      .then(() => {
-        const newProformas = proformas.filter((p) => p.id != id);
-        setProformas(newProformas);
-        toast({
-          title: "توجه",
-          description: `اطلاعات پیش فاکتور شما حذف شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
-    // setModalHeader("آیا از حذف پیش فاکتور زیر اطمینان دارید؟");
-    // setModalContetnt(<DeleteProforma id={id} onClose={AlertOnClose} />);
+    const res = await RemoveProforma(id);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    const newProformas = proformas.filter((p) => p.id != id);
+    setProformas(newProformas);
+    toast({
+      title: "توجه",
+      description: `اطلاعات پیش فاکتور شما حذف شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
   };
 
   const handleEditProforma = (id) => {
     if (id === 0) return;
     setSelectedID(id);
-    // setModalHeader("ویرایش پیش فاکتور");
-    // setModalContetnt(<EditProforma id={id} onClose={onClose} />);
     onOpen();
   };
 
   if (proformas)
     return (
-      <Flex direction="column" height="100vh">
+      <Flex
+        filter={loading ? "blur(10px)" : ""}
+        direction="column"
+        height="100vh"
+      >
         <SearchBar
           search={search}
           setSearch={setSearch}
@@ -337,11 +343,7 @@ export const ProformaDataTable = ({ isDesktop }) => {
           userInfo="جستجوی پیش فاکتور"
         />
         <Box flex="1" overflowY="auto" p={5}>
-          <SimpleGrid
-            mr={1}
-            columns={{ base: 1, md: 2, lg: 5 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
-            spacing={3}
-          >
+          <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
             {proformas.map((row) => (
               <Card
                 maxW="370px"

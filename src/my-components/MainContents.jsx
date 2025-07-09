@@ -1,5 +1,5 @@
 // components/MainContent.jsx
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 
 import { NewProforma } from "../pages/proformas/NewProforma";
 import { useContext, useEffect, useState } from "react";
@@ -24,6 +24,9 @@ import { Logout } from "./Logout";
 import { ChangePassword } from "./users/ChangePassword";
 import { ChangePasswordByUser } from "./users/ChangePasswordByUser";
 import { UserContext } from "../contexts/UserContext";
+import { MyModal } from "./MyModal";
+import { clearTokens } from "../api/tokenUtils";
+import { useNavigate } from "react-router-dom";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -59,7 +62,9 @@ const validContents = [
 export const MainContents = ({ activeContent, isDesktop }) => {
   const [pageTitle, setPageTitle] = useState("");
   const [shouldRender, setShouldRender] = useState(null);
-  const { user } = useContext(UserContext);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const findActiveContent = (item) => {
@@ -127,9 +132,37 @@ export const MainContents = ({ activeContent, isDesktop }) => {
       }
     };
 
+    const checkUserExp = () => {
+      if (!user) return;
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      if (user.exp < currentTimestamp) setSessionExpired(true);
+    };
+
+    checkUserExp();
     findActiveContent(activeContent);
   }, [activeContent]);
 
+  if (sessionExpired) {
+    return (
+      <MyModal isOpen={sessionExpired} modalHeader="خطای دسترسی" size="2xl">
+        <Flex direction="column" rowGap={16}>
+          <Heading mx="auto" size="md" fontFamily="Vaziri">
+            نشست منقضی شده است، لطفا مجددا وارد سیستم شوید
+          </Heading>
+          <Button
+            colorScheme="pink"
+            onClick={() => {
+              clearTokens();
+              setUser(null);
+              navigate("/login");
+            }}
+          >
+            خروج
+          </Button>
+        </Flex>
+      </MyModal>
+    );
+  }
   return (
     <Flex w="98%" m={1} bg="#efefef" direction="column" height="100vh">
       {/* <Card w="98%" m={1} bg="#efefef"> */}

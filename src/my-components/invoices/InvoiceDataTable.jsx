@@ -112,7 +112,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
     );
   };
 
-  const handleSendCustomerLink = (id) => {
+  const handleSendCustomerLink = async (id) => {
     const invoice = invoices.find((i) => i.id == id);
 
     if (!invoice) {
@@ -145,49 +145,64 @@ export const InvoiceDataTable = ({ isDesktop }) => {
       });
       return;
     }
-    SetInvoiceIsSent(invoice.id)
-      .then((res) => updateInvoiceInList(id, "isSent", "true"))
-      .catch((err) => console.log(err.message));
-    const customer =
-      invoice?.customer?.customerGender +
-      " " +
-      invoice?.customer?.customerFName +
-      " " +
-      invoice?.customer?.customerLName;
+    setLoading(true);
+    const res = await SetInvoiceIsSent(invoice.id);
+    if (!res.success) {
+      toast({
+        title: "خطا بعد از ارسال",
+        description: <res className="error"></res>,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    updateInvoiceInList(id, "isSent", "true");
+    toast({
+      title: "توجه",
+      description:
+        "لینک تاییدیه به شماره موبایل" +
+        " " +
+        invoice.customer.customerMobile +
+        " به نام " +
+        invoice.customer.customerFName +
+        " " +
+        invoice.customer.customerLName +
+        " ارسال شد. ",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
 
-    SendUpdateInvoiceSms(
-      customer,
-      invoice?.customer?.customerMobile,
-      "www.hesab-yaar.ir/upload-invoice-document?token=" + invoice?.customerLink
-    )
-      .then((res) => {
-        toast({
-          title: "توجه",
-          description:
-            "لینک تاییدیه به شماره موبایل" +
-            " " +
-            invoice.customer.customerMobile +
-            " به نام " +
-            invoice.customer.customerFName +
-            " " +
-            invoice.customer.customerLName +
-            " ارسال شد. " +
-            "www.hesab-yaar.ir/upload-invoice-document?token=" +
-            invoice?.customerLink,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطا بعد از ارسال",
-          description: err.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      );
+    // const customer =
+    //   invoice?.customer?.customerGender +
+    //   " " +
+    //   invoice?.customer?.customerFName +
+    //   " " +
+    //   invoice?.customer?.customerLName;
+
+    // SendUpdateInvoiceSms(
+    //   customer,
+    //   invoice?.customer?.customerMobile,
+    //   "www.hesab-yaar.ir/upload-invoice-document?token=" + invoice?.customerLink
+    // ).then((res) => {
+    //   toast({
+    //     title: "توجه",
+    //     description:
+    //       "لینک تاییدیه به شماره موبایل" +
+    //       " " +
+    //       invoice.customer.customerMobile +
+    //       " به نام " +
+    //       invoice.customer.customerFName +
+    //       " " +
+    //       invoice.customer.customerLName +
+    //       " ارسال شد. ",
+    //     status: "success",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    // });
   };
 
   const handleDeleteInvoice = (id) => {
@@ -411,7 +426,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
                           setSelectedID(row.id);
                           setDialogGears({
                             title: "ارسال لینک به مشتری",
-                            text: `آیا می خواهید لینک به شماره ${row.customer.customerPhone} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                            text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
                             callBack: handleSendCustomerLink,
                           });
 

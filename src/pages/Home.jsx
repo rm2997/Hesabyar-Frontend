@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Divider,
   Drawer,
   DrawerBody,
@@ -13,6 +14,7 @@ import {
   Image,
   Img,
   Link,
+  LinkBox,
   SimpleGrid,
   Text,
   useBreakpointValue,
@@ -573,7 +575,7 @@ export const Home = () => {
             spacing={50}
             color="white"
             p={10}
-            columns={{ base: 1, md: 2, lg: 4 }}
+            columns={{ base: 1, md: 3, lg: 5 }}
           >
             <VStack
               textAlign="right"
@@ -634,14 +636,42 @@ export const Home = () => {
                 ارائه بهترین خدمات به شما مشتریان گرامی می‌باشد
               </Text>
             </VStack>
+
+            <VStack textAlign="right" alignItems="end">
+              <Box
+                bg="gray"
+                boxSize="100px"
+                maxH="300px"
+                mb={8}
+                mr="auto"
+                ml="auto"
+              >
+                <LinkBox
+                  referrerPolicy="origin"
+                  target="_blank"
+                  href="https://trustseal.enamad.ir/?id=621964&Code=QZvNJGhh1flyIQ2g8Y93bitVDZpUfM6X"
+                >
+                  <Image
+                    referrerPolicy="origin"
+                    src="https://trustseal.enamad.ir/logo.aspx?id=621964&Code=QZvNJGhh1flyIQ2g8Y93bitVDZpUfM6X"
+                    alt=""
+                    style={{ cursor: "pointer" }}
+                    code="QZvNJGhh1flyIQ2g8Y93bitVDZpUfM6X"
+                  />
+                </LinkBox>
+              </Box>
+              <Text fontWeight="medium" textAlign="right">
+                شرکت آسانسور علیایی دارای نشان نماد می‌باشد
+              </Text>
+            </VStack>
           </SimpleGrid>
 
-          <Box width="full" bg="#2E2E2E" color="gray" textAlign="center">
+          <Box width="full" bg="black" color="gray.500" textAlign="center">
             <Divider />
-            <Heading fontFamily="Vaziri" size="xs" m={2}>
+            <Heading fontFamily="Aseman" fontSize="lg" m={2}>
               کلیه حقوق مادی و معنی متعلق به گروه صنعتی علیایی می باشد
             </Heading>
-            <Text fontSize="xs" fontFamily="Aseman" size="md" m={2}>
+            <Text fontSize="md" fontFamily="Aseman" m={2}>
               طراحی و توسعه داده شده توسط رضا میرعسگری - 09125213288
             </Text>
           </Box>

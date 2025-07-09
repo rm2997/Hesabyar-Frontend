@@ -1,4 +1,6 @@
 import {
+  AbsoluteCenter,
+  Box,
   Button,
   Card,
   CardBody,
@@ -8,6 +10,7 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  Spinner,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -29,7 +32,6 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
     confirm: "",
   });
   const [userData, setUserData] = useState([]);
-  const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const toast = useToast();
@@ -45,7 +47,7 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
         if (!res.success) {
           toast({
             title: "خطایی رخ داد",
-            description: `${res.error}`,
+            description: res.error,
             status: "error",
             duration: 3000,
             isClosable: true,
@@ -61,7 +63,7 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
       } catch (error) {
         toast({
           title: "خطایی رخ داد",
-          description: `${error.message}`,
+          description: error.message,
           status: "error",
           duration: 3000,
           isClosable: true,
@@ -79,7 +81,7 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
     if (!checkPass.success) {
       toast({
         title: "خطایی رخ داد",
-        description: `${checkPass.message}`,
+        description: checkPass.error,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -166,100 +168,107 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
   };
 
   return (
-    <Card m={10}>
-      <CardHeader
-        bg="#68C15A"
-        borderBottomColor="gray.400"
-        borderBottomWidth="1px"
-        borderTopRadius={5}
-        color="black"
-      >
-        تغییر کلمه عبور
-      </CardHeader>
-      <CardBody borderTopWidth={2}>
-        <VStack
-          align={"stretch"}
-          direction={["column", "row"]}
-          as="form"
-          spacing={8}
-          onSubmit={handleSubmit}
+    <Box>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+      <Card m={10}>
+        <CardHeader
+          bg="#68C15A"
+          borderBottomColor="gray.400"
+          borderBottomWidth="1px"
+          borderTopRadius={5}
+          color="black"
         >
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="137px">
-                نام کاربری
-              </FormLabel>
-              <MyInputBox
-                icon={User}
-                isReadOnly
-                type="text"
-                name="username"
-                width="400px"
-                placeholder="نام کاربری"
-                value={userData.username}
-              />
-            </HStack>
-          </FormControl>
-          <FormControl isRequired as={Flex}>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                کلمه عبور فعلی
-              </FormLabel>
-              <MyInputBox
-                type="password"
-                icon={Key}
-                name="current"
-                title="کلمه عبور فعلی"
-                size={30}
-                value={formData.current}
-                onChange={handleChangeFormData}
-              />
-            </HStack>
-          </FormControl>
-          <FormControl isRequired as={Flex}>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                کلمه عبور جدید
-              </FormLabel>
-              <MyInputBox
-                type="password"
-                icon={KeyRound}
-                name="new"
-                title="کلمه عبور جدید"
-                size={30}
-                value={formData.new}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
-          <FormControl isRequired as={Flex}>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                تکرار کلمه عبور
-              </FormLabel>
-              <MyInputBox
-                icon={KeyRound}
-                type="password"
-                name="confirm"
-                title="تکرار کلمه عبور"
-                size={30}
-                value={formData.confirm}
-                onChange={handleChangeFormData}
-              />
-            </HStack>
-          </FormControl>
-
-          <Button
-            leftIcon={<SquareCheckBig />}
-            colorScheme="blue"
-            type="submit"
-            isLoading={loading}
+          تغییر کلمه عبور
+        </CardHeader>
+        <CardBody borderTopWidth={2}>
+          <VStack
+            align={"stretch"}
+            direction={["column", "row"]}
+            as="form"
+            spacing={8}
+            onSubmit={handleSubmit}
           >
-            تایید
-          </Button>
-        </VStack>
-      </CardBody>
-      <CardFooter></CardFooter>
-    </Card>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="137px">
+                  نام کاربری
+                </FormLabel>
+                <MyInputBox
+                  icon={User}
+                  isReadOnly
+                  type="text"
+                  name="username"
+                  width="400px"
+                  placeholder="نام کاربری"
+                  value={userData.username}
+                />
+              </HStack>
+            </FormControl>
+            <FormControl isRequired as={Flex}>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  کلمه عبور فعلی
+                </FormLabel>
+                <MyInputBox
+                  type="password"
+                  icon={Key}
+                  name="current"
+                  title="کلمه عبور فعلی"
+                  size={30}
+                  value={formData.current}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+            </FormControl>
+            <FormControl isRequired as={Flex}>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  کلمه عبور جدید
+                </FormLabel>
+                <MyInputBox
+                  type="password"
+                  icon={KeyRound}
+                  name="new"
+                  title="کلمه عبور جدید"
+                  size={30}
+                  value={formData.new}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+            <FormControl isRequired as={Flex}>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  تکرار کلمه عبور
+                </FormLabel>
+                <MyInputBox
+                  icon={KeyRound}
+                  type="password"
+                  name="confirm"
+                  title="تکرار کلمه عبور"
+                  size={30}
+                  value={formData.confirm}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+            </FormControl>
+
+            <Button
+              leftIcon={<SquareCheckBig />}
+              colorScheme="blue"
+              type="submit"
+              isLoading={loading}
+            >
+              تایید
+            </Button>
+          </VStack>
+        </CardBody>
+        <CardFooter></CardFooter>
+      </Card>
+    </Box>
   );
 };

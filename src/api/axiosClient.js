@@ -1,5 +1,5 @@
 import axios from "axios";
-import { loadTokens } from "./tokenUtils";
+import { clearTokens, loadTokens } from "./tokenUtils";
 
 //const BASE_URL = "http://localhost:3001";
 const BASE_URL =
@@ -26,10 +26,10 @@ axiosClient.interceptors.response.use(
   (response) => response,
   async (err) => {
     if (err.response.status === 401) {
-      //clearTokens();
-      // if (window.location.href.endsWith("/login") === false)
-      //   window.location.href = "/login";
-      //return Promise.reject(err);
+      clearTokens();
+      if (window.location.href.endsWith("/login") === false)
+        window.location.href = "/login";
+      return Promise.reject(err);
     }
     return Promise.reject(err);
   }
@@ -50,6 +50,7 @@ export const apiRequest = async ({
       params,
       headers,
     });
+
     return {
       success: true,
       data: response.data,
@@ -63,7 +64,10 @@ export const apiRequest = async ({
       // سرور پاسخ داده ولی با وضعیت خطا
       statusCode = error.response.status;
       serverErrorData = error.response.data;
-      errorMessage = serverErrorData?.message || `خطا با کد ${statusCode}`;
+      if (statusCode === 401)
+        errorMessage =
+          "نشست شما منقضی شده است یا شما دسترسی به این قسمت را ندارید، لطفا مجددا لاگین کنید";
+      else errorMessage = serverErrorData?.message || `خطا با کد ${statusCode}`;
     } else if (error.request) {
       // درخواست ارسال شده ولی پاسخی دریافت نشده
       errorMessage =

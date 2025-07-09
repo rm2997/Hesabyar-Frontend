@@ -9,7 +9,6 @@ import {
 import { Info, Ruler, SquareCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ShowUnitByID, UpdateUnit } from "../../api/services/unitsService";
-import { MyLoading } from "../MyLoading";
 import { MyInputBox } from "../MyInputBox";
 
 export const EditUnit = ({ id, onClose, onUpdate, Unit }) => {
@@ -48,36 +47,33 @@ export const EditUnit = ({ id, onClose, onUpdate, Unit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await UpdateUnit(formData.id, formData)
-      .then((result) => {
-        console.log({ ...result });
-        onUpdate(result.data);
-        setFormData({
-          unitName: "",
-          unitInfo: "",
-        });
-
-        toast({
-          title: "ثبت شد",
-          description: `اطلاعات واحد بروزرسانی شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        onClose();
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+    const result = await UpdateUnit(formData.id, formData);
+    if (!result.status) {
+      toast({
+        title: "خطایی رخ داد",
+        description: result.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
+      setLoading(false);
+      return;
+    }
+    onUpdate(result.data);
+    setFormData({
+      unitName: "",
+      unitInfo: "",
+    });
+
+    toast({
+      title: "ثبت شد",
+      description: `اطلاعات واحد بروزرسانی شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    onClose();
+    setLoading(false);
   };
 
   return (

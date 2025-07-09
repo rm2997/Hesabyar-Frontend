@@ -1,7 +1,5 @@
 import {
-  AbsoluteCenter,
   Box,
-  Button,
   Card,
   CardBody,
   CardFooter,
@@ -10,11 +8,8 @@ import {
   Flex,
   HStack,
   Icon,
-  IconButton,
-  Input,
   Link,
   SimpleGrid,
-  Spinner,
   Stack,
   Text,
   Tooltip,
@@ -22,13 +17,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import {
-  CircleX,
-  FilePenLine,
-  Search,
-  Trash2,
-  WalletCards,
-} from "lucide-react";
+import { FilePenLine, Trash2, WalletCards } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { EditGood } from "./EditGood";
@@ -134,10 +123,6 @@ export const GoodsDataTable = ({ isDesktop }) => {
         })
       )
       .finally(setLoading(false));
-  };
-
-  const handleEditGood = (id) => {
-    if (selectedID === 0) return;
   };
 
   return (

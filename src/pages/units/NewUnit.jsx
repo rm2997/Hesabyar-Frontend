@@ -10,10 +10,9 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { IdCard, Info, Ruler, SquareCheckBig } from "lucide-react";
+import { Info, Ruler, SquareCheckBig } from "lucide-react";
 import { useState } from "react";
 import { CreateUnit } from "../../api/services/unitsService";
-import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
 
 export const NewUnit = ({ isDesktop }) => {

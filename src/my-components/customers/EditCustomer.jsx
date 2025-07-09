@@ -51,42 +51,40 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await UpdateCustomer(formData.id, formData)
-      .then((result) => {
-        console.log({ ...result });
-        onUpdate(id, result.data);
-        setFormData({
-          customerFName: "",
-          customerLName: "",
-          customerNationalCode: "",
-          customerPhone: "",
-          customerMobile: "",
-          customerAddress: "",
-          customerPostalCode: "",
-          customerGender: "",
-        });
-
-        toast({
-          title: "ثبت شد",
-          description: `اطلاعات مشتری بروزرسانی شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        onClose();
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+    const result = await UpdateCustomer(formData.id, formData);
+    if (!result.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: result.error,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
       });
+      setLoading(false);
+      return;
+    }
+
+    onUpdate(id, result.data);
+    setFormData({
+      customerFName: "",
+      customerLName: "",
+      customerNationalCode: "",
+      customerPhone: "",
+      customerMobile: "",
+      customerAddress: "",
+      customerPostalCode: "",
+      customerGender: "",
+    });
+
+    toast({
+      title: "ثبت شد",
+      description: `اطلاعات مشتری بروزرسانی شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    onClose();
+    setLoading(false);
   };
 
   return (
