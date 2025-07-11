@@ -8,7 +8,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 export const MyModal = ({
   children,
@@ -26,7 +26,7 @@ export const MyModal = ({
         <ModalHeader
           bg={modalHeader == "خطای دسترسی" ? "red.400" : "#61BB46"}
           color="white"
-          mb="25px"
+          mb="10px"
         >
           {modalHeader}
         </ModalHeader>

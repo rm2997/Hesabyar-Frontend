@@ -1,4 +1,6 @@
 import {
+  AbsoluteCenter,
+  Box,
   Button,
   Card,
   CardBody,
@@ -10,6 +12,7 @@ import {
   HStack,
   Select,
   SimpleGrid,
+  Spinner,
   Switch,
   useToast,
 } from "@chakra-ui/react";
@@ -93,17 +96,8 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
   };
 
   return (
-    <Card m={10} filter={loading ? "blur(10px)" : ""}>
-      <CardHeader
-        bg="#68C15A"
-        borderBottomColor="gray.400"
-        borderBottomWidth="1px"
-        borderTopRadius={5}
-        color="black"
-      >
-        ویرایش کاربر
-      </CardHeader>
-      <CardBody borderTopWidth={2}>
+    <Flex m={1} direction="column">
+      <Box filter={loading ? "blur(10px)" : ""}>
         <Flex direction="column" gap={10} as="form" onSubmit={handleSubmit}>
           <SimpleGrid
             columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
@@ -217,8 +211,12 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
             تایید
           </Button>
         </Flex>
-      </CardBody>
-      <CardFooter></CardFooter>
-    </Card>
+      </Box>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+    </Flex>
   );
 };

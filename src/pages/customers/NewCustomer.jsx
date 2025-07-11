@@ -79,22 +79,25 @@ export const NewCustomer = ({ isDesktop }) => {
 
   return (
     <Box>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
-      <Card m={10} filter={loading ? "blur(10px)" : ""}>
-        <CardHeader
-          bg="#68C15A"
-          borderBottomColor="gray.400"
-          borderBottomWidth="1px"
-          borderTopRadius={5}
-          color="black"
-        >
-          ثبت مشتری جدید
-        </CardHeader>
-        <CardBody borderTopWidth={2}>
+      <Card
+        h="105vh"
+        borderWidth={1}
+        m={1}
+        borderColor="gray.200"
+        filter={loading ? "blur(10px)" : ""}
+      >
+        {isDesktop && (
+          <CardHeader
+            bg="#68C15A"
+            borderBottomColor="gray.400"
+            borderBottomWidth="1px"
+            borderTopRadius={5}
+            color="black"
+          >
+            ثبت مشتری جدید
+          </CardHeader>
+        )}
+        <CardBody>
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
             <SimpleGrid
               columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
@@ -128,10 +131,9 @@ export const NewCustomer = ({ isDesktop }) => {
                     icon={IdCard}
                     name="customerFName"
                     title="نام"
-                    size={19}
                     value={formData.customerFName}
                     onChange={handleChangeFormData}
-                  ></MyInputBox>
+                  />
                 </HStack>
               </FormControl>
 
@@ -144,14 +146,13 @@ export const NewCustomer = ({ isDesktop }) => {
                     icon={IdCard}
                     name="customerLName"
                     title="نام خانوادگی"
-                    size={19}
                     value={formData.customerLName}
                     onChange={handleChangeFormData}
-                  ></MyInputBox>
+                  />
                 </HStack>
               </FormControl>
 
-              <FormControl isRequired>
+              <FormControl>
                 <HStack>
                   <FormLabel hidden={!isDesktop} width="150px">
                     شماره ملی
@@ -162,10 +163,9 @@ export const NewCustomer = ({ isDesktop }) => {
                     icon={IdCard}
                     name="customerNationalCode"
                     title="شماره ملی"
-                    size={19}
                     value={formData.customerNationalCode}
                     onChange={handleChangeFormData}
-                  ></MyInputBox>
+                  />
                 </HStack>
               </FormControl>
 
@@ -195,7 +195,6 @@ export const NewCustomer = ({ isDesktop }) => {
                     icon={Smartphone}
                     name="customerMobile"
                     title="شماره موبایل"
-                    size={19}
                     value={formData.customerMobile}
                     onChange={handleChangeFormData}
                   ></MyInputBox>
@@ -211,7 +210,6 @@ export const NewCustomer = ({ isDesktop }) => {
                     icon={Mailbox}
                     name="customerPostalCode"
                     title="کد پستی"
-                    size={19}
                     value={formData.customerPostalCode}
                     onChange={handleChangeFormData}
                   ></MyInputBox>
@@ -247,6 +245,17 @@ export const NewCustomer = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+            color="red.500"
+          />
+        </AbsoluteCenter>
+      )}
     </Box>
   );
 };

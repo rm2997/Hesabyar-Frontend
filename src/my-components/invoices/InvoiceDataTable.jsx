@@ -485,7 +485,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
         </Box>
         <Box
           position="sticky"
-          bottom="68px"
+          bottom="0"
           bg="#efefef"
           p={1}
           zIndex="1"

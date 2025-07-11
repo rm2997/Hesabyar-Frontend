@@ -1,4 +1,5 @@
 import {
+  AbsoluteCenter,
   Box,
   Card,
   CardBody,
@@ -10,6 +11,7 @@ import {
   Icon,
   Link,
   SimpleGrid,
+  Spinner,
   Stack,
   Text,
   Tooltip,
@@ -126,143 +128,160 @@ export const GoodsDataTable = ({ isDesktop }) => {
   };
 
   return (
-    <Flex
-      filter={loading ? "blur(10px)" : ""}
-      direction="column"
-      height="100vh"
-    >
-      <SearchBar
-        search={search}
-        setSearch={setSearch}
-        handleResetSearch={handleResetSearch}
-        loadData={loadData}
-        userInfo="جستجوی کالا"
-      />
-
-      <Box flex="1" overflowY="auto" p={5}>
-        <Flex direction="column" gap={4}>
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
-            {goodsData.map((row) => (
-              <Card
-                borderTopRadius={5}
-                borderWidth={1}
-                _hover={{ borderColor: "orange" }}
-              >
-                <CardHeader bg="green.500" borderTopRadius={5} color="white">
-                  <HStack>
-                    <WalletCards color="purple" />
-                    <Tooltip label={row.goodName}>
-                      <Text mr="auto">
-                        {row.goodName.length > 25
-                          ? row.goodName.substring(0, 25) + "..."
-                          : row.goodName}
-                      </Text>
-                    </Tooltip>
-                  </HStack>
-                </CardHeader>
-                <CardBody>
-                  <VStack align={"stretch"} spacing={2}>
-                    <HStack>
-                      <Text> واحد :</Text>
-                      <Text mr="auto">{row.goodUnit?.unitName}</Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text> قیمت کالا :</Text>
-                      <Text mr="auto">{row.goodPrice}</Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>توضیحات :</Text>
-                      <Text mr="auto">
-                        {row.goodInfo.length > 15
-                          ? row.goodInfo.substring(0, 12) + "..."
-                          : row.goodInfo}
-                      </Text>
-                    </HStack>
-                  </VStack>
-                </CardBody>
-                <CardFooter borderBottomRadius={5} bg="gray.200">
-                  <Stack
-                    direction={["row"]}
-                    spacing={2}
-                    align={"stretch"}
-                    mr="auto"
-                  >
-                    <Link
-                      _hover={{
-                        color: "orange",
-                      }}
-                      color="blue.600"
-                      onClick={(e) => {
-                        setSelectedID(row.id);
-                        setDialogGears({
-                          title: "ویرایش کالا",
-                          text: "",
-                          callBack: null,
-                        });
-                        onOpen();
-                      }}
-                    >
-                      <Tooltip label="ویرایش">
-                        <Icon w={6} h={6} as={FilePenLine} />
-                      </Tooltip>
-                    </Link>
-                    <Link
-                      _hover={{ color: "#ffd54f" }}
-                      color="red.600"
-                      onClick={(e) => {
-                        setSelectedID(row.id);
-                        setDialogGears({
-                          title: "حذف کالا",
-                          text: "آیا واقعا می خواهید این کالا را حذف کنید؟",
-                          callBack: handleDeleteGood,
-                        });
-                        setIsDialogOpen(true);
-                      }}
-                    >
-                      <Tooltip label="حذف">
-                        <Icon w={6} h={6} as={Trash2} />
-                      </Tooltip>
-                    </Link>
-                  </Stack>
-                </CardFooter>
-              </Card>
-            ))}
-          </SimpleGrid>
-        </Flex>
-      </Box>
-      <Box
-        position="sticky"
-        bottom="80px"
-        bg="#efefef"
-        p={1}
-        zIndex="1"
-        borderTopColor="gray.400"
-        borderTopWidth="1px"
-      >
-        <Flex justify="center" align="center">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
-        </Flex>
-      </Box>
-      <MyModal modalHeader="مشاهده کالا" isOpen={isOpen} onClose={onClose}>
-        <EditGood
-          id={selectedID}
-          onClose={onClose}
-          onUpdate={updateGoodInList}
-          Good={findGoodFromList(selectedID)}
+    <Box>
+      <Flex filter={loading ? "blur(10px)" : ""} direction="column">
+        <SearchBar
+          search={search}
+          setSearch={setSearch}
+          handleResetSearch={handleResetSearch}
+          loadData={loadData}
+          userInfo="جستجوی کالا"
         />
-      </MyModal>
-      <MyAlert
-        AlertHeader={dialogGears.title}
-        AlertMessage={dialogGears.text}
-        isOpen={isDialogOpen}
-        onClose={handleDialogClose}
-      />
-    </Flex>
+
+        <Box flex="1" overflowY="auto" p={1}>
+          <Flex direction="column" gap={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+              {goodsData.map((row) => (
+                <Card
+                  borderTopRadius={5}
+                  borderWidth={1}
+                  _hover={{ borderColor: "orange" }}
+                >
+                  <CardHeader
+                    bg="green.500"
+                    borderTopRadius={5}
+                    color="white"
+                    _hover={{ cursor: "pointer" }}
+                    onClick={(e) => {
+                      setSelectedID(row.id);
+                      setDialogGears({
+                        title: "ویرایش کالا",
+                        text: "",
+                        callBack: null,
+                      });
+                      onOpen();
+                    }}
+                  >
+                    <HStack>
+                      <WalletCards color="purple" />
+                      <Tooltip label={row.goodName}>
+                        <Text mr="auto">
+                          {row.goodName.length > 25
+                            ? row.goodName.substring(0, 25) + "..."
+                            : row.goodName}
+                        </Text>
+                      </Tooltip>
+                    </HStack>
+                  </CardHeader>
+                  <CardBody>
+                    <VStack align={"stretch"} spacing={2}>
+                      <HStack>
+                        <Text> واحد :</Text>
+                        <Text mr="auto">{row.goodUnit?.unitName}</Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> قیمت کالا :</Text>
+                        <Text mr="auto">{row.goodPrice}</Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>توضیحات :</Text>
+                        <Text mr="auto">
+                          {row.goodInfo.length > 15
+                            ? row.goodInfo.substring(0, 12) + "..."
+                            : row.goodInfo}
+                        </Text>
+                      </HStack>
+                    </VStack>
+                  </CardBody>
+                  <CardFooter borderBottomRadius={5} bg="gray.200">
+                    <Stack
+                      direction={["row"]}
+                      spacing={2}
+                      align={"stretch"}
+                      mr="auto"
+                    >
+                      <Link
+                        _hover={{
+                          color: "orange",
+                        }}
+                        color="blue.600"
+                        onClick={(e) => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "ویرایش کالا",
+                            text: "",
+                            callBack: null,
+                          });
+                          onOpen();
+                        }}
+                      >
+                        <Tooltip label="ویرایش">
+                          <Icon w={6} h={6} as={FilePenLine} />
+                        </Tooltip>
+                      </Link>
+                      <Link
+                        _hover={{ color: "#ffd54f" }}
+                        color="red.600"
+                        onClick={(e) => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "حذف کالا",
+                            text: "آیا واقعا می خواهید این کالا را حذف کنید؟",
+                            callBack: handleDeleteGood,
+                          });
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        <Tooltip label="حذف">
+                          <Icon w={6} h={6} as={Trash2} />
+                        </Tooltip>
+                      </Link>
+                    </Stack>
+                  </CardFooter>
+                </Card>
+              ))}
+            </SimpleGrid>
+          </Flex>
+        </Box>
+        <Box
+          position="sticky"
+          bottom="69px"
+          bg="#efefef"
+          p={1}
+          zIndex="1"
+          borderTopColor="gray.400"
+          borderTopWidth="1px"
+        >
+          <Flex justify="center" align="center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </Flex>
+        </Box>
+        <MyModal modalHeader="مشاهده کالا" isOpen={isOpen} onClose={onClose}>
+          <EditGood
+            id={selectedID}
+            onClose={onClose}
+            onUpdate={updateGoodInList}
+            Good={findGoodFromList(selectedID)}
+          />
+        </MyModal>
+        <MyAlert
+          AlertHeader={dialogGears.title}
+          AlertMessage={dialogGears.text}
+          isOpen={isDialogOpen}
+          onClose={handleDialogClose}
+        />
+      </Flex>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+    </Box>
   );
 };

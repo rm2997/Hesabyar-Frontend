@@ -1,8 +1,11 @@
 import {
+  AbsoluteCenter,
+  Box,
   Button,
   FormControl,
   FormLabel,
   HStack,
+  Spinner,
   useToast,
   VStack,
 } from "@chakra-ui/react";
@@ -77,49 +80,56 @@ export const EditUnit = ({ id, onClose, onUpdate, Unit }) => {
   };
 
   return (
-    <VStack
-      filter={loading ? "blur(10px)" : ""}
-      as="form"
-      rowGap={8}
-      onSubmit={handleSubmit}
-      dir="rtl"
-      px={10}
-    >
-      <FormControl isRequired>
-        <HStack>
-          <FormLabel width="150px">نام واحد</FormLabel>
-          <MyInputBox
-            icon={Ruler}
-            name="unitName"
-            title="نام واحد"
-            size={19}
-            value={formData.unitName}
-            onChange={handleChangeFormData}
-          ></MyInputBox>
-        </HStack>
-      </FormControl>
-      <FormControl isRequired>
-        <HStack>
-          <FormLabel width="150px">توضیحات</FormLabel>
-          <MyInputBox
-            icon={Info}
-            name="unitInfo"
-            title="توضیحات"
-            size={19}
-            value={formData.unitInfo}
-            onChange={handleChangeFormData}
-          ></MyInputBox>
-        </HStack>
-      </FormControl>
-      <Button
-        leftIcon={<SquareCheckBig />}
-        colorScheme="blue"
-        type="submit"
-        isLoading={loading}
-        width="full"
+    <Box>
+      <VStack
+        filter={loading ? "blur(10px)" : ""}
+        as="form"
+        rowGap={8}
+        onSubmit={handleSubmit}
+        dir="rtl"
+        px={2}
       >
-        تایید
-      </Button>
-    </VStack>
+        <FormControl isRequired>
+          <HStack>
+            <FormLabel width="150px">نام واحد</FormLabel>
+            <MyInputBox
+              icon={Ruler}
+              name="unitName"
+              title="نام واحد"
+              size={19}
+              value={formData.unitName}
+              onChange={handleChangeFormData}
+            ></MyInputBox>
+          </HStack>
+        </FormControl>
+        <FormControl isRequired>
+          <HStack>
+            <FormLabel width="150px">توضیحات</FormLabel>
+            <MyInputBox
+              icon={Info}
+              name="unitInfo"
+              title="توضیحات"
+              size={19}
+              value={formData.unitInfo}
+              onChange={handleChangeFormData}
+            ></MyInputBox>
+          </HStack>
+        </FormControl>
+        <Button
+          leftIcon={<SquareCheckBig />}
+          colorScheme="blue"
+          type="submit"
+          isLoading={loading}
+          width="full"
+        >
+          تایید
+        </Button>
+      </VStack>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+    </Box>
   );
 };

@@ -75,6 +75,8 @@ export const MyHome = () => {
           />
         ) : (
           <Drawer
+            closeOnEsc={true}
+            closeOnOverlayClick={true}
             isOpen={isSidebarOpen}
             placement="right"
             onClose={() => setIsSidebarOpen(false)}
@@ -87,7 +89,10 @@ export const MyHome = () => {
               <DrawerBody bg="gray.800">
                 <Sidebar
                   sidebarWidth={sidebarWidth}
-                  onMenuItemClick={(e) => setActiveContent(e)}
+                  onMenuItemClick={(e) => {
+                    setActiveContent(e);
+                    setIsSidebarOpen(false);
+                  }}
                 />
               </DrawerBody>
             </DrawerContent>

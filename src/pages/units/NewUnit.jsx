@@ -1,4 +1,6 @@
 import {
+  AbsoluteCenter,
+  Box,
   Button,
   Card,
   CardBody,
@@ -7,6 +9,7 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  Spinner,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -61,67 +64,74 @@ export const NewUnit = ({ isDesktop }) => {
   };
 
   return (
-    <Card m={10} filter={loading ? "blur(10px)" : ""}>
-      <CardHeader
-        bg="#68C15A"
-        borderBottomColor="gray.400"
-        borderBottomWidth="1px"
-        borderTopRadius={5}
-        color="black"
-      >
-        ثبت واحد جدید
-      </CardHeader>
-      <CardBody borderTopWidth={2}>
-        <VStack
-          align={"stretch"}
-          direction={["column", "row"]}
-          as="form"
-          rowGap={8}
-          px={5}
-          onSubmit={handleSubmit}
-        >
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="150px">
-                نام واحد
-              </FormLabel>
-              <MyInputBox
-                icon={Ruler}
-                name="unitName"
-                title="نام واحد"
-                size={19}
-                value={formData.unitName}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="150px">
-                توضیحات
-              </FormLabel>
-              <MyInputBox
-                icon={Info}
-                name="unitInfo"
-                title="توضیحات"
-                size={19}
-                value={formData.unitInfo}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
-
-          <Button
-            leftIcon={<SquareCheckBig />}
-            colorScheme="blue"
-            type="submit"
-            isLoading={loading}
+    <Box>
+      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+        {isDesktop && (
+          <CardHeader
+            bg="#68C15A"
+            borderBottomColor="gray.400"
+            borderBottomWidth="1px"
+            borderTopRadius={5}
+            color="black"
           >
-            تایید
-          </Button>
-        </VStack>
-      </CardBody>
-      <CardFooter></CardFooter>
-    </Card>
+            ثبت واحد جدید
+          </CardHeader>
+        )}
+        <CardBody borderTopWidth={2}>
+          <VStack
+            align={"stretch"}
+            direction={["column", "row"]}
+            as="form"
+            rowGap={8}
+            px={1}
+            onSubmit={handleSubmit}
+          >
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  نام واحد
+                </FormLabel>
+                <MyInputBox
+                  icon={Ruler}
+                  name="unitName"
+                  title="نام واحد"
+                  value={formData.unitName}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  توضیحات
+                </FormLabel>
+                <MyInputBox
+                  icon={Info}
+                  name="unitInfo"
+                  title="توضیحات"
+                  value={formData.unitInfo}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+
+            <Button
+              leftIcon={<SquareCheckBig />}
+              colorScheme="blue"
+              type="submit"
+              isLoading={loading}
+            >
+              تایید
+            </Button>
+          </VStack>
+        </CardBody>
+        <CardFooter></CardFooter>
+      </Card>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+    </Box>
   );
 };

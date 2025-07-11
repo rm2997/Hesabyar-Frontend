@@ -32,6 +32,7 @@ import {
   TableContainer,
   Divider,
   SimpleGrid,
+  AbsoluteCenter,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import { Minus, Plus, Trash2 } from "lucide-react";
@@ -263,20 +264,21 @@ export const NewInvoice = ({ isDesktop }) => {
     });
   };
 
-  if (loading) return <MyLoading showLoading={true} />;
-  else
-    return (
-      <Card m={10}>
-        <CardHeader
-          bg="#68C15A"
-          borderBottomColor="gray.400"
-          borderBottomWidth="1px"
-          borderTopRadius={5}
-          color="black"
-        >
-          ثبت فاکتور جدید
-        </CardHeader>
-        <CardBody borderTopWidth={2}>
+  return (
+    <Box minHeight="100%">
+      <Card overflowY="auto" m={1} filter={loading ? "blur(10px)" : ""}>
+        {isDesktop && (
+          <CardHeader
+            bg="#68C15A"
+            borderBottomColor="gray.400"
+            borderBottomWidth="1px"
+            borderTopRadius={5}
+            color="black"
+          >
+            ثبت فاکتور جدید
+          </CardHeader>
+        )}
+        <CardBody>
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
             <Flex direction={{ base: "column", md: "row" }} gap={5}>
               <Box flex={1} p={1} borderRadius="md">
@@ -287,7 +289,6 @@ export const NewInvoice = ({ isDesktop }) => {
                         عنوان
                       </FormLabel>
                       <Input
-                        w={250}
                         name="title"
                         value={formData.title}
                         placeholder="عنوان"
@@ -302,7 +303,6 @@ export const NewInvoice = ({ isDesktop }) => {
                       </FormLabel>
                       <Select
                         disabled={customerLoading}
-                        w={250}
                         dir="ltr"
                         name="customer"
                         placeholder="یک نفر را انتخاب کنید"
@@ -326,11 +326,10 @@ export const NewInvoice = ({ isDesktop }) => {
                   <FormControl>
                     <HStack>
                       <FormLabel hidden={!isDesktop} width="120px">
-                        شماره پیش‌فاکتور
+                        شماره پیش‌ فاکتور
                       </FormLabel>
                       <Select
                         disabled={proformaLoading}
-                        w={250}
                         dir="ltr"
                         name="proforma"
                         placeholder="یک پیش‌فاکتور انتخاب کنید"
@@ -357,7 +356,6 @@ export const NewInvoice = ({ isDesktop }) => {
                         نوع پرداخت
                       </FormLabel>
                       <Select
-                        w={250}
                         dir="ltr"
                         name="paymentStatus"
                         placeholder="نوع پرداخت را انتخاب کنید"
@@ -420,13 +418,27 @@ export const NewInvoice = ({ isDesktop }) => {
                 <Table size="sm" _disabled={!invoiceGoodsStatus}>
                   <Thead>
                     <Tr>
-                      <Th width="100px">ردیف</Th>
-                      <Th width="400px">نام کالا</Th>
-                      <Th width="100px">تعداد</Th>
-                      <Th width="200px">واحد</Th>
-                      <Th width="300px">قیمت واحد</Th>
-                      <Th width="300px">قیمت کل</Th>
-                      <Th width="300px">توضیحات</Th>
+                      <Th fontFamily="Vaziri" width="100px">
+                        ردیف
+                      </Th>
+                      <Th fontFamily="Vaziri" width="400px">
+                        نام کالا
+                      </Th>
+                      <Th fontFamily="Vaziri" width="100px">
+                        تعداد
+                      </Th>
+                      <Th fontFamily="Vaziri" width="200px">
+                        واحد
+                      </Th>
+                      <Th fontFamily="Vaziri" width="300px">
+                        قیمت واحد
+                      </Th>
+                      <Th fontFamily="Vaziri" width="300px">
+                        قیمت کل
+                      </Th>
+                      <Th fontFamily="Vaziri" width="300px">
+                        توضیحات
+                      </Th>
                       <Th>
                         <IconButton
                           isDisabled={!invoiceGoodsStatus}
@@ -607,5 +619,17 @@ export const NewInvoice = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-    );
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+            color="red.500"
+          />
+        </AbsoluteCenter>
+      )}
+    </Box>
+  );
 };

@@ -154,132 +154,141 @@ export const UploadCustomers = ({ isDesktop }) => {
   //   );
 
   return (
-    <Card m={10}>
-      <CardHeader
-        bg="#68C15A"
-        borderBottomColor="gray.400"
-        borderBottomWidth="1px"
-        borderTopRadius={5}
-        color="black"
-      >
-        آپلود دسته ای مشتریان
-      </CardHeader>
-      <CardBody borderTopWidth={2}>
-        <VStack
-          align={"stretch"}
-          direction={["column", "row"]}
-          as="form"
-          spacing={5}
-          onSubmit={handleSubmit}
-        >
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="250px">
-                فایل مورد نظر را انتخاب کنید
-              </FormLabel>
-              <Input
-                disabled={loading}
-                accept=".xlsx, .xls"
-                hidden={true}
-                type="file"
-                name="uploadFile"
-                id="uploadFile"
-                onChange={(e) => {
-                  setSelectedFile(e.target.files[0]);
-                  setSelectedFileName(e.target.value);
-                }}
-              />
-              <label htmlFor="uploadFile" disabled={loading}>
-                <Box
-                  maxHeight={10}
-                  maxWidth={160}
-                  as="span"
-                  display="inline-flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  p="10px 20px"
-                  bg=" #ffee5f "
-                  color="black"
-                  borderRadius="md"
-                  borderWidth="1px"
-                  borderColor="gray.300"
-                  cursor={loading ? "not-allowed" : "pointer"}
-                  _hover={{ bg: "yellow.400" }}
-                >
-                  {loading && <Spinner />}
-                  <FolderOpen style={{ margin: "2px", marginLeft: "10px" }} />
-                  <Text>انتخاب فایل</Text>
-                </Box>
-              </label>
-              <HStack
-                hidden={!selectedFileName}
-                borderRadius="4px"
-                borderWidth="1px"
-                borderColor="gray.200"
-                p="4px"
-              >
-                <Text dir="ltr">{selectedFileName}</Text>
-                <IconButton
-                  hidden={!selectedFileName}
-                  isLoading={loading}
+    <Box>
+      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+        {isDesktop && (
+          <CardHeader
+            bg="#68C15A"
+            borderBottomColor="gray.400"
+            borderBottomWidth="1px"
+            borderTopRadius={5}
+            color="black"
+          >
+            آپلود دسته ای مشتریان
+          </CardHeader>
+        )}
+        <CardBody borderTopWidth={2}>
+          <VStack
+            align={"stretch"}
+            direction={["column", "row"]}
+            as="form"
+            rowGap={8}
+            onSubmit={handleSubmit}
+          >
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="250px">
+                  فایل مورد نظر را انتخاب کنید
+                </FormLabel>
+                <Input
                   disabled={loading}
-                  variant="ghost"
-                  colorScheme="red"
-                  icon={<CircleX />}
-                  onClick={() => {
-                    setSelectedFileName("");
-                    setSelectedFile(null);
-                    setFileRecords(0);
-                    setProgress(0);
-                    setRecordCount(0);
+                  accept=".xlsx, .xls"
+                  hidden={true}
+                  type="file"
+                  name="uploadFile"
+                  id="uploadFile"
+                  onChange={(e) => {
+                    setSelectedFile(e.target.files[0]);
+                    setSelectedFileName(e.target.value);
                   }}
                 />
+                <label htmlFor="uploadFile" disabled={loading}>
+                  <Box
+                    maxHeight={10}
+                    maxWidth={160}
+                    as="span"
+                    display="inline-flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    p="10px 20px"
+                    bg=" #ffee5f "
+                    color="black"
+                    borderRadius="md"
+                    borderWidth="1px"
+                    borderColor="gray.300"
+                    cursor={loading ? "not-allowed" : "pointer"}
+                    _hover={{ bg: "yellow.400" }}
+                  >
+                    {loading && <Spinner />}
+                    <FolderOpen style={{ margin: "2px", marginLeft: "10px" }} />
+                    <Text>انتخاب فایل</Text>
+                  </Box>
+                </label>
+                <HStack
+                  hidden={!selectedFileName}
+                  borderRadius="4px"
+                  borderWidth="1px"
+                  borderColor="gray.200"
+                  p="4px"
+                >
+                  <Text dir="ltr">{selectedFileName}</Text>
+                  <IconButton
+                    hidden={!selectedFileName}
+                    isLoading={loading}
+                    disabled={loading}
+                    variant="ghost"
+                    colorScheme="red"
+                    icon={<CircleX />}
+                    onClick={() => {
+                      setSelectedFileName("");
+                      setSelectedFile(null);
+                      setFileRecords(0);
+                      setProgress(0);
+                      setRecordCount(0);
+                    }}
+                  />
+                </HStack>
               </HStack>
-            </HStack>
-          </FormControl>
-          <FormControl>
-            <HStack>
-              <Button
-                leftIcon={<ClipboardCheck />}
-                colorScheme="green"
-                disabled={!selectedFileName || loading}
-                onClick={handlePreviewFile}
-                isLoading={loading}
-              >
-                بررسی فایل
-              </Button>
-              <Text>تعداد رکورد : </Text>
+            </FormControl>
+            <FormControl>
+              <HStack>
+                <Button
+                  leftIcon={<ClipboardCheck />}
+                  colorScheme="green"
+                  disabled={!selectedFileName || loading}
+                  onClick={handlePreviewFile}
+                  isLoading={loading}
+                >
+                  بررسی فایل
+                </Button>
+                <Text>تعداد رکورد : </Text>
 
-              <Text>{recordCount}</Text>
-            </HStack>
-          </FormControl>
-          <Flex direction="column">
-            <Center>
-              <Text dir="ltr">{progress}%</Text>
-            </Center>
-            <Progress
-              dir="ltr"
-              value={progress}
-              size="md"
-              hasStripe
-              colorScheme="yellow"
-              borderRadius={5}
-              title="50%"
-              margin="0"
-            />
-          </Flex>
-          <Button
-            leftIcon={<ArrowUpFromLine />}
-            colorScheme="blue"
-            type="submit"
-            isLoading={loading}
-            disabled={fileRecords <= 0 || loading}
-          >
-            شروع ارسال اطلاعات مشتریان
-          </Button>
-        </VStack>
-      </CardBody>
-      <CardFooter></CardFooter>
-    </Card>
+                <Text>{recordCount}</Text>
+              </HStack>
+            </FormControl>
+            <Flex direction="column">
+              <Center>
+                <Text dir="ltr">{progress}%</Text>
+              </Center>
+              <Progress
+                dir="ltr"
+                value={progress}
+                size="md"
+                hasStripe
+                colorScheme="yellow"
+                borderRadius={5}
+                title="50%"
+                margin="0"
+              />
+            </Flex>
+            <Button
+              leftIcon={<ArrowUpFromLine />}
+              colorScheme="blue"
+              type="submit"
+              isLoading={loading}
+              disabled={fileRecords <= 0 || loading}
+            >
+              شروع ارسال اطلاعات مشتریان
+            </Button>
+          </VStack>
+        </CardBody>
+        <CardFooter></CardFooter>
+      </Card>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+    </Box>
   );
 };

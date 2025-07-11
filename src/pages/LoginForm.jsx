@@ -126,6 +126,8 @@ export const LoginForm = () => {
     setIsFormDisabled(true);
     try {
       const res = await login(form);
+      console.log(res);
+
       if (!res.success) {
         setShowCaptcha(true);
         setInputCaptha("");
@@ -134,7 +136,10 @@ export const LoginForm = () => {
         setIsFormDisabled(false);
         toast({
           title: "خطا",
-          description: res?.error,
+          description:
+            res?.status == null
+              ? "سرور اصلی پاسخ نمی دهد یا شبکه قطع است"
+              : res?.error,
           status: "error",
           duration: 5000,
           isClosable: false,

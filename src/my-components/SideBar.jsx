@@ -56,6 +56,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
         align="stretch"
         color="gray.100"
         borderColor="gray.700"
+        allowToggle={true}
       >
         <SidebarItem
           id={1}

@@ -37,6 +37,8 @@ import {
   ModalFooter,
   Box,
   Divider,
+  AbsoluteCenter,
+  Spinner,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import {
@@ -59,6 +61,7 @@ import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
 import { NewCustomer } from "../customers/NewCustomer";
 import { SearchCustomer } from "../../my-components/SearchCustomer";
 import { SearchGoods } from "../../my-components/SearchGood";
+import { MyModal } from "../../my-components/MyModal";
 
 export const NewProforma = ({ isDesktop }) => {
   const toast = useToast();
@@ -266,19 +269,20 @@ export const NewProforma = ({ isDesktop }) => {
   };
   const handleSearchUser = () => {};
 
-  if (loading) return <MyLoading showLoading={true} />;
-  else
-    return (
-      <Card m={10}>
-        <CardHeader
-          bg="#68C15A"
-          borderBottomColor="gray.400"
-          borderBottomWidth="1px"
-          borderTopRadius={5}
-          color="black"
-        >
-          ثبت پیش فاکتور جدید
-        </CardHeader>
+  return (
+    <Box>
+      <Card h="105vh" m={1} filter={loading ? "blur(10px)" : ""}>
+        {isDesktop && (
+          <CardHeader
+            bg="#68C15A"
+            borderBottomColor="gray.400"
+            borderBottomWidth="1px"
+            borderTopRadius={5}
+            color="black"
+          >
+            ثبت پیش فاکتور جدید
+          </CardHeader>
+        )}
         <CardBody borderTopWidth={2}>
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
             <Flex direction={{ base: "column", md: "row" }} gap={5}>
@@ -290,7 +294,6 @@ export const NewProforma = ({ isDesktop }) => {
                         عنوان
                       </FormLabel>
                       <Input
-                        w={250}
                         name="title"
                         value={formData.title}
                         placeholder="عنوان"
@@ -356,7 +359,6 @@ export const NewProforma = ({ isDesktop }) => {
                         نوع پرداخت
                       </FormLabel>
                       <Select
-                        w={250}
                         dir="ltr"
                         name="paymentStatus"
                         placeholder="نوع پرداخت را انتخاب کنید"
@@ -373,7 +375,7 @@ export const NewProforma = ({ isDesktop }) => {
                   </FormControl>
                 </Stack>
               </Box>
-              <Box flex={1} p={4} borderRadius="md">
+              <Box flex={1} p={1} borderRadius="md">
                 <Flex direction={{ base: "column", md: "row" }} gap={4}>
                   <PaperMoneyInput
                     title={"اطلاعات سفته"}
@@ -407,9 +409,9 @@ export const NewProforma = ({ isDesktop }) => {
               </Box>
             </Flex>
             <Divider />
-            <Box p={4} borderRadius="md">
+            <Box px={1} borderRadius="md">
               <TableContainer>
-                <Table size="sm" variant="simple">
+                <Table borderColor="gray.400" variant="simple">
                   <Thead>
                     <Tr>
                       <Th fontFamily="Vaziri" width="100px">
@@ -442,7 +444,7 @@ export const NewProforma = ({ isDesktop }) => {
                       </Th>
                     </Tr>
                   </Thead>
-                  <Tbody>
+                  <Tbody bg="blackAlpha.100">
                     {proformaItems.map((item, index) => (
                       <Tr key={item.no}>
                         <Td>
@@ -455,7 +457,7 @@ export const NewProforma = ({ isDesktop }) => {
                             placeholder="ردیف"
                           />
                         </Td>
-                        <Td>
+                        <Td w="full">
                           <HStack>
                             {/* <Select
                               disabled={goodLoading}
@@ -538,7 +540,7 @@ export const NewProforma = ({ isDesktop }) => {
                         </Td>
                         <Td>
                           <Input
-                            disabled
+                            readOnly
                             placeholder="واحد"
                             name="goodUnitName"
                             value={item.goodUnitName}
@@ -637,24 +639,13 @@ export const NewProforma = ({ isDesktop }) => {
             <Button colorScheme="blue" type="submit" isLoading={loading}>
               ثبت پیش فاکتور
             </Button>
-            <Modal
-              dir="rtl"
+            <MyModal
+              modalHeader={"ثبت مشتری جدید"}
               onClose={onClose}
-              size={isDesktop ? "xl" : "full"}
               isOpen={isOpen}
             >
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>مشتری جدید</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody dir="rtl">
-                  <NewCustomer />
-                </ModalBody>
-                <ModalFooter>
-                  <Button onClick={onClose}>Close</Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
+              <NewCustomer />
+            </MyModal>
           </Flex>
         </CardBody>
         <CardFooter></CardFooter>
@@ -679,5 +670,11 @@ export const NewProforma = ({ isDesktop }) => {
           }}
         />
       </Card>
-    );
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+    </Box>
+  );
 };

@@ -311,36 +311,37 @@ export const EditProforma = ({
     setShowSearchGood(true);
   };
 
-  if (loading)
-    return (
-      <AbsoluteCenter>
-        <Spinner size="xl" color="red" />
-      </AbsoluteCenter>
-    );
-  else
-    return (
-      <Card m={10}>
-        <CardHeader
-          bg="#68C15A"
-          borderBottomColor="gray.400"
-          borderBottomWidth="1px"
-          borderTopRadius={5}
-          color="black"
-        >
-          ویرایش پیش فاکتور
-        </CardHeader>
-        <CardBody borderTopWidth={2}>
-          <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
-            <Flex direction={{ base: "column", md: "row" }} gap={5}>
-              <Box flex={1} p={1} borderRadius="md">
-                <Stack spacing={5} direction="column">
+  return (
+    <Box>
+      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+        {isDesktop && (
+          <CardHeader
+            bg="#68C15A"
+            borderBottomColor="gray.400"
+            borderBottomWidth="1px"
+            borderTopRadius={5}
+            color="black"
+          >
+            ویرایش پیش فاکتور
+          </CardHeader>
+        )}
+        <CardBody>
+          <Flex
+            direction="column"
+            rowGap={4}
+            columnGap={4}
+            as="form"
+            onSubmit={handleSubmit}
+          >
+            <Flex direction={{ base: "column", md: "row" }}>
+              <Box>
+                <Stack spacing={4} direction="column">
                   <FormControl>
                     <HStack>
                       <FormLabel hidden={!isDesktop} width="120px">
                         عنوان
                       </FormLabel>
                       <Input
-                        w={250}
                         name="title"
                         value={formData.title}
                         placeholder="عنوان"
@@ -398,7 +399,6 @@ export const EditProforma = ({
                         نوع پرداخت
                       </FormLabel>
                       <Select
-                        w={250}
                         dir="ltr"
                         name="paymentStatus"
                         placeholder="نوع پرداخت را انتخاب کنید"
@@ -456,7 +456,7 @@ export const EditProforma = ({
               </Box>
             </Flex>
             <Divider />
-            <Box p={4} borderRadius="md">
+            <Box px={2} borderRadius="md">
               <TableContainer>
                 <Table size="sm" variant="simple">
                   <Thead>
@@ -683,7 +683,7 @@ export const EditProforma = ({
                   </Tfoot>
                 </Table>
               </TableContainer>
-              <HStack marginTop="5px" marginRight="auto">
+              <HStack mt={1} mr="auto">
                 <Text>فایل تاییدیه مشتری: </Text>
                 {approvedFile ? (
                   <Box
@@ -756,5 +756,11 @@ export const EditProforma = ({
           }}
         />
       </Card>
-    );
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+    </Box>
+  );
 };

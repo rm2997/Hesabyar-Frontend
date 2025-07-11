@@ -120,7 +120,7 @@ export const HeaderBar = ({
         </Tooltip>
       )}
 
-      <Flex gap={4} align="center">
+      <Flex gap={2} align="center">
         <Box position="relative">
           <IconButton
             _hover={{ color: "orange" }}

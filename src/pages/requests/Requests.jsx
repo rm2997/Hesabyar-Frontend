@@ -7,11 +7,10 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import { ChangePassword } from "../../my-components/users/ChangePassword";
-import { NewUser } from "../../my-components/users/NewUser";
-import { UsersDataTable } from "../../my-components/users/UsersDataTable";
+import { ProformaRequests } from "../../my-components/requests/ProformaRequests";
+import { InvoiceRequests } from "../../my-components/requests/InvoiceRequests";
 
-export const Users = ({ isDesktop, user }) => {
+export const Requests = ({ isDesktop }) => {
   return (
     <SimpleGrid>
       <Tabs
@@ -25,20 +24,16 @@ export const Users = ({ isDesktop, user }) => {
         borderColor="gray.200"
       >
         <TabList>
-          <Tab>کاربر جدید</Tab>
-          <Tab>تغییر کلمه عبور</Tab>
-          <Tab>کاربران</Tab>
+          <Tab>پیش فاکتورها</Tab>
+          <Tab>فاکتورها</Tab>
         </TabList>
         <TabIndicator mt="-1.5px" height="2px" bg="blue.500" />
         <TabPanels borderColor="gray.200" borderWidth="1px" borderRadius="5">
           <TabPanel>
-            <NewUser isDesktop={isDesktop} />
+            <ProformaRequests isDesktop={isDesktop} />
           </TabPanel>
           <TabPanel>
-            <ChangePassword isDesktop={isDesktop} user={user} />
-          </TabPanel>
-          <TabPanel>
-            <UsersDataTable isDesktop={isDesktop} />
+            <InvoiceRequests isDesktop={isDesktop} />
           </TabPanel>
         </TabPanels>
       </Tabs>

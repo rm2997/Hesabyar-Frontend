@@ -1,4 +1,6 @@
 import {
+  AbsoluteCenter,
+  Box,
   Button,
   Card,
   CardBody,
@@ -107,83 +109,97 @@ export const NewNotification = ({ isDesktop }) => {
   };
 
   return (
-    <Card m={10} filter={loading ? "blur(10px)" : ""}>
-      <CardHeader
-        bg="#68C15A"
-        borderBottomColor="gray.400"
-        borderBottomWidth="1px"
-        borderTopRadius={5}
-        color="black"
-      >
-        ثبت پیام جدید
-      </CardHeader>
-      <CardBody borderTopWidth={2}>
-        <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
-          <SimpleGrid
-            columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
-            spacing={4}
+    <Box>
+      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+        {isDesktop && (
+          <CardHeader
+            bg="#68C15A"
+            borderBottomColor="gray.400"
+            borderBottomWidth="1px"
+            borderTopRadius={5}
+            color="black"
           >
+            ثبت پیام جدید
+          </CardHeader>
+        )}
+        <CardBody>
+          <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
+            <SimpleGrid
+              columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+              spacing={4}
+            >
+              <FormControl isRequired>
+                <HStack>
+                  <FormLabel hidden={!isDesktop} width="90px">
+                    عنوان
+                  </FormLabel>
+                  <MyInputBox
+                    icon={IdCard}
+                    name="title"
+                    title="عنوان"
+                    value={formData.title}
+                    onChange={handleChangeFormData}
+                  />
+                </HStack>
+              </FormControl>
+
+              <FormControl isRequired>
+                <HStack>
+                  <FormLabel hidden={!isDesktop} width="90px">
+                    گیرنده
+                  </FormLabel>
+                  <InputGroup>
+                    <Select
+                      dir="ltr"
+                      name="toUser"
+                      placeholder="لطفا یکی از کاربران را انتخاب کنید"
+                      value={formData.toUser.id}
+                      onChange={(e) => handleChangeUser(e.target.value)}
+                    >
+                      {usersData.map((user) => (
+                        <option key={user.id} value={user.id}>
+                          {user.userfname + " " + user.userlname}
+                        </option>
+                      ))}
+                    </Select>
+                  </InputGroup>
+                  {loading && <Spinner />}
+                </HStack>
+              </FormControl>
+            </SimpleGrid>
+
             <FormControl isRequired>
               <HStack>
-                <FormLabel hidden={!isDesktop} width="90px">
-                  عنوان
+                <FormLabel hidden={!isDesktop} width="85px">
+                  محتوا
                 </FormLabel>
-                <MyInputBox
-                  icon={IdCard}
-                  name="title"
-                  title="عنوان"
-                  value={formData.title}
+                <Textarea
+                  name="message"
+                  placeholder="محتوا"
+                  value={formData.message}
                   onChange={handleChangeFormData}
                 />
               </HStack>
             </FormControl>
 
-            <FormControl isRequired>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="90px">
-                  گیرنده
-                </FormLabel>
-                <InputGroup>
-                  <Select
-                    dir="ltr"
-                    htmlSize={19}
-                    name="toUser"
-                    placeholder="لطفا یکی از کاربران را انتخاب کنید"
-                    value={formData.toUser.id}
-                    onChange={(e) => handleChangeUser(e.target.value)}
-                  >
-                    {usersData.map((user) => (
-                      <option key={user.id} value={user.id}>
-                        {user.userfname + " " + user.userlname}
-                      </option>
-                    ))}
-                  </Select>
-                </InputGroup>
-                {loading && <Spinner />}
-              </HStack>
-            </FormControl>
-          </SimpleGrid>
-
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="85px">
-                محتوا
-              </FormLabel>
-              <Textarea
-                name="message"
-                placeholder="محتوا"
-                value={formData.message}
-                onChange={handleChangeFormData}
-              />
-            </HStack>
-          </FormControl>
-
-          <Button colorScheme="blue" type="submit" isLoading={loading}>
-            تایید
-          </Button>
-        </Flex>
-      </CardBody>
-      <CardFooter></CardFooter>
-    </Card>
+            <Button colorScheme="blue" type="submit" isLoading={loading}>
+              تایید
+            </Button>
+          </Flex>
+        </CardBody>
+        <CardFooter></CardFooter>
+      </Card>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+            color="red.500"
+          />
+        </AbsoluteCenter>
+      )}
+    </Box>
   );
 };

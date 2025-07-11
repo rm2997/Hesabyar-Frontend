@@ -1,4 +1,6 @@
 import {
+  AbsoluteCenter,
+  Box,
   Button,
   Card,
   CardBody,
@@ -8,6 +10,7 @@ import {
   FormLabel,
   HStack,
   Select,
+  Spinner,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -85,110 +88,108 @@ export const NewGood = ({ isDesktop }) => {
   };
 
   return (
-    <Card m={10}>
-      <CardHeader
-        bg="#68C15A"
-        borderBottomColor="gray.400"
-        borderBottomWidth="1px"
-        borderTopRadius={5}
-        color="black"
-      >
-        ثبت کالای جدید
-      </CardHeader>
-      <CardBody borderTopWidth={2}>
-        <VStack
-          align={"stretch"}
-          direction={["column", "row"]}
-          as="form"
-          spacing={5}
-          onSubmit={handleSubmit}
-        >
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                نام کالا
-              </FormLabel>
-              <MyInputBox
-                icon={Package2}
-                name="goodName"
-                title="نام کالا"
-                size={19}
-                value={formData.goodName}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="150px">
-                واحد اندازه گیری
-              </FormLabel>
-              <Select
-                dir="ltr"
-                name="goodUnit"
-                w={295}
-                placeholder="انتخاب کنید"
-                value={formData.goodUnit}
-                onChange={handleChangeFormData}
-              >
-                {units.map((unit) => (
-                  <option value={unit.id} key={unit.id}>
-                    {unit.unitName}
-                  </option>
-                ))}
-              </Select>
-              {/* <MyInputBox
-                icon={IdCard}
-                name="goodUnit"
-                title="واحد اندازه گیری"
-                size={19}
-                value={formData.goodUnit}
-                onChange={handleChangeFormData}
-              ></MyInputBox> */}
-            </HStack>
-          </FormControl>
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                قیمت
-              </FormLabel>
-              <MyInputBox
-                icon={DollarSign}
-                name="goodPrice"
-                title="قیمت"
-                size={19}
-                value={formData.goodPrice}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
-          <FormControl isRequired>
-            <HStack>
-              <FormLabel hidden={!isDesktop} width="170px">
-                توضیحات
-              </FormLabel>
-              <MyInputBox
-                icon={Info}
-                name="goodInfo"
-                title="توضیحات"
-                size={19}
-                value={formData.goodInfo}
-                onChange={handleChangeFormData}
-              ></MyInputBox>
-            </HStack>
-          </FormControl>
-
-          <Button
-            leftIcon={<SquareCheckBig />}
-            colorScheme="blue"
-            type="submit"
-            isLoading={loading}
+    <Box>
+      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+        {isDesktop && (
+          <CardHeader
+            bg="#68C15A"
+            borderBottomColor="gray.400"
+            borderBottomWidth="1px"
+            borderTopRadius={5}
+            color="black"
           >
-            تایید
-          </Button>
-        </VStack>
-      </CardBody>
-      <CardFooter></CardFooter>
-    </Card>
+            ثبت کالای جدید
+          </CardHeader>
+        )}
+        <CardBody borderTopWidth={2}>
+          <VStack
+            align={"stretch"}
+            direction={["column", "row"]}
+            as="form"
+            spacing={5}
+            onSubmit={handleSubmit}
+          >
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  نام کالا
+                </FormLabel>
+                <MyInputBox
+                  icon={Package2}
+                  name="goodName"
+                  title="نام کالا"
+                  size={19}
+                  value={formData.goodName}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  واحد اندازه گیری
+                </FormLabel>
+                <Select
+                  dir="ltr"
+                  name="goodUnit"
+                  placeholder="یک واحد انتخاب کنید"
+                  value={formData.goodUnit}
+                  onChange={handleChangeFormData}
+                >
+                  {units.map((unit) => (
+                    <option value={unit.id} key={unit.id}>
+                      {unit.unitName}
+                    </option>
+                  ))}
+                </Select>
+              </HStack>
+            </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  قیمت
+                </FormLabel>
+                <MyInputBox
+                  icon={DollarSign}
+                  name="goodPrice"
+                  title="قیمت"
+                  value={formData.goodPrice}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+            <FormControl>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  توضیحات
+                </FormLabel>
+                <MyInputBox
+                  icon={Info}
+                  name="goodInfo"
+                  title="توضیحات"
+                  value={formData.goodInfo}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+
+            <Button
+              leftIcon={<SquareCheckBig />}
+              colorScheme="blue"
+              type="submit"
+              isLoading={loading}
+            >
+              تایید
+            </Button>
+          </VStack>
+        </CardBody>
+        <CardFooter></CardFooter>
+      </Card>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+    </Box>
   );
 };

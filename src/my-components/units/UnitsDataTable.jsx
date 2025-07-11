@@ -1,4 +1,5 @@
 import {
+  AbsoluteCenter,
   Box,
   Card,
   CardBody,
@@ -9,6 +10,7 @@ import {
   Icon,
   Link,
   SimpleGrid,
+  Spinner,
   Stack,
   Text,
   Tooltip,
@@ -124,130 +126,149 @@ export const UnitsDataTable = ({ isDesktop }) => {
   }, [currentPage]);
 
   return (
-    <Flex
-      filter={loading ? "blur(10px)" : ""}
-      direction="column"
-      height="100vh"
-    >
-      <SearchBar
-        search={search}
-        setSearch={setSearch}
-        handleResetSearch={handleResetSearch}
-        loadData={loadData}
-        userInfo="جستجوی مشتری"
-      />
-
-      <Box flex="1" overflowY="auto" p={5}>
-        <Flex direction="column" gap={4}>
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
-            {unitsData.map((row) => (
-              <Card
-                borderTopRadius={5}
-                borderWidth={1}
-                _hover={{ borderColor: "orange" }}
-              >
-                <CardHeader bg="green.500" borderTopRadius={5} color="white">
-                  <HStack>
-                    <Ruler color="purple" />
-                    <Text mr="auto">{row.unitName}</Text>
-                  </HStack>
-                </CardHeader>
-                <CardBody>
-                  <VStack align={"stretch"} spacing={2}>
-                    <HStack>
-                      <Text>توضیحات :</Text>
-                      <Text mr="auto">
-                        {row.unitInfo.length > 15
-                          ? row.unitInfo.substring(0, 12) + "..."
-                          : row.unitInfo}
-                      </Text>
-                    </HStack>
-                  </VStack>
-                </CardBody>
-                <CardFooter borderBottomRadius={5} bg="gray.200">
-                  <Stack
-                    direction={["row"]}
-                    spacing={2}
-                    align={"stretch"}
-                    mr="auto"
-                  >
-                    <Link
-                      _hover={{
-                        color: "orange",
-                      }}
-                      color="blue.600"
-                      onClick={(e) => {
-                        setSelectedID(row.id);
-                        setDialogGears({
-                          title: "ویرایش واحد",
-                        });
-                        onOpen();
-                      }}
-                    >
-                      <Tooltip label="ویرایش">
-                        <Icon w={6} h={6} as={FilePenLine} />
-                      </Tooltip>
-                    </Link>
-                    <Link
-                      _hover={{ color: "#ffd54f" }}
-                      color="red.600"
-                      onClick={(e) => {
-                        setSelectedID(row.id);
-                        setDialogGears({
-                          title: "حذف واحد",
-                          text: "آیا واقعا می خواهید این واحد را حذف کنید؟",
-                          callBack: handleDeleteUnit,
-                        });
-                        setIsDialogOpen(true);
-                      }}
-                    >
-                      <Tooltip label="حذف">
-                        <Icon w={6} h={6} as={Trash2} />
-                      </Tooltip>
-                    </Link>
-                  </Stack>
-                </CardFooter>
-              </Card>
-            ))}
-          </SimpleGrid>
-
-          <MyModal
-            modalHeader={dialogGears.title}
-            isOpen={isOpen}
-            onClose={onClose}
-          >
-            <EditUnit
-              id={selectedID}
-              onClose={onClose}
-              onUpdate={updateUnitInList}
-              Unit={findUnitFromList(selectedID)}
-            />
-          </MyModal>
-          <MyAlert
-            AlertHeader={dialogGears.title}
-            AlertMessage={dialogGears.text}
-            isOpen={isDialogOpen}
-            onClose={handleDialogClose}
-          />
-        </Flex>
-      </Box>
-      <Box
-        position="sticky"
-        bottom="68px"
-        bg="#efefef"
-        p={1}
-        zIndex="1"
-        borderTopColor="gray.400"
-        borderTopWidth="1px"
+    <Box>
+      <Flex
+        filter={loading ? "blur(10px)" : ""}
+        direction="column"
+        height="100vh"
       >
-        <Flex justify="center" align="center">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
-        </Flex>
-      </Box>
-    </Flex>
+        <SearchBar
+          search={search}
+          setSearch={setSearch}
+          handleResetSearch={handleResetSearch}
+          loadData={loadData}
+          userInfo="جستجوی مشتری"
+        />
+
+        <Box flex="1" overflowY="auto" p={5}>
+          <Flex direction="column" gap={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+              {unitsData.map((row) => (
+                <Card
+                  borderTopRadius={5}
+                  borderWidth={1}
+                  _hover={{ borderColor: "orange" }}
+                >
+                  <CardHeader
+                    bg="green.500"
+                    borderTopRadius={5}
+                    color="white"
+                    _hover={{ cursor: "pointer" }}
+                    onClick={(e) => {
+                      setSelectedID(row.id);
+                      setDialogGears({
+                        title: "ویرایش واحد",
+                      });
+                      onOpen();
+                    }}
+                  >
+                    <HStack>
+                      <Ruler color="purple" />
+                      <Text mr="auto">{row.unitName}</Text>
+                    </HStack>
+                  </CardHeader>
+                  <CardBody>
+                    <VStack align={"stretch"} spacing={2}>
+                      <HStack>
+                        <Text>توضیحات :</Text>
+                        <Text mr="auto">
+                          {row.unitInfo.length > 15
+                            ? row.unitInfo.substring(0, 12) + "..."
+                            : row.unitInfo}
+                        </Text>
+                      </HStack>
+                    </VStack>
+                  </CardBody>
+                  <CardFooter borderBottomRadius={5} bg="gray.200">
+                    <Stack
+                      direction={["row"]}
+                      spacing={2}
+                      align={"stretch"}
+                      mr="auto"
+                    >
+                      <Link
+                        _hover={{
+                          color: "orange",
+                        }}
+                        color="blue.600"
+                        onClick={(e) => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "ویرایش واحد",
+                          });
+                          onOpen();
+                        }}
+                      >
+                        <Tooltip label="ویرایش">
+                          <Icon w={6} h={6} as={FilePenLine} />
+                        </Tooltip>
+                      </Link>
+                      <Link
+                        _hover={{ color: "#ffd54f" }}
+                        color="red.600"
+                        onClick={(e) => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "حذف واحد",
+                            text: "آیا واقعا می خواهید این واحد را حذف کنید؟",
+                            callBack: handleDeleteUnit,
+                          });
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        <Tooltip label="حذف">
+                          <Icon w={6} h={6} as={Trash2} />
+                        </Tooltip>
+                      </Link>
+                    </Stack>
+                  </CardFooter>
+                </Card>
+              ))}
+            </SimpleGrid>
+
+            <MyModal
+              modalHeader={dialogGears.title}
+              isOpen={isOpen}
+              onClose={onClose}
+            >
+              <EditUnit
+                id={selectedID}
+                onClose={onClose}
+                onUpdate={updateUnitInList}
+                Unit={findUnitFromList(selectedID)}
+              />
+            </MyModal>
+            <MyAlert
+              AlertHeader={dialogGears.title}
+              AlertMessage={dialogGears.text}
+              isOpen={isDialogOpen}
+              onClose={handleDialogClose}
+            />
+          </Flex>
+        </Box>
+        <Box
+          position="sticky"
+          bottom="68px"
+          bg="#efefef"
+          p={1}
+          zIndex="1"
+          borderTopColor="gray.400"
+          borderTopWidth="1px"
+        >
+          <Flex justify="center" align="center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </Flex>
+        </Box>
+      </Flex>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
+    </Box>
   );
 };

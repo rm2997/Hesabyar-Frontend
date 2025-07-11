@@ -138,11 +138,6 @@ export const CustomerDataTable = ({ isDesktop }) => {
 
   return (
     <Box>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
       <Flex
         filter={loading ? "blur(10px)" : ""}
         direction="column"
@@ -165,7 +160,21 @@ export const CustomerDataTable = ({ isDesktop }) => {
                   borderWidth={1}
                   _hover={{ borderColor: "orange" }}
                 >
-                  <CardHeader bg="green.500" borderTopRadius={5} color="white">
+                  <CardHeader
+                    bg="green.500"
+                    borderTopRadius={5}
+                    color="white"
+                    _hover={{ cursor: "pointer" }}
+                    onClick={(e) => {
+                      setSelectedID(row.id);
+                      setDialogGears({
+                        title: "ویرایش مشتری",
+                        text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
+                        callBack: () => handleEditCustomer(row.id),
+                      });
+                      onOpen();
+                    }}
+                  >
                     <HStack>
                       <UsersRound color="purple" />
                       <Text mr="auto">
@@ -300,6 +309,11 @@ export const CustomerDataTable = ({ isDesktop }) => {
           </Flex>
         </Box>
       </Flex>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner size="xl" color="red.500" />
+        </AbsoluteCenter>
+      )}
     </Box>
   );
 };

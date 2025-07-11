@@ -16,6 +16,8 @@ import {
   Tooltip,
   Icon,
   Flex,
+  AbsoluteCenter,
+  Spinner,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -330,271 +332,282 @@ export const ProformaDataTable = ({ isDesktop }) => {
 
   if (proformas)
     return (
-      <Flex
-        filter={loading ? "blur(10px)" : ""}
-        direction="column"
-        height="100vh"
-      >
-        <SearchBar
-          search={search}
-          setSearch={setSearch}
-          handleResetSearch={handleResetSearch}
-          loadData={loadData}
-          userInfo="جستجوی پیش فاکتور"
-        />
-        <Box flex="1" overflowY="auto" p={5}>
-          <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
-            {proformas.map((row) => (
-              <Card
-                maxW="370px"
-                _hover={{
-                  cursor: "",
-                  borderColor: "orange.300",
-                }}
-                borderWidth="1px"
-                borderColor="gray.300"
-              >
-                <CardHeader
-                  borderTopRadius={5}
-                  bg={
-                    !row.isConverted
-                      ? row?.isAccepted
-                        ? "green.400"
-                        : "blue.200"
-                      : "gray.400"
-                  }
+      <Box>
+        <Flex
+          filter={loading ? "blur(10px)" : ""}
+          direction="column"
+          height="100vh"
+        >
+          <SearchBar
+            search={search}
+            setSearch={setSearch}
+            handleResetSearch={handleResetSearch}
+            loadData={loadData}
+            userInfo="جستجوی پیش فاکتور"
+          />
+          <Box flex="1" overflowY="auto" p={5}>
+            <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
+              {proformas.map((row) => (
+                <Card
+                  maxW="370px"
+                  _hover={{
+                    cursor: "",
+                    borderColor: "orange.300",
+                  }}
+                  borderWidth="1px"
+                  borderColor="gray.300"
                 >
-                  <HStack>
-                    <Text> شماره :{row.id}</Text>
-                    <Box mr="auto">
-                      <HStack>
-                        {row.isConverted ? (
-                          <Tooltip label="فاکتور شده">
-                            <Replace color="purple" />
-                          </Tooltip>
-                        ) : (
-                          <></>
-                        )}
-                        {row.isAccepted ? (
-                          <Tooltip label="تایید کاربر ارشد">
-                            <ShieldUser color="green" />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip label="منتظر تایید کاربر ارشد ">
-                            <UserLock
-                              color="yellow"
-                              _hover={{ color: "green" }}
-                            />
-                          </Tooltip>
-                        )}
-
-                        {row.approvedFile ? (
-                          <Tooltip label="تایید مشتری">
-                            <UserRoundCheck color="green" />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip label="منتظر تایید مشتری">
-                            <Handshake color="white" />
-                          </Tooltip>
-                        )}
-
-                        {row.isSent ? (
-                          <Tooltip label="لینک به مشتری ارسال شده است">
-                            <MailCheck color="green" />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip label="منتظر ارسال">
-                            <CircleFadingArrowUp color="orange" />
-                          </Tooltip>
-                        )}
-                      </HStack>
-                    </Box>
-                  </HStack>
-                </CardHeader>
-                <CardBody>
-                  <VStack spacing={2} align="stretch">
-                    <HStack>
-                      <Text>عنوان : </Text>
-                      <Text>{row.title}</Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>تاریخ : </Text>
-                      <Text>
-                        {dayjs(row.createdAt).locale("fa").format("YYYY/MM/DD")}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>نام مشتری : </Text>
-                      <Text>
-                        {row.customer?.customerFName +
-                          " " +
-                          row.customer?.customerLName}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>نوع پرداخت : </Text>
-                      <Text>{row.paymentStatus}</Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text> تایید مشتری : </Text>
-                      <Text>{row.approvedFile ? "دارد" : "ندارد"}</Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text> جمع کل : </Text>
-                      <Text fontSize={"xl"}>
-                        {Number(row.totalAmount).toLocaleString()}
-                      </Text>
-                    </HStack>
-                  </VStack>
-                </CardBody>
-                <CardFooter borderBottomRadius={5} bg="gray.100">
-                  <Stack
-                    direction={["row"]}
-                    spacing={2}
-                    align={"stretch"}
-                    mr="auto"
+                  <CardHeader
+                    borderTopRadius={5}
+                    _hover={{ cursor: "pointer" }}
+                    onClick={(e) => handleEditProforma(row.id)}
+                    bg={
+                      !row.isConverted
+                        ? row?.isAccepted
+                          ? "green.400"
+                          : "blue.200"
+                        : "gray.400"
+                    }
                   >
-                    {!row.isConverted && (
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => handleEditProforma(row.id)}
-                      >
-                        <Tooltip label="ویرایش">
-                          <Icon w={6} h={6} as={FilePenLine} />
-                        </Tooltip>
-                      </Link>
-                    )}
+                    <HStack>
+                      <Text> شماره :{row.id}</Text>
+                      <Box mr="auto">
+                        <HStack>
+                          {row.isConverted ? (
+                            <Tooltip label="فاکتور شده">
+                              <Replace color="purple" />
+                            </Tooltip>
+                          ) : (
+                            <></>
+                          )}
+                          {row.isAccepted ? (
+                            <Tooltip label="تایید کاربر ارشد">
+                              <ShieldUser color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر تایید کاربر ارشد ">
+                              <UserLock
+                                color="yellow"
+                                _hover={{ color: "green" }}
+                              />
+                            </Tooltip>
+                          )}
 
-                    {!row.isConverted && (
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => handleGenerateNewLink(row.id)}
-                      >
-                        <Tooltip label="تولید لینک جدید">
-                          <Icon w={6} h={6} as={Link2} />
-                        </Tooltip>
-                      </Link>
-                    )}
+                          {row.approvedFile ? (
+                            <Tooltip label="تایید مشتری">
+                              <UserRoundCheck color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر تایید مشتری">
+                              <Handshake color="white" />
+                            </Tooltip>
+                          )}
 
-                    {!row.isConverted && row?.isSent == false && (
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="green.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "ارسال لینک به مشتری",
-                            text: `آیا می خواهید لینک به شماره ${
-                              row.customer.customerMobile
-                            } به نام ${
-                              row.customer.customerGender +
-                              " " +
-                              row.customer.customerFName +
-                              " " +
-                              row.customer.customerLName
-                            } ارسال گردد؟`,
-                            callBack: () => handleSendCustomerLink(row.id),
-                          });
-
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="ارسال لینک به مشتری">
-                          <Icon w={6} h={6} as={Send} />
-                        </Tooltip>
-                      </Link>
-                    )}
-
-                    {!row.isConverted &&
-                      row?.isSent &&
-                      row?.approvedFile &&
-                      row?.isAccepted && (
+                          {row.isSent ? (
+                            <Tooltip label="لینک به مشتری ارسال شده است">
+                              <MailCheck color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر ارسال">
+                              <CircleFadingArrowUp color="orange" />
+                            </Tooltip>
+                          )}
+                        </HStack>
+                      </Box>
+                    </HStack>
+                  </CardHeader>
+                  <CardBody>
+                    <VStack spacing={2} align="stretch">
+                      <HStack>
+                        <Text>عنوان : </Text>
+                        <Text>{row.title}</Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>تاریخ : </Text>
+                        <Text>
+                          {dayjs(row.createdAt)
+                            .locale("fa")
+                            .format("YYYY/MM/DD")}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>نام مشتری : </Text>
+                        <Text>
+                          {row.customer?.customerFName +
+                            " " +
+                            row.customer?.customerLName}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>نوع پرداخت : </Text>
+                        <Text>{row.paymentStatus}</Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> تایید مشتری : </Text>
+                        <Text>{row.approvedFile ? "دارد" : "ندارد"}</Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> جمع کل : </Text>
+                        <Text fontSize={"xl"}>
+                          {Number(row.totalAmount).toLocaleString()}
+                        </Text>
+                      </HStack>
+                    </VStack>
+                  </CardBody>
+                  <CardFooter borderBottomRadius={5} bg="gray.100">
+                    <Stack
+                      direction={["row"]}
+                      spacing={2}
+                      align={"stretch"}
+                      mr="auto"
+                    >
+                      {!row.isConverted && (
                         <Link
-                          _hover={{ color: "#ffd54f" }}
-                          color="purple.600"
-                          onClick={() => handleConvertToInvoice(row.id)}
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => handleEditProforma(row.id)}
                         >
-                          <Tooltip label="تبدیل به فاکتور">
-                            <Icon w={6} h={6} as={Replace} />
+                          <Tooltip label="ویرایش">
+                            <Icon w={6} h={6} as={FilePenLine} />
                           </Tooltip>
                         </Link>
                       )}
 
-                    {!row.isConverted && (
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="red.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "حذف پیش فاکتور",
-                            text: "آیا واقعا می خواهید این پیش فاکتور را حذف کنید؟",
-                            callBack: handleDeleteProforma,
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="حذف">
-                          <Icon w={6} h={6} as={Trash2} />
-                        </Tooltip>
-                      </Link>
-                    )}
-                  </Stack>
-                </CardFooter>
-              </Card>
-            ))}
-            <MyModal
-              modalHeader="ویرایش پیش فاکتور"
-              onClose={onClose}
-              isOpen={isOpen}
-            >
-              <EditProforma
-                isDesktop={isDesktop}
+                      {!row.isConverted && (
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => handleGenerateNewLink(row.id)}
+                        >
+                          <Tooltip label="تولید لینک جدید">
+                            <Icon w={6} h={6} as={Link2} />
+                          </Tooltip>
+                        </Link>
+                      )}
+
+                      {!row.isConverted && row?.isSent == false && (
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="green.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "ارسال لینک به مشتری",
+                              text: `آیا می خواهید لینک به شماره ${
+                                row.customer.customerMobile
+                              } به نام ${
+                                row.customer.customerGender +
+                                " " +
+                                row.customer.customerFName +
+                                " " +
+                                row.customer.customerLName
+                              } ارسال گردد؟`,
+                              callBack: () => handleSendCustomerLink(row.id),
+                            });
+
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="ارسال لینک به مشتری">
+                            <Icon w={6} h={6} as={Send} />
+                          </Tooltip>
+                        </Link>
+                      )}
+
+                      {!row.isConverted &&
+                        row?.isSent &&
+                        row?.approvedFile &&
+                        row?.isAccepted && (
+                          <Link
+                            _hover={{ color: "#ffd54f" }}
+                            color="purple.600"
+                            onClick={() => handleConvertToInvoice(row.id)}
+                          >
+                            <Tooltip label="تبدیل به فاکتور">
+                              <Icon w={6} h={6} as={Replace} />
+                            </Tooltip>
+                          </Link>
+                        )}
+
+                      {!row.isConverted && (
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="red.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "حذف پیش فاکتور",
+                              text: "آیا واقعا می خواهید این پیش فاکتور را حذف کنید؟",
+                              callBack: handleDeleteProforma,
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="حذف">
+                            <Icon w={6} h={6} as={Trash2} />
+                          </Tooltip>
+                        </Link>
+                      )}
+                    </Stack>
+                  </CardFooter>
+                </Card>
+              ))}
+              <MyModal
+                modalHeader="ویرایش پیش فاکتور"
                 onClose={onClose}
-                onOpen={onOpen}
-                setProformas={setProformas}
-                proformas={proformas}
-                proforma={proformas.find(
-                  (proforma) => proforma.id === selectedID
-                )}
+                isOpen={isOpen}
+              >
+                <EditProforma
+                  isDesktop={isDesktop}
+                  onClose={onClose}
+                  onOpen={onOpen}
+                  setProformas={setProformas}
+                  proformas={proformas}
+                  proforma={proformas.find(
+                    (proforma) => proforma.id === selectedID
+                  )}
+                />
+              </MyModal>
+              <MyAlert
+                onClose={handleDialogClose}
+                isOpen={isDialogOpen}
+                AlertHeader={dialogGears.title}
+                AlertMessage={dialogGears.text}
               />
-            </MyModal>
-            <MyAlert
-              onClose={handleDialogClose}
-              isOpen={isDialogOpen}
-              AlertHeader={dialogGears.title}
-              AlertMessage={dialogGears.text}
-            />
-          </SimpleGrid>
-        </Box>
-        <Box
-          position="sticky"
-          bottom="68px"
-          bg="#efefef"
-          p={1}
-          zIndex="1"
-          borderTopColor="gray.400"
-          borderTopWidth="1px"
-        >
-          <Flex justify="center" align="center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
-          </Flex>
-        </Box>
-      </Flex>
+            </SimpleGrid>
+          </Box>
+          <Box
+            position="sticky"
+            bottom="0"
+            bg="#efefef"
+            p={1}
+            zIndex="1"
+            borderTopColor="gray.400"
+            borderTopWidth="1px"
+          >
+            <Flex justify="center" align="center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </Flex>
+          </Box>
+        </Flex>
+        {loading && (
+          <AbsoluteCenter>
+            <Spinner size="xl" color="red.500" />
+          </AbsoluteCenter>
+        )}
+      </Box>
     );
 };

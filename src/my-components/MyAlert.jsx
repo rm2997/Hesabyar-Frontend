@@ -12,10 +12,11 @@ import {
 export const MyAlert = ({ AlertHeader, AlertMessage, onClose, isOpen }) => {
   return (
     <AlertDialog
-      motionPreset="slideInTop"
+      motionPreset="slideInRight"
       onClose={onClose}
       isOpen={isOpen}
       isCentered
+      allowPinchZoom={true}
     >
       <AlertDialogOverlay />
       <AlertDialogContent>

@@ -104,12 +104,7 @@ export const ChangePassword = ({ isDesktop, user }) => {
 
   return (
     <Box>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
-      <Card m={10} filter={loading ? "blur(10px)" : ""}>
+      <Card filter={loading ? "blur(10px)" : ""}>
         <CardHeader
           bg="#68C15A"
           borderBottomColor="gray.400"
@@ -119,7 +114,7 @@ export const ChangePassword = ({ isDesktop, user }) => {
         >
           تغییر کلمه عبور
         </CardHeader>
-        <CardBody borderTopWidth={2}>
+        <CardBody borderTopWidth={2} overflow="scroll">
           <VStack
             align={"stretch"}
             direction={["column", "row"]}
@@ -135,7 +130,7 @@ export const ChangePassword = ({ isDesktop, user }) => {
                 <Select
                   disabled={user?.role != "admin"}
                   dir="ltr"
-                  placeholder="انتخاب کنید"
+                  placeholder="یک کاربر انتخاب کنید"
                   maxW="397px"
                   name="id"
                   value={formData.id}
@@ -195,6 +190,17 @@ export const ChangePassword = ({ isDesktop, user }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+            color="red.500"
+          />
+        </AbsoluteCenter>
+      )}
     </Box>
   );
 };

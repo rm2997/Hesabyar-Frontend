@@ -44,7 +44,7 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal motionPreset="slideInTop" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader bg="blue.300" textAlign="center">

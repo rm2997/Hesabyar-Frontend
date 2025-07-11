@@ -145,16 +145,18 @@ export const UploadGoods = ({ isDesktop }) => {
   //   );
 
   return (
-    <Card m={10}>
-      <CardHeader
-        bg="#68C15A"
-        borderBottomColor="gray.400"
-        borderBottomWidth="1px"
-        borderTopRadius={5}
-        color="black"
-      >
-        آپلود دسته ای کالاها
-      </CardHeader>
+    <Card m={1}>
+      {isDesktop && (
+        <CardHeader
+          bg="#68C15A"
+          borderBottomColor="gray.400"
+          borderBottomWidth="1px"
+          borderTopRadius={5}
+          color="black"
+        >
+          آپلود دسته ای کالاها
+        </CardHeader>
+      )}
       <CardBody borderTopWidth={2}>
         <VStack
           align={"stretch"}

@@ -27,6 +27,7 @@ import { UserContext } from "../contexts/UserContext";
 import { MyModal } from "./MyModal";
 import { clearTokens } from "../api/tokenUtils";
 import { useNavigate } from "react-router-dom";
+import { Requests } from "../pages/requests/Requests";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -124,7 +125,7 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         case "َchangePassword":
           return <ChangePasswordByUser isDesktop={isDesktop} />;
         case "acceptRequest":
-          return <RequestsDataTable isDesktop={isDesktop} />;
+          return <Requests isDesktop={isDesktop} />;
         case "logout":
           return <Logout />;
         default:
@@ -164,7 +165,7 @@ export const MainContents = ({ activeContent, isDesktop }) => {
     );
   }
   return (
-    <Flex w="98%" m={1} bg="#efefef" direction="column" height="100vh">
+    <Flex w="98%" mx={1} bg="#efefef" direction="column" minHh="100%">
       {/* <Card w="98%" m={1} bg="#efefef"> */}
       {/* <CardHeader
         bg="#0A9DBB"
@@ -178,14 +179,16 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         borderBottomColor="gray.100"
         borderBottomWidth="1px"
         color="white"
-        p={2}
+        p={1}
       >
-        <Text fontSize={"2xl"}>{pageTitle}</Text>
+        <Text mx={1} fontSize={"2xl"}>
+          {pageTitle}
+        </Text>
       </Box>
       {/* </CardHeader> */}
       {/* <CardBody overflow="scroll" color="gray.200"> */}
-      <Box flex="1" overflowY="auto" p={2}>
-        <Box>{shouldRender}</Box>
+      <Box display="flex" flexDirection="column" overflowY="auto" p={1}>
+        <Box overflowY="auto">{shouldRender}</Box>
       </Box>
 
       {/* <CardFooter bg="#dedcdd"></CardFooter> */}
