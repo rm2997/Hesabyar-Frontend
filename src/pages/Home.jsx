@@ -21,7 +21,15 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { Menu, Phone, User2 } from "lucide-react";
+import {
+  Facebook,
+  Linkedin,
+  Menu,
+  Phone,
+  Smartphone,
+  Twitter,
+  User2,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -41,12 +49,46 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-const images = [
-  "/assets/images/slider/cabin1.jpg",
-  "/assets/images/slider/door1.jpg",
-  "/assets/images/slider/door2.jpg",
-  "/assets/images/slider/motor3.jpg",
-  "/assets/images/slider/wheel1.jpg",
+const sliderData = [
+  {
+    title: "واردات مستقیم ریل آسانسور",
+    image: "/assets/images/slider/Reil1.jpg",
+    description:
+      "واردات انحصاری از کشورهای چین، اسپانیا و ترکیه با بهترین ویژگی های کیفی",
+  },
+  {
+    title: "سیم بکسل",
+    image: "/assets/images/slider/Boxel12.jpg",
+    description: "بالاترین استحکام کششی نسبت به موارد مشابه موجود",
+  },
+  {
+    title: "موتور الکو",
+    image: "/assets/images/slider/motor1.jpg",
+    description:
+      "نمایندگی رسمی شرکت الکو، اولین تولیدکننده موتور وگیربکس در ایران",
+  },
+  {
+    title: "گیربکس الکو",
+    image: "/assets/images/slider/motor2.jpg",
+    description:
+      "نمایندگی رسمی شرکت الکو، اولین تولیدکننده موتور وگیربکس در ایران",
+  },
+  {
+    title: "کابل هدسان",
+    image: "/assets/images/slider/Cable1.jpg",
+    description: "نمایندگی رسمی تراول کابل هدسان",
+  },
+  {
+    title: " ریل آسانسور",
+    image: "/assets/images/slider/Reil2.jpg",
+    description:
+      "واردات انحصاری از کشورهای چین، اسپانیا و ترکیه با بهترین ویژگی های کیفی",
+  },
+  {
+    title: "سیم بکسل",
+    image: "/assets/images/slider/Boxel1.jpg",
+    description: " واردات مستقیم سیم بکسل آسانسور به صورت انحصاری از کشور چین",
+  },
 ];
 
 export const Home = () => {
@@ -56,6 +98,7 @@ export const Home = () => {
 
   const sliderSettings = {
     dots: true,
+
     infinite: true,
     autoplay: true,
     speed: 800,
@@ -63,44 +106,101 @@ export const Home = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: true,
+    focusOnSelect: false,
   };
   const position = [35.67646, 51.327177];
 
   return (
-    <Box bg="#2E2E2E">
+    <Box overflow={!isDesktop ? "hidden" : ""} bg="#2E2E2E">
       {/* top menu */}
       <Flex
         dir="rtl"
         as="header"
         bg="#585858"
         color="white"
-        px={4}
-        py={3}
-        align="center"
-        borderWidth="1px"
-        borderBottomRadius="20px"
-        borderColor="gray.700"
-        ml="auto"
-        mr="auto"
-        w={isDesktop ? 1000 : "full"}
-        h={{ base: "55px", md: "70px", sm: "100" }}
         position="sticky"
-        top="0px"
-        zIndex={1}
+        top="0"
+        zIndex={1000}
+        px={2}
+        // pt={{ base: 7, sm: 9, md: 9, lg: 8 }}
+        // pb={{ base: 9, sm: 0, md: 9, lg: 9 }}
+        align="center"
+        borderBottomRadius="20px"
+        mx="auto"
+        maxW="100vw"
+        w={isDesktop ? 1000 : "full"}
+        h={{ base: "64px", md: "70px" }}
       >
+        <Box
+          mx={isDesktop ? 3 : 1}
+          borderRadius="10%"
+          _hover={{
+            cursor: "pointer",
+          }}
+          boxShadow="0 0 25px orange"
+          boxSize={20}
+          maxH={5}
+          bgSize="contain"
+          bgRepeat="no-repeat"
+          bgPosition="center"
+        >
+          <Image
+            borderRadius="10%"
+            src="/assets/images/logos/logo1.png"
+            objectFit="cover"
+            target="_blank"
+            rel="noopener noreferrer"
+          />
+        </Box>
         {isDesktop ? (
-          <Flex gap={5}>
-            <Link>صفحه اصلی</Link>
-            <Link>محصولات</Link>
-            <Link>محصولات بازرگانی</Link>
-            <Link>کاتالوگ</Link>
-            <Link>ارتباط با ما</Link>
-            <Link>تماس با ما</Link>
+          <Flex columnGap={5}>
+            <Link
+              _hover={{ textShadow: "2px 2px 5px orange" }}
+              transition="text-shadow 0.5s"
+              fontFamily="IranSans"
+            >
+              صفحه اصلی
+            </Link>
+            <Link
+              _hover={{ textShadow: "2px 2px 5px orange" }}
+              transition="text-shadow 0.5s"
+              fontFamily="IranSans"
+            >
+              محصولات
+            </Link>
+            <Link
+              _hover={{ textShadow: "2px 2px 5px orange" }}
+              transition="text-shadow 0.5s"
+              fontFamily="IranSans"
+            >
+              محصولات بازرگانی
+            </Link>
+            <Link
+              _hover={{ textShadow: "2px 2px 5px orange" }}
+              transition="text-shadow 0.5s"
+              fontFamily="IranSans"
+            >
+              کاتالوگ
+            </Link>
+            <Link
+              _hover={{ textShadow: "2px 2px 5px orange" }}
+              transition="text-shadow 0.5s"
+              fontFamily="IranSans"
+            >
+              ارتباط با ما
+            </Link>
+            <Link
+              _hover={{ textShadow: "2px 2px 5px orange" }}
+              transition="text-shadow 0.5s"
+              fontFamily="IranSans"
+            >
+              تماس با ما
+            </Link>
           </Flex>
         ) : (
           <Flex>
             <IconButton
-              icon={<Menu size={24} />}
+              icon={<Menu />}
               variant="ghost"
               color="white"
               aria-label="باز کردن منو"
@@ -125,7 +225,7 @@ export const Home = () => {
 
         <IconButton
           mr={2}
-          icon={<User2 size={24} />}
+          icon={<User2 />}
           variant="solid"
           colorScheme="teal"
           aria-label="ورود به سیستم"
@@ -168,18 +268,42 @@ export const Home = () => {
       {/* Slider */}
       <Box maxW="900px" mx="auto" mb={8} mt={8}>
         <Slider {...sliderSettings}>
-          {images.map((img, i) => (
-            <Box key={i} h="600px">
+          {sliderData.map((slide, i) => (
+            <Box key={i} h="600px" dir="rtl">
               <img
-                src={img}
-                alt={`slider-${i}`}
+                src={slide.image}
+                alt={slide.title}
                 style={{
                   width: "100%",
                   height: "100%",
-                  objectFit: "cover",
+                  objectFit: "fill",
                   borderRadius: "10px",
                 }}
               />
+              <Box
+                mr={1}
+                float="right"
+                position="absolute"
+                top="83.2%"
+                h="100px"
+                maxW="900px"
+                color="gray"
+                borderRadius="10px"
+              >
+                <Heading
+                  fontSize={{ base: "2xl", md: "lg", lg: "4xl" }}
+                  fontFamily="Aseman"
+                >
+                  {slide.title}
+                </Heading>
+                <Text
+                  fontSize={{ base: "xs", md: "sm" }}
+                  fontFamily="IranSans"
+                  mt="1"
+                >
+                  {slide.description}
+                </Text>
+              </Box>
             </Box>
           ))}
         </Slider>
@@ -247,31 +371,27 @@ export const Home = () => {
               >
                 <Flex spacing={2} spacingX={0}>
                   <Heading
-                    alignContent="center"
-                    alignItems="center"
-                    textAlign="right"
-                    size={isDesktop ? "xl" : "md"}
-                    fontFamily="EnglishHeader"
-                    mr={2}
+                    size={isDesktop ? "lg" : "md"}
+                    fontFamily="Aseman"
+                    ml="auto"
+                    mb={2}
                   >
-                    G
+                    انواع ریل آسانسور
                   </Heading>
-                  <Heading
+                  {/* <Heading
                     alignContent="center"
                     alignItems="center"
                     textAlign="left"
                     size={isDesktop ? "md" : "sm"}
                     fontFamily="EnglishHeader"
-                  >
-                    collection
-                  </Heading>
+                  ></Heading> */}
                 </Flex>
                 <Text
                   dir="rtl"
-                  fontSize={isDesktop ? "sm" : "xs"}
-                  fontFamily="Aseman"
+                  fontSize={isDesktop ? "xs" : "2xs"}
+                  fontFamily="IranSans"
                 >
-                  کابین آسانسور تمام شیشه ای
+                  وارد کننده ریل های با کیفیت اسپانیایی، ترکیه ای و چینی
                 </Text>
               </Box>
               <Box
@@ -291,7 +411,7 @@ export const Home = () => {
                   h="100%"
                   borderRadius={15}
                   objectFit="fit"
-                  src="/assets/images/products/glassCabin3.jpg"
+                  src="/assets/images/products/Reil1.jpg"
                 />
               </Box>
             </SimpleGrid>
@@ -326,14 +446,12 @@ export const Home = () => {
               >
                 <Flex spacing={2} spacingX={0}>
                   <Heading
-                    alignContent="center"
-                    alignItems="center"
-                    textAlign="right"
                     size={isDesktop ? "xl" : "md"}
-                    fontFamily="EnglishHeader"
-                    mr={2}
+                    fontFamily="Aseman"
+                    ml="auto"
+                    mb={2}
                   >
-                    N
+                    موتور آسانسور
                   </Heading>
                   <Heading
                     alignContent="center"
@@ -341,16 +459,14 @@ export const Home = () => {
                     textAlign="left"
                     size={isDesktop ? "md" : "sm"}
                     fontFamily="EnglishHeader"
-                  >
-                    collection
-                  </Heading>
+                  ></Heading>
                 </Flex>
                 <Text
                   dir="rtl"
-                  fontSize={isDesktop ? "sm" : "xs"}
-                  fontFamily="Aseman"
+                  fontSize={isDesktop ? "xs" : "2xs"}
+                  fontFamily="IranSans"
                 >
-                  کابین آسانسور تمام استیل
+                  نمایندگی رسمی موتورهای الکو
                 </Text>
               </Box>
               <Box
@@ -370,7 +486,7 @@ export const Home = () => {
                   h="100%"
                   borderRadius={15}
                   objectFit="fit"
-                  src="/assets/images/products/glassCabin4.jpg"
+                  src="/assets/images/products/motor1.jpg"
                 />
               </Box>
             </SimpleGrid>
@@ -409,14 +525,12 @@ export const Home = () => {
               >
                 <Flex spacing={2} spacingX={0}>
                   <Heading
-                    alignContent="center"
-                    alignItems="center"
-                    textAlign="right"
                     size={isDesktop ? "xl" : "md"}
-                    fontFamily="EnglishHeader"
-                    mr={2}
+                    fontFamily="Aseman"
+                    ml="auto"
+                    mb={2}
                   >
-                    Base
+                    گیربکس آسانسور
                   </Heading>
                   <Heading
                     alignContent="center"
@@ -424,16 +538,14 @@ export const Home = () => {
                     textAlign="left"
                     size={isDesktop ? "md" : "sm"}
                     fontFamily="EnglishHeader"
-                  >
-                    Parts
-                  </Heading>
+                  ></Heading>
                 </Flex>
                 <Text
                   dir="rtl"
-                  fontSize={isDesktop ? "sm" : "xs"}
-                  fontFamily="Aseman"
+                  fontSize={isDesktop ? "xs" : "2xs"}
+                  fontFamily="IranSans"
                 >
-                  ریل آسانسور
+                  نمایندگی رسمی گیربوکس های الکو
                 </Text>
               </Box>
               <Box
@@ -453,7 +565,7 @@ export const Home = () => {
                   h="100%"
                   borderRadius={15}
                   objectFit="fit"
-                  src="/assets/images/products/reil1.jpg"
+                  src="/assets/images/products/motor2.jpg"
                 />
               </Box>
             </SimpleGrid>
@@ -488,14 +600,12 @@ export const Home = () => {
               >
                 <Flex spacing={2} spacingX={0}>
                   <Heading
-                    alignContent="center"
-                    alignItems="center"
-                    textAlign="right"
                     size={isDesktop ? "xl" : "md"}
-                    fontFamily="EnglishHeader"
-                    mr={2}
+                    fontFamily="Aseman"
+                    ml="auto"
+                    mb={2}
                   >
-                    O
+                    سیم بکسل
                   </Heading>
                   <Heading
                     alignContent="center"
@@ -503,16 +613,15 @@ export const Home = () => {
                     textAlign="left"
                     size={isDesktop ? "md" : "sm"}
                     fontFamily="EnglishHeader"
-                  >
-                    collection
-                  </Heading>
+                  ></Heading>
                 </Flex>
                 <Text
                   dir="rtl"
-                  fontSize={isDesktop ? "sm" : "xs"}
-                  fontFamily="Aseman"
+                  fontSize={isDesktop ? "xs" : "2xs"}
+                  fontFamily="IranSans"
                 >
-                  آسانسور های بیرونی{" "}
+                  واردات مستقیم سیم بکسل به صورت انحصاری در ابعاد و ضخامت های
+                  مختلف{" "}
                 </Text>
               </Box>
               <Box
@@ -532,7 +641,7 @@ export const Home = () => {
                   h="100%"
                   borderRadius={15}
                   objectFit="fit"
-                  src="/assets/images/products/glassCabin1.jpg"
+                  src="/assets/images/products/Boxel1.jpg"
                 />
               </Box>
             </SimpleGrid>
@@ -612,19 +721,29 @@ export const Home = () => {
               <Text fontWeight="medium">‌09121234567 : مدیریت</Text>
               <Text fontWeight="medium">‌09121234567 : مدیر فروش</Text>
               <Text fontWeight="medium">‌09121234567 : حسابداری</Text>
+              <Flex mx="auto" mt={2} direction="row" columnGap={3}>
+                <Link _hover={{ color: "orange" }}>
+                  <Twitter />
+                </Link>
+                <Link _hover={{ color: "orange" }}>
+                  <Phone />
+                </Link>
+                <Link _hover={{ color: "orange" }}>
+                  <Smartphone />
+                </Link>
+                <Link _hover={{ color: "orange" }}>
+                  <Linkedin />
+                </Link>
+                <Link _hover={{ color: "orange" }}>
+                  <Facebook />
+                </Link>
+              </Flex>
             </VStack>
 
             <VStack textAlign="right" alignItems="end">
-              <Box
-                bg="orange"
-                boxSize={100}
-                maxH={10}
-                mb={8}
-                mr="auto"
-                ml="auto"
-              >
+              <Box boxSize={100} maxH={10} mb={8} mr="auto" ml="auto">
                 <Image
-                  src="/assets/images/logos/logoMedium.jpg"
+                  src="/assets/images/logos/logo1.png"
                   objectFit="cover"
                   target="_blank"
                   rel="noopener noreferrer"

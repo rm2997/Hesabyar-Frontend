@@ -370,7 +370,7 @@ export const ProformaRequests = ({ isDesktop }) => {
         </Box>
         <Box
           position="sticky"
-          bottom="68px"
+          bottom="0px"
           bg="#efefef"
           p={1}
           zIndex="1"
@@ -414,7 +414,13 @@ export const ProformaRequests = ({ isDesktop }) => {
       </MyModal>
       {loading && (
         <AbsoluteCenter>
-          <Spinner color="red" colorScheme="red" size="xl" />
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="red.500"
+            size="xl"
+          />
         </AbsoluteCenter>
       )}
     </Box>

@@ -28,6 +28,8 @@ import {
   Heading,
   SimpleGrid,
   Stack,
+  AbsoluteCenter,
+  Spinner,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -39,7 +41,6 @@ import {
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { CheckCircle2, CircleX } from "lucide-react";
-import { NotFoundPage } from "./NotFoundPage";
 
 export const UploadProformaDocument = ({}) => {
   const toast = useToast();
@@ -155,30 +156,31 @@ export const UploadProformaDocument = ({}) => {
     setLoading(false);
   };
 
-  if (loading) return <MyLoading showLoading={true} />;
-  else
-    return (
-      <Card m={10}>
+  return (
+    <Box>
+      <Card m={1} filter={loading ? "blur(10px)" : ""}>
         <CardHeader
-          bg="#68C15A"
+          bg="#6b749f"
           color="white"
           borderBottomColor="gray.400"
           borderBottomWidth="1px"
           borderTopRadius={5}
-          textAlign="center"
+          textAlign="right"
         >
-          <Heading size="lg">{formData.title}</Heading>
+          <Heading fontFamily="IranSans" size="lg">
+            {formData.title} - پیش فاکتور
+          </Heading>
         </CardHeader>
         <CardBody>
           <SimpleGrid
             columns={{ base: 1, md: 1, lg: 1 }}
             dir="rtl"
             mb={10}
-            rowGap={3}
+            rowGap={5}
             as="form"
             onSubmit={handleSubmit}
           >
-            <Stack align="stretch" rowGap={2} spacing={4}>
+            <Stack align="stretch" rowGap={5} spacing={4}>
               <HStack>
                 <Text>نام خریدار : </Text>
                 <Text name="customer">
@@ -209,16 +211,58 @@ export const UploadProformaDocument = ({}) => {
             <Divider mb={5} />
             <Stack align="stretch">
               <TableContainer dir="rtl">
-                <Table size="sm" variant="simple">
-                  <Thead borderBottomWidth={2}>
-                    <Tr>
-                      <Th>ردیف</Th>
-                      <Th>نام کالا</Th>
-                      <Th>تعداد</Th>
-                      <Th>واحد</Th>
-                      <Th>قیمت واحد</Th>
-                      <Th>جمع کل</Th>
-                      <Th>توضیحات کالا</Th>
+                <Table size="sm" variant="striped">
+                  <Thead h="50px" borderBottomWidth={2}>
+                    <Tr bg="#666c85" textFillColor="white">
+                      <Th
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        textAlign="center"
+                      >
+                        ردیف
+                      </Th>
+                      <Th
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        textAlign="center"
+                      >
+                        نام کالا
+                      </Th>
+                      <Th
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        textAlign="center"
+                      >
+                        تعداد
+                      </Th>
+                      <Th
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        textAlign="center"
+                      >
+                        واحد
+                      </Th>
+                      <Th
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        textAlign="center"
+                      >
+                        قیمت واحد
+                      </Th>
+                      <Th
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        textAlign="center"
+                      >
+                        جمع کل
+                      </Th>
+                      <Th
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        textAlign="center"
+                      >
+                        توضیحات کالا
+                      </Th>
                       <Th></Th>
                     </Tr>
                   </Thead>
@@ -281,11 +325,23 @@ export const UploadProformaDocument = ({}) => {
                       <Th>
                         <VStack mt="5px" align="stretch" spacing={0}>
                           <HStack p={2} bg="gray.100" spacing={10}>
-                            <Heading size="xs">تعداد کل : </Heading>
+                            <Heading
+                              fontFamily="IranSans"
+                              fontSize="md"
+                              size="xs"
+                            >
+                              تعداد کل :
+                            </Heading>
                             <Text>{itemsCount}</Text>
                           </HStack>
                           <HStack p={2} bg="gray.100" spacing={5}>
-                            <Heading size="xs">مبلغ نهایی :</Heading>
+                            <Heading
+                              fontFamily="IranSans"
+                              fontSize="md"
+                              size="xs"
+                            >
+                              مبلغ نهایی :
+                            </Heading>
                             <Text>
                               {Number(formData.totalAmount).toLocaleString()}
                             </Text>
@@ -343,6 +399,7 @@ export const UploadProformaDocument = ({}) => {
                 />
               </InputGroup>
               <Box
+                overflow="auto"
                 borderRadius="6px"
                 borderColor="orange"
                 borderWidth="1px"
@@ -395,5 +452,11 @@ export const UploadProformaDocument = ({}) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-    );
+      {loading && (
+        <AbsoluteCenter>
+          <Spinner color="red.500" emptyColor="gray.300" thickness="md" />
+        </AbsoluteCenter>
+      )}
+    </Box>
+  );
 };

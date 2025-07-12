@@ -8,10 +8,12 @@ export const UserSentdNotifications = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      setShowLoading(true);
       await ShowUserSndNotifications().then((res) => {
         setUserData(res.data);
         setShowLoading(false);
       });
+      setShowLoading(false);
     };
 
     loadData();

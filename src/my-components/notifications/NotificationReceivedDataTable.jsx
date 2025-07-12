@@ -1,4 +1,5 @@
 import {
+  AbsoluteCenter,
   Box,
   Card,
   CardBody,
@@ -10,6 +11,7 @@ import {
   Icon,
   Link,
   SimpleGrid,
+  Spinner,
   Stack,
   Text,
   Tooltip,
@@ -82,6 +84,8 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
             duration: 3000,
             isClosable: true,
           });
+          setLoading(false);
+          return;
         })
         .finally(setLoading(false));
     } catch (err) {
@@ -92,6 +96,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
         duration: 3000,
         isClosable: true,
       });
+      setLoading(false);
     }
   };
 
@@ -177,175 +182,193 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
   dayjs.extend(jalali);
 
   return (
-    <Flex direction="column" height="100vh">
-      <SearchBar
-        search={search}
-        setSearch={setSearch}
-        handleResetSearch={handleResetSearch}
-        loadData={loadData}
-        userInfo="جستجوی اعلان"
-      />
-      <Box flex="1" overflowY="auto" p={5}>
-        <Flex direction="column" gap={4}>
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
-            {userMessages.map((row) => (
-              <Card
-                borderTopRadius={5}
-                borderWidth={1}
-                _hover={{ borderColor: "orange" }}
-              >
-                <CardHeader bg="green.500" borderTopRadius={5} color="white">
-                  <HStack>
-                    {row.receiverRead ? (
-                      <Tooltip label="خوانده شده">
-                        <MailOpen color="yellow" />
-                      </Tooltip>
-                    ) : (
-                      <Tooltip label="خوانده نشده">
-                        <Mail color="orange" />
-                      </Tooltip>
-                    )}
-
-                    <Text mr="auto">{row.title}</Text>
-                  </HStack>
-                </CardHeader>
-                <CardBody>
-                  <VStack align={"stretch"} spacing={2}>
-                    <HStack>
-                      <Text>تاریخ :</Text>
-                      <Text mr="auto">
-                        {dayjs(row.createdAt).locale("fa").format("YYYY/MM/DD")}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>فرستنده :</Text>
-                      <Text mr="auto">
-                        {row.fromUser?.userfname +
-                          " " +
-                          row.fromUser?.userlname}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>محتوا :</Text>
-                      <Text mr="auto">
-                        {row.message.length > 15
-                          ? row.message.substring(0, 12) + "..."
-                          : row.message}
-                      </Text>
-                    </HStack>
-                  </VStack>
-                </CardBody>
-                <CardFooter borderBottomRadius={5} bg="gray.200">
-                  <Stack
-                    direction={["row"]}
-                    spacing={2}
-                    align={"stretch"}
-                    mr="auto"
-                  >
-                    {row.receiverRead ? (
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={() => handleMarkAsUnreadNotification(row.id)}
-                      >
-                        <Tooltip label="به عنوان خوانده نشده مارک کن">
-                          <Icon w={6} h={6} as={EyeClosed} />
-                        </Tooltip>
-                      </Link>
-                    ) : (
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={() => handleMarkAsReadNotification(row.id)}
-                      >
-                        <Tooltip label="به عنوان خوانده شده مارک کن">
-                          <Icon w={6} h={6} as={Eye} />
-                        </Tooltip>
-                      </Link>
-                    )}
-                    <Link
-                      _hover={{ color: "#ffd54f" }}
-                      color="red.600"
-                      onClick={(e) => {
-                        setSelectedID(row.id);
-                        setDialogGears({
-                          title: "حذف پیام",
-                          text: "آیا واقعا می خواهید این پیام را حذف کنید؟",
-                          callBack: handleDeleteNotification,
-                        });
-                        setIsDialogOpen(true);
-                      }}
-                    >
-                      <Tooltip label="حذف">
-                        <Icon w={6} h={6} as={Trash2} />
-                      </Tooltip>
-                    </Link>
-
-                    <Link
-                      _hover={{ color: "#ffd54f" }}
-                      color="green"
-                      onClick={() => {
-                        setSelectedID(row.id);
-                        setDialogGears({
-                          title: "مشاهده پیام",
-                          text: "",
-                          callBack: null,
-                        });
-                        handleMarkAsReadNotification(row.id);
-                        onOpen();
-                      }}
-                    >
-                      <Tooltip label="مشاهده">
-                        <Icon w={6} h={6} as={View} />
-                      </Tooltip>
-                    </Link>
-                  </Stack>
-                </CardFooter>
-              </Card>
-            ))}
-          </SimpleGrid>
-
-          <MyModal
-            modalHeader={dialogGears.title}
-            isOpen={isOpen}
-            onClose={onClose}
-          >
-            <ShowUserNotification
-              id={selectedID}
-              notifications={userMessages}
-            />
-          </MyModal>
-          <MyAlert
-            AlertHeader={dialogGears.title}
-            AlertMessage={dialogGears.text}
-            isOpen={isDialogOpen}
-            onClose={handleDialogClose}
-          />
-        </Flex>
-      </Box>
-      <Box
-        position="sticky"
-        bottom="68px"
-        bg="#efefef"
-        p={1}
-        zIndex="1"
-        borderTopColor="gray.400"
-        borderTopWidth="1px"
+    <Box>
+      <Flex
+        filter={loading ? "blur(10px)" : ""}
+        direction="column"
+        height="100vh"
       >
-        <Flex justify="center" align="center">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
-        </Flex>
-      </Box>
-    </Flex>
+        <SearchBar
+          search={search}
+          setSearch={setSearch}
+          handleResetSearch={handleResetSearch}
+          loadData={loadData}
+          userInfo="جستجوی اعلان"
+        />
+        <Box flex="1" overflowY="auto" p={5}>
+          <Flex direction="column" gap={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+              {userMessages.map((row) => (
+                <Card
+                  borderTopRadius={5}
+                  borderWidth={1}
+                  _hover={{ borderColor: "orange" }}
+                >
+                  <CardHeader bg="green.500" borderTopRadius={5} color="white">
+                    <HStack>
+                      {row.receiverRead ? (
+                        <Tooltip label="خوانده شده">
+                          <MailOpen color="yellow" />
+                        </Tooltip>
+                      ) : (
+                        <Tooltip label="خوانده نشده">
+                          <Mail color="orange" />
+                        </Tooltip>
+                      )}
+
+                      <Text mr="auto">{row.title}</Text>
+                    </HStack>
+                  </CardHeader>
+                  <CardBody>
+                    <VStack align={"stretch"} spacing={2}>
+                      <HStack>
+                        <Text>تاریخ :</Text>
+                        <Text mr="auto">
+                          {dayjs(row.createdAt)
+                            .locale("fa")
+                            .format("YYYY/MM/DD")}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>فرستنده :</Text>
+                        <Text mr="auto">
+                          {row.fromUser?.userfname +
+                            " " +
+                            row.fromUser?.userlname}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>محتوا :</Text>
+                        <Text mr="auto">
+                          {row.message.length > 15
+                            ? row.message.substring(0, 12) + "..."
+                            : row.message}
+                        </Text>
+                      </HStack>
+                    </VStack>
+                  </CardBody>
+                  <CardFooter borderBottomRadius={5} bg="gray.200">
+                    <Stack
+                      direction={["row"]}
+                      spacing={2}
+                      align={"stretch"}
+                      mr="auto"
+                    >
+                      {row.receiverRead ? (
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={() => handleMarkAsUnreadNotification(row.id)}
+                        >
+                          <Tooltip label="به عنوان خوانده نشده مارک کن">
+                            <Icon w={6} h={6} as={EyeClosed} />
+                          </Tooltip>
+                        </Link>
+                      ) : (
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={() => handleMarkAsReadNotification(row.id)}
+                        >
+                          <Tooltip label="به عنوان خوانده شده مارک کن">
+                            <Icon w={6} h={6} as={Eye} />
+                          </Tooltip>
+                        </Link>
+                      )}
+                      <Link
+                        _hover={{ color: "#ffd54f" }}
+                        color="red.600"
+                        onClick={(e) => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "حذف پیام",
+                            text: "آیا واقعا می خواهید این پیام را حذف کنید؟",
+                            callBack: handleDeleteNotification,
+                          });
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        <Tooltip label="حذف">
+                          <Icon w={6} h={6} as={Trash2} />
+                        </Tooltip>
+                      </Link>
+
+                      <Link
+                        _hover={{ color: "#ffd54f" }}
+                        color="green"
+                        onClick={() => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "مشاهده پیام",
+                            text: "",
+                            callBack: null,
+                          });
+                          handleMarkAsReadNotification(row.id);
+                          onOpen();
+                        }}
+                      >
+                        <Tooltip label="مشاهده">
+                          <Icon w={6} h={6} as={View} />
+                        </Tooltip>
+                      </Link>
+                    </Stack>
+                  </CardFooter>
+                </Card>
+              ))}
+            </SimpleGrid>
+
+            <MyModal
+              modalHeader={dialogGears.title}
+              isOpen={isOpen}
+              onClose={onClose}
+            >
+              <ShowUserNotification
+                id={selectedID}
+                notifications={userMessages}
+              />
+            </MyModal>
+            <MyAlert
+              AlertHeader={dialogGears.title}
+              AlertMessage={dialogGears.text}
+              isOpen={isDialogOpen}
+              onClose={handleDialogClose}
+            />
+          </Flex>
+        </Box>
+        <Box
+          position="sticky"
+          bottom="0"
+          bg="#efefef"
+          p={1}
+          zIndex="1"
+          borderTopColor="gray.400"
+          borderTopWidth="1px"
+        >
+          <Flex justify="center" align="center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </Flex>
+        </Box>
+        {loading && (
+          <AbsoluteCenter>
+            <Spinner
+              size="xl"
+              color="red.500"
+              emptyColor="gray.300"
+              thickness="4px"
+            />
+          </AbsoluteCenter>
+        )}
+      </Flex>
+    </Box>
   );
 };

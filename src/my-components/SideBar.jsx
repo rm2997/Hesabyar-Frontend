@@ -37,15 +37,22 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
       bg="gray.800"
       position="relative"
       borderLeft="8px solid gray.100"
+      borderTopColor="gray.300"
+      borderTopWidth={1}
     >
-      <Box mt={1} bg="#50b742" w="100%" h="40px" borderRadius={2}>
+      <Box
+        bg="#50b742"
+        w="100%"
+        h="40px"
+        borderRadius={2}
+        alignContent="center"
+      >
         <Link>
           <Text
             pt={1}
-            alignContent={"center"}
-            textAlign={"center"}
-            fontSize={sidebarWidth === 300 ? "2xl" : "medium"}
-            fontFamily={""}
+            textAlign="center"
+            fontSize={sidebarWidth === 300 ? "3xl" : "lg  "}
+            fontFamily="Aseman"
           >
             امکانات
           </Text>

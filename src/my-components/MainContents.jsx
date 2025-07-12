@@ -174,14 +174,17 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         color="white"
       > */}
       <Box
-        borderBottomRadius={5}
-        bg="#0A9DBB"
-        borderBottomColor="gray.100"
-        borderBottomWidth="1px"
+        borderColor="gray.500"
+        borderTopWidth={1}
+        borderBottomWidth={1}
+        boxShadow="rgba(0, 0, 0, 0.5) 1px 1px 1px 1px"
+        alignItems="center"
+        alignContent="center"
+        bg="#373c50"
         color="white"
         p={1}
       >
-        <Text mx={1} fontSize={"2xl"}>
+        <Text h="38px" fontFamily="Yekan" mx={3} fontSize={"lg"}>
           {pageTitle}
         </Text>
       </Box>

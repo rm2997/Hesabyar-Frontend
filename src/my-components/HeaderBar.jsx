@@ -76,6 +76,7 @@ export const HeaderBar = ({
       bg="gray.800"
       borderBottom="1px"
       borderColor="gray.700"
+      boxShadow="rgba(0, 0, 0, 0.5) 1px 1px 1px 1px"
     >
       <HStack spacing={sidebarWidth === 300 ? 10 : 5}>
         <HStack>

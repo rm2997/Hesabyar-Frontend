@@ -8,6 +8,7 @@ export const UserReceivedNotifications = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      setShowLoading(true);
       await ShowUserRcvAllNotifications().then((res) => {
         setUserData(res.data);
         setShowLoading(false);
