@@ -1,5 +1,4 @@
 import {
-  AbsoluteCenter,
   Box,
   Button,
   Card,
@@ -9,7 +8,6 @@ import {
   FormControl,
   FormLabel,
   HStack,
-  Spinner,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -17,7 +15,7 @@ import { Info, Ruler, SquareCheckBig } from "lucide-react";
 import { useState } from "react";
 import { CreateUnit } from "../../api/services/unitsService";
 import { MyInputBox } from "../../my-components/MyInputBox";
-
+import { MyLoading } from "../../my-components/MyLoading";
 export const NewUnit = ({ isDesktop }) => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -100,7 +98,7 @@ export const NewUnit = ({ isDesktop }) => {
                 ></MyInputBox>
               </HStack>
             </FormControl>
-            <FormControl isRequired>
+            <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="150px">
                   توضیحات
@@ -127,11 +125,7 @@ export const NewUnit = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

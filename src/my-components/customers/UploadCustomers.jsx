@@ -1,5 +1,4 @@
 import {
-  AbsoluteCenter,
   Box,
   Button,
   Card,
@@ -13,7 +12,6 @@ import {
   HStack,
   IconButton,
   Input,
-  Modal,
   Progress,
   Spinner,
   Text,
@@ -26,6 +24,7 @@ import {
   ClipboardCheck,
   FolderOpen,
 } from "lucide-react";
+import { MyLoading } from "../MyLoading";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 
@@ -284,11 +283,7 @@ export const UploadCustomers = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

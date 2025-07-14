@@ -21,7 +21,7 @@ import {
   CheckUserPassword,
   GetUserByUserid,
 } from "../../api/services/userService";
-
+import { MyLoading } from "../MyLoading";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { UserContext } from "../../contexts/UserContext";
 
@@ -169,12 +169,7 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
 
   return (
     <Box>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
-      <Card m={10}>
+      <Card m={1} filter={loading ? "blur(10px)" : ""}>
         <CardHeader
           bg="#68C15A"
           borderBottomColor="gray.400"
@@ -269,6 +264,7 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
+      {loading && <MyLoading />}
     </Box>
   );
 };

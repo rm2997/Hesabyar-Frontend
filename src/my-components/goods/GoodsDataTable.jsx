@@ -29,6 +29,7 @@ import { RemoveGood, ShowAllGoods } from "../../api/services/goodsService";
 
 import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
+import { MyLoading } from "../MyLoading";
 
 export const GoodsDataTable = ({ isDesktop }) => {
   const [goodsData, setGoodsData] = useState([]);
@@ -51,26 +52,25 @@ export const GoodsDataTable = ({ isDesktop }) => {
 
   const loadData = async (resetPage = false) => {
     setLoading(true);
-    ShowAllGoods(
+    const res = await ShowAllGoods(
       resetPage ? 1 : currentPage,
       itemsPerPage,
       resetPage ? "" : search
-    )
-      .then((res) => {
-        if (!res.data) return;
-        setGoodsData(res?.data.items);
-        setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
-      })
-      .catch((error) => {
-        toast({
-          title: "خطا در دریافت داده‌ها",
-          description: error.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(setLoading(false));
+    );
+    if (!res.data) {
+      toast({
+        title: "خطا در دریافت داده‌ها",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    setGoodsData(res?.data.items);
+    setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
+    setLoading(false);
   };
 
   const handleResetSearch = () => {
@@ -101,30 +101,31 @@ export const GoodsDataTable = ({ isDesktop }) => {
     goodsData.map((g) => (g.id === id ? g : null));
   };
 
-  const handleDeleteGood = () => {
+  const handleDeleteGood = async () => {
     if (selectedID === 0) return;
-    RemoveGood(selectedID)
-      .then((res) => {
-        setLoading(true);
-        deleteGoodFromList(selectedID);
-        toast({
-          title: "توجه",
-          description: ` ,واحد حذف شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
+    setLoading(true);
+    const res = await RemoveGood(selectedID);
+    if (!res?.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+
+    deleteGoodFromList(selectedID);
+    toast({
+      title: "توجه",
+      description: ` ,واحد حذف شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
   };
 
   return (
@@ -182,7 +183,16 @@ export const GoodsDataTable = ({ isDesktop }) => {
                       <Divider />
                       <HStack>
                         <Text> قیمت کالا :</Text>
-                        <Text mr="auto">{row.goodPrice}</Text>
+                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
+                          {row.goodPrice}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> موجودی :</Text>
+                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
+                          {row.goodCount}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
@@ -247,7 +257,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
         </Box>
         <Box
           position="sticky"
-          bottom="69px"
+          bottom="0"
           bg="#efefef"
           p={1}
           zIndex="1"
@@ -277,11 +287,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
           onClose={handleDialogClose}
         />
       </Flex>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

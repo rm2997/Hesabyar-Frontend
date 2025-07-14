@@ -12,24 +12,14 @@ import {
   HStack,
   Select,
   SimpleGrid,
-  Spinner,
   Switch,
-  VStack,
   useToast,
 } from "@chakra-ui/react";
-import {
-  IdCard,
-  Info,
-  KeyRound,
-  Phone,
-  Smartphone,
-  SquareCheckBig,
-  User,
-  UserPlus,
-} from "lucide-react";
+import { IdCard, KeyRound, Smartphone, User, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
+import { MyLoading } from "../MyLoading";
 import { CreateUser, GetAllUsers } from "../../api/services/userService";
 import { UserRoles } from "../../api/services/enums/roles.enum";
 
@@ -282,17 +272,7 @@ export const NewUser = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            size="xl"
-            color="red.500"
-          />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

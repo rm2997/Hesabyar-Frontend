@@ -31,6 +31,7 @@ import {
 } from "../../api/services/customerService";
 import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
+import { MyLoading } from "../MyLoading";
 
 export const CustomerDataTable = ({ isDesktop }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -142,6 +143,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
         filter={loading ? "blur(10px)" : ""}
         direction="column"
         height="100vh"
+        minH="100%"
       >
         <SearchBar
           search={search}
@@ -293,7 +295,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
         </Box>
         <Box
           position="sticky"
-          bottom="68px"
+          bottom="0"
           bg="#efefef"
           p={1}
           zIndex="1"
@@ -309,11 +311,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
           </Flex>
         </Box>
       </Flex>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

@@ -20,17 +20,26 @@ export const MyModal = ({
   useEffect(() => {}, [children]);
 
   return (
-    <Modal dir="rtl" onClose={onClose} size={size} isOpen={isOpen}>
+    <Modal
+      isCentered={modalHeader == "خطای دسترسی"}
+      dir="rtl"
+      onClose={onClose}
+      size={size}
+      isOpen={isOpen}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader
-          bg={modalHeader == "خطای دسترسی" ? "red.400" : "#61BB46"}
+          textAlign="right"
+          bg={modalHeader == "خطای دسترسی" ? "red.400" : "#373c50"}
           color="white"
           mb="10px"
         >
           {modalHeader}
         </ModalHeader>
-        {modalHeader !== "خطای دسترسی" && <ModalCloseButton />}
+        {modalHeader !== "خطای دسترسی" && (
+          <ModalCloseButton left="1rem" right="auto" color="white" />
+        )}
         <ModalBody dir="rtl">{children}</ModalBody>
         <ModalFooter>
           {modalHeader !== "خطای دسترسی" && (

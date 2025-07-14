@@ -181,11 +181,7 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
           تایید
         </Button>
       </VStack>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

@@ -57,11 +57,17 @@ export const TrustInput = ({
                   bg="gray.100"
                 >
                   <Datepicker
+                    fontSize="md"
+                    textAlign="center"
+                    fontFamily="IranSans"
                     closeWhenSelectADay={true}
                     format={"YYYY/MM/DD"}
                     adjustPosition={"auto"}
                     input={
                       <input
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
                         placeholder="انتخاب تاریخ"
                         width={isDesktop ? "240px" : "200px"}
                       />

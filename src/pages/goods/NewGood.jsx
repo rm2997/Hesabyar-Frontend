@@ -1,5 +1,4 @@
 import {
-  AbsoluteCenter,
   Box,
   Button,
   Card,
@@ -10,21 +9,15 @@ import {
   FormLabel,
   HStack,
   Select,
-  Spinner,
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import {
-  DollarSign,
-  IdCard,
-  Info,
-  Package2,
-  SquareCheckBig,
-} from "lucide-react";
+import { DollarSign, Info, Package2, SquareCheckBig } from "lucide-react";
 import { useState, useEffect } from "react";
 import { CreateGood } from "../../api/services/goodsService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
+import { MyLoading } from "../../my-components/MyLoading";
 import { ShowAllUnits } from "../../api/services/unitsService";
 
 export const NewGood = ({ isDesktop }) => {
@@ -39,9 +32,20 @@ export const NewGood = ({ isDesktop }) => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllUnits()
-        .then((res) => setUnits(res?.data?.items))
-        .finally(setLoading(false));
+      const res = await ShowAllUnits();
+      if (!res.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
+      setUnits(res?.data?.items);
+      setLoading(false);
     };
 
     loadData();
@@ -52,8 +56,19 @@ export const NewGood = ({ isDesktop }) => {
     setLoading(true);
 
     try {
+      setLoading(true);
       const response = await CreateGood(formData);
-      if (!response.data) return;
+      if (!response.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: response.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
       setFormData({
         goodName: "",
         goodUnit: "",
@@ -67,6 +82,7 @@ export const NewGood = ({ isDesktop }) => {
         duration: 3000,
         isClosable: true,
       });
+      setLoading(false);
     } catch (err) {
       toast({
         title: "خطایی رخ داد",
@@ -75,8 +91,6 @@ export const NewGood = ({ isDesktop }) => {
         duration: 3000,
         isClosable: true,
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -126,7 +140,7 @@ export const NewGood = ({ isDesktop }) => {
             </FormControl>
             <FormControl isRequired>
               <HStack>
-                <FormLabel hidden={!isDesktop} width="150px">
+                <FormLabel hidden={!isDesktop} width="170px">
                   واحد اندازه گیری
                 </FormLabel>
                 <Select
@@ -185,11 +199,7 @@ export const NewGood = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

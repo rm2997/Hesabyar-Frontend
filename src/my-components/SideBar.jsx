@@ -47,16 +47,15 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
         borderRadius={2}
         alignContent="center"
       >
-        <Link>
-          <Text
-            pt={1}
-            textAlign="center"
-            fontSize={sidebarWidth === 300 ? "3xl" : "lg  "}
-            fontFamily="Aseman"
-          >
-            امکانات
-          </Text>
-        </Link>
+        <Heading
+          pt={1}
+          textAlign="center"
+          fontWeight="normal"
+          fontSize={sidebarWidth === 300 ? "2xl" : "lg  "}
+          fontFamily="Yekan"
+        >
+          امکانات
+        </Heading>
       </Box>
       <Accordion
         spacing={2}
@@ -167,14 +166,14 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           icon={<House />}
           children={[
             {
-              id: "newSendDepot",
-              name: "جدید",
+              id: "newDepotEntery",
+              name: "ورود کالای جدید",
               type: "text",
               icon: <DecimalsArrowRight />,
             },
             {
               id: "depotStat",
-              name: "لیست انبار",
+              name: "تایید خروج کالا",
               type: "text",
               icon: <House />,
             },

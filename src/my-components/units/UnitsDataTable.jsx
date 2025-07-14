@@ -27,6 +27,7 @@ import { MyModal } from "../MyModal";
 import { RemoveUnit, ShowAllUnits } from "../../api/services/unitsService";
 import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
+import { MyLoading } from "../MyLoading";
 
 export const UnitsDataTable = ({ isDesktop }) => {
   const [dialogGears, setDialogGears] = useState({
@@ -94,26 +95,26 @@ export const UnitsDataTable = ({ isDesktop }) => {
 
   const loadData = async (resetPage = false) => {
     setLoading(true);
-    await ShowAllUnits(
+    const res = await ShowAllUnits(
       resetPage ? 1 : currentPage,
       itemsPerPage,
       resetPage ? "" : search
-    )
-      .then((res) => {
-        if (!res?.data) return;
-        setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
-        setUnitsData(res?.data?.items);
-      })
-      .catch((err) => {
-        toast({
-          title: "خطا در دریافت داده‌ها",
-          description: err.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(setLoading(false));
+    );
+
+    if (!res?.success) {
+      toast({
+        title: "خطا در دریافت داده‌ها",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
+    setUnitsData(res?.data?.items);
+    setLoading(false);
   };
 
   const handleResetSearch = () => {
@@ -172,9 +173,9 @@ export const UnitsDataTable = ({ isDesktop }) => {
                       <HStack>
                         <Text>توضیحات :</Text>
                         <Text mr="auto">
-                          {row.unitInfo.length > 15
-                            ? row.unitInfo.substring(0, 12) + "..."
-                            : row.unitInfo}
+                          {row?.unitInfo?.length > 15
+                            ? row?.unitInfo?.substring(0, 12) + "..."
+                            : row?.unitInfo}
                         </Text>
                       </HStack>
                     </VStack>
@@ -248,7 +249,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
         </Box>
         <Box
           position="sticky"
-          bottom="68px"
+          bottom="0"
           bg="#efefef"
           p={1}
           zIndex="1"
@@ -264,11 +265,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
           </Flex>
         </Box>
       </Flex>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

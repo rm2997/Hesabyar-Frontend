@@ -50,6 +50,7 @@ import { MyModal } from "../MyModal";
 import { MyAlert } from "../MyAlert";
 import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
+import { MyLoading } from "../MyLoading";
 
 export const ProformaDataTable = ({ isDesktop }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -228,12 +229,20 @@ export const ProformaDataTable = ({ isDesktop }) => {
   const handleConvertToInvoice = async (id) => {
     const proforma = proformas.find((p) => (p.id = id));
     if (!proforma) return;
+
     const newInvoice = {
       ...proforma,
+      id: 0,
+      isSent: false,
+      approvedFile: "",
+      isAccepted: false,
+      customerLink: "",
+      acceptedBy: null,
       customer: { ...proforma.customer },
       invoiceGoods: proforma.proformaGoods,
       proforma: { ...proforma },
     };
+
     setLoading(true);
     const res = await CreateInvoice(newInvoice);
     if (!res.success) {
@@ -370,7 +379,10 @@ export const ProformaDataTable = ({ isDesktop }) => {
                     }
                   >
                     <HStack>
-                      <Text> شماره :{row.id}</Text>
+                      <Text fontFamily="IranSans" fontSize="md">
+                        {" "}
+                        شماره :{row.id}
+                      </Text>
                       <Box mr="auto">
                         <HStack>
                           {row.isConverted ? (
@@ -420,12 +432,14 @@ export const ProformaDataTable = ({ isDesktop }) => {
                     <VStack spacing={2} align="stretch">
                       <HStack>
                         <Text>عنوان : </Text>
-                        <Text>{row.title}</Text>
+                        <Text fontFamily="IranSans" fontSize="md">
+                          {row.title}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text>تاریخ : </Text>
-                        <Text>
+                        <Text fontFamily="IranSans" fontSize="md">
                           {dayjs(row.createdAt)
                             .locale("fa")
                             .format("YYYY/MM/DD")}
@@ -434,7 +448,7 @@ export const ProformaDataTable = ({ isDesktop }) => {
                       <Divider />
                       <HStack>
                         <Text>نام مشتری : </Text>
-                        <Text>
+                        <Text fontFamily="IranSans" fontSize="md">
                           {row.customer?.customerFName +
                             " " +
                             row.customer?.customerLName}
@@ -443,17 +457,21 @@ export const ProformaDataTable = ({ isDesktop }) => {
                       <Divider />
                       <HStack>
                         <Text>نوع پرداخت : </Text>
-                        <Text>{row.paymentStatus}</Text>
+                        <Text fontFamily="IranSans" fontSize="md">
+                          {row.paymentStatus}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text> تایید مشتری : </Text>
-                        <Text>{row.approvedFile ? "دارد" : "ندارد"}</Text>
+                        <Text fontFamily="IranSans" fontSize="md">
+                          {row.approvedFile ? "دارد" : "ندارد"}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text> جمع کل : </Text>
-                        <Text fontSize={"xl"}>
+                        <Text fontFamily="IranSans" fontSize={"xl"}>
                           {Number(row.totalAmount).toLocaleString()}
                         </Text>
                       </HStack>
@@ -603,11 +621,7 @@ export const ProformaDataTable = ({ isDesktop }) => {
             </Flex>
           </Box>
         </Flex>
-        {loading && (
-          <AbsoluteCenter>
-            <Spinner size="xl" color="red.500" />
-          </AbsoluteCenter>
-        )}
+        {loading && <MyLoading />}
       </Box>
     );
 };

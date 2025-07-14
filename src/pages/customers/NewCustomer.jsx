@@ -27,6 +27,7 @@ import { useState } from "react";
 import { CreateCustomer } from "../../api/services/customerService";
 
 import { MyInputBox } from "../../my-components/MyInputBox";
+import { MyLoading } from "../../my-components/MyLoading";
 
 export const NewCustomer = ({ isDesktop }) => {
   const [formData, setFormData] = useState({});
@@ -245,17 +246,7 @@ export const NewCustomer = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            size="xl"
-            color="red.500"
-          />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

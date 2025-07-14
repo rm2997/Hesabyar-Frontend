@@ -49,9 +49,9 @@ import {
   PackageSearch,
   Plus,
   Trash2,
-  UserRoundPlus,
   UserSearch,
 } from "lucide-react";
+import { MyLoading } from "../MyLoading";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -68,6 +68,7 @@ import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
 import { NewCustomer } from "../../pages/customers/NewCustomer";
 import { SearchGoods } from "../SearchGood";
 import { SearchCustomer } from "../SearchCustomer";
+import { MyModal } from "../MyModal";
 
 export const EditProforma = ({
   isDesktop,
@@ -96,6 +97,7 @@ export const EditProforma = ({
     trustIssueDate: "",
     proformaGoods: [],
     description: "",
+    isConverted: 0,
   });
 
   const [proformaItems, setProformaItems] = useState([]);
@@ -107,6 +109,7 @@ export const EditProforma = ({
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
   const [showSearchGood, setShowSearchGood] = useState(false);
 
+  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const items = proforma.proformaGoods;
@@ -163,6 +166,7 @@ export const EditProforma = ({
       proformaGoods: null,
       approvedFile: "",
       description: "",
+      isConverted: 0,
     });
     setProformaItems([
       {
@@ -313,7 +317,12 @@ export const EditProforma = ({
 
   return (
     <Box>
-      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+      <Card
+        minH="100%"
+        overflowY="auto"
+        m={1}
+        filter={loading ? "blur(10px)" : ""}
+      >
         {isDesktop && (
           <CardHeader
             bg="#68C15A"
@@ -458,31 +467,78 @@ export const EditProforma = ({
             <Divider />
             <Box px={2} borderRadius="md">
               <TableContainer>
-                <Table size="sm" variant="simple">
+                <Table
+                  borderColor="blackAlpha.200"
+                  borderWidth={1}
+                  size="sm"
+                  variant="simple"
+                >
                   <Thead>
-                    <Tr>
-                      <Th fontFamily="Vaziri" width="100px">
+                    <Tr bg="#6b749f">
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="100px"
+                      >
                         ردیف
                       </Th>
-                      <Th fontFamily="Vaziri" width="400px">
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="400px"
+                      >
                         نام کالا
                       </Th>
-                      <Th fontFamily="Vaziri" width="100px">
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="100px"
+                      >
                         تعداد
                       </Th>
-                      <Th fontFamily="Vaziri" width="100px">
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="100px"
+                      >
                         واحد
                       </Th>
-                      <Th fontFamily="Vaziri" width="200px">
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="200px"
+                      >
                         قیمت واحد
                       </Th>
-                      <Th fontFamily="Vaziri" width="300px">
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="300px"
+                      >
                         قیمت کل
                       </Th>
-                      <Th fontFamily="Vaziri" width="300px">
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="300px"
+                      >
                         توضیحات
                       </Th>
-                      <Th>
+                      <Th bg="white">
                         <IconButton
                           icon={<Plus />}
                           onClick={() => handleAddNewItem()}
@@ -496,6 +552,8 @@ export const EditProforma = ({
                       <Tr key={"row" + index}>
                         <Td>
                           <Input
+                            fontFamily="IranSans"
+                            fontSize="md"
                             readOnly
                             name="no"
                             key={"Field_no" + item.id}
@@ -570,6 +628,8 @@ export const EditProforma = ({
                         </Td>
                         <Td>
                           <NumberInput
+                            fontFamily="IranSans"
+                            fontSize="md"
                             defaultValue={1}
                             key={"quantity" + item.id}
                             dir="ltr"
@@ -594,11 +654,13 @@ export const EditProforma = ({
                             key={"unitName" + item.id}
                             placeholder="واحد"
                             name="unitName"
-                            value={item?.good?.goodUnit?.unitName}
+                            value={item?.proformaGoods?.goodUnit?.unitName}
                           />
                         </Td>
                         <Td>
                           <Input
+                            fontFamily="IranSans"
+                            fontSize="md"
                             type="number"
                             key={"price" + item.id}
                             name="price"
@@ -615,6 +677,8 @@ export const EditProforma = ({
                         </Td>
                         <Td>
                           <Input
+                            fontFamily="IranSans"
+                            fontSize="md"
                             readOnly
                             key={"goodPrice" + item.id}
                             type="number"
@@ -661,12 +725,16 @@ export const EditProforma = ({
                       <Th width="100px"></Th>
                       <Th width="200px"></Th>
                       <Th width="200px">
-                        <Text> تعداد کل: {totalQuantity}</Text>
+                        <Text fontFamily="IranSans" fontSize="md">
+                          تعداد کل: {totalQuantity}
+                        </Text>
                       </Th>
                       <Th width="200px"></Th>
                       <Th width="300px"></Th>
                       <Th width="300px">
-                        <Text>جمع کل: {totalPrice}</Text>
+                        <Text fontFamily="IranSans" fontSize="md">
+                          جمع کل: {Number(totalPrice).toLocaleString()}
+                        </Text>
                       </Th>
                       <Th></Th>
                       <Th>
@@ -687,9 +755,16 @@ export const EditProforma = ({
                 <Text>فایل تاییدیه مشتری: </Text>
                 {approvedFile ? (
                   <Box
+                    _hover={{ cursor: "pointer", borderColor: "orange" }}
+                    overflow="auto"
                     borderRadius="6px"
+                    borderColor="black"
+                    borderWidth="1px"
                     hidden={approvedFile == null || approvedFile == ""}
                     boxSize="20"
+                    onClick={(e) => {
+                      setShowModal(true);
+                    }}
                   >
                     <Image
                       src={approvedFile ? approvedFile : ""}
@@ -711,7 +786,17 @@ export const EditProforma = ({
               onChange={handleChangeFormData}
             />
 
-            <Button colorScheme="blue" type="submit" isLoading={loading}>
+            <Button
+              colorScheme="blue"
+              type="submit"
+              isLoading={loading}
+              disabled={formData.isConverted}
+              title={
+                formData.isConverted
+                  ? "این پیش فاکتور به فاکتور تبدیل شده است"
+                  : ""
+              }
+            >
               ثبت تغییرات پیش فاکتور
             </Button>
             <Modal
@@ -756,11 +841,30 @@ export const EditProforma = ({
           }}
         />
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      <MyModal
+        modalHeader=" فایل تاییدیه مشتری"
+        onClose={() => setShowModal(false)}
+        isOpen={showModal}
+        size={isDesktop ? "xl" : "full"}
+      >
+        <Box
+          overflow="auto"
+          borderRadius="6px"
+          borderColor="orange"
+          borderWidth="1px"
+          hidden={approvedFile == null || approvedFile == ""}
+          boxSize={isDesktop ? "lg" : "sm"}
+        >
+          <Image
+            src={approvedFile ? approvedFile : ""}
+            objectFit="cover"
+            target="_blank"
+            rel="noopener noreferrer"
+            alt="تاییدیه"
+          />
+        </Box>
+      </MyModal>
+      {loading && <MyLoading />}
     </Box>
   );
 };

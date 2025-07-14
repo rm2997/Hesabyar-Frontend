@@ -1,5 +1,4 @@
 import {
-  AbsoluteCenter,
   Box,
   Card,
   CardBody,
@@ -11,7 +10,6 @@ import {
   Icon,
   Link,
   SimpleGrid,
-  Spinner,
   Stack,
   Text,
   Tooltip,
@@ -41,6 +39,7 @@ import { GetAllUsers, RemoveUser } from "../../api/services/userService";
 import { SendLocationSms } from "../../api/services/userService";
 import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
+import { MyLoading } from "../MyLoading";
 
 export const UsersDataTable = ({ isDesktop }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -407,17 +406,7 @@ export const UsersDataTable = ({ isDesktop }) => {
           </Flex>
         </Box>
       </Flex>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            size="xl"
-            color="red.500"
-          />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

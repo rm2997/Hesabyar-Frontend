@@ -20,7 +20,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Trash2, Eye, Mail, MailOpen, EyeClosed, View } from "lucide-react";
-
+import { MyLoading } from "../MyLoading";
 import { useEffect, useLayoutEffect, useState } from "react";
 import {
   MarkNotificationAsRead,
@@ -64,40 +64,27 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
   const loadData = async (resetPage = false) => {
     if (!currentPage || !itemsPerPage) return;
     setLoading(true);
-    try {
-      await ShowUserRcvAllNotifications(
-        resetPage ? 1 : currentPage,
-        itemsPerPage,
-        resetPage ? "" : search
-      )
-        .then((res) => {
-          if (!res.data || res?.data.items == []) return;
 
-          setUserMessages(res?.data?.items);
-          setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
-        })
-        .catch((error) => {
-          toast({
-            title: "خطا در دریافت داده‌ها",
-            description: error.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-          setLoading(false);
-          return;
-        })
-        .finally(setLoading(false));
-    } catch (err) {
+    const res = await ShowUserRcvAllNotifications(
+      resetPage ? 1 : currentPage,
+      itemsPerPage,
+      resetPage ? "" : search
+    );
+
+    if (!res.success) {
       toast({
         title: "خطا در دریافت داده‌ها",
-        description: err.message,
+        description: res.error,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
       setLoading(false);
+      return;
     }
+    setUserMessages(res?.data?.items);
+    setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -123,21 +110,49 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
   const handleMarkAsReadNotification = async (id) => {
     setSelectedID(id);
     try {
-      await MarkNotificationAsRead(id);
+      setLoading(true);
+      const res = await MarkNotificationAsRead(id);
+      if (!res.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
       await setUserMessagesAsRead(id);
       await loadUnreadeNotif();
+      setLoading(false);
     } catch (err) {
       console.log(err);
+      setLoading(false);
     }
   };
 
   const handleMarkAsUnreadNotification = async (id) => {
     setSelectedID(id);
     try {
-      await MarkNotificationAsUnread(id);
+      setLoading(true);
+      const res = await MarkNotificationAsUnread(id);
+      if (!res.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
       await setUserMessagesAsUnread(id);
       await loadUnreadeNotif();
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.log(err);
     }
   };
@@ -147,30 +162,30 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
 
-  const handleDeleteNotification = () => {
+  const handleDeleteNotification = async () => {
     setLoading(true);
-    RemoveNotification(selectedID)
-      .then((res) => {
-        const notifs = userMessages.filter((n) => n.id !== selectedID);
-        setUserMessages(notifs);
-        toast({
-          title: "توجه",
-          description: ` پیام حذف شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
+    const res = await RemoveNotification(selectedID);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    const notifs = userMessages.filter((n) => n.id !== selectedID);
+    setUserMessages(notifs);
+    toast({
+      title: "توجه",
+      description: ` پیام حذف شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
   };
 
   const handleShowNotification = async () => {
@@ -204,7 +219,22 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                   borderWidth={1}
                   _hover={{ borderColor: "orange" }}
                 >
-                  <CardHeader bg="green.500" borderTopRadius={5} color="white">
+                  <CardHeader
+                    bg="green.500"
+                    borderTopRadius={5}
+                    color="white"
+                    _hover={{ cursor: "pointer" }}
+                    onClick={() => {
+                      setSelectedID(row.id);
+                      setDialogGears({
+                        title: "مشاهده پیام",
+                        text: "",
+                        callBack: null,
+                      });
+                      handleMarkAsReadNotification(row.id);
+                      onOpen();
+                    }}
+                  >
                     <HStack>
                       {row.receiverRead ? (
                         <Tooltip label="خوانده شده">
@@ -223,7 +253,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
                         <Text>تاریخ :</Text>
-                        <Text mr="auto">
+                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
                           {dayjs(row.createdAt)
                             .locale("fa")
                             .format("YYYY/MM/DD")}
@@ -369,6 +399,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
           </AbsoluteCenter>
         )}
       </Flex>
+      {loading && <MyLoading />}
     </Box>
   );
 };

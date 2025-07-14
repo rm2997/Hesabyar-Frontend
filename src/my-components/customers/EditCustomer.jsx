@@ -222,11 +222,7 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
           تایید
         </Button>
       </Flex>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

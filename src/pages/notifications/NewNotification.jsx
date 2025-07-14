@@ -1,5 +1,4 @@
 import {
-  AbsoluteCenter,
   Box,
   Button,
   Card,
@@ -10,21 +9,19 @@ import {
   FormControl,
   FormLabel,
   HStack,
-  Icon,
   InputGroup,
-  InputRightElement,
   Select,
   SimpleGrid,
   Spinner,
   Textarea,
-  VStack,
   useToast,
 } from "@chakra-ui/react";
-import { DollarSign, Hash, IdCard, UserSearch } from "lucide-react";
+import { IdCard } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateNotification } from "../../api/services/notificationService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
+import { MyLoading } from "../../my-components/MyLoading";
 import { GetAllUsers } from "../../api/services/userService";
 import { useNotification } from "../../contexts/NotificationContext";
 
@@ -189,17 +186,7 @@ export const NewNotification = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            size="xl"
-            color="red.500"
-          />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

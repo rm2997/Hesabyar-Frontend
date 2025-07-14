@@ -96,31 +96,29 @@ export const UploadProformaDocument = ({}) => {
           duration: 3000,
           isClosable: false,
         });
-        navigate("/NotFound");
+        setTimeout(() => navigate("/NotFound"), 1000);
         return;
       }
       setLoading(true);
-
-      await ShowProformasByToken(token)
-        .then((res) => {
-          setFormData({ ...res.data, approvedFile: "" });
-          let items = 0;
-          res.data.proformaGoods.forEach((element) => {
-            items += element.quantity;
-          });
-          setItemsCount(items);
-        })
-        .catch((err) => {
-          toast({
-            title: "خطا",
-            description: err.message,
-            status: "error",
-            duration: 3000,
-            isClosable: false,
-          });
-
-          navigate("/NotFound");
+      const res = await ShowProformasByToken(token);
+      if (!res.success) {
+        toast({
+          title: "خطا",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: false,
         });
+        setLoading(false);
+        setTimeout(() => navigate("/NotFound"), 1000);
+        return;
+      }
+      setFormData({ ...res.data, approvedFile: "" });
+      let items = 0;
+      res?.data?.proformaGoods.forEach((element) => {
+        items += element.quantity;
+      });
+      setItemsCount(items);
       setLoading(false);
     };
 
@@ -133,32 +131,40 @@ export const UploadProformaDocument = ({}) => {
     const form = new FormData();
     form.append("image", formData.imageFile);
 
-    await UpdateProformCustomerFile(token, form)
-      .then((res) => {
-        toast({
-          title: "توجه",
-          description: "تاییدیه شما ارسال گردید",
-          status: "success",
-          duration: 3000,
-          isClosable: false,
-        });
-        navigate("/home");
-      })
-      .catch((err) => {
-        toast({
-          title: "خطا",
-          description: err.message,
-          status: "error",
-          duration: 3000,
-          isClosable: false,
-        });
+    const res = await UpdateProformCustomerFile(token, form);
+    if (!res) {
+      toast({
+        title: "خطا",
+        description: "",
+        status: "error",
+        duration: 3000,
+        isClosable: false,
       });
+      setLoading(false);
+      navigate("/NotFound");
+      return;
+    }
+    toast({
+      title: "توجه",
+      description: "تاییدیه شما ارسال گردید",
+      status: "success",
+      duration: 3000,
+      isClosable: false,
+    });
+    navigate("/home");
+
+    setLoading(false);
     setLoading(false);
   };
 
   return (
     <Box>
-      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+      <Card
+        minH="100%"
+        overflowY="auto"
+        m={1}
+        filter={loading ? "blur(10px)" : ""}
+      >
         <CardHeader
           bg="#6b749f"
           color="white"
@@ -193,13 +199,15 @@ export const UploadProformaDocument = ({}) => {
               </HStack>
               <HStack>
                 <Text>تاریخ :</Text>
-                <Text name="createdAt">
+                <Text fontFamily="IranSans" fontSize="md" name="createdAt">
                   {dayjs(formData.createdAt).locale("fa").format("YYYY/MM/DD")}
                 </Text>
               </HStack>
               <HStack>
-                <Text>ساعت :</Text>
-                <Text name="createdAt">
+                <Text fontFamily="IranSans" fontSize="md">
+                  ساعت :
+                </Text>
+                <Text fontFamily="IranSans" fontSize="md" name="createdAt">
                   {dayjs(formData.createdAt).locale("fa").format("HH:mm:ss")}
                 </Text>
               </HStack>
@@ -270,44 +278,66 @@ export const UploadProformaDocument = ({}) => {
                     {formData?.proformaGoods?.map((item, index) => (
                       <Tr key={item.no}>
                         <Td>
-                          <HStack>
-                            <Text>{index + 1} </Text>
-                          </HStack>
+                          <Text
+                            fontFamily="IranSans"
+                            fontSize="md"
+                            textAlign="center"
+                          >
+                            {index + 1}
+                          </Text>
                         </Td>
                         <Td>
-                          <HStack>
-                            <Text>{item.good.goodName}</Text>
-                          </HStack>
+                          <Text
+                            fontFamily="IranSans"
+                            fontSize="md"
+                            textAlign="center"
+                          >
+                            {item.good.goodName}
+                          </Text>
                         </Td>
                         <Td>
-                          <HStack>
-                            <Text>{item.quantity}</Text>
-                          </HStack>
+                          <Text
+                            fontFamily="IranSans"
+                            fontSize="md"
+                            textAlign="center"
+                          >
+                            {item.quantity}
+                          </Text>
                         </Td>
                         <Td>
-                          <HStack>
-                            <Text>{item?.good?.goodUnit?.unitName}</Text>
-                          </HStack>
+                          <Text
+                            fontFamily="IranSans"
+                            fontSize="md"
+                            textAlign="center"
+                          >
+                            {item?.good?.goodUnit?.unitName}
+                          </Text>
                         </Td>
 
                         <Td>
-                          <HStack>
-                            <Text>{Number(item.price).toLocaleString()} </Text>
-                          </HStack>
+                          <Text
+                            fontFamily="IranSans"
+                            fontSize="md"
+                            textAlign="center"
+                          >
+                            {Number(item.price).toLocaleString()}{" "}
+                          </Text>
                         </Td>
                         <Td>
-                          <HStack>
-                            <Text>
-                              {Number(
-                                item.quantity * item.price
-                              ).toLocaleString()}
-                            </Text>
-                          </HStack>
+                          <Text
+                            fontFamily="IranSans"
+                            fontSize="md"
+                            textAlign="center"
+                          >
+                            {Number(
+                              item.quantity * item.price
+                            ).toLocaleString()}
+                          </Text>
                         </Td>
                         <Td>
-                          <HStack>
-                            <Text>{item.description}</Text>
-                          </HStack>
+                          <Text fontFamily="IranSans" fontSize="md">
+                            {item.description}
+                          </Text>
                         </Td>
                         <Td></Td>
                       </Tr>
@@ -332,7 +362,9 @@ export const UploadProformaDocument = ({}) => {
                             >
                               تعداد کل :
                             </Heading>
-                            <Text>{itemsCount}</Text>
+                            <Text fontFamily="IranSans" fontSize="md">
+                              {itemsCount}
+                            </Text>
                           </HStack>
                           <HStack p={2} bg="gray.100" spacing={5}>
                             <Heading
@@ -342,7 +374,7 @@ export const UploadProformaDocument = ({}) => {
                             >
                               مبلغ نهایی :
                             </Heading>
-                            <Text>
+                            <Text fontFamily="IranSans" fontSize="md">
                               {Number(formData.totalAmount).toLocaleString()}
                             </Text>
                           </HStack>
@@ -452,11 +484,7 @@ export const UploadProformaDocument = ({}) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner color="red.500" emptyColor="gray.300" thickness="md" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

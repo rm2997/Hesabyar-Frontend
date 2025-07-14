@@ -54,6 +54,9 @@ export const ChequeInput = ({
                   مبلغ
                 </FormLabel>
                 <NumberInput
+                  title="مبلغ چک"
+                  fontSize="md"
+                  fontFamily="IranSans"
                   defaultValue={0}
                   w={250}
                   dir="ltr"
@@ -82,6 +85,9 @@ export const ChequeInput = ({
                   سریال
                 </FormLabel>
                 <Input
+                  title="سریال چک"
+                  fontSize="md"
+                  fontFamily="IranSans"
                   w={250}
                   dir="ltr"
                   name="chequeSerial"
@@ -98,13 +104,23 @@ export const ChequeInput = ({
                 </FormLabel>
 
                 <Box
+                  fontSize="md"
+                  fontFamily="IranSans"
                   alignItems="end"
                   borderWidth={1}
                   borderColor="gray.200"
                   bg="gray.100"
                 >
                   <Datepicker
-                    input={<input placeholder="تاریخ را انتخاب کنید..." />}
+                    fontSize="md"
+                    fontFamily="IranSans"
+                    input={
+                      <input
+                        fontSize="md"
+                        fontFamily="IranSans"
+                        placeholder="تاریخ را انتخاب کنید..."
+                      />
+                    }
                     id="chequeDate"
                     closeWhenSelectADay={true}
                     format={"YYYY/MM/DD"}

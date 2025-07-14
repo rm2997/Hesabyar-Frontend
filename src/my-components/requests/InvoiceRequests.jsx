@@ -21,6 +21,7 @@ import {
   AbsoluteCenter,
   Spinner,
   Image,
+  Heading,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -50,6 +51,7 @@ import {
   ShowInvoiceApprovedFile,
   ShowUserAllInvoices,
 } from "../../api/services/invoiceService";
+import { MyLoading } from "../MyLoading";
 export const InvoiceRequests = ({ isDesktop }) => {
   const [currentInvoicePage, setCurrentInvoicePage] = useState(1);
   const [invoiceSearch, setInvoiceSearch] = useState("");
@@ -219,9 +221,17 @@ export const InvoiceRequests = ({ isDesktop }) => {
                 <CardHeader
                   borderTopRadius={5}
                   bg={row?.isAccepted ? "green.200" : "orange.200"}
+                  _hover={{ cursor: "pointer" }}
+                  onClick={(e) => {
+                    setInvoiceSelectedID(row.id);
+                    handleShowInvoicePicture(row.id);
+                  }}
                 >
                   <HStack>
-                    <Text> پیش فاکتور شماره :{row.id}</Text>
+                    <Text fontFamily="IranSans" fontSize="md">
+                      {" "}
+                      پیش فاکتور شماره :{row.id}
+                    </Text>
                     <Box mr="auto">
                       {row.isSent ? (
                         <SquareArrowUp color="green" />
@@ -242,19 +252,21 @@ export const InvoiceRequests = ({ isDesktop }) => {
                   <VStack spacing={2} align="stretch">
                     <HStack>
                       <Text>عنوان : </Text>
-                      <Text>{row.title}</Text>
+                      <Text fontFamily="IranSans" fontSize="md">
+                        {row.title}
+                      </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text>تاریخ : </Text>
-                      <Text>
+                      <Text fontFamily="IranSans" fontSize="md">
                         {dayjs(row.createdAt).locale("fa").format("YYYY/MM/DD")}
                       </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text>نام مشتری : </Text>
-                      <Text>
+                      <Text fontFamily="IranSans" fontSize="md">
                         {row.customer?.customerFName +
                           " " +
                           row.customer?.customerLName}
@@ -263,17 +275,21 @@ export const InvoiceRequests = ({ isDesktop }) => {
                     <Divider />
                     <HStack>
                       <Text>نوع پرداخت : </Text>
-                      <Text>{row.paymentStatus}</Text>
+                      <Text fontFamily="IranSans" fontSize="md">
+                        {row.paymentStatus}
+                      </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text> تایید مشتری : </Text>
-                      <Text>{row.approvedFile ? "دارد" : "ندارد"}</Text>
+                      <Text fontFamily="IranSans" fontSize="md">
+                        {row.approvedFile ? "دارد" : "ندارد"}
+                      </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text> جمع کل : </Text>
-                      <Text fontSize={"xl"}>
+                      <Text fontFamily="IranSans" fontSize={"xl"}>
                         {Number(row.totalAmount).toLocaleString()}
                       </Text>
                     </HStack>
@@ -340,32 +356,6 @@ export const InvoiceRequests = ({ isDesktop }) => {
                 </CardFooter>
               </Card>
             ))}
-            <MyAlert
-              onClose={handleDialogClose}
-              isOpen={isDialogOpen}
-              AlertHeader={dialogGears.title}
-              AlertMessage={dialogGears.text}
-            />
-            <MyModal
-              modalHeader="نمایش فایل تاییدیه مشتری"
-              onClose={() => setShowModal(false)}
-              isOpen={showModal}
-              size="xl"
-            >
-              <Box
-                borderRadius="6px"
-                hidden={approvedFile == null || approvedFile == ""}
-                boxSize="xl"
-              >
-                <Image
-                  src={approvedFile ? approvedFile : ""}
-                  objectFit="cover"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  alt="تاییدیه"
-                />
-              </Box>
-            </MyModal>
           </SimpleGrid>
         </Box>
         <Box
@@ -393,15 +383,18 @@ export const InvoiceRequests = ({ isDesktop }) => {
         AlertMessage={dialogGears.text}
       />
       <MyModal
-        modalHeader="نمایش فایل تاییدیه مشتری"
+        modalHeader=" فایل تاییدیه مشتری"
         onClose={() => setShowModal(false)}
         isOpen={showModal}
-        size="xl"
+        size={isDesktop ? "xl" : "xs"}
       >
         <Box
+          overflow="auto"
           borderRadius="6px"
+          borderColor="orange"
+          borderWidth="1px"
           hidden={approvedFile == null || approvedFile == ""}
-          boxSize="xl"
+          boxSize={isDesktop ? "lg" : "2xs"}
         >
           <Image
             src={approvedFile ? approvedFile : ""}
@@ -412,17 +405,7 @@ export const InvoiceRequests = ({ isDesktop }) => {
           />
         </Box>
       </MyModal>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="red.500"
-            size="xl"
-          />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

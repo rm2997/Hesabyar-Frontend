@@ -78,25 +78,37 @@ export const HeaderBar = ({
       borderColor="gray.700"
       boxShadow="rgba(0, 0, 0, 0.5) 1px 1px 1px 1px"
     >
-      <HStack spacing={sidebarWidth === 300 ? 10 : 5}>
+      <HStack spacing={sidebarWidth === 300 ? 3 : 1}>
         <HStack>
           <Box
+            mx={1}
+            borderRadius="10%"
+            _hover={{
+              cursor: "pointer",
+            }}
+            boxShadow="0 0 25px orange"
             boxSize={20}
             maxH={5}
             bgSize="contain"
             bgRepeat="no-repeat"
             bgPosition="center"
+            onClick={() => navigate("/home")}
           >
             <Image
-              src="/assets/images/logos/logo1.jpg"
+              borderRadius="10%"
+              src="/assets/images/logos/logo1.png"
               objectFit="cover"
               target="_blank"
               rel="noopener noreferrer"
             />
           </Box>
-          <Button variant="link" onClick={() => navigate("/home")}>
-            <Text fontSize="md" fontWeight="bold">
-              {sidebarWidth === 300 ? "گروه صنعتی علیایی" : ""}
+          <Button
+            display={sidebarWidth === 300 ? "inline" : "none"}
+            variant="link"
+            onClick={() => navigate("/home")}
+          >
+            <Text fontFamily="IranSans" fontSize="lg" fontWeight="bold">
+              گروه صنعتی علیایی
             </Text>
           </Button>
         </HStack>

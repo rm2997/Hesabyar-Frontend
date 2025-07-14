@@ -1,18 +1,12 @@
 import {
-  AbsoluteCenter,
   Box,
   Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
   Flex,
   FormControl,
   FormLabel,
   HStack,
   Select,
   SimpleGrid,
-  Spinner,
   Switch,
   useToast,
 } from "@chakra-ui/react";
@@ -21,7 +15,8 @@ import { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
-import { GetAllUsers, UpdateUser } from "../../api/services/userService";
+import { MyLoading } from "../MyLoading";
+import { UpdateUser } from "../../api/services/userService";
 import { UserRoles } from "../../api/services/enums/roles.enum";
 
 export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
@@ -212,11 +207,7 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
           </Button>
         </Flex>
       </Box>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Flex>
   );
 };

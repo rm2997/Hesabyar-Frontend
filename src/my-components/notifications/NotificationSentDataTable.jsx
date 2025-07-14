@@ -11,7 +11,6 @@ import {
   Icon,
   Link,
   SimpleGrid,
-  Spinner,
   Stack,
   Text,
   Tooltip,
@@ -20,7 +19,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Trash2, Mail, View } from "lucide-react";
-
+import { MyLoading } from "../MyLoading";
 import { useEffect, useState } from "react";
 import { useNotification } from "../../contexts/NotificationContext";
 import dayjs from "dayjs";
@@ -62,37 +61,28 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
   const loadData = async (resetPage = false) => {
     if (!currentPage || !itemsPerPage) return;
     setLoading(true);
-    try {
-      await ShowUserSndNotifications(
-        resetPage ? 1 : currentPage,
-        itemsPerPage,
-        resetPage ? "" : search
-      )
-        .then((res) => {
-          if (!res.data) return;
 
-          setUserData(res?.data?.items);
-          setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
-        })
-        .catch((error) => {
-          toast({
-            title: "خطا در دریافت داده‌ها",
-            description: error.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        })
-        .finally(setLoading(false));
-    } catch (err) {
+    const res = await ShowUserSndNotifications(
+      resetPage ? 1 : currentPage,
+      itemsPerPage,
+      resetPage ? "" : search
+    );
+
+    if (!res.success) {
       toast({
         title: "خطا در دریافت داده‌ها",
-        description: err.message,
+        description: res.error,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
+      setLoading(false);
+      return;
     }
+
+    setUserData(res?.data?.items);
+    setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -122,30 +112,31 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
 
-  const handleDeleteNotification = () => {
+  const handleDeleteNotification = async () => {
     setLoading(true);
-    RemoveNotification(selectedID)
-      .then((res) => {
-        const notifs = userMessages.filter((n) => n.id !== selectedID);
-        setUserMessages(notifs);
-        toast({
-          title: "توجه",
-          description: ` پیام حذف شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
+
+    const res = await RemoveNotification(selectedID);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    const notifs = userMessages.filter((n) => n.id !== selectedID);
+    setUserMessages(notifs);
+    toast({
+      title: "توجه",
+      description: ` پیام حذف شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
   };
 
   dayjs.extend(jalali);
@@ -173,7 +164,21 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
                   borderWidth={1}
                   _hover={{ borderColor: "orange" }}
                 >
-                  <CardHeader bg="green.500" borderTopRadius={5} color="white">
+                  <CardHeader
+                    bg="green.500"
+                    borderTopRadius={5}
+                    color="white"
+                    _hover={{ cursor: "pointer" }}
+                    onClick={() => {
+                      setSelectedID(row.id);
+                      setDialogGears({
+                        title: "مشاهده پیام",
+                        text: "",
+                        callBack: null,
+                      });
+                      onOpen();
+                    }}
+                  >
                     <HStack>
                       <Tooltip>
                         <Mail color="orange" />
@@ -185,7 +190,7 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
                         <Text>تاریخ :</Text>
-                        <Text mr="auto">
+                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
                           {dayjs(row.createdAt)
                             .locale("fa")
                             .format("YYYY/MM/DD")}
@@ -292,16 +297,7 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
           </Flex>
         </Box>
       </Flex>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner
-            color="red.500"
-            emptyColor="gray.300"
-            size="xl"
-            thickness="4px"
-          />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

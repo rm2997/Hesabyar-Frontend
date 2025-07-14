@@ -5,7 +5,6 @@ import {
   FormControl,
   FormLabel,
   HStack,
-  Spinner,
   useToast,
   VStack,
 } from "@chakra-ui/react";
@@ -13,7 +12,7 @@ import { Info, Ruler, SquareCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ShowUnitByID, UpdateUnit } from "../../api/services/unitsService";
 import { MyInputBox } from "../MyInputBox";
-
+import { MyLoading } from "../MyLoading";
 export const EditUnit = ({ id, onClose, onUpdate, Unit }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
@@ -51,7 +50,7 @@ export const EditUnit = ({ id, onClose, onUpdate, Unit }) => {
     e.preventDefault();
     setLoading(true);
     const result = await UpdateUnit(formData.id, formData);
-    if (!result.status) {
+    if (!result.success) {
       toast({
         title: "خطایی رخ داد",
         description: result.error,
@@ -102,7 +101,7 @@ export const EditUnit = ({ id, onClose, onUpdate, Unit }) => {
             ></MyInputBox>
           </HStack>
         </FormControl>
-        <FormControl isRequired>
+        <FormControl>
           <HStack>
             <FormLabel width="150px">توضیحات</FormLabel>
             <MyInputBox
@@ -125,11 +124,7 @@ export const EditUnit = ({ id, onClose, onUpdate, Unit }) => {
           تایید
         </Button>
       </VStack>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

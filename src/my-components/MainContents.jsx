@@ -28,6 +28,7 @@ import { MyModal } from "./MyModal";
 import { clearTokens } from "../api/tokenUtils";
 import { useNavigate } from "react-router-dom";
 import { Requests } from "../pages/requests/Requests";
+import { NewDepotEntry } from "../pages/depot/NewDepotEntry";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -38,7 +39,7 @@ const validContents = [
   { name: "invoiceStat", value: "فاکتور ها" },
   { name: "newSale", value: "فروش جدید" },
   { name: "saleStat", value: "لیست فروش" },
-  { name: "newSendDepot", value: "ثبت ورود" },
+  { name: "newDepotEntery", value: "ورود کالای جدید" },
   { name: "depotStat", value: "لیست انبار" },
   { name: "user", value: "کاربران" },
   { name: "newCustomer", value: "ثبت مشتری جدید" },
@@ -91,8 +92,8 @@ export const MainContents = ({ activeContent, isDesktop }) => {
           return <></>;
         case "myInvoices":
           return <InvoiceDataTable isDesktop={isDesktop} />;
-        case "newSale":
-          return;
+        case "newDepotEntery":
+          return <NewDepotEntry isDesktop={isDesktop} />;
         case "saleStat":
           return <>Hi4</>;
         case "user":
@@ -145,13 +146,23 @@ export const MainContents = ({ activeContent, isDesktop }) => {
 
   if (sessionExpired) {
     return (
-      <MyModal isOpen={sessionExpired} modalHeader="خطای دسترسی" size="2xl">
-        <Flex direction="column" rowGap={16}>
-          <Heading mx="auto" size="md" fontFamily="Vaziri">
-            نشست منقضی شده است، لطفا مجددا وارد سیستم شوید
+      <MyModal
+        isOpen={sessionExpired}
+        modalHeader="خطای دسترسی"
+        size={isDesktop ? "2xl" : "xs"}
+      >
+        <Flex direction="column" rowGap={isDesktop ? 16 : 8}>
+          <Heading
+            mx="auto"
+            mt={isDesktop ? 10 : 1}
+            size={isDesktop ? "md" : "xs"}
+            fontStyle="normal"
+            fontFamily="IranSans"
+          >
+            نشست شما منقضی شده است، لطفا مجددا وارد سیستم شوید.
           </Heading>
           <Button
-            colorScheme="pink"
+            colorScheme="red"
             onClick={() => {
               clearTokens();
               setUser(null);

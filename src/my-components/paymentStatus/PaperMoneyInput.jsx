@@ -50,6 +50,8 @@ export const PaperMoneyInput = ({
                   مبلغ
                 </FormLabel>
                 <NumberInput
+                  fontSize="md"
+                  fontFamily="IranSans"
                   defaultValue={0}
                   w={250}
                   dir="ltr"
@@ -78,6 +80,8 @@ export const PaperMoneyInput = ({
                   سریال
                 </FormLabel>
                 <Input
+                  fontSize="md"
+                  fontFamily="IranSans"
                   w={250}
                   dir="ltr"
                   name="paperMoneySerial"
@@ -93,17 +97,22 @@ export const PaperMoneyInput = ({
                   تاریخ
                 </FormLabel>
                 <Box
+                  fontSize="md"
+                  fontFamily="IranSans"
                   alignItems="end"
                   borderWidth={1}
                   borderColor="gray.200"
                   bg="gray.100"
                 >
                   <Datepicker
+                    fontSize="md"
+                    fontFamily="IranSans"
                     closeWhenSelectADay={true}
                     format={"YYYY/MM/DD"}
                     adjustPosition={"auto"}
                     input={
                       <input
+                        style={{ fontSize: "10px", fontFamily: "IranSans" }}
                         placeholder="انتخاب تاریخ"
                         width={isDesktop ? "240px" : "200px"}
                       />

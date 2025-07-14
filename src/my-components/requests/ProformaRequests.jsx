@@ -72,29 +72,29 @@ export const ProformaRequests = ({ isDesktop }) => {
 
   const loadProformaData = async (resetPage = false) => {
     setLoading(true);
-    await ShowUserAllProformas(
+    const res = await ShowUserAllProformas(
       resetPage ? 1 : currentProformaPage,
       itemsPerPage,
       resetPage ? "" : proformaSearch
-    )
-      .then((res) => {
-        if (!res?.data) return;
-        setTotalProformaPages(Math.ceil(res?.data?.total / itemsPerPage));
-        const newProformas = res.data.items.filter(
-          (p) =>
-            p.isAccepted == false && p.isSent == true && p.approvedFile !== null
-        );
-        setProformas(newProformas);
-      })
-      .catch((err) => {
-        toast({
-          title: "خطا در دریافت داده‌ها",
-          description: err.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+    );
+
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
+
+      setLoading(false);
+      return;
+    }
+    setTotalProformaPages(Math.ceil(res?.data?.total / itemsPerPage));
+    const newProformas = res.data.items.filter(
+      (p) => p.isAccepted == false && p.isSent == true && p.approvedFile
+    );
+    setProformas(newProformas);
     setLoading(false);
   };
 
@@ -118,26 +118,27 @@ export const ProformaRequests = ({ isDesktop }) => {
 
   const handleAcceptProforma = async (id) => {
     setLoading(true);
-    await SetProformaIsAccepted(id)
-      .then((res) => {
-        updateProformainList(id);
-        toast({
-          title: "توجه",
-          description: `پیش فاکتور شما تایید شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+    const res = await SetProformaIsAccepted(id);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
+
+      setLoading(false);
+      return;
+    }
+    updateProformainList(id);
+    toast({
+      title: "توجه",
+      description: `پیش فاکتور شما تایید شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
     setLoading(false);
   };
 
@@ -149,27 +150,28 @@ export const ProformaRequests = ({ isDesktop }) => {
   const handleDeleteProforma = async (id) => {
     setProformaSelectedID(id);
     setLoading(true);
-    await RemoveProforma(id)
-      .then(() => {
-        const newProformas = proformas.filter((p) => p.id != id);
-        setProformas(newProformas);
-        toast({
-          title: "توجه",
-          description: `اطلاعات پیش فاکتور شما حذف شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      );
+    const res = await RemoveProforma(id);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      setLoading(false);
+      return;
+    }
+    const newProformas = proformas.filter((p) => p.id != id);
+    setProformas(newProformas);
+    toast({
+      title: "توجه",
+      description: `اطلاعات پیش فاکتور شما حذف شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
     setLoading(false);
   };
 
@@ -214,9 +216,16 @@ export const ProformaRequests = ({ isDesktop }) => {
                         : "blue.200"
                       : "gray.400"
                   }
+                  _hover={{ cursor: "pointer" }}
+                  onClick={(e) => {
+                    setProformaSelectedID(row.id);
+                    handleShowProformaPicture(row.id);
+                  }}
                 >
                   <HStack>
-                    <Text> شماره :{row.id}</Text>
+                    <Text fontFamily="IranSans" fontSize="md">
+                      شماره :{row.id}
+                    </Text>
                     <Box mr="auto">
                       <HStack>
                         {row.isConverted ? (
@@ -266,19 +275,21 @@ export const ProformaRequests = ({ isDesktop }) => {
                   <VStack spacing={2} align="stretch">
                     <HStack>
                       <Text>عنوان : </Text>
-                      <Text>{row.title}</Text>
+                      <Text fontFamily="IranSans" fontSize="md">
+                        {row.title}
+                      </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text>تاریخ : </Text>
-                      <Text>
+                      <Text fontFamily="IranSans" fontSize="md">
                         {dayjs(row.createdAt).locale("fa").format("YYYY/MM/DD")}
                       </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text>نام مشتری : </Text>
-                      <Text>
+                      <Text fontFamily="IranSans" fontSize="md">
                         {row.customer?.customerFName +
                           " " +
                           row.customer?.customerLName}
@@ -287,17 +298,21 @@ export const ProformaRequests = ({ isDesktop }) => {
                     <Divider />
                     <HStack>
                       <Text>نوع پرداخت : </Text>
-                      <Text>{row.paymentStatus}</Text>
+                      <Text fontFamily="IranSans" fontSize="md">
+                        {row.paymentStatus}
+                      </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text> تایید مشتری : </Text>
-                      <Text>{row.approvedFile ? "دارد" : "ندارد"}</Text>
+                      <Text fontFamily="IranSans" fontSize="md">
+                        {row.approvedFile ? "دارد" : "ندارد"}
+                      </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text> جمع کل : </Text>
-                      <Text fontSize={"xl"}>
+                      <Text fontFamily="IranSans" fontSize="xl">
                         {Number(row.totalAmount).toLocaleString()}
                       </Text>
                     </HStack>
@@ -393,15 +408,18 @@ export const ProformaRequests = ({ isDesktop }) => {
         AlertMessage={dialogGears.text}
       />
       <MyModal
-        modalHeader="نمایش فایل تاییدیه مشتری"
+        modalHeader=" فایل تاییدیه مشتری"
         onClose={() => setShowModal(false)}
         isOpen={showModal}
-        size="xl"
+        size={isDesktop ? "xl" : "full"}
       >
         <Box
+          overflow="auto"
           borderRadius="6px"
+          borderColor="orange"
+          borderWidth="1px"
           hidden={approvedFile == null || approvedFile == ""}
-          boxSize="xl"
+          boxSize={isDesktop ? "lg" : "sm"}
         >
           <Image
             src={approvedFile ? approvedFile : ""}

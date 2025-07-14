@@ -16,6 +16,8 @@ import {
   Tooltip,
   Icon,
   Flex,
+  AbsoluteCenter,
+  Spinner,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -23,7 +25,6 @@ import {
   FilePenLine,
   Send,
   Trash2,
-  SquareArrowUp,
   CircleFadingArrowUp,
   MailCheck,
   Handshake,
@@ -37,7 +38,6 @@ import { EditInvoice } from "./EditInvoice";
 import {
   GenerateNewToken,
   RemoveInvoice,
-  SendUpdateInvoiceSms,
   SetInvoiceIsSent,
   ShowUserAllInvoices,
 } from "../../api/services/invoiceService";
@@ -46,6 +46,7 @@ import { MyModal } from "../MyModal";
 import { MyAlert } from "../MyAlert";
 import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
+import { MyLoading } from "../MyLoading";
 
 export const InvoiceDataTable = ({ isDesktop }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -281,225 +282,244 @@ export const InvoiceDataTable = ({ isDesktop }) => {
 
   if (invoices)
     return (
-      <Flex direction="column" height="100vh">
-        <SearchBar
-          search={search}
-          setSearch={setSearch}
-          handleResetSearch={handleResetSearch}
-          loadData={loadData}
-          userInfo="جستجوی فاکتور"
-        />
-        <Box flex="1" overflowY="auto" p={5}>
-          <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
-            {invoices.map((row) => (
-              <Card
-                maxW="350px"
-                _hover={{
-                  cursor: "",
-                  borderColor: "green.500",
-                }}
-                borderWidth="1px"
-                borderColor="gray.300"
-              >
-                <CardHeader
-                  borderTopRadius={5}
-                  bg={row?.isAccepted ? "green.400" : "blue.200"}
+      <Box>
+        <Flex
+          filter={loading ? "blur(10px)" : ""}
+          direction="column"
+          height="100vh"
+        >
+          <SearchBar
+            search={search}
+            setSearch={setSearch}
+            handleResetSearch={handleResetSearch}
+            loadData={loadData}
+            userInfo="جستجوی فاکتور"
+          />
+          <Box flex="1" overflowY="auto" p={5}>
+            <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
+              {invoices.map((row) => (
+                <Card
+                  maxW="350px"
+                  _hover={{
+                    cursor: "",
+                    borderColor: "green.500",
+                  }}
+                  borderWidth="1px"
+                  borderColor="gray.300"
                 >
-                  <HStack>
-                    <Text>شماره :{row.id}</Text>
-                    <Box mr="auto">
-                      <HStack>
-                        {row.isAccepted ? (
-                          <Tooltip label="تایید کاربر ارشد">
-                            <ShieldUser color="green" />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip label="منتظر تایید کاربر ارشد ">
-                            <UserLock
-                              color="yellow"
-                              _hover={{ color: "green" }}
-                            />
-                          </Tooltip>
-                        )}
-
-                        {row.approvedFile ? (
-                          <Tooltip label="تایید مشتری">
-                            <UserRoundCheck color="green" />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip label="منتظر تایید مشتری">
-                            <Handshake color="white" />
-                          </Tooltip>
-                        )}
-
-                        {row.isSent ? (
-                          <Tooltip label="لینک به مشتری ارسال شده است">
-                            <MailCheck color="green" />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip label="منتظر ارسال">
-                            <CircleFadingArrowUp color="orange" />
-                          </Tooltip>
-                        )}
-                      </HStack>
-                    </Box>
-                  </HStack>
-                </CardHeader>
-                <CardBody>
-                  <VStack spacing={2} align="stretch">
-                    <HStack>
-                      <Text>عنوان : </Text>
-                      <Text>{row.title}</Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>تاریخ : </Text>
-                      <Text>
-                        {dayjs(row.createdAt).locale("fa").format("YYYY/MM/DD")}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>نام مشتری : </Text>
-                      <Text>
-                        {row.customer?.customerFName +
-                          " " +
-                          row.customer?.customerLName}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>نوع پرداخت : </Text>
-                      <Text>{row.paymentStatus}</Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text> تایید مشتری : </Text>
-                      <Text>{row.approvedFile ? "دارد" : "ندارد"}</Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text> جمع کل : </Text>
-                      <Text fontSize={"xl"}>
-                        {Number(row.totalAmount).toLocaleString()}
-                      </Text>
-                    </HStack>
-                  </VStack>
-                </CardBody>
-                <CardFooter borderBottomRadius={5} bg="gray.100">
-                  <Stack
-                    direction={["row"]}
-                    spacing={2}
-                    align={"stretch"}
-                    mr="auto"
+                  <CardHeader
+                    borderTopRadius={5}
+                    bg={row?.isAccepted ? "green.400" : "blue.200"}
+                    _hover={{ cursor: "pointer" }}
+                    onClick={(e) => handleEditInvoice(row.id)}
                   >
-                    <Link
-                      _hover={{
-                        color: "orange",
-                      }}
-                      color="blue.600"
-                      onClick={(e) => handleEditInvoice(row.id)}
-                    >
-                      <Tooltip label="ویرایش">
-                        <Icon w={6} h={6} as={FilePenLine} />
-                      </Tooltip>
-                    </Link>
+                    <HStack>
+                      <Text>شماره :{row.id}</Text>
+                      <Box mr="auto">
+                        <HStack>
+                          {row.isAccepted ? (
+                            <Tooltip label="تایید کاربر ارشد">
+                              <ShieldUser color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر تایید کاربر ارشد ">
+                              <UserLock
+                                color="yellow"
+                                _hover={{ color: "green" }}
+                              />
+                            </Tooltip>
+                          )}
 
-                    <Link
-                      _hover={{
-                        color: "orange",
-                      }}
-                      color="blue.600"
-                      onClick={(e) => handleGenerateNewLink(row.id)}
-                    >
-                      <Tooltip label="تولید لینک جدید">
-                        <Icon w={6} h={6} as={Link2} />
-                      </Tooltip>
-                    </Link>
+                          {row.approvedFile ? (
+                            <Tooltip label="تایید مشتری">
+                              <UserRoundCheck color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر تایید مشتری">
+                              <Handshake color="white" />
+                            </Tooltip>
+                          )}
 
-                    {!row.isSent && (
+                          {row.isSent ? (
+                            <Tooltip label="لینک به مشتری ارسال شده است">
+                              <MailCheck color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر ارسال">
+                              <CircleFadingArrowUp color="orange" />
+                            </Tooltip>
+                          )}
+                        </HStack>
+                      </Box>
+                    </HStack>
+                  </CardHeader>
+                  <CardBody>
+                    <VStack spacing={2} align="stretch">
+                      <HStack>
+                        <Text>عنوان : </Text>
+                        <Text fontFamily="IranSans" fontSize="md">
+                          {row.title}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>تاریخ : </Text>
+                        <Text fontFamily="IranSans" fontSize="md">
+                          {dayjs(row.createdAt)
+                            .locale("fa")
+                            .format("YYYY/MM/DD")}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>نام مشتری : </Text>
+                        <Text fontFamily="IranSans" fontSize="md">
+                          {row.customer?.customerFName +
+                            " " +
+                            row.customer?.customerLName}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>نوع پرداخت : </Text>
+                        <Text fontFamily="IranSans" fontSize="md">
+                          {row.paymentStatus}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> تایید مشتری : </Text>
+                        <Text fontFamily="IranSans" fontSize="md">
+                          {row.approvedFile ? "دارد" : "ندارد"}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> جمع کل : </Text>
+                        <Text fontFamily="IranSans" fontSize={"xl"}>
+                          {Number(row.totalAmount).toLocaleString()}
+                        </Text>
+                      </HStack>
+                    </VStack>
+                  </CardBody>
+                  <CardFooter borderBottomRadius={5} bg="gray.100">
+                    <Stack
+                      direction={["row"]}
+                      spacing={2}
+                      align={"stretch"}
+                      mr="auto"
+                    >
                       <Link
-                        _disabled={true}
+                        _hover={{
+                          color: "orange",
+                        }}
+                        color="blue.600"
+                        onClick={(e) => handleEditInvoice(row.id)}
+                      >
+                        <Tooltip label="ویرایش">
+                          <Icon w={6} h={6} as={FilePenLine} />
+                        </Tooltip>
+                      </Link>
+
+                      <Link
+                        _hover={{
+                          color: "orange",
+                        }}
+                        color="blue.600"
+                        onClick={(e) => handleGenerateNewLink(row.id)}
+                      >
+                        <Tooltip label="تولید لینک جدید">
+                          <Icon w={6} h={6} as={Link2} />
+                        </Tooltip>
+                      </Link>
+
+                      {!row.isSent && (
+                        <Link
+                          _disabled={true}
+                          _hover={{ color: "#ffd54f" }}
+                          color="green.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "ارسال لینک به مشتری",
+                              text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                              callBack: handleSendCustomerLink,
+                            });
+
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="ارسال به مشتری">
+                            <Icon w={6} h={6} as={Send} />
+                          </Tooltip>
+                        </Link>
+                      )}
+
+                      <Link
                         _hover={{ color: "#ffd54f" }}
-                        color="green.600"
+                        color="red.600"
                         onClick={(e) => {
                           setSelectedID(row.id);
                           setDialogGears({
-                            title: "ارسال لینک به مشتری",
-                            text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
-                            callBack: handleSendCustomerLink,
+                            title: "حذف فاکتور",
+                            text: "آیا واقعا می خواهید این فاکتور را حذف کنید؟",
+                            callBack: handleDeleteInvoice,
                           });
-
                           setIsDialogOpen(true);
                         }}
                       >
-                        <Tooltip label="ارسال به مشتری">
-                          <Icon w={6} h={6} as={Send} />
+                        <Tooltip label="حذف">
+                          <Icon w={6} h={6} as={Trash2} />
                         </Tooltip>
                       </Link>
-                    )}
+                    </Stack>
+                  </CardFooter>
+                </Card>
+              ))}
 
-                    <Link
-                      _hover={{ color: "#ffd54f" }}
-                      color="red.600"
-                      onClick={(e) => {
-                        setSelectedID(row.id);
-                        setDialogGears({
-                          title: "حذف فاکتور",
-                          text: "آیا واقعا می خواهید این فاکتور را حذف کنید؟",
-                          callBack: handleDeleteInvoice,
-                        });
-                        setIsDialogOpen(true);
-                      }}
-                    >
-                      <Tooltip label="حذف">
-                        <Icon w={6} h={6} as={Trash2} />
-                      </Tooltip>
-                    </Link>
-                  </Stack>
-                </CardFooter>
-              </Card>
-            ))}
-
-            <MyModal
-              modalHeader="ویرایش فاکتور"
-              onClose={onClose}
-              isOpen={isOpen}
-            >
-              <EditInvoice
-                isDesktop={isDesktop}
+              <MyModal
+                modalHeader="ویرایش فاکتور"
                 onClose={onClose}
-                onOpen={onOpen}
-                setInvoices={setInvoices}
-                invoices={invoices}
-                invoice={invoices.find((invoice) => invoice.id === selectedID)}
+                isOpen={isOpen}
+              >
+                <EditInvoice
+                  isDesktop={isDesktop}
+                  onClose={onClose}
+                  onOpen={onOpen}
+                  setInvoices={setInvoices}
+                  invoices={invoices}
+                  invoice={invoices.find(
+                    (invoice) => invoice.id === selectedID
+                  )}
+                />
+              </MyModal>
+              <MyAlert
+                onClose={handleDialogClose}
+                isOpen={isDialogOpen}
+                AlertHeader={dialogGears.title}
+                AlertMessage={dialogGears.text}
               />
-            </MyModal>
-            <MyAlert
-              onClose={handleDialogClose}
-              isOpen={isDialogOpen}
-              AlertHeader={dialogGears.title}
-              AlertMessage={dialogGears.text}
-            />
-          </SimpleGrid>
-        </Box>
-        <Box
-          position="sticky"
-          bottom="0"
-          bg="#efefef"
-          p={1}
-          zIndex="1"
-          borderTopColor="gray.400"
-          borderTopWidth="1px"
-        >
-          <Flex justify="center" align="center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
-          </Flex>
-        </Box>
-      </Flex>
+            </SimpleGrid>
+          </Box>
+          <Box
+            position="sticky"
+            bottom="0"
+            bg="#efefef"
+            p={1}
+            zIndex="1"
+            borderTopColor="gray.400"
+            borderTopWidth="1px"
+          >
+            <Flex justify="center" align="center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </Flex>
+          </Box>
+        </Flex>
+        {loading && <MyLoading />}
+      </Box>
     );
 };

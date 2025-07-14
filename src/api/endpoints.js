@@ -97,6 +97,16 @@ const endpoints = {
     create: "/units/",
     delete: (id) => `/units/${id}`,
   },
+  depot: {
+    listAll: (page, limit, search) =>
+      `/depots?page=${page}&limit=${limit}&search=${search}`,
+    update: (id) => `/depots/${id}`,
+    updateDepotImageFile: (id) => `/depots/image/${id}`,
+    listOne: (id) => `/depots/${id}`,
+    detail: (id) => `/depots/${id}`,
+    create: "/depots/",
+    delete: (id) => `/depots/${id}`,
+  },
   sms: {
     likeToLike: "https://api.sms.ir/v1/send/likeToLike",
     bulk: "https://api.sms.ir/v1/send/bulk",

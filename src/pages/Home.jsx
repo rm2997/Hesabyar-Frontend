@@ -122,8 +122,6 @@ export const Home = () => {
         top="0"
         zIndex={1000}
         px={2}
-        // pt={{ base: 7, sm: 9, md: 9, lg: 8 }}
-        // pb={{ base: 9, sm: 0, md: 9, lg: 9 }}
         align="center"
         borderBottomRadius="20px"
         mx="auto"
@@ -209,21 +207,33 @@ export const Home = () => {
           </Flex>
         )}
 
-        <Flex alignItems="center" direction="column" mr="auto" ml={2}>
+        <Flex
+          overflow="hidden"
+          alignItems="center"
+          direction="column"
+          mr="auto"
+          ml={isDesktop ? 2 : 0}
+          minW="100px"
+        >
           <Heading
             mt={1}
-            size="md"
+            size={isDesktop ? "md" : "sm"}
             fontFamily="EnglishHeader"
             color="whiteAlpha.900"
           >
             OLIAEI GROUP
           </Heading>
-          <Text fontSize="md" fontFamily="Aseman" mb="5px">
+          <Text
+            fontFamily="Aseman"
+            mb="5px"
+            fontSize={{ base: "2xs", lg: "lg", md: "md" }}
+          >
             بزرگترین وارد کننده قطعات آسانسور
           </Text>
         </Flex>
 
         <IconButton
+          size={isDesktop ? "md" : "sm"}
           mr={2}
           icon={<User2 />}
           variant="solid"
@@ -232,7 +242,11 @@ export const Home = () => {
           onClick={() => navigate("/myhome")}
         />
         <Link href="tel:+989123456789" mr={1}>
-          <IconButton icon={<Phone size={24} />} colorScheme="teal">
+          <IconButton
+            size={isDesktop ? "md" : "sm"}
+            icon={<Phone size={24} />}
+            colorScheme="teal"
+          >
             تماس با ما
           </IconButton>
         </Link>

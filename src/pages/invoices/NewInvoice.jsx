@@ -89,14 +89,49 @@ export const NewInvoice = ({ isDesktop }) => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllCustomers().then((res) => setCustomers(res?.data?.items));
-      await ShowUserAllProformas().then((res) =>
-        setProformas(res?.data?.items)
-      );
-      await ShowAllGoods().then((res) => setAllGoods(res?.data?.items));
-    };
+      const res1 = await ShowAllCustomers();
+      if (!res1.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: res1.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
+      setCustomers(res1?.data?.items);
 
-    loadData().finally(setLoading(false));
+      const res2 = await ShowUserAllProformas();
+      if (!res2.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: res2.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
+      setProformas(res2?.data?.items);
+
+      const res3 = await ShowAllGoods();
+      if (!res3.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: res3.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
+      setAllGoods(res3?.data?.items);
+    };
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -107,43 +142,43 @@ export const NewInvoice = ({ isDesktop }) => {
     e.preventDefault();
     setLoading(true);
 
-    await CreateInvoice({ ...formData, totalAmount: totalPrice })
-      .then((res) => {
-        if (res.status !== 200) return;
+    const res = await CreateInvoice({ ...formData, totalAmount: totalPrice });
 
-        setFormData({
-          id: 0,
-          title: "",
-          proforma: {},
-          customer: {},
-          totalAmount: 0,
-          paymentStatus: 0,
-          chequeDate: "",
-          chequeAmount: 0,
-          chequeSerial: 0,
-          paperMoneyAmount: 0,
-          paperMoneySerial: 0,
-          trustIssueDate: "",
-          invoiceGoods: [],
-        });
-        toast({
-          title: "ثبت شد",
-          description: `اطلاعات فاکتور شما ذخیره شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
+    if (res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+
+    setFormData({
+      id: 0,
+      title: "",
+      proforma: {},
+      customer: {},
+      totalAmount: 0,
+      paymentStatus: 0,
+      chequeDate: "",
+      chequeAmount: 0,
+      chequeSerial: 0,
+      paperMoneyAmount: 0,
+      paperMoneySerial: 0,
+      trustIssueDate: "",
+      invoiceGoods: [],
+    });
+    toast({
+      title: "ثبت شد",
+      description: `اطلاعات فاکتور شما ذخیره شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
   };
 
   const handleItemChange = (index, field, value) => {
@@ -165,7 +200,7 @@ export const NewInvoice = ({ isDesktop }) => {
 
     if (field === "good" && Number(value) > 0) {
       const selected = allGoods.find((p) => p.id === Number(value));
-      console.log("selected", selected);
+
       if (selected) {
         newItems[index].price = selected.goodPrice;
         newItems[index].good = selected;
@@ -203,7 +238,7 @@ export const NewInvoice = ({ isDesktop }) => {
       total: 0,
     };
     items.push(newItem);
-    console.log(items);
+
     setFormData({ ...formData, invoiceGoods: items });
   };
 
@@ -265,8 +300,14 @@ export const NewInvoice = ({ isDesktop }) => {
   };
 
   return (
-    <Box minHeight="100%">
-      <Card overflowY="auto" m={1} filter={loading ? "blur(10px)" : ""}>
+    <Box>
+      <Card
+        overflowY="auto"
+        minH="100%"
+        h={isDesktop ? "100%" : "110vh"}
+        m={1}
+        filter={loading ? "blur(10px)" : ""}
+      >
         {isDesktop && (
           <CardHeader
             bg="#68C15A"
@@ -413,33 +454,75 @@ export const NewInvoice = ({ isDesktop }) => {
               </Box>
             </Flex>
             <Divider />
-            <Box p={4} borderRadius="md">
-              <TableContainer>
-                <Table size="sm" _disabled={!invoiceGoodsStatus}>
-                  <Thead>
+            <Box p={1} borderRadius="md">
+              <TableContainer dir="rtl">
+                <Table
+                  variant="simple"
+                  borderColor="blackAlpha.200"
+                  borderWidth={1}
+                  bor
+                  derRadius="md"
+                  _disabled={!invoiceGoodsStatus}
+                >
+                  <Thead h="50px" bg="#666c85" textFillColor="white">
                     <Tr>
-                      <Th fontFamily="Vaziri" width="100px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        width="100px"
+                      >
                         ردیف
                       </Th>
-                      <Th fontFamily="Vaziri" width="400px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        width="400px"
+                      >
                         نام کالا
                       </Th>
-                      <Th fontFamily="Vaziri" width="100px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        width="100px"
+                      >
                         تعداد
                       </Th>
-                      <Th fontFamily="Vaziri" width="200px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        width="200px"
+                      >
                         واحد
                       </Th>
-                      <Th fontFamily="Vaziri" width="300px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        width="300px"
+                      >
                         قیمت واحد
                       </Th>
-                      <Th fontFamily="Vaziri" width="300px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="Vaziri"
+                        width="300px"
+                      >
                         قیمت کل
                       </Th>
-                      <Th fontFamily="Vaziri" width="300px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="Vaziri"
+                        width="300px"
+                      >
                         توضیحات
                       </Th>
-                      <Th>
+                      <Th bg="white">
                         <IconButton
                           isDisabled={!invoiceGoodsStatus}
                           icon={<Plus />}
@@ -460,6 +543,8 @@ export const NewInvoice = ({ isDesktop }) => {
                             onChange={(e) =>
                               handleItemChange(index, "no", e.target.value)
                             }
+                            fontSize="md"
+                            fontFamily="IranSans"
                             placeholder="ردیف"
                           />
                         </Td>
@@ -490,6 +575,8 @@ export const NewInvoice = ({ isDesktop }) => {
                         </Td>
                         <Td>
                           <NumberInput
+                            fontSize="md"
+                            fontFamily="IranSans"
                             isDisabled={!invoiceGoodsStatus}
                             defaultValue={1}
                             key={"quantity" + item.id}
@@ -519,11 +606,14 @@ export const NewInvoice = ({ isDesktop }) => {
                         </Td>
                         <Td>
                           <Input
+                            textAlign="left"
+                            fontSize="md"
+                            fontFamily="IranSans"
                             isDisabled={!invoiceGoodsStatus}
                             type="number"
                             name="goodPrice"
                             value={item.price}
-                            placeholder="قیمت"
+                            placeholder="قیمت واحد"
                             onChange={(e) =>
                               handleItemChange(
                                 index,
@@ -534,12 +624,14 @@ export const NewInvoice = ({ isDesktop }) => {
                           />
                         </Td>
                         <Td>
-                          {" "}
                           <Input
-                            disabled
+                            textAlign="left"
+                            fontSize="md"
+                            fontFamily="IranSans"
+                            readOnly
                             type="number"
                             name="goodPrice"
-                            value={item.total}
+                            value={Number(item.total).toLocaleString()}
                             placeholder="قیمت"
                             onChange={(e) =>
                               handleItemChange(
@@ -582,12 +674,24 @@ export const NewInvoice = ({ isDesktop }) => {
                     <Th width="100px"></Th>
                     <Th width="200px"></Th>
                     <Th width="200px">
-                      <Text> تعداد کل: {totalQuantity}</Text>
+                      <Text
+                        textAlign="center"
+                        fontSize="md"
+                        fontFamily="IranSans"
+                      >
+                        تعداد کل: {Number(totalQuantity).toLocaleString()}
+                      </Text>
                     </Th>
                     <Th width="200px"></Th>
                     <Th width="300px"></Th>
                     <Th width="300px">
-                      <Text>جمع کل: {totalPrice}</Text>
+                      <Text
+                        textAlign="center"
+                        fontSize="md"
+                        fontFamily="IranSans"
+                      >
+                        جمع کل: {Number(totalPrice).toLocaleString()}
+                      </Text>
                     </Th>
                     <Th width="300px"></Th>
                     <Th>
@@ -619,17 +723,7 @@ export const NewInvoice = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            size="xl"
-            color="red.500"
-          />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

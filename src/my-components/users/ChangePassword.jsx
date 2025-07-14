@@ -18,7 +18,7 @@ import {
 import { KeyRound, UserPen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ChangePass } from "../../api/services/userService";
-
+import { MyLoading } from "../MyLoading";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { GetAllUsers } from "../../api/services/userService";
 
@@ -190,17 +190,7 @@ export const ChangePassword = ({ isDesktop, user }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            size="xl"
-            color="red.500"
-          />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

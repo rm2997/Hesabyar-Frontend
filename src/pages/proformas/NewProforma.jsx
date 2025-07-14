@@ -267,11 +267,18 @@ export const NewProforma = ({ isDesktop }) => {
     setSelectedItem(id);
     setShowSearchGood(true);
   };
+
   const handleSearchUser = () => {};
 
   return (
     <Box>
-      <Card h="105vh" m={1} filter={loading ? "blur(10px)" : ""}>
+      <Card
+        overflowY="auto"
+        minH="100%"
+        h={isDesktop ? "100%" : "108vh"}
+        m={1}
+        filter={loading ? "blur(10px)" : ""}
+      >
         {isDesktop && (
           <CardHeader
             bg="#68C15A"
@@ -303,13 +310,12 @@ export const NewProforma = ({ isDesktop }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} width="100px">
                         نام مشتری
                       </FormLabel>
-
                       <Input
                         placeholder="لطفا یک مشتری انتخاب کنید"
-                        maxW="250px"
+                        maxW="560px"
                         onClick={() => setShowSearchCustomer(true)}
                         value={
                           formData.customer !== null
@@ -325,8 +331,7 @@ export const NewProforma = ({ isDesktop }) => {
                       />
                       {formData.customer && (
                         <IconButton
-                          mr="-10px"
-                          size="md"
+                          size={isDesktop ? "md" : "sm"}
                           icon={<CircleX />}
                           colorScheme="red"
                           title="انصراف"
@@ -337,14 +342,14 @@ export const NewProforma = ({ isDesktop }) => {
                         />
                       )}
                       <IconButton
-                        size={"md"}
+                        size={isDesktop ? "md" : "sm"}
                         icon={<UserSearch />}
                         colorScheme="orange"
                         onClick={() => setShowSearchCustomer(true)}
                         title="جستجوی مشتری "
                       />
                       <IconButton
-                        size={"md"}
+                        size={isDesktop ? "md" : "sm"}
                         colorScheme="green"
                         icon={<UserRoundPlus />}
                         onClick={handleAddNewUser}
@@ -409,33 +414,67 @@ export const NewProforma = ({ isDesktop }) => {
               </Box>
             </Flex>
             <Divider />
-            <Box px={1} borderRadius="md">
-              <TableContainer>
-                <Table borderColor="gray.400" variant="simple">
-                  <Thead>
-                    <Tr>
-                      <Th fontFamily="Vaziri" width="100px">
+            <Box px={1}>
+              <TableContainer dir="rtl">
+                <Table
+                  variant="simple"
+                  borderColor="blackAlpha.200"
+                  borderWidth={1}
+                  borderRadius="md"
+                >
+                  <Thead h="50px">
+                    <Tr bg="#666c85" textFillColor="white">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                      >
                         ردیف
                       </Th>
-                      <Th fontFamily="Vaziri" width="400px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                      >
                         نام کالا
                       </Th>
-                      <Th fontFamily="Vaziri" width="100px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                      >
                         تعداد
                       </Th>
-                      <Th fontFamily="Vaziri" width="100px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                      >
                         واحد
                       </Th>
-                      <Th fontFamily="Vaziri" width="200px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                      >
                         قیمت واحد
                       </Th>
-                      <Th fontFamily="Vaziri" width="300px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                      >
                         قیمت کل
                       </Th>
-                      <Th fontFamily="Vaziri" width="300px">
+                      <Th
+                        fontSize="md"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        width="300px"
+                      >
                         توضیحات
                       </Th>
-                      <Th>
+                      <Th bg="white">
                         <IconButton
                           icon={<Plus />}
                           onClick={handleAddNewItem}
@@ -444,20 +483,23 @@ export const NewProforma = ({ isDesktop }) => {
                       </Th>
                     </Tr>
                   </Thead>
-                  <Tbody bg="blackAlpha.100">
+                  <Tbody>
                     {proformaItems.map((item, index) => (
                       <Tr key={item.no}>
                         <Td>
                           <Input
+                            fontFamily="IranSans"
+                            fontSize="md"
                             readOnly
                             value={item.no}
                             onChange={(e) =>
                               handleItemChange(index, "no", e.target.value)
                             }
                             placeholder="ردیف"
+                            minW={10}
                           />
                         </Td>
-                        <Td w="full">
+                        <Td minW={400}>
                           <HStack>
                             {/* <Select
                               disabled={goodLoading}
@@ -479,7 +521,6 @@ export const NewProforma = ({ isDesktop }) => {
                             </Select> */}
                             <Input
                               placeholder="انتخاب کنید"
-                              maxW="250px"
                               onClick={() =>
                                 !item?.goodName
                                   ? handleShowSearchGood(index)
@@ -491,7 +532,6 @@ export const NewProforma = ({ isDesktop }) => {
                             />
                             {item?.goodName && (
                               <IconButton
-                                mr="-10px"
                                 size="md"
                                 icon={<CircleX />}
                                 colorScheme="red"
@@ -521,6 +561,9 @@ export const NewProforma = ({ isDesktop }) => {
                         </Td>
                         <Td>
                           <NumberInput
+                            fontSize="md"
+                            textAlign="center"
+                            fontFamily="IranSans"
                             defaultValue={1}
                             dir="ltr"
                             min={1}
@@ -530,6 +573,7 @@ export const NewProforma = ({ isDesktop }) => {
                               handleItemChange(index, "quantity", value)
                             }
                             placeholder="تعداد"
+                            maxW={100}
                           >
                             <NumberInputField />
                             <NumberInputStepper>
@@ -544,10 +588,17 @@ export const NewProforma = ({ isDesktop }) => {
                             placeholder="واحد"
                             name="goodUnitName"
                             value={item.goodUnitName}
+                            minW="80px"
+                            maxW="150px"
                           />
                         </Td>
                         <Td>
                           <Input
+                            fontSize="md"
+                            textAlign="left"
+                            fontFamily="IranSans"
+                            minW="85px"
+                            maxW="300px"
                             type="number"
                             name="goodPrice"
                             value={item.goodPrice}
@@ -563,10 +614,17 @@ export const NewProforma = ({ isDesktop }) => {
                         </Td>
                         <Td>
                           <Input
-                            disabled
-                            type="number"
+                            readOnly
+                            fontSize="md"
+                            textAlign="left"
+                            minW="85px"
+                            maxW="500px"
+                            fontFamily="IranSans"
+                            type="text"
                             name="goodPrice"
-                            value={item.quantity * item.goodPrice}
+                            value={Number(
+                              item?.quantity * item?.goodPrice
+                            ).toLocaleString()}
                             placeholder="قیمت"
                             onChange={(e) =>
                               handleItemChange(
@@ -589,6 +647,8 @@ export const NewProforma = ({ isDesktop }) => {
                                 e.target.value
                               )
                             }
+                            minW="95px"
+                            maxW="250px"
                           />
                         </Td>
                         <Td>
@@ -604,15 +664,27 @@ export const NewProforma = ({ isDesktop }) => {
                   </Tbody>
                   <Tfoot>
                     <Tr>
-                      <Th width="100px"></Th>
-                      <Th width="200px"></Th>
-                      <Th width="200px">
-                        <Text> تعداد کل: {totalQuantity}</Text>
+                      <Th></Th>
+                      <Th></Th>
+                      <Th>
+                        <Text
+                          fontSize="md"
+                          textAlign="center"
+                          fontFamily="IranSans"
+                        >
+                          تعداد کل: {totalQuantity}
+                        </Text>
                       </Th>
-                      <Th width="200px"></Th>
-                      <Th width="300px"></Th>
-                      <Th width="300px">
-                        <Text>جمع کل: {totalPrice}</Text>
+                      <Th></Th>
+                      <Th></Th>
+                      <Th>
+                        <Text
+                          fontSize="md"
+                          textAlign="center"
+                          fontFamily="IranSans"
+                        >
+                          جمع کل: {Number(totalPrice).toLocaleString()}
+                        </Text>
                       </Th>
                       <Th></Th>
                       <Th>
@@ -639,13 +711,6 @@ export const NewProforma = ({ isDesktop }) => {
             <Button colorScheme="blue" type="submit" isLoading={loading}>
               ثبت پیش فاکتور
             </Button>
-            <MyModal
-              modalHeader={"ثبت مشتری جدید"}
-              onClose={onClose}
-              isOpen={isOpen}
-            >
-              <NewCustomer />
-            </MyModal>
           </Flex>
         </CardBody>
         <CardFooter></CardFooter>
@@ -660,6 +725,13 @@ export const NewProforma = ({ isDesktop }) => {
             setShowSearchCustomer(false);
           }}
         />
+        <MyModal
+          modalHeader={"ثبت مشتری جدید"}
+          onClose={onClose}
+          isOpen={isOpen}
+        >
+          <NewCustomer />
+        </MyModal>
         <SearchGoods
           searchItems={handleSearchGoods}
           isOpen={showSearchGood}
@@ -670,11 +742,7 @@ export const NewProforma = ({ isDesktop }) => {
           }}
         />
       </Card>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner size="xl" color="red.500" />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

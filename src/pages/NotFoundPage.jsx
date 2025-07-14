@@ -8,6 +8,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import { Home } from "lucide-react";
 import { Link as RouterLink } from "react-router-dom";
 
 const MotionBox = motion(Box);
@@ -17,7 +18,7 @@ export const NotFoundPage = () => {
     <VStack
       justify="center"
       align="center"
-      h="100vh"
+      minH="100vh"
       px={6}
       bg={useColorModeValue("gray.100", "gray.900")}
       textAlign="center"
@@ -35,16 +36,27 @@ export const NotFoundPage = () => {
         />
       </MotionBox>
 
-      <Heading fontSize="4xl" color={useColorModeValue("teal.600", "teal.300")}>
+      <Heading
+        fontFamily="Yekan"
+        fontSize="4xl"
+        color={useColorModeValue("teal.600", "teal.300")}
+      >
         صفحه مورد نظر وجود ندارد
       </Heading>
 
       <Text fontSize="lg" color={useColorModeValue("gray.600", "gray.400")}>
-        آدرس وارد شده وجود ندارد یا حذف شده. لطفاً به صفحه اصلی بازگردید
+        !آدرس وارد شده وجود ندارد یا حذف شده است
       </Text>
 
       <MotionBox whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-        <Button as={RouterLink} to="/" colorScheme="teal" size="lg" shadow="lg">
+        <Button
+          rightIcon={<Home />}
+          as={RouterLink}
+          to="/"
+          colorScheme="teal"
+          size="lg"
+          shadow="lg"
+        >
           بازگشت به خانه
         </Button>
       </MotionBox>

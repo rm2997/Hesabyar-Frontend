@@ -3,7 +3,7 @@ import endpoints from "../endpoints";
 
 export const CreateUnit = async (unitData) => {
   return await apiRequest({
-    method: "POSTT",
+    method: "POST",
     url: endpoints.unit.create,
     data: unitData,
   });

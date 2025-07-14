@@ -28,7 +28,6 @@ import {
   TableContainer,
   Flex,
   Stack,
-  useDisclosure,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -42,6 +41,7 @@ import {
   Image,
   AbsoluteCenter,
 } from "@chakra-ui/react";
+import { MyLoading } from "../MyLoading";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import {
   CircleX,
@@ -68,6 +68,7 @@ import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
 import { NewCustomer } from "../../pages/customers/NewCustomer";
 import { SearchGoods } from "../SearchGood";
 import { SearchCustomer } from "../SearchCustomer";
+import { MyModal } from "../MyModal";
 
 export const EditInvoice = ({
   isDesktop,
@@ -107,6 +108,7 @@ export const EditInvoice = ({
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
   const [showSearchGood, setShowSearchGood] = useState(false);
 
+  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const items = invoice.invoiceGoods;
@@ -311,24 +313,25 @@ export const EditInvoice = ({
     setShowSearchGood(true);
   };
 
-  if (loading)
-    return (
-      <AbsoluteCenter>
-        <Spinner size="xl" color="red" />
-      </AbsoluteCenter>
-    );
-  else
-    return (
-      <Card m={10}>
-        <CardHeader
-          bg="#68C15A"
-          borderBottomColor="gray.400"
-          borderBottomWidth="1px"
-          borderTopRadius={5}
-          color="black"
-        >
-          ویرایش فاکتور
-        </CardHeader>
+  return (
+    <Box>
+      <Card
+        minH="100%"
+        overflowY="auto"
+        m={1}
+        filter={loading ? "blur(10px)" : ""}
+      >
+        {isDesktop && (
+          <CardHeader
+            bg="#68C15A"
+            borderBottomColor="gray.400"
+            borderBottomWidth="1px"
+            borderTopRadius={5}
+            color="black"
+          >
+            ویرایش فاکتور
+          </CardHeader>
+        )}
         <CardBody borderTopWidth={2}>
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
             <Flex direction={{ base: "column", md: "row" }} gap={5}>
@@ -458,17 +461,77 @@ export const EditInvoice = ({
             <Divider />
             <Box p={4} borderRadius="md">
               <TableContainer>
-                <Table size="sm" variant="simple">
+                <Table
+                  borderColor="blackAlpha.200"
+                  borderWidth={1}
+                  size="sm"
+                  variant="simple"
+                >
                   <Thead>
-                    <Tr>
-                      <Th width="100px">ردیف</Th>
-                      <Th width="400px">نام کالا</Th>
-                      <Th width="100px">تعداد</Th>
-                      <Th width="100px">واحد</Th>
-                      <Th width="200px">قیمت واحد</Th>
-                      <Th width="300px">قیمت کل</Th>
-                      <Th width="300px">توضیحات</Th>
-                      <Th>
+                    <Tr bg="#6b749f">
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="100px"
+                      >
+                        ردیف
+                      </Th>
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="400px"
+                      >
+                        نام کالا
+                      </Th>
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="100px"
+                      >
+                        تعداد
+                      </Th>
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="100px"
+                      >
+                        واحد
+                      </Th>
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="200px"
+                      >
+                        قیمت واحد
+                      </Th>
+                      <Th
+                        textColor="white"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="300px"
+                      >
+                        قیمت کل
+                      </Th>
+                      <Th
+                        textColor="white"
+                        fontFamily="IranSans"
+                        fontSize="md"
+                        width="300px"
+                      >
+                        توضیحات
+                      </Th>
+                      <Th bg="white">
                         <IconButton
                           icon={<Plus />}
                           onClick={() => handleAddNewItem()}
@@ -482,6 +545,8 @@ export const EditInvoice = ({
                       <Tr key={"row" + index}>
                         <Td>
                           <Input
+                            fontFamily="IranSans"
+                            fontSize="md"
                             readOnly
                             name="no"
                             key={"Field_no" + item.id}
@@ -556,6 +621,8 @@ export const EditInvoice = ({
                         </Td>
                         <Td>
                           <NumberInput
+                            fontFamily="IranSans"
+                            fontSize="md"
                             defaultValue={1}
                             key={"quantity" + item.id}
                             dir="ltr"
@@ -585,6 +652,8 @@ export const EditInvoice = ({
                         </Td>
                         <Td>
                           <Input
+                            fontFamily="IranSans"
+                            fontSize="md"
                             type="number"
                             key={"price" + item.id}
                             name="price"
@@ -601,6 +670,8 @@ export const EditInvoice = ({
                         </Td>
                         <Td>
                           <Input
+                            fontFamily="IranSans"
+                            fontSize="md"
                             readOnly
                             key={"goodPrice" + item.id}
                             type="number"
@@ -647,12 +718,24 @@ export const EditInvoice = ({
                       <Th width="100px"></Th>
                       <Th width="200px"></Th>
                       <Th width="200px">
-                        <Text> تعداد کل: {totalQuantity}</Text>
+                        <Text
+                          textAlign="center"
+                          fontFamily="IranSans"
+                          fontSize="md"
+                        >
+                          تعداد کل: {totalQuantity}
+                        </Text>
                       </Th>
                       <Th width="200px"></Th>
                       <Th width="300px"></Th>
                       <Th width="300px">
-                        <Text>جمع کل: {totalPrice}</Text>
+                        <Text
+                          textAlign="center"
+                          fontFamily="IranSans"
+                          fontSize="md"
+                        >
+                          جمع کل: {Number(totalPrice).toLocaleString()}
+                        </Text>
                       </Th>
                       <Th></Th>
                       <Th>
@@ -673,7 +756,10 @@ export const EditInvoice = ({
                 <Text>فایل تاییدیه مشتری: </Text>
                 {approvedFile ? (
                   <Box
+                    overflow="auto"
                     borderRadius="6px"
+                    borderColor="orange"
+                    borderWidth="1px"
                     hidden={approvedFile == null || approvedFile == ""}
                     boxSize="20"
                   >
@@ -700,7 +786,7 @@ export const EditInvoice = ({
             <Button colorScheme="blue" type="submit" isLoading={loading}>
               ثبت تغییرات فاکتور
             </Button>
-            <Modal
+            {/* <Modal
               dir="rtl"
               onClose={onClose}
               size={isDesktop ? "xl" : "full"}
@@ -717,7 +803,7 @@ export const EditInvoice = ({
                   <Button onClick={onClose}>Close</Button>
                 </ModalFooter>
               </ModalContent>
-            </Modal>
+            </Modal> */}
           </Flex>
         </CardBody>
         <CardFooter></CardFooter>
@@ -742,5 +828,30 @@ export const EditInvoice = ({
           }}
         />
       </Card>
-    );
+      <MyModal
+        modalHeader=" فایل تاییدیه مشتری"
+        onClose={() => setShowModal(false)}
+        isOpen={showModal}
+        size={isDesktop ? "xl" : "full"}
+      >
+        <Box
+          overflow="auto"
+          borderRadius="6px"
+          borderColor="orange"
+          borderWidth="1px"
+          hidden={approvedFile == null || approvedFile == ""}
+          boxSize={isDesktop ? "lg" : "sm"}
+        >
+          <Image
+            src={approvedFile ? approvedFile : ""}
+            objectFit="cover"
+            target="_blank"
+            rel="noopener noreferrer"
+            alt="تاییدیه"
+          />
+        </Box>
+      </MyModal>
+      {loading && <MyLoading />}
+    </Box>
+  );
 };

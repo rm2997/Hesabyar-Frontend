@@ -14,7 +14,6 @@ import {
   ModalBody,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { ShowAllGoods } from "../api/services/goodsService";
 
 export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
   const [query, setQuery] = useState("");
