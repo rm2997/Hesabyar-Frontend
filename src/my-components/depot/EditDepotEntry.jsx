@@ -50,15 +50,17 @@ import { ShowAllUnits } from "../../api/services/unitsService";
 import { SearchGoods } from "../../my-components/SearchGood";
 import {
   CreateDepot,
+  ShowDepotImageFile,
+  UpdateDepot,
   UpdateDepotImageFile,
 } from "../../api/services/depotService";
 import { MyModal } from "../../my-components/MyModal";
 import { Datepicker } from "@ijavad805/react-datepicker";
 import { SearchCustomer } from "../../my-components/SearchCustomer";
 import { ShowAllCustomers } from "../../api/services/customerService";
-import { NewCustomer } from "../customers/NewCustomer";
+import { NewCustomer } from "../../pages/customers/NewCustomer";
 
-export const NewDepotEntry = ({ isDesktop }) => {
+export const EditDepotEntry = ({ isDesktop, closeMe, depot, onUpdate, id }) => {
   const [formData, setFormData] = useState({});
   const [imagePreview, setImagePreview] = useState("");
   const [showSearchGood, setShowSearchGood] = useState(false);
@@ -70,13 +72,24 @@ export const NewDepotEntry = ({ isDesktop }) => {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
+  useEffect(() => {
+    const loadData = async () => {
+      setFormData(depot);
+      setSelectedGood(depot.depotGood);
+      const res = await ShowDepotImageFile(id);
+      if (!res.success) {
+      } else {
+        const url = URL.createObjectURL(res.data);
+        setImagePreview(url);
+      }
+    };
+    loadData();
+  }, []);
+
   const initFormData = async () => {
     for (let key in formData) formData[key] = "";
   };
 
-  useEffect(() => {
-    setFormData({ ...formData, quantity: 0 });
-  }, []);
   const validateForm = async () => {
     if (!selectedGood) {
       toast({
@@ -118,26 +131,26 @@ export const NewDepotEntry = ({ isDesktop }) => {
       });
       return false;
     }
-    if (!formData.quantity || formData.quantity == 0) {
+    if (!formData.quantity) {
       toast({
         title: "توجه",
-        description: "میزان کالا را ثبت کنید",
+        description: "تعداد را ثبت کنید",
         status: "warning",
         duration: 3000,
         isClosable: true,
       });
       return false;
     }
-    if (!formData.imageFile) {
-      toast({
-        title: "توجه",
-        description: "تصویر کالا را ثبت کنید",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return false;
-    }
+    // if (!formData.imageFile) {
+    //   toast({
+    //     title: "توجه",
+    //     description: "تصویر کالا را ثبت کنید",
+    //     status: "warning",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   return false;
+    // }
     return true;
   };
 
@@ -150,7 +163,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
       formData.depotGood = selectedGood;
       console.log(formData);
 
-      const response = await CreateDepot(formData);
+      const response = await UpdateDepot(id, formData);
       if (!response.success) {
         toast({
           title: "خطایی رخ داد",
@@ -163,20 +176,20 @@ export const NewDepotEntry = ({ isDesktop }) => {
         return;
       }
 
-      const form = new FormData();
-      form.append("image", formData.imageFile);
-      const imageRes = await UpdateDepotImageFile(response.data.id, form);
-      if (!imageRes) {
-        toast({
-          title: "خطایی در ارسال تصویر رخ داد",
-          description: response.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        setLoading(false);
-        return;
-      }
+      //   const form = new FormData();
+      //   form.append("image", formData.imageFile);
+      //   const imageRes = await UpdateDepotImageFile(response.data.id, form);
+      //   if (!imageRes) {
+      //     toast({
+      //       title: "خطایی در ارسال تصویر رخ داد",
+      //       description: response.error,
+      //       status: "error",
+      //       duration: 3000,
+      //       isClosable: true,
+      //     });
+      //     setLoading(false);
+      //     return;
+      //   }
       toast({
         title: "ثبت شد",
         description: `اطلاعات ورودی انبار ذخیره شد`,
@@ -184,10 +197,12 @@ export const NewDepotEntry = ({ isDesktop }) => {
         duration: 3000,
         isClosable: true,
       });
+      onUpdate(response.data);
       await initFormData();
       setSelectedGood(null);
       setImagePreview("");
       setLoading(false);
+      closeMe();
     } catch (err) {
       toast({
         title: "خطایی رخ داد",
@@ -200,12 +215,10 @@ export const NewDepotEntry = ({ isDesktop }) => {
   };
 
   const handleChangeFormData = (e) => {
-    console.log(e.target.name, e.target.value);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-    console.log(formData);
   };
 
   const handleSearchGoods = async (query) => {
@@ -246,7 +259,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
             borderTopRadius={5}
             color="black"
           >
-            ثبت ورودی کالا
+            ویرایش ورودی انبار
           </CardHeader>
         )}
         <CardBody borderTopWidth={2}>
@@ -324,7 +337,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                     <NumberDecrementStepper />
                   </NumberInputStepper>
                 </NumberInput>
-                <Text>{formData?.depotGood?.goodUnit?.unitName}</Text>
+                <Text>{formData?.good?.goodUnit?.unitName}</Text>
               </HStack>
             </FormControl>
             <FormControl isRequired>
@@ -429,7 +442,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                 <FormLabel hidden={!isDesktop} width="150px">
                   تصویر کالا
                 </FormLabel>
-                <InputGroup maxW="500px">
+                {/* <InputGroup maxW="500px">
                   <InputLeftElement>
                     <IconButton
                       colorScheme="red"
@@ -438,7 +451,8 @@ export const NewDepotEntry = ({ isDesktop }) => {
                       onClick={() =>
                         setFormData({
                           ...formData,
-                          depotImage: "",
+                          goodImage: "",
+                          imageFile: "",
                         })
                       }
                     />
@@ -449,28 +463,26 @@ export const NewDepotEntry = ({ isDesktop }) => {
                     pt="5px"
                     pb="5px"
                     type="file"
-                    name="depotImage"
-                    value={formData.depotImage}
+                    name="goodImage"
+                    //value={formData.goodImage}
                     onChange={(e) => {
                       setFormData({
                         ...formData,
-                        depotImage: e.target.value,
+                        goodImage: e.target.value,
                         imageFile: e.target.files[0],
                       });
                       setImagePreview(URL.createObjectURL(e.target.files[0]));
                     }}
                   />
-                </InputGroup>
-                {formData.depotImage && (
+                </InputGroup> */}
+                {formData?.goodImage && (
                   <Box
                     _hover={{ cursor: "pointer", borderColor: "orange" }}
                     overflow="auto"
                     borderRadius="6px"
                     borderColor="black"
                     borderWidth="1px"
-                    hidden={
-                      formData.depotImage == null || formData.depotImage == ""
-                    }
+                    hidden={!imagePreview}
                     boxSize="20"
                     onClick={(e) => {
                       setShowImageModal(true);
@@ -481,7 +493,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                       objectFit="cover"
                       target="_blank"
                       rel="noopener noreferrer"
-                      alt={formData.depotImage}
+                      alt={formData.goodImage}
                     />
                   </Box>
                 )}
@@ -547,7 +559,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
           borderRadius="6px"
           borderColor="orange"
           borderWidth="1px"
-          hidden={formData.depotImage == null || formData.depotImage == ""}
+          hidden={!imagePreview}
           boxSize={isDesktop ? "lg" : "sm"}
         >
           <Image

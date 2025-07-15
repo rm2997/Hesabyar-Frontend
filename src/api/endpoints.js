@@ -98,14 +98,15 @@ const endpoints = {
     delete: (id) => `/units/${id}`,
   },
   depot: {
-    listAll: (page, limit, search) =>
-      `/depots?page=${page}&limit=${limit}&search=${search}`,
-    update: (id) => `/depots/${id}`,
-    updateDepotImageFile: (id) => `/depots/image/${id}`,
-    listOne: (id) => `/depots/${id}`,
-    detail: (id) => `/depots/${id}`,
-    create: "/depots/",
-    delete: (id) => `/depots/${id}`,
+    listAll: (page, limit, type, search) =>
+      `/depot?page=${page}&limit=${limit}&type=${type}&search=${search}`,
+    update: (id) => `/depot/${id}`,
+    updateDepotImageFile: (id) => `/depot/image/${id}`,
+    getDepotImageFile: (id) => `/depot/image/${id}`,
+    listOne: (id) => `/depot/${id}`,
+    detail: (id) => `/depot/${id}`,
+    create: "/depot/",
+    delete: (id) => `/depot/${id}`,
   },
   sms: {
     likeToLike: "https://api.sms.ir/v1/send/likeToLike",

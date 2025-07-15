@@ -29,6 +29,7 @@ import { clearTokens } from "../api/tokenUtils";
 import { useNavigate } from "react-router-dom";
 import { Requests } from "../pages/requests/Requests";
 import { NewDepotEntry } from "../pages/depot/NewDepotEntry";
+import { DepotEntryList } from "./depot/DepotEntryList";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -40,6 +41,7 @@ const validContents = [
   { name: "newSale", value: "فروش جدید" },
   { name: "saleStat", value: "لیست فروش" },
   { name: "newDepotEntery", value: "ورود کالای جدید" },
+  { name: "depotEntryList", value: "سوابق ثبت ورودی " },
   { name: "depotStat", value: "لیست انبار" },
   { name: "user", value: "کاربران" },
   { name: "newCustomer", value: "ثبت مشتری جدید" },
@@ -94,6 +96,10 @@ export const MainContents = ({ activeContent, isDesktop }) => {
           return <InvoiceDataTable isDesktop={isDesktop} />;
         case "newDepotEntery":
           return <NewDepotEntry isDesktop={isDesktop} />;
+        case "depotEntryList":
+          return <DepotEntryList isDesktop={isDesktop} />;
+        case "depotExitList":
+          return;
         case "saleStat":
           return <>Hi4</>;
         case "user":

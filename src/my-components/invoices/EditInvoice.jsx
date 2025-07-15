@@ -125,7 +125,9 @@ export const EditInvoice = ({
       await ShowInvoiceApprovedFile(invoice.id)
         .then((res) => {
           if (!res.data) return;
+          console.log(res.data);
           const url = URL.createObjectURL(res.data);
+          console.log("url:", url);
           setApprovedFile(url);
         })
         .catch((err) => console.log(err.message));
@@ -189,33 +191,30 @@ export const EditInvoice = ({
       invoiceGoods: [...invoiceItems],
       totalAmount: totalPrice,
     };
-    console.log(submitData);
-    await UpdateInvoice(formData.id, submitData)
-      .then((res) => {
-        if (res.status !== 200) return;
-        const newInvoices = invoices.filter((p) => p.id != formData.id);
-        newInvoices.push(formData);
-        setInvoices(newInvoices);
-        initForm();
 
-        toast({
-          title: "ثبت شد",
-          description: `اطلاعات فاکتور شما ذخیره شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        onClose();
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+    const res = await UpdateInvoice(formData.id, submitData);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
+      setLoading(false);
+      return;
+    }
+    const newInvoices = invoices.filter((p) => p.id != formData.id);
+    newInvoices.push(formData);
+    setInvoices(newInvoices);
+    initForm();
+    toast({
+      title: "ثبت شد",
+      description: `اطلاعات فاکتور شما ذخیره شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
     setLoading(false);
     onClose();
   };

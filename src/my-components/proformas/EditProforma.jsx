@@ -112,24 +112,48 @@ export const EditProforma = ({
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const items = proforma.proformaGoods;
-
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllCustomers(1, -1, "").then((res) =>
-        setCustomers(res?.data?.items)
-      );
-      await ShowAllGoods(1, -1, "").then((res) =>
-        setAllGoods(res?.data?.items)
-      );
-      await ShowProformaApprovedFile(proforma.id)
-        .then((res) => {
-          if (!res.data) return;
-          const url = URL.createObjectURL(res.data);
-          setApprovedFile(url);
-        })
-        .catch((err) => console.log(err.message));
+      const customersResponse = await ShowAllCustomers(1, -1, "");
+      if (!customersResponse.success) {
+        toast({
+          title: "خطایی هنگام بارگذاری مشتریان رخ داد",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else setCustomers(customersResponse?.data?.items);
+
+      const goodsResponse = await ShowAllGoods(1, -1, "");
+      if (!goodsResponse.success) {
+        toast({
+          title: "خطایی هنگام بارگذاری کالاها رخ داد",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        setAllGoods(goodsResponse?.data?.items);
+      }
+
+      const res = await ShowProformaApprovedFile(proforma.id);
+      if (!res.success) {
+        toast({
+          title: "خطایی هنگام بارگذاری تصویر رخ داد",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        const url = URL.createObjectURL(res.data);
+        console.log(url);
+        setApprovedFile(url);
+      }
+
       for (let i = 0; i < proforma.proformaGoods.length; i++) {
         proforma.proformaGoods[i].no = i + 1;
         proforma.proformaGoods[i].uniqueId = Date.now().toString();
@@ -141,10 +165,6 @@ export const EditProforma = ({
     };
     loadData();
   }, []);
-
-  // useEffect(() => {
-  //   setFormData({ ...formData, proformaGoods: [...items] });
-  // }, [items]);
 
   useEffect(() => {
     recalculateTotal();

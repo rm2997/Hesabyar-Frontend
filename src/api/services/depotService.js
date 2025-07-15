@@ -1,5 +1,6 @@
 import axiosClient, { apiRequest } from "../axiosClient";
 import endpoints from "../endpoints";
+import { DepotTypes } from "./enums/depotTypes.enum";
 
 export const CreateDepot = async (DepotData) => {
   return apiRequest({
@@ -32,39 +33,47 @@ export const UpdateDepotImageFile = async (id, data) => {
   }
 };
 
-export const UpdateDepot = async (id, DepotData) => {
+export const UpdateDepot = async (id, depotData) => {
   return apiRequest({
     method: "PUT",
     url: endpoints.depot.update(id),
-    data: DepotData,
+    data: depotData,
+  });
+};
+export const ShowDepotImageFile = async (id) => {
+  return apiRequest({
+    method: "GET",
+    url: endpoints.depot.getDepotImageFile(id),
+    responseType: "blob",
   });
 };
 
 export const UploadDepotsFile = async (formData) => {
-  // return apiRequest({
-  //   method: "POST",
-  //   url: endpoints.depot.create,
-  //   data: formData,
-  // });
-  try {
-    const response = await axiosClient.post(
-      endpoints.depot.uploadExcel,
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
-    return response;
-  } catch (error) {
-    if (error.response) {
-      // پاسخ از سمت سرور (۴xx یا ۵xx)
-      throw new Error(error.response.data?.message || "خطای سرور");
-    } else if (error.request) {
-      // درخواست فرستاده شده ولی پاسخی نیومده
-      throw new Error("پاسخی از سرور دریافت نشد");
-    } else {
-      // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
-    }
-  }
+  return apiRequest({
+    method: "POST",
+    url: endpoints.depot.create,
+    data: formData,
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  // try {
+  //   const response = await axiosClient.post(
+  //     endpoints.depot.uploadExcel,
+  //     formData,
+  //     { headers: { "Content-Type": "multipart/form-data" } }
+  //   );
+  //   return response;
+  // } catch (error) {
+  //   if (error.response) {
+  //     // پاسخ از سمت سرور (۴xx یا ۵xx)
+  //     throw new Error(error.response.data?.message || "خطای سرور");
+  //   } else if (error.request) {
+  //     // درخواست فرستاده شده ولی پاسخی نیومده
+  //     throw new Error("پاسخی از سرور دریافت نشد");
+  //   } else {
+  //     // خطای دیگر (مثلاً در خود کد)
+  //     throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
+  //   }
+  // }
 };
 
 export const RemoveDepot = async (id) => {
@@ -81,9 +90,14 @@ export const ShowDepotByID = async (id) => {
   });
 };
 
-export const ShowAllDepots = async (page = 1, limit = 10, search = "") => {
+export const ShowAllDepots = async (
+  page = 1,
+  limit = 10,
+  type,
+  search = ""
+) => {
   return apiRequest({
     method: "GET",
-    url: endpoints.depot.listAll(page, limit, search),
+    url: endpoints.depot.listAll(page, limit, type, search),
   });
 };

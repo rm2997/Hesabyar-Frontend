@@ -4,10 +4,14 @@ import { SidebarItem } from "./SIdebarItem";
 import { PieChart } from "./PieChart";
 import {
   ArrowUpFromLine,
+  Blocks,
   Boxes,
   Coins,
+  Combine,
+  DecimalsArrowLeft,
   DecimalsArrowRight,
   FileSpreadsheet,
+  GalleryHorizontalEnd,
   House,
   Layers,
   LucideLayers,
@@ -24,10 +28,13 @@ import {
   ShieldCheck,
   ShieldUser,
   ShoppingBag,
+  SquareLibrary,
+  SquareStack,
   Table,
   UserRoundPlus,
   Users,
   UsersRound,
+  Warehouse,
 } from "lucide-react";
 
 export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
@@ -163,19 +170,31 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           title="انبار"
           color="orange.400"
           justIcon={sidebarWidth === 300 ? false : true}
-          icon={<House />}
+          icon={<Warehouse />}
           children={[
             {
               id: "newDepotEntery",
               name: "ورود کالای جدید",
               type: "text",
-              icon: <DecimalsArrowRight />,
+              icon: <DecimalsArrowLeft />,
             },
             {
-              id: "depotStat",
-              name: "تایید خروج کالا",
+              id: "depotEntryList",
+              name: "سوابق ثبت ورودی ",
               type: "text",
-              icon: <House />,
+              icon: <SquareStack />,
+            },
+            {
+              id: "newDepotExit",
+              name: "خروج کالا",
+              type: "text",
+              icon: <Combine />,
+            },
+            {
+              id: "depotExitList",
+              name: "سوابق ثبت خروجی ",
+              type: "text",
+              icon: <GalleryHorizontalEnd />,
             },
           ]}
           onMenuItemClick={onMenuItemClick}
@@ -213,7 +232,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           title="کالاها"
           justIcon={sidebarWidth === 300 ? false : true}
           color="maroon"
-          icon={<ShoppingBag />}
+          icon={<Blocks />}
           children={[
             {
               id: "newGood",
@@ -253,7 +272,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
               id: "units",
               name: "لیست واحدها",
               type: "text",
-              icon: <Boxes />,
+              icon: <SquareLibrary />,
             },
           ]}
           onMenuItemClick={onMenuItemClick}

@@ -22,21 +22,21 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 });
 
-axiosClient.interceptors.response.use(
-  (response) => response,
-  async (err) => {
-    if (err.response.status === 401) {
-      clearTokens();
-      if (
-        window.location.href.endsWith("/login") === false ||
-        window.location.href.endsWith("/second-login") === false
-      )
-        window.location.href = "/login";
-      return Promise.reject(err);
-    }
-    return Promise.reject(err);
-  }
-);
+// axiosClient.interceptors.response.use(
+//   (response) => response,
+//   async (err) => {
+//     if (err.response.status === 401) {
+//       clearTokens();
+//       if (
+//         window.location.href.endsWith("/login") === false ||
+//         window.location.href.endsWith("/second-login") === false
+//       )
+//         window.location.href = "/login";
+//       return Promise.reject(err);
+//     }
+//     return Promise.reject(err);
+//   }
+// );
 
 export const apiRequest = async ({
   method,
@@ -44,6 +44,7 @@ export const apiRequest = async ({
   data = {},
   params = {},
   headers = {},
+  responseType = "json",
 }) => {
   try {
     const response = await axiosClient({
@@ -52,6 +53,7 @@ export const apiRequest = async ({
       data,
       params,
       headers,
+      responseType: responseType,
     });
 
     return {
