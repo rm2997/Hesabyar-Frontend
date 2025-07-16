@@ -15,18 +15,17 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
-export const SearchCustomer = ({ onSelect, isOpen, onClose, searchItems }) => {
+export const SearchInvoices = ({ onSelect, isOpen, onClose, searchItems }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const inputRef = useRef();
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  const searchGoods = async (q) => {
+  const searchInvoices = async (q) => {
     setLoading(true);
     try {
       const res = await searchItems(q);
@@ -41,26 +40,32 @@ export const SearchCustomer = ({ onSelect, isOpen, onClose, searchItems }) => {
   const handleChange = (e) => {
     const val = e.target.value;
     setQuery(val);
-    if (val.length > 2) {
-      searchGoods(val);
+    if (val.length > 0) {
+      searchInvoices(val);
     } else {
       setResults([]);
     }
   };
 
   return (
-    <Modal initialFocusRef={inputRef} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      motionPreset="slideInTop"
+      isOpen={isOpen}
+      onClose={onClose}
+      initialFocusRef={inputRef}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader bg="blue.300" textAlign="center">
-          جستجوی مشتری
+          جستجوی فاکتور
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody p={10} dir="rtl">
           <Box position="relative" w="100%">
             <Input
+              type="number"
               ref={inputRef}
-              placeholder="جستجوی نام مشتری..."
+              placeholder="جستجوی شماره فاکتور..."
               value={query}
               onChange={handleChange}
             />
@@ -94,11 +99,8 @@ export const SearchCustomer = ({ onSelect, isOpen, onClose, searchItems }) => {
                       }}
                     >
                       <Text>
-                        {item.customerGender +
-                          " " +
-                          item.customerFName +
-                          " " +
-                          item.customerLName}
+                        {item.title}
+
                         <Badge colorScheme="blue" mr="10px">
                           ID: {item.id}
                         </Badge>

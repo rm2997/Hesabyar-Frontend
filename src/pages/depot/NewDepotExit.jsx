@@ -5,6 +5,8 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Divider,
+  Flex,
   FormControl,
   FormLabel,
   HStack,
@@ -19,8 +21,11 @@ import {
   NumberInputField,
   NumberInputStepper,
   Select,
+  Spinner,
   Text,
   VStack,
+  Wrap,
+  WrapItem,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -28,11 +33,16 @@ import {
   CircleX,
   DollarSign,
   Dot,
+  DotSquare,
   Ellipsis,
+  FolderOpen,
+  FolderOpenDot,
   Hash,
   Info,
   Package2,
   PackageSearch,
+  PlusCircle,
+  ScanSearch,
   SquareCheckBig,
   UserRoundPlus,
   UserSearch,
@@ -57,12 +67,21 @@ import { Datepicker } from "@ijavad805/react-datepicker";
 import { SearchCustomer } from "../../my-components/SearchCustomer";
 import { ShowAllCustomers } from "../../api/services/customerService";
 import { NewCustomer } from "../customers/NewCustomer";
+import {
+  ShowInvoicesByID,
+  ShowUserAllInvoices,
+} from "../../api/services/invoiceService";
+import { SearchInvoices } from "../../my-components/SearchInvoic";
 
-export const NewDepotEntry = ({ isDesktop }) => {
+export const NewDepotExit = ({ isDesktop }) => {
   const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({});
   const [imagePreview, setImagePreview] = useState("");
   const [showSearchGood, setShowSearchGood] = useState(false);
+  const [showSearchInvoice, setShowSearchInvoice] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(false);
+  const [invoiceGoods, setInvoiceGoods] = useState([]);
+
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -75,6 +94,9 @@ export const NewDepotEntry = ({ isDesktop }) => {
     for (let key in formData) formData[key] = "";
   };
 
+  useEffect(() => {
+    console.log(invoiceGoods);
+  }, [invoiceGoods]);
   useEffect(() => {
     setFormData({ ...formData, quantity: 0 });
   }, []);
@@ -248,13 +270,32 @@ export const NewDepotEntry = ({ isDesktop }) => {
     setShowSearchGood(true);
   };
 
-  const handleItemChange = async (id) => {
+  const handleChangeGood = async (id) => {
     setSelectedGood(id);
     const res = await ShowGoodByID(id);
     if (!res.success) {
       return;
     }
     setFormData({ ...formData, depotGood: res?.data });
+  };
+
+  const handleShowSearchInvoice = async () => {
+    setShowSearchInvoice(true);
+  };
+
+  const handleInvoiceChange = async (id) => {
+    setSelectedInvoice(id);
+    const res = await ShowInvoicesByID(id);
+    if (!res.success) {
+      return;
+    }
+    setFormData({ ...formData, depotInvoice: res?.data });
+    setInvoiceGoods(res?.data.invoiceGoods);
+  };
+
+  const handleSearchInvoices = async (query) => {
+    const response = await ShowUserAllInvoices(1, 10, query);
+    return response.data.items;
   };
 
   const handleAddNewUser = () => {
@@ -272,7 +313,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
             borderTopRadius={5}
             color="black"
           >
-            ثبت ورودی کالا
+            ثبت خروج کالا
           </CardHeader>
         )}
         <CardBody borderTopWidth={2}>
@@ -286,26 +327,33 @@ export const NewDepotEntry = ({ isDesktop }) => {
             <FormControl isRequired>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
-                  نام کالا
+                  فاکتور
                 </FormLabel>
                 <Input
-                  placeholder="یک کالا انتخاب کنید"
+                  placeholder="یک فاکتور انتخاب کنید"
                   type="text"
                   onClick={() =>
-                    !formData?.depotGood ? handleShowSearchGood() : ""
+                    !formData?.depotInvoice ? handleShowSearchInvoice() : ""
                   }
-                  value={formData.depotGood ? formData.depotGood?.goodName : ""}
-                  name="depotGood"
+                  value={
+                    formData.depotInvoice
+                      ? formData?.depotInvoice?.id +
+                        "-" +
+                        formData?.depotInvoice?.title
+                      : ""
+                  }
+                  name="depotInvoice"
                   readOnly
                 />
-                {formData.depotGood && (
+                {formData.depotInvoice && (
                   <IconButton
                     size="md"
                     icon={<CircleX />}
                     colorScheme="red"
                     onClick={() => {
-                      setFormData({ ...formData, depotGood: null });
-                      setSelectedGood(null);
+                      setFormData({ ...formData, depotInvoice: null });
+                      setInvoiceGoods([]);
+                      setSelectedInvoice(null);
                     }}
                     title="انصراف"
                     variant="ghost"
@@ -314,89 +362,234 @@ export const NewDepotEntry = ({ isDesktop }) => {
                 <IconButton
                   size={"md"}
                   colorScheme="orange"
-                  icon={<PackageSearch />}
+                  icon={<ScanSearch />}
                   onClick={() => {
-                    handleShowSearchGood();
+                    handleShowSearchInvoice();
                   }}
-                  title="جستجوی کالا "
+                  title="جستجوی فاکتور "
                 />
               </HStack>
             </FormControl>
-            <FormControl isRequired>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="150px">
-                  میزان
-                </FormLabel>
-                <NumberInput
-                  fontSize="md"
-                  textAlign="center"
-                  fontFamily="IranSans"
-                  defaultValue={1}
-                  dir="ltr"
-                  min={1}
-                  name="quantity"
-                  value={formData.quantity}
-                  placeholder="تعداد"
-                  maxW={200}
-                  onChange={(e) =>
-                    handleChangeFormData({
-                      target: { value: e, name: "quantity" },
-                    })
-                  }
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-                <Text>{formData?.depotGood?.goodUnit?.unitName}</Text>
-              </HStack>
-            </FormControl>
-            <FormControl isRequired>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="165px">
-                  شماره سریال
-                </FormLabel>
+            {invoiceGoods.length > 0 && (
+              <Flex
+                direction={isDesktop ? "" : "column"}
+                rowGap={3}
+                dir="ltr"
+                w="full"
+                columnGap={3}
+                mt={2}
+              >
+                {invoiceGoods.map((invoiceItem) => (
+                  <Box
+                    borderWidth="1px"
+                    borderRadius="lg"
+                    p={3}
+                    minW="150px"
+                    boxShadow="md"
+                    position="relative"
+                    key={invoiceItem?.id}
+                  >
+                    <Flex justify="space-between" align="center">
+                      <IconButton
+                        colorScheme="red"
+                        variant="ghost"
+                        size="xs"
+                        icon={<CircleX />}
+                        //onClick={() => onRemove?.(product.id)}
+                      />
+                      <Text
+                        fontFamily="IranSans"
+                        fontWeight="bold"
+                        fontSize="md"
+                      >
+                        {invoiceItem?.good?.goodName}
+                      </Text>
+                    </Flex>
 
-                <MyInputBox
-                  autoComplete={false}
-                  icon={Hash}
-                  name="goodSerial"
-                  title="شماره سریال"
-                  value={formData.goodSerial}
-                  onChange={handleChangeFormData}
-                />
-              </HStack>
-            </FormControl>
+                    <Flex justify="space-between" mt={3} dir="rtl">
+                      <Text
+                        dir="rtl"
+                        fontFamily="iransans"
+                        fontSize="xs"
+                        my="auto"
+                      >
+                        تعداد
+                      </Text>
+                      <NumberInput
+                        maxW="80px"
+                        fontFamily="IranSans"
+                        defaultValue={1}
+                        key={"quantity" + invoiceItem.quantity}
+                        dir="ltr"
+                        min={1}
+                        max={invoiceItem.quantity}
+                        name="quantity"
+                        value={invoiceItem?.quantity}
+                        // onChange={(value) =>
+                        //   handleItemChange(index, "quantity", value)
+                        // }
+                        placeholder="تعداد"
+                      >
+                        <NumberInputField />
+                        <NumberInputStepper>
+                          <NumberIncrementStepper />
+                          <NumberDecrementStepper />
+                        </NumberInputStepper>
+                      </NumberInput>
+                      <Text
+                        dir="rtl"
+                        fontFamily="iransans"
+                        fontSize="xs"
+                        my="auto"
+                      >
+                        {invoiceItem?.good?.goodUnit?.unitName}
+                      </Text>
+                    </Flex>
+                    <Flex
+                      justify="space-between"
+                      mt={3}
+                      columnGap={3}
+                      dir="rtl"
+                    >
+                      <Text
+                        dir="rtl"
+                        fontFamily="iransans"
+                        fontSize="xs"
+                        mt={2}
+                      >
+                        شماره سریال
+                      </Text>
+                      <Input
+                        maxW="120px"
+                        autoComplete={false}
+                        name="goodSerial"
+                        placeholder="شماره سریال"
+                        value={formData.goodSerial}
+                        onChange={handleChangeFormData}
+                      />
+                      <Text w="5px" />
+                    </Flex>
+                    <Flex justify="space-between" mt={3} dir="rtl">
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        تصویر کالا
+                      </FormLabel>
+                      <label
+                        htmlFor={"depotImage" + invoiceItem.id}
+                        disabled={loading}
+                      >
+                        <Box
+                          maxHeight={10}
+                          maxWidth={160}
+                          as="span"
+                          display="inline-flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          p="10px 20px"
+                          bg="orange.300"
+                          color="black"
+                          borderRadius="md"
+                          borderWidth="1px"
+                          borderColor="gray.300"
+                          cursor={loading ? "not-allowed" : "pointer"}
+                          _hover={{ bg: "orange.100" }}
+                        >
+                          {loading && <Spinner />}
+                          <Ellipsis
+                            style={{ margin: "2px", marginLeft: "10px" }}
+                          />
+                          <Text fontSize="sm">انتخاب تصویر</Text>
+                        </Box>
+                      </label>
+
+                      <IconButton
+                        htmlFor="depotImage"
+                        colorScheme="red"
+                        variant="ghost"
+                        icon={<CircleX />}
+                        onClick={handleCancelImage}
+                      />
+
+                      <Input
+                        id={"depotImage" + invoiceItem.id}
+                        hidden
+                        accept="image/*"
+                        capture="environment"
+                        pt="5px"
+                        pb="5px"
+                        type="file"
+                        name="depotImage"
+                        ref={fileInputRef}
+                        onChange={(e) => {
+                          handleChangeImage(e);
+                        }}
+                      />
+
+                      {formData.depotImage && (
+                        <Box
+                          _hover={{
+                            cursor: "pointer",
+                            borderColor: "orange",
+                          }}
+                          overflow="auto"
+                          borderRadius="6px"
+                          borderColor="black"
+                          borderWidth="1px"
+                          hidden={!formData.depotImage}
+                          boxSize="50px"
+                          onClick={(e) => {
+                            setShowImageModal(true);
+                          }}
+                        >
+                          <Image
+                            src={imagePreview}
+                            objectFit="cover"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            alt={formData.depotImage}
+                          />
+                        </Box>
+                      )}
+                    </Flex>
+                  </Box>
+                ))}
+              </Flex>
+            )}
+
             <FormControl isRequired>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="150px">
                   تاریخ ورود
                 </FormLabel>
-                <Datepicker
-                  fontSize="md"
-                  fontFamily="IranSans"
-                  input={
-                    <input
-                      style={{ borderColor: "gray", borderWidth: "1px" }}
-                      placeholder="تاریخ ورود را انتخاب کنید..."
-                    />
-                  }
-                  id="chequeDate"
-                  closeWhenSelectADay={true}
-                  format={"YYYY/MM/DD"}
-                  adjustPosition="auto"
-                  theme="green"
-                  allowClear={true}
-                  name="deliveredAt"
-                  value={formData.deliveredAt}
-                  onChange={(e) =>
-                    handleChangeFormData({
-                      target: { value: e ? e : "", name: "deliveredAt" },
-                    })
-                  }
-                />
+                <Box
+                  borderWidth={1}
+                  borderColor="gray.300"
+                  borderRadius="md"
+                  p={2}
+                >
+                  <Datepicker
+                    fontSize="md"
+                    fontFamily="IranSans"
+                    input={
+                      <input
+                        style={{ borderColor: "gray", borderWidth: "1px" }}
+                        placeholder="تاریخ ورود را انتخاب کنید..."
+                      />
+                    }
+                    id="chequeDate"
+                    closeWhenSelectADay={true}
+                    format={"YYYY/MM/DD"}
+                    adjustPosition="auto"
+                    theme="green"
+                    allowClear={true}
+                    name="deliveredAt"
+                    value={formData.deliveredAt}
+                    onChange={(e) =>
+                      handleChangeFormData({
+                        target: { value: e ? e : "", name: "deliveredAt" },
+                      })
+                    }
+                  />
+                </Box>
               </HStack>
             </FormControl>
 
@@ -451,57 +644,6 @@ export const NewDepotEntry = ({ isDesktop }) => {
             </FormControl>
 
             <FormControl>
-              <HStack mt={1} mr="auto">
-                <FormLabel hidden={!isDesktop} width="150px">
-                  تصویر کالا
-                </FormLabel>
-                <InputGroup maxW="500px">
-                  <InputLeftElement>
-                    <IconButton
-                      colorScheme="red"
-                      variant="ghost"
-                      icon={<CircleX />}
-                      onClick={handleCancelImage}
-                    />
-                  </InputLeftElement>
-                  <Input
-                    accept="image/*"
-                    capture="environment"
-                    pt="5px"
-                    pb="5px"
-                    type="file"
-                    name="depotImage"
-                    ref={fileInputRef}
-                    onChange={(e) => {
-                      handleChangeImage(e);
-                    }}
-                  />
-                </InputGroup>
-                {formData.depotImage && (
-                  <Box
-                    _hover={{ cursor: "pointer", borderColor: "orange" }}
-                    overflow="auto"
-                    borderRadius="6px"
-                    borderColor="black"
-                    borderWidth="1px"
-                    hidden={!formData.depotImage}
-                    boxSize="50px"
-                    onClick={(e) => {
-                      setShowImageModal(true);
-                    }}
-                  >
-                    <Image
-                      src={imagePreview}
-                      objectFit="cover"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      alt={formData.depotImage}
-                    />
-                  </Box>
-                )}
-              </HStack>
-            </FormControl>
-            <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
                   توضیحات
@@ -527,12 +669,21 @@ export const NewDepotEntry = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
+      <SearchInvoices
+        searchItems={handleSearchInvoices}
+        isOpen={showSearchInvoice}
+        onClose={() => setShowSearchInvoice(false)}
+        onSelect={(g) => {
+          handleInvoiceChange(g.id);
+          setShowSearchInvoice(false);
+        }}
+      />
       <SearchGoods
         searchItems={handleSearchGoods}
         isOpen={showSearchGood}
         onClose={() => setShowSearchGood(false)}
         onSelect={(g) => {
-          handleItemChange(g.id);
+          handleChangeGood(g.id);
           setShowSearchGood(false);
         }}
       />

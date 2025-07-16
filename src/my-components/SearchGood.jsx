@@ -13,12 +13,17 @@ import {
   ModalHeader,
   ModalBody,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const inputRef = useRef();
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const searchGoods = async (q) => {
     setLoading(true);
@@ -43,7 +48,12 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
   };
 
   return (
-    <Modal motionPreset="slideInTop" isOpen={isOpen} onClose={onClose}>
+    <Modal
+      initialFocusRef={inputRef}
+      motionPreset="slideInTop"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader bg="blue.300" textAlign="center">
@@ -53,6 +63,7 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
         <ModalBody p={10} dir="rtl">
           <Box position="relative" w="100%">
             <Input
+              ref={inputRef}
               placeholder="جستجوی نام کالا..."
               value={query}
               onChange={handleChange}

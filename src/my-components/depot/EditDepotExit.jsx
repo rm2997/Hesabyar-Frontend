@@ -60,7 +60,7 @@ import { SearchCustomer } from "../../my-components/SearchCustomer";
 import { ShowAllCustomers } from "../../api/services/customerService";
 import { NewCustomer } from "../../pages/customers/NewCustomer";
 
-export const EditDepotEntry = ({ isDesktop, closeMe, depot, onUpdate, id }) => {
+export const EditDepotExit = ({ isDesktop, closeMe, depot, onUpdate, id }) => {
   const [formData, setFormData] = useState({});
   const [imagePreview, setImagePreview] = useState("");
   const [showSearchGood, setShowSearchGood] = useState(false);

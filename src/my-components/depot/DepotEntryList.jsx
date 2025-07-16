@@ -97,6 +97,7 @@ export const DepotEntryList = ({ isDesktop }) => {
   };
 
   const updateDepotEntryInList = (updatedDepotEntry) => {
+    console.log("updatedDepotEntry:", updatedDepotEntry);
     setDepotEntry((prev) =>
       prev.map((g) => (g.id === updatedDepotEntry.id ? updatedDepotEntry : g))
     );
@@ -110,10 +111,10 @@ export const DepotEntryList = ({ isDesktop }) => {
     return depotEntry.find((g) => (g.id === id ? g : null));
   };
 
-  const handleDeleteDepotEntry = async () => {
-    if (selectedID === 0) return;
+  const handleDeleteDepotEntry = async (id) => {
+    if (id === 0) return;
     setLoading(true);
-    const res = await RemoveDepot(selectedID);
+    const res = await RemoveDepot(id);
     if (!res?.success) {
       toast({
         title: "خطایی رخ داد",
@@ -126,7 +127,7 @@ export const DepotEntryList = ({ isDesktop }) => {
       return;
     }
 
-    deleteDepotEntryFromList(selectedID);
+    deleteDepotEntryFromList(id);
     toast({
       title: "توجه",
       description: `اطلاعات حذف شد`,
@@ -266,7 +267,9 @@ export const DepotEntryList = ({ isDesktop }) => {
                           setDialogGears({
                             title: "حذف",
                             text: "آیا واقعا می خواهید این رکورد را حذف کنید؟",
-                            callBack: handleDeleteDepotEntry,
+                            callBack: () => {
+                              handleDeleteDepotEntry(row.id);
+                            },
                           });
                           setIsDialogOpen(true);
                         }}
