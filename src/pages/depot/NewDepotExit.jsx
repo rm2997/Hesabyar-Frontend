@@ -74,113 +74,188 @@ import {
 import { SearchInvoices } from "../../my-components/SearchInvoic";
 
 export const NewDepotExit = ({ isDesktop }) => {
-  const fileInputRef = useRef(null);
-  const [formData, setFormData] = useState({});
-  const [imagePreview, setImagePreview] = useState("");
-  const [showSearchGood, setShowSearchGood] = useState(false);
+  const [formData, setFormData] = useState({
+    depotInvoice: null,
+    depotType: "",
+    description: "",
+    depotGoods: null,
+    totalAmount: 0,
+    totalQuantity: 0,
+    issuedBy: null,
+    issuedAt: "",
+    driver: "",
+    driverCarNumber: "",
+    driverNatCode: "",
+  });
+  const [depotGoods, setDepotGoods] = useState([
+    // {
+    //   quantity: 0,
+    //   price: 0,
+    //   good: null,
+    //   serial: "",
+    //   description: "",
+    //   issuedBy: null,
+    //   issuedAt: "",
+    //   image: null,
+    //   imagePreview: "",
+    //   imageFile: null,
+    // },
+  ]);
+  //const [showSearchGood, setShowSearchGood] = useState(false);
   const [showSearchInvoice, setShowSearchInvoice] = useState(false);
-  const [selectedInvoice, setSelectedInvoice] = useState(false);
-  const [invoiceGoods, setInvoiceGoods] = useState([]);
+  //const [selectedInvoice, setSelectedInvoice] = useState(false);
+  //const [invoiceGoods, setInvoiceGoods] = useState([]);
 
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedDepotGood, setSelectedDepotGood] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [selectedGood, setSelectedGood] = useState(0);
+  //   const [selectedGood, setSelectedGood] = useState(0);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const initFormData = async () => {
-    for (let key in formData) formData[key] = "";
+    setFormData({
+      depotInvoice: null,
+      depotType: "",
+      description: "",
+      depotGoods: null,
+      totalAmount: 0,
+      totalQuantity: 0,
+      issuedBy: null,
+      issuedAt: "",
+      driver: "",
+      driverCarNumber: "",
+      driverNatCode: "",
+    });
+    setDepotGoods([]);
   };
 
-  useEffect(() => {
-    console.log(invoiceGoods);
-  }, [invoiceGoods]);
-  useEffect(() => {
-    setFormData({ ...formData, quantity: 0 });
-  }, []);
+  const validateDate = async (inputDate) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const date = new Date(inputDate);
+    date.setHours(0, 0, 0, 0);
+
+    return date <= today;
+  };
+
   const validateForm = async () => {
-    if (!selectedGood) {
+    if (!formData.depotInvoice) {
       toast({
         title: "توجه",
-        description: "باید یک کالا انتخاب کنید",
+        description: "باید یک فاکتور انتخاب کنید",
         status: "warning",
         duration: 3000,
         isClosable: true,
       });
       return false;
     }
-    if (!formData.deliveredAt) {
+    if (!depotGoods || depotGoods?.length < 1) {
       toast({
         title: "توجه",
-        description: "باید یک تاریخ ورود انتخاب کنید",
+        description: "باید حداقل یک کالا از فاکتور انتخاب کنید",
         status: "warning",
         duration: 3000,
         isClosable: true,
       });
       return false;
     }
-    if (!formData.deliveredBy) {
+
+    if (!formData.issuedAt || !(await validateDate(formData?.issuedAt))) {
       toast({
         title: "توجه",
-        description: "باید یک تحویل دهنده انتخاب کنید",
+        description: "تاریخ خروج صحیح نیست",
         status: "warning",
         duration: 3000,
         isClosable: true,
       });
       return false;
     }
-    if (!formData.goodSerial) {
+    if (!formData.issuedBy) {
       toast({
         title: "توجه",
-        description: "شماره سریال کالا را ثبت کنید",
+        description: "باید تحویل گیرنده را مشخص کنید",
         status: "warning",
         duration: 3000,
         isClosable: true,
       });
       return false;
     }
-    if (!formData.quantity || formData.quantity == 0) {
+    const serialCheck = depotGoods.every((good) => {
+      let retVal = true;
+      if (!good.serial) {
+        toast({
+          title: "توجه",
+          description: `شماره سریال  ${good?.good.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retVal = false;
+      }
+      return retVal;
+    });
+    if (!serialCheck) return false;
+
+    const imageCheck = depotGoods.every((good) => {
+      let retval = true;
+      if (!good.imageFile) {
+        toast({
+          title: "توجه",
+          description: `تصویر  ${good?.good.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retval = false;
+      }
+      return retval;
+    });
+    if (!imageCheck) return false;
+    if (
+      formData?.driver?.length == 0 &&
+      formData?.driverCarNumber?.length == 0 &&
+      formData?.driverNatCode?.length == 0
+    ) {
       toast({
         title: "توجه",
-        description: "میزان کالا را ثبت کنید",
+        description: "باید حداقل یکی از مشخصات راننده یا خودرو را مشخص کنید",
         status: "warning",
         duration: 3000,
         isClosable: true,
       });
       return false;
     }
-    if (!formData.imageFile) {
-      toast({
-        title: "توجه",
-        description: "تصویر کالا را ثبت کنید",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return false;
-    }
+
     return true;
   };
 
-  const handleCancelImage = () => {
-    fileInputRef.current.value = "";
-    setFormData({
-      depotImage: "",
+  const handleCancelImage = (index) => {
+    const tmpDepotGoods = [...depotGoods];
+    tmpDepotGoods[index] = {
+      ...tmpDepotGoods[index],
+      image: "",
       imageFile: null,
-    });
-    setImagePreview(null);
+      imagePreview: "",
+    };
+    setDepotGoods(tmpDepotGoods);
   };
-  const handleChangeImage = async (e) => {
+
+  const handleChangeImage = async (index, e) => {
+    setSelectedDepotGood(index);
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      setFormData({
-        ...formData,
-        depotImage: file.name,
+      const tmpDepotGoods = [...depotGoods];
+      tmpDepotGoods[index] = {
+        ...tmpDepotGoods[index],
+        image: "",
         imageFile: file,
-      });
-      setImagePreview(URL.createObjectURL(file));
+        imagePreview: URL.createObjectURL(file),
+      };
+      setDepotGoods(tmpDepotGoods);
     } else {
       toast({
         title: "توجه",
@@ -191,74 +266,96 @@ export const NewDepotExit = ({ isDesktop }) => {
       });
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let totalQuantity = 0;
+    let totalAmount = 0;
+    depotGoods.forEach((element) => {
+      totalQuantity += element.quantity;
+      totalAmount += element.price * element.quantity;
+    });
+
     const validate = await validateForm();
     if (validate == false) return;
-    try {
-      setLoading(true);
 
-      const response = await CreateDepot(formData);
-      if (!response.success) {
-        toast({
-          title: "خطایی رخ داد",
-          description: response.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        setLoading(false);
-        return;
-      }
+    const tmpDepotGoods = [...depotGoods];
+    const tmpformData = formData;
+    tmpDepotGoods.forEach((g) => {
+      g.issuedAt = tmpformData.issuedAt;
+      g.issuedBy = tmpformData.issuedBy;
+      g.description = formData?.description;
+    });
+    tmpformData.depotType = "خروجی";
+    tmpformData.totalQuantity = totalQuantity;
+    tmpformData.totalAmount = totalAmount;
+    tmpformData.depotGoods = [...tmpDepotGoods];
 
-      const form = new FormData();
-      form.append("image", formData.imageFile);
-      const imageRes = await UpdateDepotImageFile(response.data.id, form);
-      if (!imageRes) {
-        toast({
-          title: "خطایی در ارسال تصویر رخ داد",
-          description: response.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        setLoading(false);
-        return;
-      }
-      toast({
-        title: "ثبت شد",
-        description: `اطلاعات ورودی انبار ذخیره شد`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      await initFormData();
-      setSelectedGood(null);
-      setImagePreview("");
-      setLoading(false);
-    } catch (err) {
+    setLoading(true);
+    const response = await CreateDepot(tmpformData);
+    if (!response.success) {
       toast({
         title: "خطایی رخ داد",
-        description: `${err}`,
+        description: response.error,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
+      setLoading(false);
+      return;
     }
+
+    await handleSubmitImages(response?.data?.depotGoods);
+    await initFormData();
+    toast({
+      title: "توجه",
+      description: "با موفقیت ثبت شد",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
+  };
+
+  const handleSubmitImages = async (data) => {
+    data.forEach(async (element, index) => {
+      const form = new FormData();
+      form.append("image", depotGoods[index].imageFile);
+      console.log(element.id, form);
+      const imageRes = await UpdateDepotImageFile(element.id, form);
+      if (!imageRes.success)
+        toast({
+          title: "خطایی در ارسال تصویر رخ داد",
+          description: imageRes.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      setLoading(false);
+    });
   };
 
   const handleChangeFormData = (e) => {
-    console.log(e.target.name, e.target.value);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-    console.log(formData);
   };
 
-  const handleSearchGoods = async (query) => {
-    const response = await ShowAllGoods(1, 10, query);
-    return response.data.items;
+  const handleChangeGoodsData = (index, e) => {
+    const newDepotGoods = [...depotGoods]; // کپی آرایه
+    newDepotGoods[index] = {
+      ...newDepotGoods[index], // کپی شیء
+      [e.target.name]: e.target.value,
+    };
+    setDepotGoods(newDepotGoods);
+  };
+
+  const handleRemoveDepotGood = (index) => {
+    const tmpDepotGoods = [...depotGoods];
+    tmpDepotGoods.pop(index);
+    setDepotGoods(tmpDepotGoods);
+    setSelectedDepotGood(null);
   };
 
   const handleSearchCustomers = async (query) => {
@@ -266,31 +363,37 @@ export const NewDepotExit = ({ isDesktop }) => {
     return response.data.items;
   };
 
-  const handleShowSearchGood = async () => {
-    setShowSearchGood(true);
-  };
-
-  const handleChangeGood = async (id) => {
-    setSelectedGood(id);
-    const res = await ShowGoodByID(id);
-    if (!res.success) {
-      return;
-    }
-    setFormData({ ...formData, depotGood: res?.data });
-  };
-
   const handleShowSearchInvoice = async () => {
     setShowSearchInvoice(true);
   };
 
   const handleInvoiceChange = async (id) => {
-    setSelectedInvoice(id);
+    //setSelectedInvoice(id);
     const res = await ShowInvoicesByID(id);
     if (!res.success) {
       return;
     }
     setFormData({ ...formData, depotInvoice: res?.data });
-    setInvoiceGoods(res?.data.invoiceGoods);
+
+    const tmpDepotGoods = [];
+    const goods = [...res?.data?.invoiceGoods];
+    goods.forEach((good) => {
+      const depotGood = {
+        quantity: good.quantity,
+        price: good.price,
+        good: good.good,
+        serial: "",
+        description: "",
+        issuedBy: null,
+        issuedAt: "",
+        image: null,
+        imagePreview: "",
+        imageFile: null,
+      };
+      tmpDepotGoods.push(depotGood);
+    });
+    setDepotGoods(tmpDepotGoods);
+    //setInvoiceGoods(res?.data.invoiceGoods);
   };
 
   const handleSearchInvoices = async (query) => {
@@ -345,15 +448,15 @@ export const NewDepotExit = ({ isDesktop }) => {
                   name="depotInvoice"
                   readOnly
                 />
-                {formData.depotInvoice && (
+                {formData?.depotInvoice && (
                   <IconButton
                     size="md"
                     icon={<CircleX />}
                     colorScheme="red"
                     onClick={() => {
                       setFormData({ ...formData, depotInvoice: null });
-                      setInvoiceGoods([]);
-                      setSelectedInvoice(null);
+                      setDepotGoods([]);
+                      setSelectedDepotGood(null);
                     }}
                     title="انصراف"
                     variant="ghost"
@@ -370,7 +473,7 @@ export const NewDepotExit = ({ isDesktop }) => {
                 />
               </HStack>
             </FormControl>
-            {invoiceGoods.length > 0 && (
+            {depotGoods?.length > 0 && (
               <Flex
                 direction={isDesktop ? "" : "column"}
                 rowGap={3}
@@ -379,7 +482,7 @@ export const NewDepotExit = ({ isDesktop }) => {
                 columnGap={3}
                 mt={2}
               >
-                {invoiceGoods.map((invoiceItem) => (
+                {depotGoods.map((depotItem, index) => (
                   <Box
                     borderWidth="1px"
                     borderRadius="lg"
@@ -387,7 +490,7 @@ export const NewDepotExit = ({ isDesktop }) => {
                     minW="150px"
                     boxShadow="md"
                     position="relative"
-                    key={invoiceItem?.id}
+                    key={index + "-depotGood"}
                   >
                     <Flex justify="space-between" align="center">
                       <IconButton
@@ -395,14 +498,14 @@ export const NewDepotExit = ({ isDesktop }) => {
                         variant="ghost"
                         size="xs"
                         icon={<CircleX />}
-                        //onClick={() => onRemove?.(product.id)}
+                        onClick={() => handleRemoveDepotGood(index)}
                       />
                       <Text
                         fontFamily="IranSans"
                         fontWeight="bold"
                         fontSize="md"
                       >
-                        {invoiceItem?.good?.goodName}
+                        {depotItem?.good?.goodName}
                       </Text>
                     </Flex>
 
@@ -416,18 +519,20 @@ export const NewDepotExit = ({ isDesktop }) => {
                         تعداد
                       </Text>
                       <NumberInput
+                        size={"sm"}
                         maxW="80px"
                         fontFamily="IranSans"
                         defaultValue={1}
-                        key={"quantity" + invoiceItem.quantity}
+                        key={"quantity" + index}
                         dir="ltr"
                         min={1}
-                        max={invoiceItem.quantity}
-                        name="quantity"
-                        value={invoiceItem?.quantity}
-                        // onChange={(value) =>
-                        //   handleItemChange(index, "quantity", value)
-                        // }
+                        max={depotItem?.quantity}
+                        value={depotItem?.quantity}
+                        onChange={(value) =>
+                          handleChangeGoodsData(index, {
+                            target: { name: "quantity", value: value },
+                          })
+                        }
                         placeholder="تعداد"
                       >
                         <NumberInputField />
@@ -442,7 +547,7 @@ export const NewDepotExit = ({ isDesktop }) => {
                         fontSize="xs"
                         my="auto"
                       >
-                        {invoiceItem?.good?.goodUnit?.unitName}
+                        {depotItem?.good?.goodUnit?.unitName}
                       </Text>
                     </Flex>
                     <Flex
@@ -457,24 +562,33 @@ export const NewDepotExit = ({ isDesktop }) => {
                         fontSize="xs"
                         mt={2}
                       >
-                        شماره سریال
+                        سریال
                       </Text>
                       <Input
+                        size="sm"
+                        dir="ltr"
                         maxW="120px"
                         autoComplete={false}
-                        name="goodSerial"
+                        name="serial"
                         placeholder="شماره سریال"
-                        value={formData.goodSerial}
-                        onChange={handleChangeFormData}
+                        value={depotItem?.serial}
+                        onChange={(e) => handleChangeGoodsData(index, e)}
                       />
-                      <Text w="5px" />
+
+                      {/* <Text w="5px" /> */}
                     </Flex>
                     <Flex justify="space-between" mt={3} dir="rtl">
-                      <FormLabel hidden={!isDesktop} width="150px">
-                        تصویر کالا
+                      <FormLabel
+                        fontSize="xs"
+                        fontFamily="iransans"
+                        my="auto"
+                        hidden={!isDesktop}
+                      >
+                        تصویر
                       </FormLabel>
                       <label
-                        htmlFor={"depotImage" + invoiceItem.id}
+                        style={{ marginLeft: "auto" }}
+                        htmlFor={"image" + index}
                         disabled={loading}
                       >
                         <Box
@@ -483,48 +597,42 @@ export const NewDepotExit = ({ isDesktop }) => {
                           as="span"
                           display="inline-flex"
                           alignItems="center"
-                          justifyContent="center"
-                          p="10px 20px"
+                          p="5px 10px"
                           bg="orange.300"
                           color="black"
                           borderRadius="md"
-                          borderWidth="1px"
+                          borderWidth="0.5px"
                           borderColor="gray.300"
                           cursor={loading ? "not-allowed" : "pointer"}
                           _hover={{ bg: "orange.100" }}
                         >
-                          {loading && <Spinner />}
-                          <Ellipsis
-                            style={{ margin: "2px", marginLeft: "10px" }}
-                          />
-                          <Text fontSize="sm">انتخاب تصویر</Text>
+                          <Ellipsis />
                         </Box>
                       </label>
 
                       <IconButton
-                        htmlFor="depotImage"
+                        hidden={!depotGoods[index]?.imagePreview}
                         colorScheme="red"
                         variant="ghost"
                         icon={<CircleX />}
-                        onClick={handleCancelImage}
+                        onClick={() => handleCancelImage(index)}
                       />
 
                       <Input
-                        id={"depotImage" + invoiceItem.id}
+                        id={"image" + index}
                         hidden
                         accept="image/*"
                         capture="environment"
                         pt="5px"
                         pb="5px"
                         type="file"
-                        name="depotImage"
-                        ref={fileInputRef}
+                        name="image"
                         onChange={(e) => {
-                          handleChangeImage(e);
+                          handleChangeImage(index, e);
                         }}
                       />
 
-                      {formData.depotImage && (
+                      {depotGoods[index]?.imagePreview && (
                         <Box
                           _hover={{
                             cursor: "pointer",
@@ -534,18 +642,17 @@ export const NewDepotExit = ({ isDesktop }) => {
                           borderRadius="6px"
                           borderColor="black"
                           borderWidth="1px"
-                          hidden={!formData.depotImage}
                           boxSize="50px"
-                          onClick={(e) => {
+                          onClick={() => {
                             setShowImageModal(true);
                           }}
                         >
                           <Image
-                            src={imagePreview}
+                            src={depotGoods[index]?.imagePreview}
                             objectFit="cover"
                             target="_blank"
                             rel="noopener noreferrer"
-                            alt={formData.depotImage}
+                            alt={depotGoods[index]?.image}
                           />
                         </Box>
                       )}
@@ -558,7 +665,7 @@ export const NewDepotExit = ({ isDesktop }) => {
             <FormControl isRequired>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="150px">
-                  تاریخ ورود
+                  تاریخ تحویل
                 </FormLabel>
                 <Box
                   borderWidth={1}
@@ -581,11 +688,11 @@ export const NewDepotExit = ({ isDesktop }) => {
                     adjustPosition="auto"
                     theme="green"
                     allowClear={true}
-                    name="deliveredAt"
-                    value={formData.deliveredAt}
+                    name="issuedAt"
+                    value={formData.issuedAt}
                     onChange={(e) =>
                       handleChangeFormData({
-                        target: { value: e ? e : "", name: "deliveredAt" },
+                        target: { value: e ? e : "", name: "issuedAt" },
                       })
                     }
                   />
@@ -596,34 +703,32 @@ export const NewDepotExit = ({ isDesktop }) => {
             <FormControl isRequired>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="150px">
-                  تحویل دهنده
+                  گیرنده
                 </FormLabel>
                 <Input
                   placeholder="لطفا یک مشتری انتخاب کنید"
                   maxW="560px"
                   onClick={() => setShowSearchCustomer(true)}
                   value={
-                    formData.deliveredBy
-                      ? formData?.deliveredBy?.customerGender +
+                    formData.issuedBy
+                      ? formData?.issuedBy?.customerGender +
                         " " +
-                        formData?.deliveredBy?.customerFName +
+                        formData?.issuedBy?.customerFName +
                         " " +
-                        formData?.deliveredBy?.customerLName
+                        formData?.issuedBy?.customerLName
                       : ""
                   }
-                  name="deliveredBy"
+                  name="issuedBy"
                   readOnly
                 />
-                {formData.deliveredBy && (
+                {formData.issuedBy && (
                   <IconButton
                     size={isDesktop ? "md" : "sm"}
                     icon={<CircleX />}
                     colorScheme="red"
                     title="انصراف"
                     variant="ghost"
-                    onClick={() =>
-                      setFormData({ ...formData, deliveredBy: null })
-                    }
+                    onClick={() => setFormData({ ...formData, issuedBy: null })}
                   />
                 )}
                 <IconButton
@@ -646,17 +751,63 @@ export const NewDepotExit = ({ isDesktop }) => {
             <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
-                  توضیحات
+                  مشخصات راننده
                 </FormLabel>
                 <MyInputBox
                   icon={Info}
-                  name="depotInfo"
-                  title="توضیحات"
-                  value={formData.depotInfo}
+                  name="driver"
+                  title="مشخصات راننده"
+                  value={formData.driver}
                   onChange={handleChangeFormData}
                 ></MyInputBox>
               </HStack>
             </FormControl>
+
+            <FormControl>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  کد ملی راننده
+                </FormLabel>
+                <MyInputBox
+                  icon={Info}
+                  name="driverNatCode"
+                  title="کد ملی راننده"
+                  value={formData.driverNatCode}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+
+            <FormControl>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  پلاک خوردو
+                </FormLabel>
+                <MyInputBox
+                  icon={Info}
+                  name="driverCarNumber"
+                  title="پلاک خوردو"
+                  value={formData.driverCarNumber}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+
+            <FormControl>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  توضیحات
+                </FormLabel>
+                <MyInputBox
+                  icon={Info}
+                  name="description"
+                  title="توضیحات"
+                  value={formData.description}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+
             <Button
               leftIcon={<SquareCheckBig />}
               colorScheme="blue"
@@ -678,7 +829,7 @@ export const NewDepotExit = ({ isDesktop }) => {
           setShowSearchInvoice(false);
         }}
       />
-      <SearchGoods
+      {/* <SearchGoods
         searchItems={handleSearchGoods}
         isOpen={showSearchGood}
         onClose={() => setShowSearchGood(false)}
@@ -686,14 +837,14 @@ export const NewDepotExit = ({ isDesktop }) => {
           handleChangeGood(g.id);
           setShowSearchGood(false);
         }}
-      />
+      /> */}
       <SearchCustomer
         searchItems={handleSearchCustomers}
         isOpen={showSearchCustomer}
         onClose={() => setShowSearchCustomer(false)}
         onSelect={(g) => {
           handleChangeFormData({
-            target: { name: "deliveredBy", value: g },
+            target: { name: "issuedBy", value: g },
           });
           setShowSearchCustomer(false);
         }}
@@ -712,11 +863,10 @@ export const NewDepotExit = ({ isDesktop }) => {
           borderRadius="6px"
           borderColor="orange"
           borderWidth="1px"
-          hidden={!formData.depotImage}
           boxSize={isDesktop ? "lg" : "sm"}
         >
           <Image
-            src={imagePreview}
+            src={depotGoods[selectedDepotGood]?.imagePreview}
             objectFit="cover"
             target="_blank"
             rel="noopener noreferrer"

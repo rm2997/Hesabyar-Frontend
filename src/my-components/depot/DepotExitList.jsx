@@ -18,6 +18,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import {
+  Combine,
   DecimalsArrowLeft,
   FilePenLine,
   Trash2,
@@ -35,6 +36,7 @@ import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { EditDepotEntry } from "./EditDepotEntry";
+import { EditDepotExit } from "./EditDepotExit";
 
 export const DepotExitList = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
@@ -62,7 +64,7 @@ export const DepotExitList = ({ isDesktop }) => {
     const res = await ShowAllDepots(
       resetPage ? 1 : currentPage,
       itemsPerPage,
-      DepotTypes.find((t) => t.key == "in").value,
+      DepotTypes.find((t) => t.key == "out").value,
       resetPage ? "" : search
     );
     if (!res.success) {
@@ -150,7 +152,7 @@ export const DepotExitList = ({ isDesktop }) => {
           setSearch={setSearch}
           handleResetSearch={handleResetSearch}
           loadData={loadData}
-          userInfo="جستجوی ورودی انبار"
+          userInfo="جستجوی خروجی انبار"
         />
 
         <Box flex="1" overflowY="auto" p={1}>
@@ -178,8 +180,8 @@ export const DepotExitList = ({ isDesktop }) => {
                     }}
                   >
                     <HStack>
-                      <DecimalsArrowLeft color="orange" />
-                      <Text fontFamily="IranSans" fontSize="md" mr="auto">
+                      <Combine color="orange" />
+                      <Text fontFamily="IranSans" fontSize="lg" mr="auto">
                         شماره : {row.id}
                       </Text>
                     </HStack>
@@ -187,11 +189,32 @@ export const DepotExitList = ({ isDesktop }) => {
                   <CardBody>
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
-                        <Text> تاریخ ورود :</Text>
+                        <Text> تاریخ ثبت :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {dayjs(row.deliveredAt)
+                          {dayjs(row.createdAt)
                             .locale("fa")
                             .format("YYYY/MM/DD")}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>شماره فاکتور:</Text>
+                        <Text fontFamily="iransans" fontSize="md" mr="auto">
+                          {row.depotInvoice?.id}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>تعداد کالا</Text>
+                        <Text fontFamily="iransans" fontSize="md" mr="auto">
+                          {row?.totalQuantity}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>جمع کل</Text>
+                        <Text fontFamily="iransans" fontSize="md" mr="auto">
+                          {Number(row?.totalAmount).toLocaleString()}
                         </Text>
                       </HStack>
                       <Divider />
@@ -204,33 +227,6 @@ export const DepotExitList = ({ isDesktop }) => {
                         </Text>
                       </HStack>
                       <Divider />
-                      <HStack>
-                        <Text> تحویل دهنده:</Text>
-                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row?.deliveredBy.customerFName +
-                            " " +
-                            row?.deliveredBy.customerLName}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text> نام کالا :</Text>
-                        <Tooltip label={row.depotGood?.goodName}>
-                          <Text mr="auto">
-                            {row.depotGood?.goodName?.length > 20
-                              ? row?.depotGood?.goodName.substring(0, 20) +
-                                "..."
-                              : row.depotGood?.goodName}
-                          </Text>
-                        </Tooltip>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text> مقدار :</Text>
-                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row.quantity}
-                        </Text>
-                      </HStack>
                     </VStack>
                   </CardBody>
                   <CardFooter borderBottomRadius={5} bg="gray.200">
@@ -303,7 +299,7 @@ export const DepotExitList = ({ isDesktop }) => {
           </Flex>
         </Box>
         <MyModal modalHeader="جزییات" isOpen={isOpen} onClose={onClose}>
-          <EditDepotEntry
+          <EditDepotExit
             isDesktop={isDesktop}
             id={selectedID}
             closeMe={onClose}

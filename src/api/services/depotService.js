@@ -1,6 +1,5 @@
 import axiosClient, { apiRequest } from "../axiosClient";
 import endpoints from "../endpoints";
-import { DepotTypes } from "./enums/depotTypes.enum";
 
 export const CreateDepot = async (DepotData) => {
   return apiRequest({
@@ -11,26 +10,33 @@ export const CreateDepot = async (DepotData) => {
 };
 
 export const UpdateDepotImageFile = async (id, data) => {
-  try {
-    const response = await axiosClient.patch(
-      endpoints.depot.updateDepotImageFile(id),
-      data,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
-    if (!response) throw new Error();
-    return response;
-  } catch (error) {
-    if (error.response) {
-      // پاسخ از سمت سرور (۴xx یا ۵xx)
-      throw new Error(error?.response?.data?.message || "خطای سرور");
-    } else if (error?.request) {
-      // درخواست فرستاده شده ولی پاسخی نیومده
-      throw new Error("پاسخی از سرور دریافت نشد");
-    } else {
-      // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
-    }
-  }
+  return apiRequest({
+    method: "PATCH",
+    url: endpoints.depot.updateDepotImageFile(id),
+    data: data,
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  // try {
+  //   const response = await axiosClient.patch(
+  //     endpoints.depot.updateDepotImageFile(id),
+  //     data,
+  //     { headers: { "Content-Type": "multipart/form-data" } }
+  //   );
+  //   if (!response) throw new Error();
+  //   return response;
+  // } catch (error) {
+  //   if (error.response) {
+  //     // پاسخ از سمت سرور (۴xx یا ۵xx)
+  //     throw new Error(error?.response?.data?.message || "خطای سرور");
+  //   } else if (error?.request) {
+  //     // درخواست فرستاده شده ولی پاسخی نیومده
+  //     throw new Error("پاسخی از سرور دریافت نشد");
+  //   } else {
+  //     // خطای دیگر (مثلاً در خود کد)
+  //     throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
+  //   }
+  // }
 };
 
 export const UpdateDepot = async (id, depotData) => {

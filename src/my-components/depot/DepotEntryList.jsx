@@ -18,6 +18,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import {
+  Combine,
   DecimalsArrowLeft,
   FilePenLine,
   Trash2,
@@ -35,6 +36,7 @@ import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { EditDepotEntry } from "./EditDepotEntry";
+import { EditDepotExit } from "./EditDepotExit";
 
 export const DepotEntryList = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
@@ -179,7 +181,7 @@ export const DepotEntryList = ({ isDesktop }) => {
                   >
                     <HStack>
                       <DecimalsArrowLeft color="orange" />
-                      <Text fontFamily="IranSans" fontSize="md" mr="auto">
+                      <Text fontFamily="IranSans" fontSize="lg" mr="auto">
                         شماره : {row.id}
                       </Text>
                     </HStack>
@@ -187,11 +189,18 @@ export const DepotEntryList = ({ isDesktop }) => {
                   <CardBody>
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
-                        <Text> تاریخ ورود :</Text>
+                        <Text> تاریخ ثبت :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {dayjs(row.deliveredAt)
+                          {dayjs(row.createdAt)
                             .locale("fa")
                             .format("YYYY/MM/DD")}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>تعداد کالا</Text>
+                        <Text fontFamily="iransans" fontSize="md" mr="auto">
+                          {row?.totalQuantity}
                         </Text>
                       </HStack>
                       <Divider />
@@ -204,33 +213,6 @@ export const DepotEntryList = ({ isDesktop }) => {
                         </Text>
                       </HStack>
                       <Divider />
-                      <HStack>
-                        <Text> تحویل دهنده:</Text>
-                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row?.deliveredBy.customerFName +
-                            " " +
-                            row?.deliveredBy.customerLName}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text> نام کالا :</Text>
-                        <Tooltip label={row.depotGood?.goodName}>
-                          <Text mr="auto">
-                            {row.depotGood?.goodName?.length > 20
-                              ? row?.depotGood?.goodName.substring(0, 20) +
-                                "..."
-                              : row.depotGood?.goodName}
-                          </Text>
-                        </Tooltip>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text> مقدار :</Text>
-                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row.quantity}
-                        </Text>
-                      </HStack>
                     </VStack>
                   </CardBody>
                   <CardFooter borderBottomRadius={5} bg="gray.200">
