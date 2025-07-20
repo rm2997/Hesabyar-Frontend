@@ -51,8 +51,60 @@ export const NewGood = ({ isDesktop }) => {
     loadData();
   }, []);
 
+  const validateForm = async () => {
+    if (!formData) {
+      toast({
+        title: "توجه",
+        description: "اطلاعات کالا باید تکمیل گردد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.goodName?.trim().length < 2) {
+      toast({
+        title: "توجه",
+        description: "لطفا نام صحیح را وارد کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.goodName?.trim().length > 0 &&
+      !isNaN(Number(formData?.goodName))
+    ) {
+      toast({
+        title: "توجه",
+        description: "نام کالا باید از جنس حروف باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.goodPrice?.trim().length == 0 ||
+      isNaN(Number(formData?.goodPrice))
+    ) {
+      toast({
+        title: "توجه",
+        description: "قیمت کالا صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if ((await validateForm()) == false) return;
     setLoading(true);
 
     try {
@@ -164,10 +216,12 @@ export const NewGood = ({ isDesktop }) => {
                   قیمت
                 </FormLabel>
                 <MyInputBox
+                  fontFamily="iransans"
+                  fontSize="md"
                   icon={DollarSign}
                   name="goodPrice"
                   title="قیمت"
-                  value={formData.goodPrice}
+                  value={formData?.goodPrice}
                   onChange={handleChangeFormData}
                 ></MyInputBox>
               </HStack>

@@ -86,7 +86,7 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
   const toast = useToast();
 
   useEffect(() => {
-    console.log(depot);
+
     setFormData({
       ...depot,
       issuedBy: depot?.depotGoods[0]?.issuedBy,
@@ -634,10 +634,10 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   value={
                     formData.issuedBy
                       ? formData?.issuedBy?.customerGender +
-                        " " +
-                        formData?.issuedBy?.customerFName +
-                        " " +
-                        formData?.issuedBy?.customerLName
+                      " " +
+                      formData?.issuedBy?.customerFName +
+                      " " +
+                      formData?.issuedBy?.customerLName
                       : ""
                   }
                   name="issuedBy"

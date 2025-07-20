@@ -49,6 +49,7 @@ import { ShowAllGoods, ShowGoodByID } from "../../api/services/goodsService";
 import { SearchGoods } from "../../my-components/SearchGood";
 
 export const NewDepotEntry = ({ isDesktop }) => {
+  const [totalQuantity, setTotalQuantity] = useState(0);
   const [formData, setFormData] = useState({
     depotInvoice: null,
     depotType: "",
@@ -84,6 +85,11 @@ export const NewDepotEntry = ({ isDesktop }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+
+  const recalculateTotal = () => {
+    const count = depotGoods.reduce((sum, i) => sum + i.quantity, 0);
+    setTotalQuantity(count);
+  };
 
   const initFormData = async () => {
     setFormData({
@@ -309,13 +315,19 @@ export const NewDepotEntry = ({ isDesktop }) => {
       [e.target.name]: e.target.value,
     };
     setDepotGoods(newDepotGoods);
+    const count = newDepotGoods.reduce((sum, i) => sum + i.quantity, 0);
+    setTotalQuantity(Number(count));
   };
 
-  const handleRemoveDepotGood = (index) => {
-    const tmpDepotGoods = [...depotGoods];
-    tmpDepotGoods.pop(index);
+  const handleRemoveDepotGood = (item) => {
+    const tmpDepotGoods = depotGoods.filter(
+      (g) => g?.good?.id != item?.good?.id
+    );
+    //tmpDepotGoods.pop(index);
     setDepotGoods(tmpDepotGoods);
     setSelectedDepotGood(null);
+    const count = tmpDepotGoods.reduce((sum, i) => sum + i.quantity, 0);
+    setTotalQuantity(Number(count));
   };
 
   const handleSearchCustomers = async (query) => {
@@ -403,6 +415,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   boxShadow="md"
                   position="relative"
                   key={index + "-depotGood"}
+                  mx={isDesktop ? "" : "auto"}
                 >
                   <Flex justify="space-between" align="center">
                     <IconButton
@@ -410,7 +423,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                       variant="ghost"
                       size="xs"
                       icon={<CircleX />}
-                      onClick={() => handleRemoveDepotGood(index)}
+                      onClick={() => handleRemoveDepotGood(depotItem)}
                     />
 
                     <Text
@@ -427,18 +440,14 @@ export const NewDepotEntry = ({ isDesktop }) => {
                     </Text>
                   </Flex>
 
-                  <Flex justify="space-between" mt={3} dir="rtl">
-                    <Text
-                      dir="rtl"
-                      fontFamily="iransans"
-                      fontSize="xs"
-                      my="auto"
-                    >
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
                       تعداد
                     </Text>
                     <NumberInput
-                      size={"sm"}
-                      maxW="80px"
+                      variant="flushed"
+                      size="xs"
+                      textAlign="center"
                       fontFamily="IranSans"
                       defaultValue={1}
                       key={"quantity" + index}
@@ -467,32 +476,27 @@ export const NewDepotEntry = ({ isDesktop }) => {
                       {depotItem?.good?.goodUnit?.unitName}
                     </Text>
                   </Flex>
-                  <Flex justify="space-between" mt={3} columnGap={3} dir="rtl">
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
                     <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
                       سریال
                     </Text>
                     <Input
                       size="sm"
-                      dir="ltr"
-                      maxW="120px"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
                       autoComplete={false}
                       name="serial"
-                      placeholder="شماره سریال"
                       value={depotItem?.serial}
                       onChange={(e) => handleChangeGoodsData(index, e)}
                     />
 
                     {/* <Text w="5px" /> */}
                   </Flex>
-                  <Flex justify="space-between" mt={3} dir="rtl">
-                    <FormLabel
-                      fontSize="xs"
-                      fontFamily="iransans"
-                      my="auto"
-                      hidden={!isDesktop}
-                    >
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
                       تصویر
-                    </FormLabel>
+                    </Text>
                     <label
                       style={{ marginLeft: "auto" }}
                       htmlFor={"image" + index}
@@ -516,7 +520,6 @@ export const NewDepotEntry = ({ isDesktop }) => {
                         <Ellipsis />
                       </Box>
                     </label>
-
                     <IconButton
                       hidden={!depotGoods[index]?.imagePreview}
                       colorScheme="red"
@@ -576,6 +579,25 @@ export const NewDepotEntry = ({ isDesktop }) => {
                 variant="ghost"
                 onClick={() => setShowSearchGood(true)}
               />
+              <Flex
+                p={3}
+                justify="space-between"
+                columnGap={5}
+                dir="rtl"
+                mt="auto"
+                mx={isDesktop ? "" : "auto"}
+                borderWidth={0.5}
+                borderStyle="dashed"
+              >
+                <Text
+                  px={5}
+                  fontSize="md"
+                  textAlign="center"
+                  fontFamily="IranSans"
+                >
+                  تعداد کل : {totalQuantity}
+                </Text>
+              </Flex>
             </Flex>
 
             <FormControl isRequired>

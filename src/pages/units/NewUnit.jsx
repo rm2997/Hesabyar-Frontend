@@ -22,8 +22,46 @@ export const NewUnit = ({ isDesktop }) => {
 
   const toast = useToast();
 
+ const validateForm = async () => {
+    if (!formData) {
+      toast({
+        title: "توجه",
+        description: "اطلاعات واحد باید تکمیل گردد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.unitName?.trim().length < 2 ) {
+      toast({
+        title: "توجه",
+        description: "لطفا نام صحیح را وارد کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+     if (formData?.unitName?.trim().length >0 && !isNaN(Number(formData?.unitName)) ) {
+      toast({
+        title: "توجه",
+        description: "نام واحد باید از جنس حروف باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (await validateForm()==false)
+      return;
     setLoading(true);
 
     const response = await CreateUnit(formData);

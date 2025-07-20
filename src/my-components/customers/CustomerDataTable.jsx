@@ -168,7 +168,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
                     color="white"
                     _hover={{ cursor: "pointer" }}
                     onClick={(e) => {
-                      setSelectedID(row.id);
+                      setSelectedID(row?.id);
                       setDialogGears({
                         title: "ویرایش مشتری",
                         text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
@@ -180,7 +180,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
                     <HStack>
                       <UsersRound color="purple" />
                       <Text mr="auto">
-                        {row.customerFName + " " + row.customerLName}
+                        {row?.customerFName + " " + row?.customerLName}
                       </Text>
                     </HStack>
                   </CardHeader>
@@ -188,30 +188,30 @@ export const CustomerDataTable = ({ isDesktop }) => {
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
                         <Text> شماره موبایل :</Text>
-                        <Text mr="auto">{row.customerMobile}</Text>
+                        <Text mr="auto">{row?.customerMobile}</Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text> شماره تلفن :</Text>
-                        <Text mr="auto">{row.customerPhone}</Text>
+                        <Text mr="auto">{row?.customerPhone}</Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text> شماره ملی :</Text>
-                        <Text mr="auto">{row.customerNationalCode}</Text>
+                        <Text mr="auto">{row?.customerNationalCode}</Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text> کد پستی :</Text>
-                        <Text mr="auto">{row.customerPostalCode}</Text>
+                        <Text mr="auto">{row?.customerPostalCode}</Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text>آدرس :</Text>
                         <Text mr="auto">
-                          {row.customerAddress.length > 15
-                            ? row.customerAddress.substring(0, 12) + "..."
-                            : row.customerAddress}
+                          {row?.customerAddress?.length > 15
+                            ? row?.customerAddress?.substring(0, 12) + "..."
+                            : row?.customerAddress}
                         </Text>
                       </HStack>
                     </VStack>

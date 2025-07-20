@@ -70,6 +70,8 @@ export const MyHome = () => {
       <Flex flex={1} position="relative" overflow="hidden">
         {isDesktop ? (
           <Sidebar
+            isDesktop={isDesktop}
+            user={user}
             sidebarWidth={sidebarWidth}
             onMenuItemClick={(e) => setActiveContent(e)}
           />
@@ -88,6 +90,8 @@ export const MyHome = () => {
               </DrawerHeader>
               <DrawerBody bg="gray.800">
                 <Sidebar
+                  isDesktop={isDesktop}
+                  user={user}
                   sidebarWidth={sidebarWidth}
                   onMenuItemClick={(e) => {
                     setActiveContent(e);

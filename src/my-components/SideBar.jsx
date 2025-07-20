@@ -1,5 +1,14 @@
 // components/Sidebar.jsx
-import { Accordion, Box, Divider, Heading, Link, Text } from "@chakra-ui/react";
+import {
+  Accordion,
+  Box,
+  Divider,
+  Flex,
+  Heading,
+  Link,
+  Text,
+  Tooltip,
+} from "@chakra-ui/react";
 import { SidebarItem } from "./SIdebarItem";
 import { PieChart } from "./PieChart";
 import {
@@ -36,8 +45,22 @@ import {
   UsersRound,
   Warehouse,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { GetUserByUserid } from "../api/services/userService";
 
-export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
+export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
+  const [userName, setUserName] = useState("");
+  useEffect(() => {
+    const loadData = async () => {
+      const res = await GetUserByUserid(user.sub);
+
+      if (res.success)
+        setUserName(res.data.userfname + " " + res.data.userlname);
+      else setUserName("نا مشخص");
+    };
+    loadData();
+  }, []);
+
   return (
     <Box
       w={sidebarWidth}
@@ -54,15 +77,30 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
         borderRadius={2}
         alignContent="center"
       >
-        <Heading
-          pt={1}
+        <Flex
+          direction="row"
+          p={1}
           textAlign="center"
-          fontWeight="normal"
-          fontSize={sidebarWidth === 300 ? "2xl" : "lg  "}
-          fontFamily="Yekan"
+          alignItems="center"
+          gap={isDesktop ? 5 : 1}
         >
-          امکانات
-        </Heading>
+          <Tooltip label={user?.role}>
+            <Box mx={sidebarWidth !== 300 ? "auto" : ""}>
+              {user?.role == "admin" ? (
+                <ShieldUser color="lightYellow" />
+              ) : (
+                <Users color="black" />
+              )}
+            </Box>
+          </Tooltip>
+          <Heading
+            hidden={sidebarWidth !== 300}
+            fontSize={sidebarWidth === 300 ? "lg" : "sm"}
+            fontFamily="iransans"
+          >
+            {userName}
+          </Heading>
+        </Flex>
       </Box>
       <Accordion
         spacing={2}
@@ -143,7 +181,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
           ]}
           onMenuItemClick={onMenuItemClick}
         />
-        <SidebarItem
+        {/* <SidebarItem
           id={4}
           title="فروش"
           color="#957871"
@@ -164,7 +202,7 @@ export const Sidebar = ({ sidebarWidth, onMenuItemClick }) => {
             },
           ]}
           onMenuItemClick={onMenuItemClick}
-        />
+        /> */}
         <SidebarItem
           id={5}
           title="انبار"

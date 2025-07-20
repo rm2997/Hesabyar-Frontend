@@ -66,10 +66,10 @@ export const UnitsDataTable = ({ isDesktop }) => {
     unitsData.map((u) => (u.id === id ? u : null));
   };
 
-  const handleDeleteUnit = async () => {
-    if (selectedID === 0) return;
+  const handleDeleteUnit = async (id) => {
+    if (id == 0) return;
     setLoading(true);
-    const res = await RemoveUnit(selectedID);
+    const res = await RemoveUnit(id);
     if (!res.success) {
       toast({
         title: "خطایی رخ داد",
@@ -81,7 +81,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-    deleteUnitFromList(selectedID);
+    deleteUnitFromList(id);
     toast({
       title: "توجه",
       description: "واحد حذف شد",
@@ -212,7 +212,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
                           setDialogGears({
                             title: "حذف واحد",
                             text: "آیا واقعا می خواهید این واحد را حذف کنید؟",
-                            callBack: handleDeleteUnit,
+                            callBack: () => handleDeleteUnit(row?.id),
                           });
                           setIsDialogOpen(true);
                         }}
@@ -226,45 +226,44 @@ export const UnitsDataTable = ({ isDesktop }) => {
                 </Card>
               ))}
             </SimpleGrid>
-
-            <MyModal
-              modalHeader={dialogGears.title}
-              isOpen={isOpen}
-              onClose={onClose}
-            >
-              <EditUnit
-                id={selectedID}
-                onClose={onClose}
-                onUpdate={updateUnitInList}
-                Unit={findUnitFromList(selectedID)}
-              />
-            </MyModal>
-            <MyAlert
-              AlertHeader={dialogGears.title}
-              AlertMessage={dialogGears.text}
-              isOpen={isDialogOpen}
-              onClose={handleDialogClose}
-            />
-          </Flex>
-        </Box>
-        <Box
-          position="sticky"
-          bottom="0"
-          bg="#efefef"
-          p={1}
-          zIndex="1"
-          borderTopColor="gray.400"
-          borderTopWidth="1px"
-        >
-          <Flex justify="center" align="center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
           </Flex>
         </Box>
       </Flex>
+      <MyModal
+        modalHeader={dialogGears.title}
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <EditUnit
+          id={selectedID}
+          onClose={onClose}
+          onUpdate={updateUnitInList}
+          Unit={findUnitFromList(selectedID)}
+        />
+      </MyModal>
+      <MyAlert
+        AlertHeader={dialogGears.title}
+        AlertMessage={dialogGears.text}
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+      />
+      <Box
+        position="sticky"
+        bottom="0"
+        bg="#efefef"
+        p={1}
+        zIndex="1"
+        borderTopColor="gray.400"
+        borderTopWidth="1px"
+      >
+        <Flex justify="center" align="center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </Flex>
+      </Box>
       {loading && <MyLoading />}
     </Box>
   );

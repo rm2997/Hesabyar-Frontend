@@ -107,8 +107,8 @@ export const HeaderBar = ({
             variant="link"
             onClick={() => navigate("/home")}
           >
-            <Text fontFamily="IranSans" fontSize="lg" fontWeight="bold">
-              گروه صنعتی علیایی
+            <Text fontFamily="IranSans" fontSize={isDesktop ? "lg" : "sm"} fontWeight="bold">
+              تجارت آسانبرعلیا
             </Text>
           </Button>
         </HStack>

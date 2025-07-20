@@ -40,7 +40,7 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
   const handleChange = (e) => {
     const val = e.target.value;
     setQuery(val);
-    if (val.length > 2) {
+    if (val?.length > 2) {
       searchGoods(val);
     } else {
       setResults([]);
@@ -71,7 +71,7 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
             {loading && (
               <Spinner size="sm" position="absolute" top="12px" right="12px" />
             )}
-            {results.length > 0 && (
+            {results?.length > 0 && (
               <Box
                 position="absolute"
                 top="80%"
@@ -88,7 +88,7 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
                 <List spacing={0}>
                   {results.map((item) => (
                     <ListItem
-                      key={item.id}
+                      key={item?.id}
                       p={2}
                       _hover={{ bg: "gray.100", cursor: "pointer" }}
                       onClick={() => {
@@ -98,10 +98,10 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
                       }}
                     >
                       <Text>
-                        {item.goodName}
+                        {item?.goodName}
 
                         <Badge colorScheme="blue" mr="10px">
-                          ID: {item.id}
+                          ID: {item?.id}
                         </Badge>
                       </Text>
                     </ListItem>

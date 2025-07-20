@@ -48,6 +48,7 @@ import {
   Minus,
   PackageSearch,
   Plus,
+  PlusCircle,
   Trash2,
   UserSearch,
 } from "lucide-react";
@@ -113,44 +114,23 @@ export const EditProforma = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log(proforma);
+
     const loadData = async () => {
       setLoading(true);
-      const customersResponse = await ShowAllCustomers(1, -1, "");
-      if (!customersResponse.success) {
-        toast({
-          title: "خطایی هنگام بارگذاری مشتریان رخ داد",
-          description: res.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else setCustomers(customersResponse?.data?.items);
-
-      const goodsResponse = await ShowAllGoods(1, -1, "");
-      if (!goodsResponse.success) {
-        toast({
-          title: "خطایی هنگام بارگذاری کالاها رخ داد",
-          description: res.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        setAllGoods(goodsResponse?.data?.items);
-      }
-
       const res = await ShowProformaApprovedFile(proforma.id);
+
       if (!res.success) {
-        toast({
-          title: "خطایی هنگام بارگذاری تصویر رخ داد",
-          description: res.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        if (res.status != 404)
+          toast({
+            title: "خطایی هنگام بارگذاری تصویر رخ داد",
+            description: res.error,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
       } else {
         const url = URL.createObjectURL(res.data);
-        console.log(url);
         setApprovedFile(url);
       }
 
@@ -158,11 +138,11 @@ export const EditProforma = ({
         proforma.proformaGoods[i].no = i + 1;
         proforma.proformaGoods[i].uniqueId = Date.now().toString();
       }
-
       setFormData({ ...proforma, proformaGoods: [...proforma.proformaGoods] });
       setProformaItems(proforma.proformaGoods);
       setLoading(false);
     };
+
     loadData();
   }, []);
 
@@ -203,16 +183,81 @@ export const EditProforma = ({
     ]);
   };
 
+  const validateForm = async (data) => {
+    if (!data.customer) {
+      toast({
+        title: "توجه",
+        description: "باید مشتری را مشخص کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (!data.proformaGoods || data.proformaGoods?.length < 1) {
+      toast({
+        title: "توجه",
+        description: "باید حداقل یک کالا انتخاب کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    const goodQCheck = data.proformaGoods.every((good) => {
+      let retVal = true;
+      if (!good.quantity || good.quantity == 0) {
+        toast({
+          title: "توجه",
+          description: ` تعداد  ${good?.good?.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retVal = false;
+      }
+      return retVal;
+    });
+    if (!goodQCheck) return false;
+
+    const goodACheck = data.proformaGoods.every((good) => {
+      let retval = true;
+      if (!good.total || good.total == 0) {
+        console.log(good);
+
+        toast({
+          title: "توجه",
+          description: `قیمت کل ${good?.good?.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retval = false;
+      }
+      return retval;
+    });
+    if (!goodACheck) return false;
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const items = [...proformaItems];
+    items.forEach((i) => (i.total = i.price * i.quantity));
+
+    const data = { ...formData };
+    data.proformaGoods = [...items];
+    data.totalAmount = totalPrice;
+    data.totalQuantity = totalQuantity;
+
+    setFormData(data);
+
+    if ((await validateForm(data)) == false) return;
+
     setLoading(true);
-    const submitData = {
-      ...formData,
-      proformaGoods: [...proformaItems],
-      totalAmount: totalPrice,
-    };
-    console.log(submitData);
-    await UpdateProforma(formData.id, submitData)
+    await UpdateProforma(formData.id, data)
       .then((res) => {
         if (res.status !== 200) return;
         const newProformas = proformas.filter((p) => p.id != formData.id);
@@ -268,35 +313,28 @@ export const EditProforma = ({
     setProformaItems(newItems);
   };
 
-  const recalculateTotal = (goods) => {
-    const items = goods ? [...goods] : [...proformaItems];
-
-    if (!items) return;
-    const total = items.reduce((sum, i) => sum + i.total, 0);
-    const count = items.reduce((sum, i) => sum + i.quantity, 0);
-
+  const recalculateTotal = () => {
+    const total = proformaItems.reduce(
+      (sum, i) => sum + i.quantity * i.price,
+      0
+    );
+    const count = proformaItems.reduce((sum, i) => sum + i.quantity, 0);
     setTotalPrice(total);
     setTotalQuantity(count);
   };
 
-  const handleAddNewItem = async () => {
+  const handleAddNewItem = (good) => {
     const items = [...proformaItems];
-    if (!items) return;
     const newItem = {
-      uniqueId: Date.now().toString(),
-      createdAt: "",
-      createdBy: {},
+      quantity: 1,
+      total: good?.goodPrice,
+      price: good?.goodPrice,
+      good: good,
       description: "",
-      id: 0,
-      quantity: 0,
-      price: 0,
-      total: 0,
-      no: items?.length > 0 ? items[items.length - 1]?.no + 1 : 1,
-      good: {},
     };
     items.push(newItem);
-    setProformaItems(items);
-    recalculateTotal(items);
+    setProformaItems([...items]);
+    setSelectedItem(items?.length);
   };
 
   const handleRemoveItem = (indexToremove, item) => {
@@ -799,6 +837,192 @@ export const EditProforma = ({
                 )}
               </HStack>
             </Box>
+
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel width="170px">انتخاب کالا</FormLabel>
+              </HStack>
+            </FormControl>
+
+            <Flex
+              direction={isDesktop ? "" : "column"}
+              flexWrap={isDesktop ? "wrap" : ""}
+              minH="100px"
+              rowGap={3}
+              p={2}
+              dir="ltr"
+              w="full"
+              columnGap={3}
+              borderStyle="dashed"
+              borderRadius="md"
+              borderWidth={1}
+            >
+              {proformaItems.map((item, index) => (
+                <Box
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  p={3}
+                  w="250px"
+                  boxShadow="md"
+                  position="relative"
+                  key={index + "-depotGood"}
+                  mx={isDesktop ? "" : "auto"}
+                >
+                  <Flex justify="space-between" align="center">
+                    <IconButton
+                      colorScheme="red"
+                      variant="ghost"
+                      size="xs"
+                      icon={<CircleX />}
+                      onClick={() => {
+                        console.log(index);
+                        handleRemoveItem(item);
+                      }}
+                    />
+
+                    <Text
+                      title={item?.good?.goodName}
+                      mx={1}
+                      dir="rtl"
+                      fontFamily="IranSans"
+                      fontWeight="bold"
+                      fontSize="md"
+                    >
+                      {item?.good?.goodName
+                        ? item?.good?.goodName?.length <= 25
+                          ? item?.good?.goodName
+                          : item?.good?.goodName.substring(0, 22) + "..."
+                        : "نا مشخص"}
+                    </Text>
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      تعداد
+                    </Text>
+                    <NumberInput
+                      variant="flushed"
+                      size="xs"
+                      textAlign="center"
+                      fontFamily="IranSans"
+                      defaultValue={1}
+                      dir="ltr"
+                      min={1}
+                      name="quantity"
+                      value={item?.quantity}
+                      onChange={(value) =>
+                        handleItemChange(index, "quantity", value)
+                      }
+                      placeholder="تعداد"
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                    <Text
+                      dir="rtl"
+                      fontFamily="iransans"
+                      fontSize="xs"
+                      my="auto"
+                    >
+                      {item?.good?.goodUnit?.unitName}
+                    </Text>
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      قیمت
+                    </Text>
+                    <Input
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="price"
+                      value={item?.price}
+                      placeholder="قیمت"
+                      onChange={(e) =>
+                        handleItemChange(index, "price", e.target.value)
+                      }
+                    />
+                  </Flex>
+                  <Flex justify="space-between" columnGap={8} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      جمع
+                    </Text>
+                    <Input
+                      readOnly
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="total"
+                      value={Number(
+                        item?.quantity * item.price
+                      ).toLocaleString()}
+                      placeholder="جمع کل"
+                      onChange={(e) =>
+                        handleItemChange(index, "total", e.target.value)
+                      }
+                    />
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      توضیحات
+                    </Text>
+                    <Input
+                      variant="flushed"
+                      size="sm"
+                      name="description"
+                      value={item?.description}
+                      onChange={(e) =>
+                        handleItemChange(index, "description", e.target.value)
+                      }
+                    />
+                  </Flex>
+                </Box>
+              ))}
+              <IconButton
+                ml={3}
+                icon={<PlusCircle size="lg" strokeWidth={1.2} />}
+                size="lg"
+                my="auto"
+                mx={isDesktop ? "" : "auto"}
+                colorScheme="green"
+                variant="ghost"
+                onClick={() => setShowSearchGood(true)}
+              />
+              <Flex
+                hidden={proformaItems?.length == 0}
+                p={3}
+                justify="space-between"
+                columnGap={5}
+                dir="rtl"
+                mt="auto"
+                mx={isDesktop ? "" : "auto"}
+                borderWidth={0.5}
+                borderStyle="dashed"
+              >
+                <Text fontSize="md" textAlign="center" fontFamily="IranSans">
+                  جمع کل: {Number(totalPrice).toLocaleString()}
+                </Text>
+
+                <Text
+                  px={5}
+                  fontSize="md"
+                  textAlign="center"
+                  fontFamily="IranSans"
+                  borderRightWidth={0.5}
+                  borderColor="gray.300"
+                >
+                  تعداد کل: {totalQuantity}
+                </Text>
+              </Flex>
+            </Flex>
+
             <Input
               placeholder=" توضیحات فاکتور"
               name="description"
@@ -873,7 +1097,7 @@ export const EditProforma = ({
           borderColor="orange"
           borderWidth="1px"
           hidden={approvedFile == null || approvedFile == ""}
-          boxSize={isDesktop ? "lg" : "sm"}
+          boxSize={isDesktop ? "lg" : "xs"}
         >
           <Image
             src={approvedFile ? approvedFile : ""}

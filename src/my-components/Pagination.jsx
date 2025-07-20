@@ -32,7 +32,7 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const pages = getPageNumbers();
   const buttonSize = useBreakpointValue({ base: "sm", md: "md" }); // تغییر سایز تو موبایل
   return (
-    <Wrap spacing={1} justify="center" mt={4}>
+    <Wrap hidden={totalPages < 2} spacing={1} justify="center" mt={4}>
       <WrapItem>
         <Button
           size={buttonSize}

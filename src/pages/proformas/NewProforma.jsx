@@ -43,9 +43,11 @@ import {
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import {
   CircleX,
+  Ellipsis,
   Minus,
   PackageSearch,
   Plus,
+  PlusCircle,
   Trash2,
   UserRoundPlus,
   UserSearch,
@@ -85,17 +87,17 @@ export const NewProforma = ({ isDesktop }) => {
     description: "",
   });
   const [proformaItems, setProformaItems] = useState([
-    {
-      uniqueId: Date.now().toString(),
-      no: 1,
-      good: null,
-      goodName: 0,
-      price: 0,
-      goodUnitName: "",
-      quantity: 0,
-      total: 0,
-      description: "",
-    },
+    // {
+    //   uniqueId: Date.now().toString(),
+    //   no: 1,
+    //   good: null,
+    //   goodName: 0,
+    //   price: 0,
+    //   goodUnitName: "",
+    //   quantity: 0,
+    //   total: 0,
+    //   description: "",
+    // },
   ]);
   const [selectedItem, setSelectedItem] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
@@ -126,7 +128,6 @@ export const NewProforma = ({ isDesktop }) => {
 
   const handleSearchGoods = async (query) => {
     const response = await ShowAllGoods(1, 10, query);
-
     return response.data.items;
   };
 
@@ -151,12 +152,79 @@ export const NewProforma = ({ isDesktop }) => {
     setTotalPrice(0);
   };
 
+  const validateForm = async (data) => {
+    if (!data.customer) {
+      toast({
+        title: "توجه",
+        description: "باید مشتری را مشخص کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (!data.proformaGoods || data.proformaGoods?.length < 1) {
+      toast({
+        title: "توجه",
+        description: "باید حداقل یک کالا انتخاب کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    const goodQCheck = data.proformaGoods.every((good) => {
+      let retVal = true;
+      if (!good.quantity || good.quantity == 0) {
+        toast({
+          title: "توجه",
+          description: ` تعداد  ${good?.good?.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retVal = false;
+      }
+      return retVal;
+    });
+    if (!goodQCheck) return false;
+
+    const goodACheck = data.proformaGoods.every((good) => {
+      let retval = true;
+      if (!good.total || good.total == 0) {
+        console.log(good);
+
+        toast({
+          title: "توجه",
+          description: `قیمت کل ${good?.good?.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retval = false;
+      }
+      return retval;
+    });
+    if (!goodACheck) return false;
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const items = [...proformaItems];
+    items.forEach((i) => (i.total = i.price * i.quantity));
+
     const data = { ...formData };
-    data.proformaGoods = [...proformaItems];
+    data.proformaGoods = [...items];
     data.totalAmount = totalPrice;
+    data.totalQuantity = totalQuantity;
+
     setFormData(data);
+
+    if ((await validateForm(data)) == false) return;
+
     setLoading(true);
     try {
       const response = await CreateProforma(data);
@@ -209,40 +277,33 @@ export const NewProforma = ({ isDesktop }) => {
   };
 
   const recalculateTotal = () => {
-    const total = proformaItems.reduce((sum, i) => sum + i.total, 0);
+    const total = proformaItems.reduce(
+      (sum, i) => sum + i.quantity * i.price,
+      0
+    );
     const count = proformaItems.reduce((sum, i) => sum + i.quantity, 0);
     setTotalPrice(total);
     setTotalQuantity(count);
   };
 
-  const handleAddNewItem = () => {
+  const handleAddNewItem = (good) => {
     const items = [...proformaItems];
     const newItem = {
-      uniqueId: Date.now().toString(),
-      no: items?.length > 0 ? items[items.length - 1]?.no + 1 : 1,
-      good: 0,
-      goodName: 0,
-      goodPrice: 0,
-      price: 0,
-      goodUnitName: "",
-      quantity: 0,
-      amount: 0,
+      quantity: 1,
+      total: good?.goodPrice,
+      price: good?.goodPrice,
+      good: good,
       description: "",
     };
     items.push(newItem);
-    setProformaItems(items);
+    setProformaItems([...items]);
+    setSelectedItem(items?.length);
   };
 
   const handleRemoveItem = (item) => {
-    const updated = [...proformaItems].filter(
-      (i) => i.uniqueId != item.uniqueId
-    );
-
-    for (let i = 0; i < updated.length; i++) {
-      updated[i].no = i + 1;
-    }
-
-    setProformaItems(updated);
+    const items = proformaItems.filter((i) => i?.good?.id != item?.good?.id);
+    setProformaItems([...items]);
+    setSelectedItem(null);
     recalculateTotal();
   };
 
@@ -310,7 +371,7 @@ export const NewProforma = ({ isDesktop }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="100px">
+                      <FormLabel hidden={!isDesktop} width="140px">
                         نام مشتری
                       </FormLabel>
                       <Input
@@ -413,295 +474,190 @@ export const NewProforma = ({ isDesktop }) => {
                 </Flex>
               </Box>
             </Flex>
-            <Divider />
-            <Box px={1}>
-              <TableContainer dir="rtl">
-                <Table
-                  variant="simple"
-                  borderColor="blackAlpha.200"
-                  borderWidth={1}
-                  borderRadius="md"
+
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel width="170px">انتخاب کالا</FormLabel>
+              </HStack>
+            </FormControl>
+
+            <Flex
+              direction={isDesktop ? "" : "column"}
+              flexWrap={isDesktop ? "wrap" : ""}
+              minH="100px"
+              rowGap={3}
+              p={2}
+              dir="ltr"
+              w="full"
+              columnGap={3}
+              borderStyle="dashed"
+              borderRadius="md"
+              borderWidth={1}
+            >
+              {proformaItems.map((item, index) => (
+                <Box
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  p={3}
+                  w="250px"
+                  boxShadow="md"
+                  position="relative"
+                  key={index + "-depotGood"}
+                  mx={isDesktop ? "" : "auto"}
                 >
-                  <Thead h="50px">
-                    <Tr bg="#666c85" textFillColor="white">
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                      >
-                        ردیف
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                      >
-                        نام کالا
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                      >
-                        تعداد
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                      >
-                        واحد
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                      >
-                        قیمت واحد
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                      >
-                        قیمت کل
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        width="300px"
-                      >
-                        توضیحات
-                      </Th>
-                      <Th bg="white">
-                        <IconButton
-                          icon={<Plus />}
-                          onClick={handleAddNewItem}
-                          colorScheme="green"
-                        />
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {proformaItems.map((item, index) => (
-                      <Tr key={item.no}>
-                        <Td>
-                          <Input
-                            fontFamily="IranSans"
-                            fontSize="md"
-                            readOnly
-                            value={item.no}
-                            onChange={(e) =>
-                              handleItemChange(index, "no", e.target.value)
-                            }
-                            placeholder="ردیف"
-                            minW={10}
-                          />
-                        </Td>
-                        <Td minW={400}>
-                          <HStack>
-                            {/* <Select
-                              disabled={goodLoading}
-                              name="id"
-                              key={item.good}
-                              defaultValue={0}
-                              dir="ltr"
-                              placeholder="انتخاب کنید"
-                              value={item.good}
-                              onChange={(e) =>
-                                handleItemChange(index, "good", e.target.value)
-                              }
-                            >
-                              {allGoods.map((i) => (
-                                <option key={i.id} value={i.id}>
-                                  {i.goodName}
-                                </option>
-                              ))}
-                            </Select> */}
-                            <Input
-                              placeholder="انتخاب کنید"
-                              onClick={() =>
-                                !item?.goodName
-                                  ? handleShowSearchGood(index)
-                                  : ""
-                              }
-                              value={item?.goodName ? item?.goodName : ""}
-                              name="good"
-                              readOnly
-                            />
-                            {item?.goodName && (
-                              <IconButton
-                                size="md"
-                                icon={<CircleX />}
-                                colorScheme="red"
-                                title="انصراف"
-                                variant="ghost"
-                                onClick={() => {
-                                  setProformaItems((prev) =>
-                                    prev.map((i) =>
-                                      i.uniqueId == item?.uniqueId
-                                        ? { ...i, goodName: "", good: null }
-                                        : i
-                                    )
-                                  );
-                                }}
-                              />
-                            )}
-                            <IconButton
-                              size={"md"}
-                              colorScheme="orange"
-                              icon={<PackageSearch />}
-                              onClick={() => {
-                                handleShowSearchGood(index);
-                              }}
-                              title="جستجوی کالا "
-                            />
-                          </HStack>
-                        </Td>
-                        <Td>
-                          <NumberInput
-                            fontSize="md"
-                            textAlign="center"
-                            fontFamily="IranSans"
-                            defaultValue={1}
-                            dir="ltr"
-                            min={1}
-                            name="quantity"
-                            value={item.quantity}
-                            onChange={(value) =>
-                              handleItemChange(index, "quantity", value)
-                            }
-                            placeholder="تعداد"
-                            maxW={100}
-                          >
-                            <NumberInputField />
-                            <NumberInputStepper>
-                              <NumberIncrementStepper />
-                              <NumberDecrementStepper />
-                            </NumberInputStepper>
-                          </NumberInput>
-                        </Td>
-                        <Td>
-                          <Input
-                            readOnly
-                            placeholder="واحد"
-                            name="goodUnitName"
-                            value={item.goodUnitName}
-                            minW="80px"
-                            maxW="150px"
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            fontSize="md"
-                            textAlign="left"
-                            fontFamily="IranSans"
-                            minW="85px"
-                            maxW="300px"
-                            type="number"
-                            name="goodPrice"
-                            value={item.goodPrice}
-                            placeholder="قیمت"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "goodPrice",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            readOnly
-                            fontSize="md"
-                            textAlign="left"
-                            minW="85px"
-                            maxW="500px"
-                            fontFamily="IranSans"
-                            type="text"
-                            name="goodPrice"
-                            value={Number(
-                              item?.quantity * item?.goodPrice
-                            ).toLocaleString()}
-                            placeholder="قیمت"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "goodPrice",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            name="description"
-                            value={item.description}
-                            placeholder="توضیحات"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "description",
-                                e.target.value
-                              )
-                            }
-                            minW="95px"
-                            maxW="250px"
-                          />
-                        </Td>
-                        <Td>
-                          <IconButton
-                            icon={<Minus />}
-                            key={item.no}
-                            onClick={() => handleRemoveItem(item)}
-                            colorScheme="red"
-                          />
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                  <Tfoot>
-                    <Tr>
-                      <Th></Th>
-                      <Th></Th>
-                      <Th>
-                        <Text
-                          fontSize="md"
-                          textAlign="center"
-                          fontFamily="IranSans"
-                        >
-                          تعداد کل: {totalQuantity}
-                        </Text>
-                      </Th>
-                      <Th></Th>
-                      <Th></Th>
-                      <Th>
-                        <Text
-                          fontSize="md"
-                          textAlign="center"
-                          fontFamily="IranSans"
-                        >
-                          جمع کل: {Number(totalPrice).toLocaleString()}
-                        </Text>
-                      </Th>
-                      <Th></Th>
-                      <Th>
-                        {proformaItems.length > 0 && (
-                          <IconButton
-                            bg="maroon"
-                            color="white"
-                            icon={<Trash2 />}
-                            onClick={handleDeleteAllItems}
-                          />
-                        )}
-                      </Th>
-                    </Tr>
-                  </Tfoot>
-                </Table>
-              </TableContainer>
-            </Box>
+                  <Flex justify="space-between" align="center">
+                    <IconButton
+                      colorScheme="red"
+                      variant="ghost"
+                      size="xs"
+                      icon={<CircleX />}
+                      onClick={() => {
+                        console.log(index);
+                        handleRemoveItem(item);
+                      }}
+                    />
+
+                    <Text
+                      title={item?.good?.goodName}
+                      mx={1}
+                      dir="rtl"
+                      fontFamily="IranSans"
+                      fontWeight="bold"
+                      fontSize="md"
+                    >
+                      {item?.good?.goodName
+                        ? item?.good?.goodName?.length <= 25
+                          ? item?.good?.goodName
+                          : item?.good?.goodName.substring(0, 22) + "..."
+                        : "نا مشخص"}
+                    </Text>
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      تعداد
+                    </Text>
+                    <NumberInput
+                      variant="flushed"
+                      size="xs"
+                      textAlign="center"
+                      fontFamily="IranSans"
+                      defaultValue={1}
+                      dir="ltr"
+                      min={1}
+                      name="quantity"
+                      value={item?.quantity}
+                      onChange={(value) =>
+                        handleItemChange(index, "quantity", value)
+                      }
+                      placeholder="تعداد"
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                    <Text
+                      dir="rtl"
+                      fontFamily="iransans"
+                      fontSize="xs"
+                      my="auto"
+                    >
+                      {item?.good?.goodUnit?.unitName}
+                    </Text>
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      قیمت
+                    </Text>
+                    <Input
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="price"
+                      value={item?.price}
+                      onChange={(e) =>
+                        handleItemChange(index, "price", e.target.value)
+                      }
+                    />
+                  </Flex>
+                  <Flex justify="space-between" columnGap={8} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      جمع
+                    </Text>
+                    <Input
+                      readOnly
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="total"
+                      value={Number(
+                        item?.quantity * item.price
+                      ).toLocaleString()}
+                      onChange={(e) =>
+                        handleItemChange(index, "total", e.target.value)
+                      }
+                    />
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      توضیحات
+                    </Text>
+                    <Input
+                      variant="flushed"
+                      size="sm"
+                      name="description"
+                      value={item.description}
+                      onChange={(e) =>
+                        handleItemChange(index, "description", e.target.value)
+                      }
+                    />
+                  </Flex>
+                </Box>
+              ))}
+              <IconButton
+                ml={3}
+                icon={<PlusCircle size="lg" strokeWidth={1.2} />}
+                size="lg"
+                my="auto"
+                mx={isDesktop ? "" : "auto"}
+                colorScheme="green"
+                variant="ghost"
+                onClick={() => setShowSearchGood(true)}
+              />
+              <Flex
+                hidden={proformaItems?.length == 0}
+                p={3}
+                justify="space-between"
+                columnGap={5}
+                dir="rtl"
+                mt="auto"
+                mx={isDesktop ? "" : "auto"}
+                borderWidth={0.5}
+                borderStyle="dashed"
+              >
+                <Text fontSize="md" textAlign="center" fontFamily="IranSans">
+                  جمع کل: {Number(totalPrice).toLocaleString()}
+                </Text>
+
+                <Text
+                  px={5}
+                  fontSize="md"
+                  textAlign="center"
+                  fontFamily="IranSans"
+                  borderRightWidth={0.5}
+                  borderColor="gray.300"
+                >
+                  تعداد کل: {totalQuantity}
+                </Text>
+              </Flex>
+            </Flex>
+
             <Input
               placeholder=" توضیحات پیش فاکتور"
               name="description"
@@ -737,7 +693,8 @@ export const NewProforma = ({ isDesktop }) => {
           isOpen={showSearchGood}
           onClose={() => setShowSearchGood(false)}
           onSelect={(g) => {
-            handleItemChange(selectedItem, "good", g.id);
+            handleAddNewItem(g);
+            //handleItemChange(selectedItem, "good", g.id);
             setShowSearchGood(false);
           }}
         />

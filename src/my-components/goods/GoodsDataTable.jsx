@@ -101,10 +101,10 @@ export const GoodsDataTable = ({ isDesktop }) => {
     goodsData.map((g) => (g.id === id ? g : null));
   };
 
-  const handleDeleteGood = async () => {
-    if (selectedID === 0) return;
+  const handleDeleteGood = async (id) => {
+    if (id == 0) return;
     setLoading(true);
-    const res = await RemoveGood(selectedID);
+    const res = await RemoveGood(id);
     if (!res?.success) {
       toast({
         title: "خطایی رخ داد",
@@ -117,10 +117,10 @@ export const GoodsDataTable = ({ isDesktop }) => {
       return;
     }
 
-    deleteGoodFromList(selectedID);
+    deleteGoodFromList(id);
     toast({
       title: "توجه",
-      description: ` ,واحد حذف شد`,
+      description: `کالا حذف شد`,
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -130,7 +130,11 @@ export const GoodsDataTable = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Flex filter={loading ? "blur(10px)" : ""} direction="column">
+      <Flex
+        filter={loading ? "blur(10px)" : ""}
+        direction="column"
+        height="100vh"
+      >
         <SearchBar
           search={search}
           setSearch={setSearch}
@@ -154,7 +158,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
                     color="white"
                     _hover={{ cursor: "pointer" }}
                     onClick={(e) => {
-                      setSelectedID(row.id);
+                      setSelectedID(row?.id);
                       setDialogGears({
                         title: "ویرایش کالا",
                         text: "",
@@ -167,9 +171,9 @@ export const GoodsDataTable = ({ isDesktop }) => {
                       <WalletCards color="purple" />
                       <Tooltip label={row.goodName}>
                         <Text mr="auto">
-                          {row.goodName.length > 25
-                            ? row.goodName.substring(0, 25) + "..."
-                            : row.goodName}
+                          {row?.goodName?.length > 25
+                            ? row?.goodName?.substring(0, 25) + "..."
+                            : row?.goodName}
                         </Text>
                       </Tooltip>
                     </HStack>
@@ -178,29 +182,29 @@ export const GoodsDataTable = ({ isDesktop }) => {
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
                         <Text> واحد :</Text>
-                        <Text mr="auto">{row.goodUnit?.unitName}</Text>
+                        <Text mr="auto">{row?.goodUnit?.unitName}</Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text> قیمت کالا :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row.goodPrice}
+                          {row?.goodPrice}
                         </Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text> موجودی :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row.goodCount}
+                          {row?.goodCount}
                         </Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text>توضیحات :</Text>
                         <Text mr="auto">
-                          {row.goodInfo.length > 15
-                            ? row.goodInfo.substring(0, 12) + "..."
-                            : row.goodInfo}
+                          {row?.goodInfo?.length > 15
+                            ? row?.goodInfo?.substring(0, 12) + "..."
+                            : row?.goodInfo}
                         </Text>
                       </HStack>
                     </VStack>
@@ -235,11 +239,11 @@ export const GoodsDataTable = ({ isDesktop }) => {
                         _hover={{ color: "#ffd54f" }}
                         color="red.600"
                         onClick={(e) => {
-                          setSelectedID(row.id);
+                          setSelectedID(row?.id);
                           setDialogGears({
                             title: "حذف کالا",
                             text: "آیا واقعا می خواهید این کالا را حذف کنید؟",
-                            callBack: handleDeleteGood,
+                            callBack: () => handleDeleteGood(row?.id),
                           });
                           setIsDialogOpen(true);
                         }}
@@ -255,38 +259,39 @@ export const GoodsDataTable = ({ isDesktop }) => {
             </SimpleGrid>
           </Flex>
         </Box>
-        <Box
-          position="sticky"
-          bottom="0"
-          bg="#efefef"
-          p={1}
-          zIndex="1"
-          borderTopColor="gray.400"
-          borderTopWidth="1px"
-        >
-          <Flex justify="center" align="center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
-          </Flex>
-        </Box>
-        <MyModal modalHeader="مشاهده کالا" isOpen={isOpen} onClose={onClose}>
-          <EditGood
-            id={selectedID}
-            onClose={onClose}
-            onUpdate={updateGoodInList}
-            Good={findGoodFromList(selectedID)}
-          />
-        </MyModal>
-        <MyAlert
-          AlertHeader={dialogGears.title}
-          AlertMessage={dialogGears.text}
-          isOpen={isDialogOpen}
-          onClose={handleDialogClose}
-        />
       </Flex>
+      <Box
+        hidden={totalPages < 1}
+        position="sticky"
+        bottom="0"
+        bg="#efefef"
+        p={1}
+        zIndex="1"
+        borderTopColor="gray.400"
+        borderTopWidth="1px"
+      >
+        <Flex justify="center" align="center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </Flex>
+      </Box>
+      <MyModal modalHeader="مشاهده کالا" isOpen={isOpen} onClose={onClose}>
+        <EditGood
+          id={selectedID}
+          onClose={onClose}
+          onUpdate={updateGoodInList}
+          Good={findGoodFromList(selectedID)}
+        />
+      </MyModal>
+      <MyAlert
+        AlertHeader={dialogGears.title}
+        AlertMessage={dialogGears.text}
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+      />
       {loading && <MyLoading />}
     </Box>
   );

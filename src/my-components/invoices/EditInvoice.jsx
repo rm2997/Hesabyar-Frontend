@@ -49,7 +49,6 @@ import {
   PackageSearch,
   Plus,
   Trash2,
-  UserRoundPlus,
   UserSearch,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -116,21 +115,26 @@ export const EditInvoice = ({
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await ShowAllCustomers(1, -1, "").then((res) =>
-        setCustomers(res?.data?.items)
-      );
-      await ShowAllGoods(1, -1, "").then((res) =>
-        setAllGoods(res?.data?.items)
-      );
-      await ShowInvoiceApprovedFile(invoice.id)
-        .then((res) => {
-          if (!res.data) return;
-          console.log(res.data);
-          const url = URL.createObjectURL(res.data);
-          console.log("url:", url);
-          setApprovedFile(url);
-        })
-        .catch((err) => console.log(err.message));
+      // await ShowAllCustomers(1, -1, "").then((res) =>
+      //   setCustomers(res?.data?.items)
+      // );
+      // await ShowAllGoods(1, -1, "").then((res) =>
+      //   setAllGoods(res?.data?.items)
+      // );
+      const res = await ShowInvoiceApprovedFile(invoice.id);
+      if (!res.success) {
+        toast({
+          title: "خطا در دریافت تصویر",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      const url = URL.createObjectURL(res.data);
+
+      setApprovedFile(url);
+
       for (let i = 0; i < invoice.invoiceGoods.length; i++) {
         invoice.invoiceGoods[i].no = i + 1;
         invoice.invoiceGoods[i].uniqueId = Date.now().toString();
@@ -362,10 +366,10 @@ export const EditInvoice = ({
                         value={
                           formData.customer !== null
                             ? formData?.customer?.customerGender +
-                              " " +
-                              formData?.customer?.customerFName +
-                              " " +
-                              formData?.customer?.customerLName
+                            " " +
+                            formData?.customer?.customerFName +
+                            " " +
+                            formData?.customer?.customerLName
                             : ""
                         }
                         name="customer"
@@ -839,7 +843,7 @@ export const EditInvoice = ({
           borderColor="orange"
           borderWidth="1px"
           hidden={approvedFile == null || approvedFile == ""}
-          boxSize={isDesktop ? "lg" : "sm"}
+          boxSize={isDesktop ? "lg" : "xs"}
         >
           <Image
             src={approvedFile ? approvedFile : ""}

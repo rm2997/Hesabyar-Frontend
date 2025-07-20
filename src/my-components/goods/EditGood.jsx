@@ -27,7 +27,7 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
     const loadData = async () => {
       setLoading(true);
       const res = await ShowAllUnits();
-      if (!res.success) {
+      if (!res?.success) {
         toast({
           title: "خطایی در بارگزاری واحدها",
           description: res.error,
@@ -38,7 +38,7 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
         setLoading(false);
         return;
       }
-      setUnits(res.data.items);
+      setUnits(res?.data?.items);
       setLoading(false);
     };
     loadData();
@@ -47,16 +47,21 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
   useEffect(() => {
     const loadFormData = async (id) => {
       setLoading(true);
-      await ShowGoodByID(id)
-        .then((result) => {
-          setFormData({ ...result.data });
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          setLoading(false);
+      const res = await ShowGoodByID(id);
+      if (!res.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
         });
+        setLoading(false);
+        return;
+      }
+
+      setFormData({ ...res.data });
+      setLoading(false);
     };
     loadFormData(id);
   }, [id]);
@@ -68,41 +73,88 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
     });
   };
 
+  const validateForm = async () => {
+    if (!formData) {
+      toast({
+        title: "توجه",
+        description: "اطلاعات کالا باید تکمیل گردد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.goodName?.trim().length < 2) {
+      toast({
+        title: "توجه",
+        description: "لطفا نام صحیح را وارد کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.goodName?.trim().length > 0 &&
+      !isNaN(Number(formData?.goodName))
+    ) {
+      toast({
+        title: "توجه",
+        description: "نام کالا باید از جنس حروف باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (isNaN(Number(formData?.goodPrice))) {
+      toast({
+        title: "توجه",
+        description: "قیمت کالا صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if ((await validateForm()) == false) return;
     setLoading(true);
 
-    await UpdateGood(formData.id, formData)
-      .then((result) => {
-        onUpdate(result.data);
-        setFormData({
-          goodName: "",
-          goodUnit: "",
-          goodPrice: "",
-          goodInfo: "",
-        });
-
-        toast({
-          title: "ثبت شد",
-          description: `اطلاعات کالا بروزرسانی شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        onClose();
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+    const res = await UpdateGood(formData.id, formData);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
+      setLoading(false);
+      return;
+    }
+    onUpdate(res.data);
+    setFormData({
+      goodName: "",
+      goodUnit: "",
+      goodPrice: "",
+      goodInfo: "",
+    });
+
+    toast({
+      title: "ثبت شد",
+      description: `اطلاعات کالا بروزرسانی شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    onClose();
+    setLoading(false);
   };
 
   return (
@@ -122,7 +174,7 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
               icon={Package2}
               name="goodName"
               title="نام کالا"
-              value={formData.goodName}
+              value={formData?.goodName}
               onChange={handleChangeFormData}
             ></MyInputBox>
           </HStack>
@@ -133,13 +185,13 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
             <Select
               dir="ltr"
               placeholder="یک واحد انتخاب کنید"
-              value={formData.goodUnit?.id}
+              value={formData?.goodUnit?.id}
               name="goodUnit"
               onChange={handleChangeFormData}
             >
               {units.map((unit) => (
-                <option value={unit.id} key={unit.id}>
-                  {unit.unitName}
+                <option value={unit?.id} key={unit?.id}>
+                  {unit?.unitName}
                 </option>
               ))}
             </Select>
@@ -153,12 +205,12 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
               name="goodPrice"
               title="قیمت"
               size={19}
-              value={formData.goodPrice}
+              value={formData?.goodPrice}
               onChange={handleChangeFormData}
             ></MyInputBox>
           </HStack>
         </FormControl>
-        <FormControl isRequired>
+        <FormControl>
           <HStack>
             <FormLabel width="100px">توضیحات</FormLabel>
             <MyInputBox
@@ -166,7 +218,7 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
               name="goodInfo"
               title="توضیحات"
               size={19}
-              value={formData.goodInfo}
+              value={formData?.goodInfo}
               onChange={handleChangeFormData}
             ></MyInputBox>
           </HStack>

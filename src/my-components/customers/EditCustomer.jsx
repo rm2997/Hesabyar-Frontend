@@ -57,8 +57,87 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
     });
   };
 
+ const validateForm = async () => {
+    if (!formData) {
+      toast({
+        title: "توجه",
+        description: "اطلاعات مشتری باید تکمیل گردد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.customerFName?.trim().length < 2 ) {
+      toast({
+        title: "توجه",
+        description: "لطفا نام صحیح را وارد کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.customerLName.trim()?.length < 2 ) {
+      toast({
+        title: "توجه",
+        description: "لطفا نام خانوادگی صحیح را وارد کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    if (formData?.customerNationalCode?.trim().length > 0 && (formData?.customerNationalCode.trim()?.length != 10 || isNaN(Number(formData?.customerNationalCode)))) {
+      toast({
+        title: "توجه",
+        description: "کد ملی صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.customerMobile?.trim().length != 11 || isNaN(Number(formData?.customerMobile))) {
+      toast({
+        title: "توجه",
+        description: "موبایل صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.customerPhone?.trim().length > 0 && (formData?.customerPhone?.trim().length < 5 || isNaN(Number(formData?.customerPhone)))) {
+      toast({
+        title: "توجه",
+        description: "شماره تلفن صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.customerPostalCode?.trim().length > 0 && (formData?.customerPostalCode?.trim().length != 10 || isNaN(Number(formData?.customerPostalCode)))) {
+      toast({
+        title: "توجه",
+        description: "کد پستی صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+      if (await validateForm() == false)
+      return;
     setLoading(true);
     const result = await UpdateCustomer(formData.id, formData);
     if (!result.success) {
@@ -200,7 +279,7 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
             </HStack>
           </FormControl>
         </SimpleGrid>
-        <FormControl isRequired>
+        <FormControl >
           <HStack>
             <FormLabel width="160px">آدرس</FormLabel>
             <Textarea
