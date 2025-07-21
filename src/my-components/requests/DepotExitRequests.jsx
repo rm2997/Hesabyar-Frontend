@@ -21,6 +21,7 @@ import {
   Combine,
   DecimalsArrowLeft,
   FilePenLine,
+  ShieldCheck,
   ShieldUser,
   Trash2,
   UserLock,
@@ -33,14 +34,17 @@ import { MyAlert } from "../MyAlert";
 import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
 import { MyLoading } from "../MyLoading";
-import { RemoveDepot, ShowAllDepots } from "../../api/services/depotService";
+import {
+  RemoveDepot,
+  SetDepotExitIsAccepted,
+  ShowAllDepots,
+} from "../../api/services/depotService";
 import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import { EditDepotEntry } from "./EditDepotEntry";
-import { EditDepotExit } from "./EditDepotExit";
+import { EditDepotExit } from "../depot/EditDepotExit";
 
-export const DepotEntryList = ({ isDesktop }) => {
+export const DepotExitRequests = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,7 +70,7 @@ export const DepotEntryList = ({ isDesktop }) => {
     const res = await ShowAllDepots(
       resetPage ? 1 : currentPage,
       itemsPerPage,
-      DepotTypes.find((t) => t.key == "in").value,
+      DepotTypes.find((t) => t.key == "out").value,
       resetPage ? "" : search
     );
     if (!res.success) {
@@ -80,9 +84,14 @@ export const DepotEntryList = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-    console.log(res.data);
-    setDepotEntry(res?.data.items);
-    setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
+    const tmpDepotExitsReq = res?.data?.items?.filter(
+      (exitReq) => exitReq.isAccepted === null
+    );
+    console.log("reza:", tmpDepotExitsReq);
+    console.log("total:", tmpDepotExitsReq.length);
+
+    setDepotEntry(tmpDepotExitsReq);
+    setTotalPages(Math.ceil(tmpDepotExitsReq.length / itemsPerPage));
     setLoading(false);
   };
 
@@ -101,10 +110,12 @@ export const DepotEntryList = ({ isDesktop }) => {
   };
 
   const updateDepotEntryInList = (updatedDepotEntry) => {
-    console.log("updatedDepotEntry:", updatedDepotEntry);
-    setDepotEntry((prev) =>
-      prev.map((g) => (g.id === updatedDepotEntry.id ? updatedDepotEntry : g))
-    );
+    if (updatedDepotEntry.isAccepted)
+      deleteDepotEntryFromList(updatedDepotEntry.id);
+    else
+      setDepotEntry((prev) =>
+        prev.map((g) => (g.id === updatedDepotEntry.id ? updatedDepotEntry : g))
+      );
   };
 
   const deleteDepotEntryFromList = (id) => {
@@ -113,6 +124,31 @@ export const DepotEntryList = ({ isDesktop }) => {
 
   const findDepotEntryFromList = (id) => {
     return depotEntry.find((g) => (g.id === id ? g : null));
+  };
+
+  const handleAcceptDepotExit = async (id) => {
+    setLoading(true);
+    const res = await SetDepotExitIsAccepted(id);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res?.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    toast({
+      title: "توجه",
+      description: "تایید شد",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    updateDepotEntryInList(res?.data);
+    setLoading(false);
   };
 
   const handleDeleteDepotEntry = async (id) => {
@@ -154,7 +190,7 @@ export const DepotEntryList = ({ isDesktop }) => {
           setSearch={setSearch}
           handleResetSearch={handleResetSearch}
           loadData={loadData}
-          userInfo="جستجوی ورودی انبار"
+          userInfo="جستجوی خروجی انبار"
         />
 
         <Box flex="1" overflowY="auto" p={1}>
@@ -215,9 +251,23 @@ export const DepotEntryList = ({ isDesktop }) => {
                       </HStack>
                       <Divider />
                       <HStack>
+                        <Text>شماره فاکتور:</Text>
+                        <Text fontFamily="iransans" fontSize="md" mr="auto">
+                          {row.depotInvoice?.id}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
                         <Text>تعداد کالا</Text>
                         <Text fontFamily="iransans" fontSize="md" mr="auto">
                           {row?.totalQuantity}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>جمع کل</Text>
+                        <Text fontFamily="iransans" fontSize="md" mr="auto">
+                          {Number(row?.totalAmount).toLocaleString()}
                         </Text>
                       </HStack>
                       <Divider />
@@ -239,6 +289,23 @@ export const DepotEntryList = ({ isDesktop }) => {
                       align={"stretch"}
                       mr="auto"
                     >
+                      <Link
+                        _hover={{ color: "#ffd54f" }}
+                        color="orange.300"
+                        onClick={(e) => {
+                          //setInvoiceSelectedID(row.id);
+                          setDialogGears({
+                            title: "تایید",
+                            text: "آیا واقعا رکورد را تایید میکنید؟",
+                            callBack: () => handleAcceptDepotExit(row.id),
+                          });
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        <Tooltip label="تایید">
+                          <Icon w={6} h={6} as={ShieldCheck} />
+                        </Tooltip>
+                      </Link>
                       <Link
                         _hover={{
                           color: "orange",
@@ -302,7 +369,7 @@ export const DepotEntryList = ({ isDesktop }) => {
           </Flex>
         </Box>
         <MyModal modalHeader="جزییات" isOpen={isOpen} onClose={onClose}>
-          <EditDepotEntry
+          <EditDepotExit
             isDesktop={isDesktop}
             id={selectedID}
             closeMe={onClose}

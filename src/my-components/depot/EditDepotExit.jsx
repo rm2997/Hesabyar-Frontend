@@ -96,20 +96,42 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
   const toast = useToast();
 
   useEffect(() => {
-    setFormData({
-      ...depot,
-      issuedBy: depot?.depotGoods[0]?.issuedBy,
-      issuedAt: depot?.depotGoods[0]?.issuedAt,
-    });
-    const tmpDepotGoods = [...depot.depotGoods];
-    tmpDepotGoods.forEach(async (g) => {
-      const imageRes = await ShowDepotImageFile(g.id);
-      if (!imageRes.success) console.log(imageRes.error);
-      g.imagePreview = URL.createObjectURL(imageRes.data);
-    });
+    const fetchData = async () => {
+      setFormData({
+        ...depot,
+        issuedBy: depot?.depotGoods[0]?.issuedBy,
+        issuedAt: depot?.depotGoods[0]?.issuedAt,
+      });
 
-    setDepotGoods([...tmpDepotGoods]);
-  }, []);
+      const tmpDepotGoods = [...depot.depotGoods];
+
+      const goodsWithImages = await Promise.all(
+        tmpDepotGoods.map(async (g) => {
+          const imageRes = await ShowDepotImageFile(g.id);
+          if (!imageRes.success) {
+            console.log(imageRes.error);
+            return g;
+          } else {
+            return {
+              ...g,
+              imagePreview: URL.createObjectURL(imageRes.data),
+            };
+          }
+        })
+      );
+
+      setDepotGoods(goodsWithImages);
+
+      setFormData({
+        ...depot,
+        issuedBy: depot?.depotGoods[0]?.issuedBy,
+        issuedAt: depot?.depotGoods[0]?.issuedAt,
+        depotGoods: goodsWithImages,
+      });
+    };
+
+    fetchData();
+  }, [isOpen]);
 
   const initFormData = async () => {
     setFormData({
@@ -844,14 +866,14 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
         modalHeader="تصویر کالا"
         onClose={() => setShowImageModal(false)}
         isOpen={showImageModal}
-        size={isDesktop ? "xl" : "full"}
+        size={isDesktop ? "xl" : "2xs"}
       >
         <Box
           overflow="auto"
           borderRadius="6px"
           borderColor="orange"
           borderWidth="1px"
-          boxSize={isDesktop ? "lg" : "sm"}
+          boxSize={isDesktop ? "lg" : "xs"}
         >
           <Image
             src={depotGoods[selectedDepotGood]?.imagePreview}

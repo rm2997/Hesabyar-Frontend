@@ -416,7 +416,7 @@ export const Home = () => {
                   h="100%"
                   borderRadius={15}
                   objectFit="fit"
-                  src="/assets/images/products/CurtainSensore.png"
+                  src="/assets/images/products/Reil1.jpg"
                 />
               </Box>
             </SimpleGrid>
@@ -483,7 +483,7 @@ export const Home = () => {
                   h="100%"
                   borderRadius={15}
                   objectFit="fit"
-                  src="/assets/images/products/motor1.jpg"
+                  src="/assets/images/products/CurtainSensore.png"
                 />
               </Box>
             </SimpleGrid>

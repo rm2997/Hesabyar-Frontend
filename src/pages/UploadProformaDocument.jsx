@@ -30,6 +30,8 @@ import {
   Stack,
   AbsoluteCenter,
   Spinner,
+  useBreakpointValue,
+  Flex,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -48,7 +50,7 @@ export const UploadProformaDocument = ({}) => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const [imagePreview, setImagePreview] = useState("");
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const isDesktop = useBreakpointValue({ base: false, md: false, lg: true });
   dayjs.extend(jalali);
   const [formData, setFormData] = useState({
     id: 0,
@@ -158,26 +160,55 @@ export const UploadProformaDocument = ({}) => {
   };
 
   return (
-    <Box>
-      <Card
-        minH="100%"
+    <Box borderTopRadius="md" p={2} borderColor="gray.100" borderWidth="1px">
+      <Flex mx={2} dir="rtl">
+        <Flex direction="column">
+          <Text fontFamily="Aseman" fontSize="2xl">
+            شرکت تجارت آسانبر علیا
+          </Text>
+          <Text
+            mx="auto"
+            fontSize="xl"
+            fontFamily="EnglishHeader"
+            color="gray.300"
+          >
+            OLIAEI GROUP
+          </Text>
+        </Flex>
+        <Box mr="auto" mt={2} boxSize="150px" maxH={5}>
+          <Image
+            borderRadius="10%"
+            src="/assets/images/logos/logo1.png"
+            objectFit="cover"
+            target="_blank"
+            rel="noopener noreferrer"
+          />
+        </Box>
+      </Flex>
+      <Box
+        minH={isDesktop ? "85vh" : "90vh"}
         overflowY="auto"
-        m={1}
+        m={2}
         filter={loading ? "blur(10px)" : ""}
+        textAlign="center"
       >
-        <CardHeader
-          bg="#6b749f"
-          color="white"
-          borderBottomColor="gray.400"
-          borderBottomWidth="1px"
-          borderTopRadius={5}
-          textAlign="right"
+        <Box
+          bg="gray.100"
+          borderTopRadius="md"
+          p={2}
+          borderColor="gray.400"
+          borderWidth="1px"
         >
-          <Heading fontFamily="IranSans" size="lg">
-            {formData.title} - پیش فاکتور
+          <Heading fontFamily="IranSans" size="md" mx="auto">
+            پیش فاکتور فروش کالا
           </Heading>
-        </CardHeader>
-        <CardBody>
+        </Box>
+        <Box
+          p={2}
+          borderColor="gray.200"
+          borderWidth={1}
+          borderBottomRadius="md"
+        >
           <SimpleGrid
             columns={{ base: 1, md: 1, lg: 1 }}
             dir="rtl"
@@ -186,10 +217,12 @@ export const UploadProformaDocument = ({}) => {
             as="form"
             onSubmit={handleSubmit}
           >
-            <Stack align="stretch" rowGap={5} spacing={4}>
+            <Stack align="stretch" rowGap={4} spacing={4}>
               <HStack>
-                <Text>نام خریدار : </Text>
-                <Text name="customer">
+                <Text fontFamily="iransans" fontSize={isDesktop ? "md" : "sm"}>
+                  نام خریدار :
+                </Text>
+                <Text name="customer" fontFamily="iransans" fontSize="sm">
                   {formData?.customer?.customerGender +
                     " " +
                     formData.customer.customerFName +
@@ -198,80 +231,95 @@ export const UploadProformaDocument = ({}) => {
                 </Text>
               </HStack>
               <HStack>
-                <Text>تاریخ :</Text>
-                <Text fontFamily="IranSans" fontSize="md" name="createdAt">
+                <Text fontFamily="iransans" fontSize={isDesktop ? "md" : "sm"}>
+                  تاریخ :
+                </Text>
+                <Text fontFamily="iransans" fontSize="md" name="createdAt">
                   {dayjs(formData.createdAt).locale("fa").format("YYYY/MM/DD")}
                 </Text>
               </HStack>
               <HStack>
-                <Text fontFamily="IranSans" fontSize="md">
+                <Text fontFamily="iransans" fontSize={isDesktop ? "md" : "sm"}>
                   ساعت :
                 </Text>
-                <Text fontFamily="IranSans" fontSize="md" name="createdAt">
+                <Text fontFamily="iransans" fontSize="md" name="createdAt">
                   {dayjs(formData.createdAt).locale("fa").format("HH:mm:ss")}
                 </Text>
               </HStack>
               <HStack>
-                <Text>نوع پرداخت :</Text>
-                <Text name="paymentStatus">{formData.paymentStatus}</Text>
+                <Text fontFamily="iransans" fontSize={isDesktop ? "md" : "sm"}>
+                  نوع پرداخت :
+                </Text>
+                <Text fontFamily="iransans" fontSize="md" name="paymentStatus">
+                  {formData.paymentStatus}
+                </Text>
               </HStack>
             </Stack>
-            <Divider mb={5} />
-            <Stack align="stretch">
-              <TableContainer dir="rtl">
-                <Table size="sm" variant="striped">
+
+            <Stack w="full" align="stretch">
+              <TableContainer
+                w="full"
+                mx="auto"
+                dir="rtl"
+                borderColor="gray.300"
+                borderRadius="md"
+                borderWidth={1}
+              >
+                <Table
+                  columnGap={5}
+                  size={isDesktop ? "md" : "xs"}
+                  variant="striped"
+                >
                   <Thead h="50px" borderBottomWidth={2}>
-                    <Tr bg="#666c85" textFillColor="white">
+                    <Tr columnGap={5} bg="gray.300" textFillColor="black">
                       <Th
+                        px={2}
                         fontFamily="IranSans"
-                        fontSize="md"
+                        fontSize={isDesktop ? "md" : "xs"}
                         textAlign="center"
                       >
                         ردیف
                       </Th>
                       <Th
+                        px={2}
                         fontFamily="IranSans"
-                        fontSize="md"
+                        fontSize={isDesktop ? "md" : "xs"}
                         textAlign="center"
                       >
                         نام کالا
                       </Th>
                       <Th
+                        px={2}
                         fontFamily="IranSans"
-                        fontSize="md"
+                        fontSize={isDesktop ? "md" : "xs"}
                         textAlign="center"
                       >
                         تعداد
                       </Th>
                       <Th
+                        px={2}
                         fontFamily="IranSans"
-                        fontSize="md"
+                        fontSize={isDesktop ? "md" : "xs"}
                         textAlign="center"
                       >
                         واحد
                       </Th>
                       <Th
+                        px={2}
                         fontFamily="IranSans"
-                        fontSize="md"
+                        fontSize={isDesktop ? "md" : "xs"}
                         textAlign="center"
                       >
-                        قیمت واحد
+                        فی
                       </Th>
                       <Th
+                        px={2}
                         fontFamily="IranSans"
-                        fontSize="md"
+                        fontSize={isDesktop ? "md" : "xs"}
                         textAlign="center"
                       >
                         جمع کل
                       </Th>
-                      <Th
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        textAlign="center"
-                      >
-                        توضیحات کالا
-                      </Th>
-                      <Th></Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -280,7 +328,7 @@ export const UploadProformaDocument = ({}) => {
                         <Td>
                           <Text
                             fontFamily="IranSans"
-                            fontSize="md"
+                            fontSize={isDesktop ? "md" : "xs"}
                             textAlign="center"
                           >
                             {index + 1}
@@ -289,7 +337,7 @@ export const UploadProformaDocument = ({}) => {
                         <Td>
                           <Text
                             fontFamily="IranSans"
-                            fontSize="md"
+                            fontSize={isDesktop ? "md" : "xs"}
                             textAlign="center"
                           >
                             {item.good.goodName}
@@ -298,7 +346,7 @@ export const UploadProformaDocument = ({}) => {
                         <Td>
                           <Text
                             fontFamily="IranSans"
-                            fontSize="md"
+                            fontSize={isDesktop ? "md" : "xs"}
                             textAlign="center"
                           >
                             {item.quantity}
@@ -307,7 +355,7 @@ export const UploadProformaDocument = ({}) => {
                         <Td>
                           <Text
                             fontFamily="IranSans"
-                            fontSize="md"
+                            fontSize={isDesktop ? "md" : "xs"}
                             textAlign="center"
                           >
                             {item?.good?.goodUnit?.unitName}
@@ -317,7 +365,7 @@ export const UploadProformaDocument = ({}) => {
                         <Td>
                           <Text
                             fontFamily="IranSans"
-                            fontSize="md"
+                            fontSize={isDesktop ? "md" : "xs"}
                             textAlign="center"
                           >
                             {Number(item.price).toLocaleString()}{" "}
@@ -326,7 +374,7 @@ export const UploadProformaDocument = ({}) => {
                         <Td>
                           <Text
                             fontFamily="IranSans"
-                            fontSize="md"
+                            fontSize={isDesktop ? "md" : "xs"}
                             textAlign="center"
                           >
                             {Number(
@@ -334,66 +382,58 @@ export const UploadProformaDocument = ({}) => {
                             ).toLocaleString()}
                           </Text>
                         </Td>
-                        <Td>
-                          <Text fontFamily="IranSans" fontSize="md">
-                            {item.description}
-                          </Text>
-                        </Td>
-                        <Td></Td>
                       </Tr>
                     ))}
-                  </Tbody>
-
-                  <Tfoot borderTopWidth={2}>
                     <Tr>
-                      <Th></Th>
-                      <Th></Th>
-                      <Th></Th>
-                      <Th></Th>
-                      <Th></Th>
-                      <Th></Th>
-                      <Th>
-                        <VStack mt="5px" align="stretch" spacing={0}>
-                          <HStack p={2} bg="gray.100" spacing={10}>
-                            <Heading
+                      <Td colSpan={4} />
+                      <Td colSpan={2}>
+                        <VStack bg="gray.100" m={1}>
+                          <HStack mx="auto">
+                            <Text
                               fontFamily="IranSans"
-                              fontSize="md"
-                              size="xs"
+                              fontSize={isDesktop ? "md" : "xs"}
                             >
                               تعداد کل :
-                            </Heading>
-                            <Text fontFamily="IranSans" fontSize="md">
-                              {itemsCount}
+                            </Text>
+                            <Text
+                              fontFamily="IranSans"
+                              fontSize={isDesktop ? "md" : "xs"}
+                            >
+                              {itemsCount} مورد
                             </Text>
                           </HStack>
-                          <HStack p={2} bg="gray.100" spacing={5}>
-                            <Heading
+                          <Divider />
+                          <HStack mx="auto">
+                            <Text
                               fontFamily="IranSans"
-                              fontSize="md"
-                              size="xs"
+                              fontSize={isDesktop ? "md" : "xs"}
                             >
                               مبلغ نهایی :
-                            </Heading>
-                            <Text fontFamily="IranSans" fontSize="md">
+                            </Text>
+                            <Text
+                              fontFamily="IranSans"
+                              fontSize={isDesktop ? "md" : "xs"}
+                            >
                               {Number(formData.totalAmount).toLocaleString()}
                             </Text>
                           </HStack>
                         </VStack>
-                      </Th>
-                      <Th></Th>
+                      </Td>
                     </Tr>
-                  </Tfoot>
+                  </Tbody>
                 </Table>
               </TableContainer>
             </Stack>
             <Divider />
             <HStack>
-              <label>توضیحات فاکتور :</label>
+              <Text fontFamily="IranSans" fontSize={isDesktop ? "md" : "xs"}>
+                توضیحات فاکتور :
+              </Text>
               <Text value={formData.description} />
             </HStack>
             <Divider />
             <SimpleGrid spacing={1} columns={{ base: 1, md: 2, lg: 3 }}>
-              <Text>
+              <Text textAlign="justify">
                 لطفا بنویسید اطلاعات را قبول دارم - امضا کرده - عکس بگیرید و
                 اینجا قرار دهید.
               </Text>
@@ -450,6 +490,7 @@ export const UploadProformaDocument = ({}) => {
             <Divider />
             <HStack>
               <Checkbox
+                textAlign="justify"
                 isDisabled={
                   formData.approvedFile == null || formData.approvedFile == ""
                 }
@@ -481,9 +522,8 @@ export const UploadProformaDocument = ({}) => {
               تایید
             </Button>
           </SimpleGrid>
-        </CardBody>
-        <CardFooter></CardFooter>
-      </Card>
+        </Box>
+      </Box>
       {loading && <MyLoading />}
     </Box>
   );

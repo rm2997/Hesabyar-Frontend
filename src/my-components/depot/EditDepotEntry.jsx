@@ -39,6 +39,7 @@ import { MyLoading } from "../../my-components/MyLoading";
 import {
   CreateDepot,
   ShowDepotImageFile,
+  UpdateDepot,
   UpdateDepotImageFile,
 } from "../../api/services/depotService";
 import { MyModal } from "../../my-components/MyModal";
@@ -48,7 +49,13 @@ import { ShowAllCustomers } from "../../api/services/customerService";
 import { ShowAllGoods } from "../../api/services/goodsService";
 import { SearchGoods } from "../../my-components/SearchGood";
 import { NewCustomer } from "../../pages/customers/NewCustomer";
-export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
+export const EditDepotEntry = ({
+  isDesktop,
+  closeMe,
+  onUpdate,
+  depot,
+  isForAccept = false,
+}) => {
   const [formData, setFormData] = useState({
     depotInvoice: null,
     depotType: "",
@@ -61,6 +68,8 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
     driver: "",
     driverCarNumber: "",
     driverNatCode: "",
+    isAccepted: null,
+    acceptedBy: null,
   });
   const [depotGoods, setDepotGoods] = useState([
     // {
@@ -86,21 +95,42 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
   const toast = useToast();
 
   useEffect(() => {
+    const fetchData = async () => {
+      setFormData({
+        ...depot,
+        issuedBy: depot?.depotGoods[0]?.issuedBy,
+        issuedAt: depot?.depotGoods[0]?.issuedAt,
+      });
 
-    setFormData({
-      ...depot,
-      issuedBy: depot?.depotGoods[0]?.issuedBy,
-      issuedAt: depot?.depotGoods[0]?.issuedAt,
-    });
-    const tmpDepotGoods = [...depot.depotGoods];
-    tmpDepotGoods.forEach(async (g) => {
-      const imageRes = await ShowDepotImageFile(g.id);
-      if (!imageRes.success) console.log(imageRes.error);
-      g.imagePreview = URL.createObjectURL(imageRes.data);
-    });
+      const tmpDepotGoods = [...depot.depotGoods];
 
-    setDepotGoods([...tmpDepotGoods]);
-  }, []);
+      const goodsWithImages = await Promise.all(
+        tmpDepotGoods.map(async (g) => {
+          const imageRes = await ShowDepotImageFile(g.id);
+          if (!imageRes.success) {
+            console.log(imageRes.error);
+            return g;
+          } else {
+            return {
+              ...g,
+              imagePreview: URL.createObjectURL(imageRes.data),
+            };
+          }
+        })
+      );
+
+      setDepotGoods(goodsWithImages);
+
+      setFormData({
+        ...depot,
+        issuedBy: depot?.depotGoods[0]?.issuedBy,
+        issuedAt: depot?.depotGoods[0]?.issuedAt,
+        depotGoods: goodsWithImages,
+      });
+    };
+
+    fetchData();
+  }, [isOpen]);
 
   const initFormData = async () => {
     setFormData({
@@ -177,12 +207,12 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
     });
     if (!serialCheck) return false;
 
-    const imageCheck = depotGoods.every((good) => {
+    const priceCheck = depotGoods.every((good) => {
       let retval = true;
-      if (!good.imageFile) {
+      if (isForAccept && (!good.price || good.price == 0)) {
         toast({
           title: "توجه",
-          description: `تصویر  ${good?.good?.goodName} را ثبت کنید`,
+          description: `قیمت  ${good?.good?.goodName} را ثبت کنید`,
           status: "warning",
           duration: 3000,
           isClosable: true,
@@ -191,7 +221,7 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
       }
       return retval;
     });
-    if (!imageCheck) return false;
+    if (!priceCheck) return false;
     if (
       formData?.driver?.length == 0 &&
       formData?.driverCarNumber?.length == 0 &&
@@ -266,9 +296,12 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
     tmpformData.totalQuantity = totalQuantity;
     tmpformData.totalAmount = totalAmount;
     tmpformData.depotGoods = [...tmpDepotGoods];
+    if (isForAccept) {
+      tmpformData.isAccepted = true;
+    } else tmpformData.isAccepted = null;
 
     setLoading(true);
-    const response = await CreateDepot(tmpformData);
+    const response = await UpdateDepot(tmpformData.id, tmpformData);
     if (!response.success) {
       toast({
         title: "خطایی رخ داد",
@@ -280,7 +313,7 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
       setLoading(false);
       return;
     }
-
+    onUpdate(response.data);
     await handleSubmitImages(response?.data?.depotGoods);
     await initFormData();
     toast({
@@ -296,6 +329,7 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
 
   const handleSubmitImages = async (data) => {
     data.forEach(async (element, index) => {
+      if (depotGoods[index].imageFile == null) return;
       const form = new FormData();
       form.append("image", depotGoods[index].imageFile);
       console.log(element.id, form);
@@ -320,9 +354,9 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
   };
 
   const handleChangeGoodsData = (index, e) => {
-    const newDepotGoods = [...depotGoods]; // کپی آرایه
+    const newDepotGoods = [...depotGoods];
     newDepotGoods[index] = {
-      ...newDepotGoods[index], // کپی شیء
+      ...newDepotGoods[index],
       [e.target.name]: e.target.value,
     };
     setDepotGoods(newDepotGoods);
@@ -487,16 +521,64 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                       value={depotItem?.serial}
                       onChange={(e) => handleChangeGoodsData(index, e)}
                     />
-
-                    {/* <Text w="5px" /> */}
                   </Flex>
+
+                  <Flex
+                    hidden={!isForAccept}
+                    justify="space-between"
+                    columnGap={3}
+                    mt={3}
+                    dir="rtl"
+                  >
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      قیمت
+                    </Text>
+                    <Input
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="price"
+                      value={depotItem?.price}
+                      placeholder="قیمت"
+                      onChange={(e) =>
+                        handleChangeGoodsData(index, {
+                          target: { name: "price", value: e.target.value },
+                        })
+                      }
+                    />
+                  </Flex>
+                  <Flex
+                    hidden={!isForAccept}
+                    justify="space-between"
+                    columnGap={8}
+                    mt={3}
+                    dir="rtl"
+                  >
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      جمع
+                    </Text>
+                    <Input
+                      readOnly
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="total"
+                      value={Number(
+                        depotItem?.quantity * depotItem.price
+                      ).toLocaleString()}
+                      placeholder="جمع کل"
+                      onChange={(e) =>
+                        handleChangeGoodsData({
+                          target: { name: "total", value: e.target.value },
+                        })
+                      }
+                    />
+                  </Flex>
+
                   <Flex justify="space-between" mt={3} dir="rtl">
-                    <FormLabel
-                      fontSize="xs"
-                      fontFamily="iransans"
-                      my="auto"
-                      hidden={!isDesktop}
-                    >
+                    <FormLabel fontSize="xs" fontFamily="iransans" my="auto">
                       تصویر
                     </FormLabel>
                     <label
@@ -634,10 +716,10 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   value={
                     formData.issuedBy
                       ? formData?.issuedBy?.customerGender +
-                      " " +
-                      formData?.issuedBy?.customerFName +
-                      " " +
-                      formData?.issuedBy?.customerLName
+                        " " +
+                        formData?.issuedBy?.customerFName +
+                        " " +
+                        formData?.issuedBy?.customerLName
                       : ""
                   }
                   name="issuedBy"
@@ -769,14 +851,14 @@ export const EditDepotEntry = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
         modalHeader="تصویر کالا"
         onClose={() => setShowImageModal(false)}
         isOpen={showImageModal}
-        size={isDesktop ? "xl" : "full"}
+        size={isDesktop ? "xl" : "xs"}
       >
         <Box
           overflow="auto"
           borderRadius="6px"
           borderColor="orange"
           borderWidth="1px"
-          boxSize={isDesktop ? "lg" : "sm"}
+          boxSize={isDesktop ? "lg" : "2xs"}
         >
           <Image
             src={depotGoods[selectedDepotGood]?.imagePreview}

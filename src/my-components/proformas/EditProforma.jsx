@@ -357,7 +357,7 @@ export const EditProforma = ({
   return (
     <Box>
       <Card
-        minH="100%"
+        minH={isDesktop ? "85vh" : "83vh"}
         overflowY="auto"
         m={1}
         filter={loading ? "blur(10px)" : ""}

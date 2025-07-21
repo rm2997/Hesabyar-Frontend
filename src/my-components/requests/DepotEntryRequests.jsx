@@ -18,13 +18,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import {
-  Combine,
   DecimalsArrowLeft,
   FilePenLine,
+  ShieldCheck,
   ShieldUser,
   Trash2,
   UserLock,
-  WalletCards,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
@@ -37,12 +36,10 @@ import { RemoveDepot, ShowAllDepots } from "../../api/services/depotService";
 import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import { EditDepotEntry } from "./EditDepotEntry";
-import { EditDepotExit } from "./EditDepotExit";
+import { EditDepotEntry } from "../depot/EditDepotEntry";
 
-export const DepotEntryList = ({ isDesktop }) => {
+export const DepotEntryRequest = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const itemsPerPage = 10;
@@ -69,7 +66,7 @@ export const DepotEntryList = ({ isDesktop }) => {
       DepotTypes.find((t) => t.key == "in").value,
       resetPage ? "" : search
     );
-    if (!res.success) {
+    if (!res?.success) {
       toast({
         title: "خطا در دریافت داده‌ها",
         description: res.error,
@@ -80,11 +77,16 @@ export const DepotEntryList = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-    console.log(res.data);
-    setDepotEntry(res?.data.items);
-    setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
+    const tmpEntryReq = res?.data?.items?.filter(
+      (entry) => entry.isAccepted == null
+    );
+
+    setDepotEntry(tmpEntryReq);
+    setTotalPages(Math.ceil(tmpEntryReq.length / itemsPerPage));
     setLoading(false);
   };
+
+  const handleAcceptDepotEntry = async (id) => {};
 
   const handleResetSearch = () => {
     setSearch("");
@@ -101,10 +103,12 @@ export const DepotEntryList = ({ isDesktop }) => {
   };
 
   const updateDepotEntryInList = (updatedDepotEntry) => {
-    console.log("updatedDepotEntry:", updatedDepotEntry);
-    setDepotEntry((prev) =>
-      prev.map((g) => (g.id === updatedDepotEntry.id ? updatedDepotEntry : g))
-    );
+    if (updatedDepotEntry.isAccepted)
+      deleteDepotEntryFromList(updatedDepotEntry.id);
+    else
+      setDepotEntry((prev) =>
+        prev.map((g) => (g.id === updatedDepotEntry.id ? updatedDepotEntry : g))
+      );
   };
 
   const deleteDepotEntryFromList = (id) => {
@@ -239,6 +243,23 @@ export const DepotEntryList = ({ isDesktop }) => {
                       align={"stretch"}
                       mr="auto"
                     >
+                      {/* <Link
+                        _hover={{ color: "#ffd54f" }}
+                        color="orange.300"
+                        onClick={(e) => {
+                          //setInvoiceSelectedID(row.id);
+                          setDialogGears({
+                            title: "تایید",
+                            text: "آیا واقعا رکورد را تایید میکنید؟",
+                            callBack: () => handleAcceptDepotEntry(row.id),
+                          });
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        <Tooltip label="تایید">
+                          <Icon w={6} h={6} as={ShieldCheck} />
+                        </Tooltip>
+                      </Link> */}
                       <Link
                         _hover={{
                           color: "orange",
@@ -308,6 +329,7 @@ export const DepotEntryList = ({ isDesktop }) => {
             closeMe={onClose}
             onUpdate={updateDepotEntryInList}
             depot={findDepotEntryFromList(selectedID)}
+            isForAccept={true}
           />
         </MyModal>
         <MyAlert

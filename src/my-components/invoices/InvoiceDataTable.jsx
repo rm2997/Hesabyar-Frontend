@@ -265,7 +265,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
         <Flex
           filter={loading ? "blur(10px)" : ""}
           direction="column"
-          height="100vh"
+          minH={isDesktop ? "85vh" : "83vh"}
         >
           <SearchBar
             search={search}

@@ -283,8 +283,7 @@ export const NewInvoice = ({ isDesktop }) => {
     <Box>
       <Card
         overflowY="auto"
-        minH="100%"
-        h={isDesktop ? "100%" : "108vh"}
+        minH={isDesktop ? "85vh" : "80vh"}
         m={1}
         filter={loading ? "blur(10px)" : ""}
       >

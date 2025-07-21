@@ -9,6 +9,8 @@ import {
 } from "@chakra-ui/react";
 import { ProformaRequests } from "../../my-components/requests/ProformaRequests";
 import { InvoiceRequests } from "../../my-components/requests/InvoiceRequests";
+import { DepotEntryRequest } from "../../my-components/requests/DepotEntryRequests";
+import { DepotExitRequests } from "../../my-components/requests/DepotExitRequests";
 
 export const Requests = ({ isDesktop }) => {
   return (
@@ -38,10 +40,10 @@ export const Requests = ({ isDesktop }) => {
             <InvoiceRequests isDesktop={isDesktop} />
           </TabPanel>
           <TabPanel>
-            <></>
+            <DepotEntryRequest isDesktop={isDesktop} />
           </TabPanel>
           <TabPanel>
-            <InvoiceRequests isDesktop={isDesktop} />
+            <DepotExitRequests isDesktop={isDesktop} />
           </TabPanel>
         </TabPanels>
       </Tabs>

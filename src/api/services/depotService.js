@@ -107,3 +107,10 @@ export const ShowAllDepots = async (
     url: endpoints.depot.listAll(page, limit, type, search),
   });
 };
+
+export const SetDepotExitIsAccepted = async (id) => {
+  return apiRequest({
+    method: "PATCH",
+    url: endpoints.depot.setDepotIsAccepted(id),
+  });
+};

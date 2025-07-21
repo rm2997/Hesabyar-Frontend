@@ -21,7 +21,9 @@ import {
   Combine,
   DecimalsArrowLeft,
   FilePenLine,
+  ShieldUser,
   Trash2,
+  UserLock,
   WalletCards,
 } from "lucide-react";
 
@@ -161,14 +163,14 @@ export const DepotExitList = ({ isDesktop }) => {
               {depotEntry.map((row) => (
                 <Card
                   borderTopRadius={5}
-                  borderWidth={1}
-                  _hover={{ borderColor: "orange" }}
+                  borderWidth="1px"
+                  borderColor="gray.300"
+                  _hover={{ cursor: "", borderColor: "green.500" }}
                 >
                   <CardHeader
-                    bg="green.500"
+                    bg={depotEntry?.isAccepted ? "green.400" : "blue.200"}
                     borderTopRadius={5}
-                    color="white"
-                    _hover={{ cursor: "pointer" }}
+                    _hover={{ cursor: "pointer", borderColor: "green.500" }}
                     onClick={(e) => {
                       setSelectedID(row.id);
                       setDialogGears({
@@ -180,10 +182,25 @@ export const DepotExitList = ({ isDesktop }) => {
                     }}
                   >
                     <HStack>
-                      <Combine color="orange" />
-                      <Text fontFamily="IranSans" fontSize="lg" mr="auto">
+                      <Text fontFamily="IranSans" fontSize="md">
                         شماره : {row.id}
                       </Text>
+                      <Box mr="auto">
+                        <HStack>
+                          {depotEntry?.isAccepted ? (
+                            <Tooltip label="تایید کاربر ارشد">
+                              <ShieldUser color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر تایید کاربر ارشد ">
+                              <UserLock
+                                color="yellow"
+                                _hover={{ color: "green" }}
+                              />
+                            </Tooltip>
+                          )}
+                        </HStack>
+                      </Box>
                     </HStack>
                   </CardHeader>
                   <CardBody>

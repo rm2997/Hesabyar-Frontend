@@ -301,6 +301,7 @@ export const NewDepotExit = ({ isDesktop }) => {
         duration: 3000,
         isClosable: true,
       });
+      initFormData();
       setLoading(false);
       return;
     }
@@ -332,6 +333,7 @@ export const NewDepotExit = ({ isDesktop }) => {
           isClosable: true,
         });
       setLoading(false);
+      initFormData();
     });
   };
 
@@ -856,14 +858,14 @@ export const NewDepotExit = ({ isDesktop }) => {
         modalHeader="تصویر کالا"
         onClose={() => setShowImageModal(false)}
         isOpen={showImageModal}
-        size={isDesktop ? "xl" : "full"}
+        size={isDesktop ? "xl" : "xs"}
       >
         <Box
           overflow="auto"
           borderRadius="6px"
           borderColor="orange"
           borderWidth="1px"
-          boxSize={isDesktop ? "lg" : "sm"}
+          boxSize={isDesktop ? "lg" : "2xs"}
         >
           <Image
             src={depotGoods[selectedDepotGood]?.imagePreview}

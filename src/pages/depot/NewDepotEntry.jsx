@@ -106,6 +106,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
       driverNatCode: "",
     });
     setDepotGoods([]);
+    setTotalQuantity(0);
   };
 
   const validateDate = async (inputDate) => {
@@ -785,14 +786,14 @@ export const NewDepotEntry = ({ isDesktop }) => {
         modalHeader="تصویر کالا"
         onClose={() => setShowImageModal(false)}
         isOpen={showImageModal}
-        size={isDesktop ? "xl" : "full"}
+        size={isDesktop ? "xl" : "xs"}
       >
         <Box
           overflow="auto"
           borderRadius="6px"
           borderColor="orange"
           borderWidth="1px"
-          boxSize={isDesktop ? "lg" : "sm"}
+          boxSize={isDesktop ? "lg" : "2xs"}
         >
           <Image
             src={depotGoods[selectedDepotGood]?.imagePreview}
