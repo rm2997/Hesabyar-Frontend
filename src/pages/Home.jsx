@@ -228,7 +228,7 @@ export const Home = () => {
             mb="5px"
             fontSize={{ base: "2xs", lg: "lg", md: "md" }}
           >
-            بزرگترین وارد کننده قطعات آسانسور
+            واردات تخصصی قطعات آسانسور
           </Text>
         </Flex>
 
@@ -338,7 +338,7 @@ export const Home = () => {
             color="white"
           >
             <Heading size="lg" fontFamily="Vaziri">
-              محصولات گروه صنعتی علیایی
+              محصولات شرکت تجارت آسانبرعلیا (آسانسورلند)
             </Heading>
           </Box>
           {isDesktop && <Divider />}
@@ -377,35 +377,26 @@ export const Home = () => {
             alignItems="center"
           >
             <SimpleGrid columns={{ base: 2 }} p={1}>
-              <Box
-                color="white"
-                alignContent="center"
-                alignItems="center"
-                p={2}
-              >
-                <Flex spacing={2} spacingX={0}>
+              <Box color="white" px={1}>
+                <Flex>
                   <Heading
                     size={isDesktop ? "lg" : "md"}
                     fontFamily="Aseman"
                     ml="auto"
                     mb={2}
                   >
-                    انواع ریل آسانسور
+                    ریل آسانسور
                   </Heading>
-                  {/* <Heading
-                    alignContent="center"
-                    alignItems="center"
-                    textAlign="left"
-                    size={isDesktop ? "md" : "sm"}
-                    fontFamily="EnglishHeader"
-                  ></Heading> */}
                 </Flex>
                 <Text
                   dir="rtl"
                   fontSize={isDesktop ? "xs" : "2xs"}
                   fontFamily="IranSans"
+                  textAlign="justify"
                 >
-                  وارد کننده ریل های با کیفیت اسپانیایی، ترکیه ای و چینی
+                  واردات مستقیم ریل آسانسور از کشورهای چین، اسپانیا و ترکیه به
+                  صورت انحصاری، دارای ویژگی های متفاوت از نظر کیفیت و بسته بندی
+                  نسبت به ریل های موجود
                 </Text>
               </Box>
               <Box
@@ -425,7 +416,7 @@ export const Home = () => {
                   h="100%"
                   borderRadius={15}
                   objectFit="fit"
-                  src="/assets/images/products/Reil1.jpg"
+                  src="/assets/images/products/CurtainSensore.png"
                 />
               </Box>
             </SimpleGrid>
@@ -452,35 +443,27 @@ export const Home = () => {
             alignItems="center"
           >
             <SimpleGrid columns={{ base: 2 }} p={1}>
-              <Box
-                color="white"
-                alignContent="center"
-                alignItems="center"
-                p={2}
-              >
-                <Flex spacing={2} spacingX={0}>
+              <Box color="white" px={1}>
+                <Flex>
                   <Heading
                     size={isDesktop ? "xl" : "md"}
                     fontFamily="Aseman"
                     ml="auto"
                     mb={2}
                   >
-                    موتور آسانسور
+                    سنسور پرده ای
                   </Heading>
-                  <Heading
-                    alignContent="center"
-                    alignItems="center"
-                    textAlign="left"
-                    size={isDesktop ? "md" : "sm"}
-                    fontFamily="EnglishHeader"
-                  ></Heading>
+                  <Heading />
                 </Flex>
                 <Text
                   dir="rtl"
                   fontSize={isDesktop ? "xs" : "2xs"}
                   fontFamily="IranSans"
+                  textAlign="justify"
                 >
-                  نمایندگی رسمی موتورهای الکو
+                  واردات مستقیم سنسور پرده ای در آب آسانسور پروسل با نام و برند
+                  انحصاری شرکت تجارت آسانبرعلیا دارای دو استاندارد بین المللی در
+                  مبدا و بالاترین حساسیت، دقت، زمان پاسخ و محدوده دینامیکی
                 </Text>
               </Box>
               <Box
@@ -531,35 +514,25 @@ export const Home = () => {
             alignItems="center"
           >
             <SimpleGrid columns={{ base: 2 }} p={1}>
-              <Box
-                color="white"
-                alignContent="center"
-                alignItems="center"
-                p={2}
-              >
-                <Flex spacing={2} spacingX={0}>
+              <Box color="white" px={1}>
+                <Flex>
                   <Heading
                     size={isDesktop ? "xl" : "md"}
                     fontFamily="Aseman"
                     ml="auto"
                     mb={2}
                   >
-                    گیربکس آسانسور
+                    موتور گیربکس
                   </Heading>
-                  <Heading
-                    alignContent="center"
-                    alignItems="center"
-                    textAlign="left"
-                    size={isDesktop ? "md" : "sm"}
-                    fontFamily="EnglishHeader"
-                  ></Heading>
+                  <Heading />
                 </Flex>
                 <Text
                   dir="rtl"
                   fontSize={isDesktop ? "xs" : "2xs"}
                   fontFamily="IranSans"
                 >
-                  نمایندگی رسمی گیربوکس های الکو
+                  نمایندگی رسمی شرکت الکو اولین تولید کننده موتور گیربکس در
+                  ایران
                 </Text>
               </Box>
               <Box
@@ -606,13 +579,8 @@ export const Home = () => {
             alignItems="center"
           >
             <SimpleGrid columns={{ base: 2 }} p={1}>
-              <Box
-                color="white"
-                alignContent="center"
-                alignItems="center"
-                p={2}
-              >
-                <Flex spacing={2} spacingX={0}>
+              <Box color="white" px={1}>
+                <Flex>
                   <Heading
                     size={isDesktop ? "xl" : "md"}
                     fontFamily="Aseman"
@@ -621,21 +589,17 @@ export const Home = () => {
                   >
                     سیم بکسل
                   </Heading>
-                  <Heading
-                    alignContent="center"
-                    alignItems="center"
-                    textAlign="left"
-                    size={isDesktop ? "md" : "sm"}
-                    fontFamily="EnglishHeader"
-                  ></Heading>
+                  <Heading />
                 </Flex>
                 <Text
                   dir="rtl"
                   fontSize={isDesktop ? "xs" : "2xs"}
                   fontFamily="IranSans"
+                  textAlign="justify"
                 >
-                  واردات مستقیم سیم بکسل به صورت انحصاری در ابعاد و ضخامت های
-                  مختلف{" "}
+                  واردات مستقیم سیم بکسل آسانسور به صورت انحصاری از کشور چین در
+                  ابعاد و ضخامت های مختلف در بالاترین استحکام کششی نسبت به موارد
+                  مشابه موجود در بازار
                 </Text>
               </Box>
               <Box
@@ -763,10 +727,11 @@ export const Home = () => {
                   rel="noopener noreferrer"
                 />
               </Box>
-              <Text fontWeight="medium" textAlign="right">
-                شرکت آسانسور علیایی با بیش از دو دهه تجربه در صنعت آسانسور ایران
-                جزو بهترین شرکت‌های آسانسور در ایران بوده و همراه تلاش ما برای
-                ارائه بهترین خدمات به شما مشتریان گرامی می‌باشد
+              <Text fontWeight="medium" dir="rtl" textAlign="justify">
+                شرکت تجارت آسانبرعلیا - آسانسورلند با بیش از دو دهه تجربه در
+                واردات قطعات آسانسور، جزو بهترین شرکت‌های تجاری قطعات آسانسور در
+                ایران بوده و همواره در تلاش برای ارائه بهترین خدمات به شما
+                مشتریان گرامی می‌باشد.
               </Text>
             </VStack>
 
@@ -778,9 +743,10 @@ export const Home = () => {
                 mb={8}
                 mr="auto"
                 ml="auto"
+                cursor="pointer"
               >
-                <LinkBox
-                  referrerPolicy="origin"
+                <a
+                  referrerpolicy="origin"
                   target="_blank"
                   href="https://trustseal.enamad.ir/?id=621964&Code=QZvNJGhh1flyIQ2g8Y93bitVDZpUfM6X"
                 >
@@ -791,20 +757,24 @@ export const Home = () => {
                     style={{ cursor: "pointer" }}
                     code="QZvNJGhh1flyIQ2g8Y93bitVDZpUfM6X"
                   />
-                </LinkBox>
+                </a>
               </Box>
-              <Text fontWeight="medium" textAlign="right">
-                شرکت آسانسور علیایی دارای نشان نماد می‌باشد
+              <Text fontSize={isDesktop ? "md" : "sm"} textAlign="right">
+                (آسانسورلند) نشان نماد شرکت تجارت آسانبرعلیا
               </Text>
             </VStack>
           </SimpleGrid>
 
           <Box width="full" bg="black" color="gray.500" textAlign="center">
             <Divider />
-            <Heading fontFamily="Aseman" fontSize="lg" m={2}>
+            <Heading
+              fontFamily="Aseman"
+              fontSize={isDesktop ? "lg" : "md"}
+              m={2}
+            >
               کلیه حقوق مادی و معنی متعلق به گروه صنعتی علیایی می باشد
             </Heading>
-            <Text fontSize="md" fontFamily="Aseman" m={2}>
+            <Text fontSize={isDesktop ? "lg" : "md"} fontFamily="Aseman" m={2}>
               طراحی و توسعه داده شده توسط رضا میرعسگری - 09125213288
             </Text>
           </Box>

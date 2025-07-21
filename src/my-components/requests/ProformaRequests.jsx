@@ -90,6 +90,7 @@ export const ProformaRequests = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
+
     setTotalProformaPages(Math.ceil(res?.data?.total / itemsPerPage));
     const newProformas = res.data.items.filter(
       (p) => p.isAccepted == false && p.isSent == true && p.approvedFile
@@ -202,7 +203,7 @@ export const ProformaRequests = ({ isDesktop }) => {
                 maxW="370px"
                 _hover={{
                   cursor: "",
-                  borderColor: "orange.300",
+                  borderColor: "green.500",
                 }}
                 borderWidth="1px"
                 borderColor="gray.300"
@@ -411,7 +412,7 @@ export const ProformaRequests = ({ isDesktop }) => {
         modalHeader=" فایل تاییدیه مشتری"
         onClose={() => setShowModal(false)}
         isOpen={showModal}
-        size={isDesktop ? "xl" : "full"}
+        size={isDesktop ? "xl" : "xs"}
       >
         <Box
           overflow="auto"
@@ -419,7 +420,7 @@ export const ProformaRequests = ({ isDesktop }) => {
           borderColor="orange"
           borderWidth="1px"
           hidden={approvedFile == null || approvedFile == ""}
-          boxSize={isDesktop ? "lg" : "sm"}
+          boxSize={isDesktop ? "lg" : "2xs"}
         >
           <Image
             src={approvedFile ? approvedFile : ""}

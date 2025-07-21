@@ -163,26 +163,26 @@ export const ShowInvoiceApprovedFile = async (id) => {
   return apiRequest({
     method: "GET",
     url: endpoints.invoice.getApprovedFile(id),
-    params: { responseType: "blob" },
+    responseType: "blob",
   });
 
-  try {
-    const resp = await axiosClient.get(endpoints.invoice.getApprovedFile(id), {
-      responseType: "blob",
-    });
-    return resp;
-  } catch (error) {
-    if (error.response) {
-      // پاسخ از سمت سرور (۴xx یا ۵xx)
-      throw new Error(error.response.data?.message || "خطای سرور");
-    } else if (error.request) {
-      // درخواست فرستاده شده ولی پاسخی نیومده
-      throw new Error("پاسخی از سرور دریافت نشد");
-    } else {
-      // خطای دیگر (مثلاً در خود کد)
-      throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
-    }
-  }
+  // try {
+  //   const resp = await axiosClient.get(endpoints.invoice.getApprovedFile(id), {
+  //     responseType: "blob",
+  //   });
+  //   return resp;
+  // } catch (error) {
+  //   if (error.response) {
+  //     // پاسخ از سمت سرور (۴xx یا ۵xx)
+  //     throw new Error(error.response.data?.message || "خطای سرور");
+  //   } else if (error.request) {
+  //     // درخواست فرستاده شده ولی پاسخی نیومده
+  //     throw new Error("پاسخی از سرور دریافت نشد");
+  //   } else {
+  //     // خطای دیگر (مثلاً در خود کد)
+  //     throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
+  //   }
+  // }
 };
 
 export const GenerateNewToken = async (id) => {

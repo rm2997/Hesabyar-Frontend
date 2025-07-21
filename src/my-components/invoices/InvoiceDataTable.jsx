@@ -67,25 +67,24 @@ export const InvoiceDataTable = ({ isDesktop }) => {
 
   const loadData = async (resetPage = false) => {
     setLoading(true);
-    await ShowUserAllInvoices(
+    const res = await ShowUserAllInvoices(
       resetPage ? 1 : currentPage,
       itemsPerPage,
       resetPage ? "" : search
-    )
-      .then((res) => {
-        if (!res?.data) return;
-        setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
-        setInvoices(res?.data?.items);
-      })
-      .catch((err) => {
-        toast({
-          title: "خطا در دریافت داده‌ها",
-          description: err.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+    );
+    if (!res?.success) {
+      toast({
+        title: "خطا در دریافت داده‌ها",
+        description: res?.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
+      setLoading(false);
+      return;
+    }
+    setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
+    setInvoices(res?.data?.items);
     setLoading(false);
   };
 
@@ -107,12 +106,21 @@ export const InvoiceDataTable = ({ isDesktop }) => {
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
 
-  const updateInvoiceInList = (id, key, value) => {
+  const updateFieldInvoiceInList = (id, key, value) => {
     setInvoices((prev) =>
       prev.map((i) => (i.id == id ? { ...i, [key]: value } : i))
     );
   };
 
+  const updateInvoiceInList = (updatedInvoice) => {
+    setInvoices((prev) =>
+      prev.map((u) => (u.id == updatedInvoice.id ? updatedInvoice : u))
+    );
+  };
+
+  const deleteInvoiceFromList = (id) => {
+    setInvoices((prev) => prev.filter((u) => u.id != id));
+  };
   const handleSendCustomerLink = async (id) => {
     const invoice = invoices.find((i) => i.id == id);
 
@@ -147,7 +155,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
       return;
     }
     setLoading(true);
-    const res = await SetInvoiceIsSent(invoice.id);
+    const res = await SetInvoiceIsSent(invoice?.id);
     if (!res.success) {
       toast({
         title: "خطا بعد از ارسال",
@@ -159,7 +167,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-    updateInvoiceInList(id, "isSent", "true");
+    updateFieldInvoiceInList(id, "isSent", "true");
     toast({
       title: "توجه",
       description:
@@ -175,62 +183,33 @@ export const InvoiceDataTable = ({ isDesktop }) => {
       duration: 3000,
       isClosable: true,
     });
-
-    // const customer =
-    //   invoice?.customer?.customerGender +
-    //   " " +
-    //   invoice?.customer?.customerFName +
-    //   " " +
-    //   invoice?.customer?.customerLName;
-
-    // SendUpdateInvoiceSms(
-    //   customer,
-    //   invoice?.customer?.customerMobile,
-    //   "www.hesab-yaar.ir/upload-invoice-document?token=" + invoice?.customerLink
-    // ).then((res) => {
-    //   toast({
-    //     title: "توجه",
-    //     description:
-    //       "لینک تاییدیه به شماره موبایل" +
-    //       " " +
-    //       invoice.customer.customerMobile +
-    //       " به نام " +
-    //       invoice.customer.customerFName +
-    //       " " +
-    //       invoice.customer.customerLName +
-    //       " ارسال شد. ",
-    //     status: "success",
-    //     duration: 3000,
-    //     isClosable: true,
-    //   });
-    // });
   };
 
-  const handleDeleteInvoice = (id) => {
+  const handleDeleteInvoice = async (id) => {
     setSelectedID(id);
     setLoading(true);
-    RemoveInvoice(id)
-      .then(() => {
-        const newInvoices = invoices.filter((p) => p.id != id);
-        setInvoices(newInvoices);
-        toast({
-          title: "توجه",
-          description: `اطلاعات فاکتور شما حذف شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      )
-      .finally(setLoading(false));
+    const res = await RemoveInvoice(id);
+    if (!res.status) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res?.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    deleteInvoiceFromList(id);
+    toast({
+      title: "توجه",
+      description: `اطلاعات فاکتور شما حذف شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+
+    setLoading(false);
     // setModalHeader("آیا از حذف پیش فاکتور زیر اطمینان دارید؟");
     // setModalContetnt(<DeleteInvoice id={id} onClose={AlertOnClose} />);
   };
@@ -486,8 +465,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
                   isDesktop={isDesktop}
                   onClose={onClose}
                   onOpen={onOpen}
-                  setInvoices={setInvoices}
-                  invoices={invoices}
+                  onUpdate={updateInvoiceInList}
                   invoice={invoices.find(
                     (invoice) => invoice.id === selectedID
                   )}

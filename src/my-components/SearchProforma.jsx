@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
-export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
+export const SearchProforma = ({ onSelect, isOpen, onClose, searchItems }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,7 +33,7 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
     initData();
   }, [isOpen]);
 
-  const searchGoods = async (q) => {
+  const searchInvoices = async (q) => {
     setLoading(true);
     try {
       const res = await searchItems(q);
@@ -48,8 +48,8 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
   const handleChange = (e) => {
     const val = e.target.value;
     setQuery(val);
-    if (val?.length > 2) {
-      searchGoods(val);
+    if (val.length > 0) {
+      searchInvoices(val);
     } else {
       setResults([]);
     }
@@ -57,29 +57,30 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
 
   return (
     <Modal
-      initialFocusRef={inputRef}
       motionPreset="slideInTop"
       isOpen={isOpen}
       onClose={onClose}
+      initialFocusRef={inputRef}
     >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader bg="blue.300" textAlign="center">
-          جستجوی کالا
+          جستجوی پیش فاکتور
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody p={10} dir="rtl">
           <Box position="relative" w="100%">
             <Input
+              type="number"
               ref={inputRef}
-              placeholder="جستجوی نام کالا..."
+              placeholder="جستجوی شماره پیش فاکتور..."
               value={query}
               onChange={handleChange}
             />
             {loading && (
               <Spinner size="sm" position="absolute" top="12px" right="12px" />
             )}
-            {results?.length > 0 && (
+            {results.length > 0 && (
               <Box
                 position="absolute"
                 top="80%"
@@ -96,7 +97,7 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
                 <List spacing={0}>
                   {results.map((item) => (
                     <ListItem
-                      key={item?.id}
+                      key={item.id}
                       p={2}
                       _hover={{ bg: "gray.100", cursor: "pointer" }}
                       onClick={() => {
@@ -106,10 +107,10 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
                       }}
                     >
                       <Text>
-                        {item?.goodName}
+                        {item.title}
 
                         <Badge colorScheme="blue" mr="10px">
-                          ID: {item?.id}
+                          ID: {item.id}
                         </Badge>
                       </Text>
                     </ListItem>

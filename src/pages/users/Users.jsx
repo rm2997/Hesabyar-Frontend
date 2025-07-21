@@ -18,7 +18,7 @@ export const Users = ({ isDesktop, user }) => {
         isLazy
         borderWidth="1px"
         align="start"
-        variant="unstyled"
+        variant="line"
         borderRadius="5"
         color="black"
         colorScheme="blue"

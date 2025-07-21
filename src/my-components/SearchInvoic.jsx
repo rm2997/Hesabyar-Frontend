@@ -25,6 +25,14 @@ export const SearchInvoices = ({ onSelect, isOpen, onClose, searchItems }) => {
     inputRef.current?.focus();
   }, []);
 
+  useEffect(() => {
+    const initData = async () => {
+      const res = await searchItems("");
+      setResults(res);
+    };
+    initData();
+  }, [isOpen]);
+
   const searchInvoices = async (q) => {
     setLoading(true);
     try {

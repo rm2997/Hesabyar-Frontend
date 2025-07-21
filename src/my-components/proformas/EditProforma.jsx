@@ -76,13 +76,10 @@ export const EditProforma = ({
   proforma,
   setProformas,
   proformas,
-  isOpen,
   onClose,
 }) => {
   const toast = useToast();
 
-  const [customers, setCustomers] = useState([]);
-  const [allGoods, setAllGoods] = useState([]);
   dayjs.extend(jalali);
   const [formData, setFormData] = useState({
     title: "",
@@ -114,12 +111,9 @@ export const EditProforma = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(proforma);
-
     const loadData = async () => {
       setLoading(true);
       const res = await ShowProformaApprovedFile(proforma.id);
-
       if (!res.success) {
         if (res.status != 404)
           toast({
@@ -289,24 +283,12 @@ export const EditProforma = ({
 
   const handleItemChange = (index, field, value) => {
     const newItems = [...proformaItems];
-    if (!newItems || newItems?.length === 0) return;
-
     newItems[index][field] =
-      field === "quantity" || field === "goodPrice" ? Number(value) : value;
+      field === "quantity" || field === "price" ? Number(value) : value;
 
-    if (field === "good" && Number(value) > 0) {
-      const selected = allGoods.find((p) => p.id === Number(value));
-
-      if (selected) {
-        newItems[index].price = selected.goodPrice;
-        newItems[index].good = selected;
-        newItems[index].total = selected.goodPrice * newItems[index].quantity;
-      }
-    }
-
-    if (field === "quantity" || field === "goodPrice") {
+    if (field === "quantity" || field === "price") {
       const qty = field === "quantity" ? value : newItems[index].quantity;
-      const prc = field === "price" ? value : newItems[index].price;
+      const prc = field === "price" ? value : newItems[index].goodPrice;
       newItems[index].total = qty * prc;
     }
     recalculateTotal(newItems);
@@ -337,12 +319,11 @@ export const EditProforma = ({
     setSelectedItem(items?.length);
   };
 
-  const handleRemoveItem = (indexToremove, item) => {
-    const items = proformaItems.filter((_, index) => index !== indexToremove);
-    if (!items) return;
-    for (let i = 0; i < items.length; i++) items[i].no = i + 1;
-    setProformaItems(items);
-    recalculateTotal(items);
+  const handleRemoveItem = (item) => {
+    const items = proformaItems.filter((i) => i?.good?.id != item?.good?.id);
+    setProformaItems([...items]);
+    setSelectedItem(null);
+    recalculateTotal();
   };
 
   const handleDeleteAllItems = () => {
@@ -522,321 +503,6 @@ export const EditProforma = ({
                 </SimpleGrid>
               </Box>
             </Flex>
-            <Divider />
-            <Box px={2} borderRadius="md">
-              <TableContainer>
-                <Table
-                  borderColor="blackAlpha.200"
-                  borderWidth={1}
-                  size="sm"
-                  variant="simple"
-                >
-                  <Thead>
-                    <Tr bg="#6b749f">
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="100px"
-                      >
-                        ردیف
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="400px"
-                      >
-                        نام کالا
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="100px"
-                      >
-                        تعداد
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="100px"
-                      >
-                        واحد
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="200px"
-                      >
-                        قیمت واحد
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="300px"
-                      >
-                        قیمت کل
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="300px"
-                      >
-                        توضیحات
-                      </Th>
-                      <Th bg="white">
-                        <IconButton
-                          icon={<Plus />}
-                          onClick={() => handleAddNewItem()}
-                          colorScheme="green"
-                        />
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {proformaItems.map((item, index) => (
-                      <Tr key={"row" + index}>
-                        <Td>
-                          <Input
-                            fontFamily="IranSans"
-                            fontSize="md"
-                            readOnly
-                            name="no"
-                            key={"Field_no" + item.id}
-                            value={index + 1}
-                            onChange={(e) =>
-                              handleItemChange(index, "no", e.target.value)
-                            }
-                            placeholder="ردیف"
-                          />
-                        </Td>
-                        <Td>
-                          <HStack>
-                            {/* <Select
-                              disabled={goodLoading}
-                              name="good"
-                              key={"good" + index}
-                              defaultValue={0}
-                              dir="ltr"
-                              placeholder="انتخاب کنید"
-                              value={item?.good?.id}
-                              onChange={(e) =>
-                                handleItemChange(index, "good", e.target.value)
-                              }
-                            >
-                              {allGoods.map((i) => (
-                                <option key={"option" + i.id} value={i.id}>
-                                  {i.goodName}
-                                </option>
-                              ))}
-                            </Select> */}
-                            <Input
-                              placeholder="انتخاب کنید"
-                              maxW="250px"
-                              onClick={() =>
-                                !item?.good?.goodName
-                                  ? handleShowSearchGood(index)
-                                  : ""
-                              }
-                              value={
-                                item?.good?.goodName ? item?.good?.goodName : ""
-                              }
-                              name="good"
-                              readOnly
-                            />
-                            {item?.good?.goodName && (
-                              <IconButton
-                                mr="-10px"
-                                size="md"
-                                icon={<CircleX />}
-                                colorScheme="red"
-                                title="انصراف"
-                                variant="ghost"
-                                onClick={() => {
-                                  setProformaItems((prev) =>
-                                    prev.map((i) =>
-                                      i.id == item.id ? { ...i, good: null } : i
-                                    )
-                                  );
-                                }}
-                              />
-                            )}
-                            <IconButton
-                              size={"md"}
-                              colorScheme="orange"
-                              icon={<PackageSearch />}
-                              onClick={() => {
-                                handleShowSearchGood(index);
-                              }}
-                              title="جستجوی کالا "
-                            />
-                          </HStack>
-                        </Td>
-                        <Td>
-                          <NumberInput
-                            fontFamily="IranSans"
-                            fontSize="md"
-                            defaultValue={1}
-                            key={"quantity" + item.id}
-                            dir="ltr"
-                            min={1}
-                            name="quantity"
-                            value={item.quantity}
-                            onChange={(value) =>
-                              handleItemChange(index, "quantity", value)
-                            }
-                            placeholder="تعداد"
-                          >
-                            <NumberInputField />
-                            <NumberInputStepper>
-                              <NumberIncrementStepper />
-                              <NumberDecrementStepper />
-                            </NumberInputStepper>
-                          </NumberInput>
-                        </Td>
-                        <Td>
-                          <Input
-                            readOnly
-                            key={"unitName" + item.id}
-                            placeholder="واحد"
-                            name="unitName"
-                            value={item?.proformaGoods?.goodUnit?.unitName}
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            fontFamily="IranSans"
-                            fontSize="md"
-                            type="number"
-                            key={"price" + item.id}
-                            name="price"
-                            value={item.price}
-                            placeholder="قیمت"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "goodPrice",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            fontFamily="IranSans"
-                            fontSize="md"
-                            readOnly
-                            key={"goodPrice" + item.id}
-                            type="number"
-                            name="goodPrice"
-                            value={item.total}
-                            placeholder="قیمت"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "goodPrice",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            name="description"
-                            value={item.description}
-                            key={"description" + item.id}
-                            placeholder="توضیحات"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "description",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <IconButton
-                            icon={<Minus />}
-                            key={"delete" + item.no}
-                            onClick={() => handleRemoveItem(index, item)}
-                            colorScheme="red"
-                          />
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                  <Tfoot>
-                    <Tr>
-                      <Th width="100px"></Th>
-                      <Th width="200px"></Th>
-                      <Th width="200px">
-                        <Text fontFamily="IranSans" fontSize="md">
-                          تعداد کل: {totalQuantity}
-                        </Text>
-                      </Th>
-                      <Th width="200px"></Th>
-                      <Th width="300px"></Th>
-                      <Th width="300px">
-                        <Text fontFamily="IranSans" fontSize="md">
-                          جمع کل: {Number(totalPrice).toLocaleString()}
-                        </Text>
-                      </Th>
-                      <Th></Th>
-                      <Th>
-                        {proformaItems.length > 0 && (
-                          <IconButton
-                            bg="maroon"
-                            color="white"
-                            icon={<Trash2 />}
-                            onClick={handleDeleteAllItems}
-                          />
-                        )}
-                      </Th>
-                    </Tr>
-                  </Tfoot>
-                </Table>
-              </TableContainer>
-              <HStack mt={1} mr="auto">
-                <Text>فایل تاییدیه مشتری: </Text>
-                {approvedFile ? (
-                  <Box
-                    _hover={{ cursor: "pointer", borderColor: "orange" }}
-                    overflow="auto"
-                    borderRadius="6px"
-                    borderColor="black"
-                    borderWidth="1px"
-                    hidden={approvedFile == null || approvedFile == ""}
-                    boxSize="20"
-                    onClick={(e) => {
-                      setShowModal(true);
-                    }}
-                  >
-                    <Image
-                      src={approvedFile ? approvedFile : ""}
-                      objectFit="cover"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      alt={formData.approvedFile}
-                    />
-                  </Box>
-                ) : (
-                  <Text>ندارد </Text>
-                )}
-              </HStack>
-            </Box>
 
             <FormControl isRequired>
               <HStack>
@@ -875,7 +541,6 @@ export const EditProforma = ({
                       size="xs"
                       icon={<CircleX />}
                       onClick={() => {
-                        console.log(index);
                         handleRemoveItem(item);
                       }}
                     />
@@ -1030,6 +695,29 @@ export const EditProforma = ({
               onChange={handleChangeFormData}
             />
 
+            <Flex alignItems="center" mt={3} dir="rtl">
+              <FormLabel> تصویر</FormLabel>
+              {formData.approvedFile && (
+                <Box
+                  onClick={() => setShowModal(true)}
+                  _hover={{ cursor: "pointer", borderColor: "orange" }}
+                  overflow="hidden"
+                  borderRadius="6px"
+                  borderWidth="1px"
+                  hidden={approvedFile == null || approvedFile == ""}
+                  boxSize={"150px"}
+                >
+                  <Image
+                    src={approvedFile ? approvedFile : ""}
+                    objectFit="cover"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    alt="تاییدیه"
+                  />
+                </Box>
+              )}
+            </Flex>
+
             <Button
               colorScheme="blue"
               type="submit"
@@ -1043,24 +731,6 @@ export const EditProforma = ({
             >
               ثبت تغییرات پیش فاکتور
             </Button>
-            <Modal
-              dir="rtl"
-              onClose={onClose}
-              size={isDesktop ? "xl" : "full"}
-              isOpen={isOpen}
-            >
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>مشتری جدید</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody dir="rtl">
-                  <NewCustomer />
-                </ModalBody>
-                <ModalFooter>
-                  <Button onClick={onClose}>Close</Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
           </Flex>
         </CardBody>
         <CardFooter></CardFooter>
@@ -1075,21 +745,12 @@ export const EditProforma = ({
             setShowSearchCustomer(false);
           }}
         />
-        <SearchGoods
-          searchItems={handleSearchGoods}
-          isOpen={showSearchGood}
-          onClose={() => setShowSearchGood(false)}
-          onSelect={(g) => {
-            handleItemChange(selectedItem, "good", g.id);
-            setShowSearchGood(false);
-          }}
-        />
       </Card>
       <MyModal
         modalHeader=" فایل تاییدیه مشتری"
         onClose={() => setShowModal(false)}
         isOpen={showModal}
-        size={isDesktop ? "xl" : "full"}
+        size={isDesktop ? "xl" : "lg"}
       >
         <Box
           overflow="auto"
@@ -1108,6 +769,27 @@ export const EditProforma = ({
           />
         </Box>
       </MyModal>
+      <SearchCustomer
+        searchItems={handleSearchCustomers}
+        isOpen={showSearchCustomer}
+        onClose={() => setShowSearchCustomer(false)}
+        onSelect={(g) => {
+          handleChangeFormData({
+            target: { name: "customer", value: g },
+          });
+          setShowSearchCustomer(false);
+        }}
+      />
+      <SearchGoods
+        searchItems={handleSearchGoods}
+        isOpen={showSearchGood}
+        onClose={() => setShowSearchGood(false)}
+        onSelect={(g) => {
+          handleAddNewItem(g);
+          //handleItemChange(selectedItem, "good", g.id);
+          setShowSearchGood(false);
+        }}
+      />
       {loading && <MyLoading />}
     </Box>
   );

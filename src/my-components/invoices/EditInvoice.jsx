@@ -48,6 +48,8 @@ import {
   Minus,
   PackageSearch,
   Plus,
+  PlusCircle,
+  ScanSearch,
   Trash2,
   UserSearch,
 } from "lucide-react";
@@ -64,27 +66,26 @@ import { ShowAllGoods } from "../../api/services/goodsService";
 import { ChequeInput } from "../../my-components/paymentStatus/ChequeInput";
 import { PaperMoneyInput } from "../../my-components/paymentStatus/PaperMoneyInput";
 import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
-import { NewCustomer } from "../../pages/customers/NewCustomer";
+
 import { SearchGoods } from "../SearchGood";
 import { SearchCustomer } from "../SearchCustomer";
 import { MyModal } from "../MyModal";
+import { SearchProforma } from "../SearchProforma";
+import { ShowUserAllProformas } from "../../api/services/proformaService";
 
 export const EditInvoice = ({
   isDesktop,
   invoice,
-  setInvoices,
-  invoices,
+  onUpdate,
   isOpen,
   onClose,
 }) => {
   const toast = useToast();
 
-  const [customers, setCustomers] = useState([]);
-  const [allGoods, setAllGoods] = useState([]);
   dayjs.extend(jalali);
   const [formData, setFormData] = useState({
     title: "",
-    customer: {},
+    customer: null,
     totalAmount: 0,
     paymentStatus: 0,
     chequeAmount: 0,
@@ -94,10 +95,9 @@ export const EditInvoice = ({
     paperMoneyAmount: 0,
     paperMoneySerial: 0,
     trustIssueDate: "",
-    invoiceGoods: [],
+    invoiceGoods: null,
     description: "",
   });
-
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [approvedFile, setApprovedFile] = useState(null);
@@ -105,6 +105,7 @@ export const EditInvoice = ({
 
   const [selectedItem, setSelectedItem] = useState(0);
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
+  const [showSearchProforma, setShowSearchProforma] = useState(false);
   const [showSearchGood, setShowSearchGood] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -115,41 +116,27 @@ export const EditInvoice = ({
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      // await ShowAllCustomers(1, -1, "").then((res) =>
-      //   setCustomers(res?.data?.items)
-      // );
-      // await ShowAllGoods(1, -1, "").then((res) =>
-      //   setAllGoods(res?.data?.items)
-      // );
       const res = await ShowInvoiceApprovedFile(invoice.id);
       if (!res.success) {
-        toast({
-          title: "خطا در دریافت تصویر",
-          description: res.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-      const url = URL.createObjectURL(res.data);
-
-      setApprovedFile(url);
-
-      for (let i = 0; i < invoice.invoiceGoods.length; i++) {
-        invoice.invoiceGoods[i].no = i + 1;
-        invoice.invoiceGoods[i].uniqueId = Date.now().toString();
+        if (res.status != 404)
+          toast({
+            title: "خطا در دریافت تصویر",
+            description: res.error,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+      } else {
+        const url = URL.createObjectURL(res?.data);
+        setApprovedFile(url);
       }
 
       setFormData({ ...invoice, invoiceGoods: [...invoice.invoiceGoods] });
-      setInvoiceItems(invoice.invoiceGoods);
+      setInvoiceItems([...invoice.invoiceGoods]);
       setLoading(false);
     };
     loadData();
   }, []);
-
-  // useEffect(() => {
-  //   setFormData({ ...formData, invoiceGoods: [...items] });
-  // }, [items]);
 
   useEffect(() => {
     recalculateTotal();
@@ -158,7 +145,7 @@ export const EditInvoice = ({
   const initForm = () => {
     setFormData({
       title: "",
-      customer: {},
+      customer: null,
       totalAmount: 0,
       paymentStatus: 0,
       chequeAmount: 0,
@@ -172,31 +159,86 @@ export const EditInvoice = ({
       approvedFile: "",
       description: "",
     });
-    setInvoiceItems([
-      {
-        uniqueId: Date.now().toString(),
-        createdAt: "",
-        createdBy: {},
-        description: "",
-        good: null,
-        id: 0,
-        price: 0,
-        quantity: 0,
-        total: 0,
-      },
-    ]);
+    setInvoiceItems([]);
+  };
+
+  const validateForm = async (data) => {
+    if (!data.customer) {
+      toast({
+        title: "توجه",
+        description: "باید مشتری را مشخص کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (!data.invoiceGoods || data.invoiceGoods?.length < 1) {
+      toast({
+        title: "توجه",
+        description: "باید حداقل یک کالا انتخاب کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    const goodQCheck = data.invoiceGoods.every((good) => {
+      let retVal = true;
+      if (!good.quantity || good.quantity == 0) {
+        toast({
+          title: "توجه",
+          description: ` تعداد  ${good?.good?.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retVal = false;
+      }
+      return retVal;
+    });
+    if (!goodQCheck) return false;
+
+    const goodACheck = data.invoiceGoods.every((good) => {
+      let retval = true;
+      if (!good.total || good.total == 0) {
+        console.log(good);
+
+        toast({
+          title: "توجه",
+          description: `قیمت کل ${good?.good?.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retval = false;
+      }
+      return retval;
+    });
+    if (!goodACheck) return false;
+
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    const submitData = {
-      ...formData,
-      invoiceGoods: [...invoiceItems],
-      totalAmount: totalPrice,
-    };
+    const items = [...invoiceItems];
+    items.forEach((i) => (i.total = i.price * i.quantity));
 
-    const res = await UpdateInvoice(formData.id, submitData);
+    const data = { ...formData };
+    data.invoiceGoods = [...items];
+    data.totalAmount = totalPrice;
+    data.totalQuantity = totalQuantity;
+    setFormData(data);
+
+    console.log("before:", data);
+
+    if ((await validateForm(data)) == false) return;
+
+    setLoading(true);
+    const res = await UpdateInvoice(formData.id, data);
+    console.log("after:", res.data);
     if (!res.success) {
       toast({
         title: "خطایی رخ داد",
@@ -208,9 +250,10 @@ export const EditInvoice = ({
       setLoading(false);
       return;
     }
-    const newInvoices = invoices.filter((p) => p.id != formData.id);
-    newInvoices.push(formData);
-    setInvoices(newInvoices);
+    onUpdate(res?.data);
+    // const newInvoices = invoices.filter((p) => p.id != formData.id);
+    // newInvoices.push(formData);
+    // setInvoices(newInvoices);
     initForm();
     toast({
       title: "ثبت شد",
@@ -225,67 +268,49 @@ export const EditInvoice = ({
 
   const handleItemChange = (index, field, value) => {
     const newItems = [...invoiceItems];
-    if (!newItems || newItems?.length === 0) return;
-
     newItems[index][field] =
-      field === "quantity" || field === "goodPrice" ? Number(value) : value;
+      field === "quantity" || field === "price" ? Number(value) : value;
 
-    if (field === "good" && Number(value) > 0) {
-      const selected = allGoods.find((p) => p.id === Number(value));
-
-      if (selected) {
-        newItems[index].price = selected.goodPrice;
-        newItems[index].good = selected;
-        newItems[index].total = selected.goodPrice * newItems[index].quantity;
-      }
-    }
-
-    if (field === "quantity" || field === "goodPrice") {
+    if (field === "quantity" || field === "price") {
       const qty = field === "quantity" ? value : newItems[index].quantity;
-      const prc = field === "price" ? value : newItems[index].price;
+      const prc = field === "price" ? value : newItems[index].goodPrice;
       newItems[index].total = qty * prc;
     }
-    recalculateTotal(newItems);
+
     setInvoiceItems(newItems);
+    recalculateTotal();
   };
 
-  const recalculateTotal = (goods) => {
-    const items = goods ? [...goods] : [...invoiceItems];
-
-    if (!items) return;
-    const total = items.reduce((sum, i) => sum + i.total, 0);
-    const count = items.reduce((sum, i) => sum + i.quantity, 0);
-
+  const recalculateTotal = () => {
+    const total = invoiceItems?.reduce(
+      (sum, i) => sum + i.quantity * i.price,
+      0
+    );
+    const count = invoiceItems?.reduce((sum, i) => sum + i.quantity, 0);
     setTotalPrice(total);
     setTotalQuantity(count);
   };
 
-  const handleAddNewItem = async () => {
+  const handleAddNewItem = (good) => {
     const items = [...invoiceItems];
-    if (!items) return;
     const newItem = {
-      uniqueId: Date.now().toString(),
-      createdAt: "",
-      createdBy: {},
+      quantity: 1,
+      total: good?.goodPrice,
+      price: good?.goodPrice,
+      good: good,
       description: "",
-      id: 0,
-      quantity: 0,
-      price: 0,
-      total: 0,
-      no: items?.length > 0 ? items[items.length - 1]?.no + 1 : 1,
-      good: {},
     };
     items.push(newItem);
-    setInvoiceItems(items);
-    recalculateTotal(items);
+    setInvoiceItems([...items]);
+    setSelectedItem(items?.length);
+    recalculateTotal();
   };
 
-  const handleRemoveItem = (indexToremove, item) => {
-    const items = invoiceItems.filter((_, index) => index !== indexToremove);
-    if (!items) return;
-    for (let i = 0; i < items.length; i++) items[i].no = i + 1;
-    setInvoiceItems(items);
-    recalculateTotal(items);
+  const handleRemoveItem = (item) => {
+    const items = invoiceItems.filter((i) => i?.good?.id != item?.good?.id);
+    setInvoiceItems([...items]);
+    setSelectedItem(null);
+    recalculateTotal();
   };
 
   const handleDeleteAllItems = () => {
@@ -309,6 +334,16 @@ export const EditInvoice = ({
   const handleSearchGoods = async (query) => {
     const response = await ShowAllGoods(1, 10, query);
     return response?.data?.items;
+  };
+
+  const handleSearchProforma = async (query) => {
+    const response = await ShowUserAllProformas(1, 10, query);
+    return response?.data?.items;
+  };
+
+  const handleChangeProformaData = (proforma) => {
+    const newItems = [...proforma.proformaGoods];
+    setInvoiceItems([...newItems]);
   };
 
   const handleShowSearchGood = async (id) => {
@@ -354,6 +389,7 @@ export const EditInvoice = ({
                       />
                     </HStack>
                   </FormControl>
+
                   <FormControl isRequired>
                     <HStack>
                       <FormLabel hidden={!isDesktop} width="300px">
@@ -366,10 +402,10 @@ export const EditInvoice = ({
                         value={
                           formData.customer !== null
                             ? formData?.customer?.customerGender +
-                            " " +
-                            formData?.customer?.customerFName +
-                            " " +
-                            formData?.customer?.customerLName
+                              " " +
+                              formData?.customer?.customerFName +
+                              " " +
+                              formData?.customer?.customerLName
                             : ""
                         }
                         name="customer"
@@ -394,6 +430,52 @@ export const EditInvoice = ({
                         colorScheme="orange"
                         onClick={() => setShowSearchCustomer(true)}
                         title="جستجوی مشتری "
+                      />
+                    </HStack>
+                  </FormControl>
+
+                  <FormControl>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="170px">
+                        پیش‌ فاکتور
+                      </FormLabel>
+                      <Input
+                        placeholder="لطفا یک پیش فاکتور انتخاب کنید"
+                        maxW="560px"
+                        onClick={() => setShowSearchProforma(true)}
+                        value={
+                          formData?.proforma
+                            ? formData?.proforma?.title +
+                              " - " +
+                              formData?.proforma?.id
+                            : ""
+                        }
+                        name="proforma"
+                        readOnly
+                      />
+                      {formData?.proforma && (
+                        <IconButton
+                          size={isDesktop ? "md" : "sm"}
+                          icon={<CircleX />}
+                          colorScheme="red"
+                          title="انصراف"
+                          variant="ghost"
+                          onClick={() => {
+                            setFormData({
+                              ...formData,
+                              proforma: null,
+                              invoiceGoods: null,
+                            });
+                            setInvoiceItems([]);
+                          }}
+                        />
+                      )}
+                      <IconButton
+                        size={isDesktop ? "md" : "sm"}
+                        icon={<ScanSearch />}
+                        colorScheme="orange"
+                        onClick={() => setShowSearchProforma(true)}
+                        title="جستجوی پیش فاکتور "
                       />
                     </HStack>
                   </FormControl>
@@ -461,324 +543,189 @@ export const EditInvoice = ({
                 </SimpleGrid>
               </Box>
             </Flex>
-            <Divider />
-            <Box p={4} borderRadius="md">
-              <TableContainer>
-                <Table
-                  borderColor="blackAlpha.200"
-                  borderWidth={1}
-                  size="sm"
-                  variant="simple"
-                >
-                  <Thead>
-                    <Tr bg="#6b749f">
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="100px"
-                      >
-                        ردیف
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="400px"
-                      >
-                        نام کالا
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="100px"
-                      >
-                        تعداد
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="100px"
-                      >
-                        واحد
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="200px"
-                      >
-                        قیمت واحد
-                      </Th>
-                      <Th
-                        textColor="white"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="300px"
-                      >
-                        قیمت کل
-                      </Th>
-                      <Th
-                        textColor="white"
-                        fontFamily="IranSans"
-                        fontSize="md"
-                        width="300px"
-                      >
-                        توضیحات
-                      </Th>
-                      <Th bg="white">
-                        <IconButton
-                          icon={<Plus />}
-                          onClick={() => handleAddNewItem()}
-                          colorScheme="green"
-                        />
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {invoiceItems.map((item, index) => (
-                      <Tr key={"row" + index}>
-                        <Td>
-                          <Input
-                            fontFamily="IranSans"
-                            fontSize="md"
-                            readOnly
-                            name="no"
-                            key={"Field_no" + item.id}
-                            value={index + 1}
-                            onChange={(e) =>
-                              handleItemChange(index, "no", e.target.value)
-                            }
-                            placeholder="ردیف"
-                          />
-                        </Td>
-                        <Td>
-                          <HStack>
-                            {/* <Select
-                              disabled={goodLoading}
-                              name="good"
-                              key={"good" + index}
-                              defaultValue={0}
-                              dir="ltr"
-                              placeholder="انتخاب کنید"
-                              value={item?.good?.id}
-                              onChange={(e) =>
-                                handleItemChange(index, "good", e.target.value)
-                              }
-                            >
-                              {allGoods.map((i) => (
-                                <option key={"option" + i.id} value={i.id}>
-                                  {i.goodName}
-                                </option>
-                              ))}
-                            </Select> */}
-                            <Input
-                              placeholder="انتخاب کنید"
-                              maxW="250px"
-                              onClick={() =>
-                                !item?.good?.goodName
-                                  ? handleShowSearchGood(index)
-                                  : ""
-                              }
-                              value={
-                                item?.good?.goodName ? item?.good?.goodName : ""
-                              }
-                              name="good"
-                              readOnly
-                            />
-                            {item?.good?.goodName && (
-                              <IconButton
-                                mr="-10px"
-                                size="md"
-                                icon={<CircleX />}
-                                colorScheme="red"
-                                title="انصراف"
-                                variant="ghost"
-                                onClick={() => {
-                                  setInvoiceItems((prev) =>
-                                    prev.map((i) =>
-                                      i.id == item.id ? { ...i, good: null } : i
-                                    )
-                                  );
-                                }}
-                              />
-                            )}
-                            <IconButton
-                              size={"md"}
-                              colorScheme="orange"
-                              icon={<PackageSearch />}
-                              onClick={() => {
-                                handleShowSearchGood(index);
-                              }}
-                              title="جستجوی کالا "
-                            />
-                          </HStack>
-                        </Td>
-                        <Td>
-                          <NumberInput
-                            fontFamily="IranSans"
-                            fontSize="md"
-                            defaultValue={1}
-                            key={"quantity" + item.id}
-                            dir="ltr"
-                            min={1}
-                            name="quantity"
-                            value={item.quantity}
-                            onChange={(value) =>
-                              handleItemChange(index, "quantity", value)
-                            }
-                            placeholder="تعداد"
-                          >
-                            <NumberInputField />
-                            <NumberInputStepper>
-                              <NumberIncrementStepper />
-                              <NumberDecrementStepper />
-                            </NumberInputStepper>
-                          </NumberInput>
-                        </Td>
-                        <Td>
-                          <Input
-                            readOnly
-                            key={"unitName" + item.id}
-                            placeholder="واحد"
-                            name="unitName"
-                            value={item?.good?.goodUnit?.unitName}
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            fontFamily="IranSans"
-                            fontSize="md"
-                            type="number"
-                            key={"price" + item.id}
-                            name="price"
-                            value={item.price}
-                            placeholder="قیمت"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "goodPrice",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            fontFamily="IranSans"
-                            fontSize="md"
-                            readOnly
-                            key={"goodPrice" + item.id}
-                            type="number"
-                            name="goodPrice"
-                            value={item.total}
-                            placeholder="قیمت"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "goodPrice",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            name="description"
-                            value={item.description}
-                            key={"description" + item.id}
-                            placeholder="توضیحات"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "description",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <IconButton
-                            icon={<Minus />}
-                            key={"delete" + item.no}
-                            onClick={() => handleRemoveItem(index, item)}
-                            colorScheme="red"
-                          />
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                  <Tfoot>
-                    <Tr>
-                      <Th width="100px"></Th>
-                      <Th width="200px"></Th>
-                      <Th width="200px">
-                        <Text
-                          textAlign="center"
-                          fontFamily="IranSans"
-                          fontSize="md"
-                        >
-                          تعداد کل: {totalQuantity}
-                        </Text>
-                      </Th>
-                      <Th width="200px"></Th>
-                      <Th width="300px"></Th>
-                      <Th width="300px">
-                        <Text
-                          textAlign="center"
-                          fontFamily="IranSans"
-                          fontSize="md"
-                        >
-                          جمع کل: {Number(totalPrice).toLocaleString()}
-                        </Text>
-                      </Th>
-                      <Th></Th>
-                      <Th>
-                        {invoiceItems.length > 0 && (
-                          <IconButton
-                            bg="maroon"
-                            color="white"
-                            icon={<Trash2 />}
-                            onClick={handleDeleteAllItems}
-                          />
-                        )}
-                      </Th>
-                    </Tr>
-                  </Tfoot>
-                </Table>
-              </TableContainer>
-              <HStack marginTop="5px" marginRight="auto">
-                <Text>فایل تاییدیه مشتری: </Text>
-                {approvedFile ? (
-                  <Box
-                    overflow="auto"
-                    borderRadius="6px"
-                    borderColor="orange"
-                    borderWidth="1px"
-                    hidden={approvedFile == null || approvedFile == ""}
-                    boxSize="20"
-                  >
-                    <Image
-                      src={approvedFile ? approvedFile : ""}
-                      objectFit="cover"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      alt={formData.approvedFile}
-                    />
-                  </Box>
-                ) : (
-                  <Text>ندارد </Text>
-                )}
+
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel width="170px">انتخاب کالا</FormLabel>
               </HStack>
-            </Box>
+            </FormControl>
+
+            <Flex
+              direction={isDesktop ? "" : "column"}
+              flexWrap={isDesktop ? "wrap" : ""}
+              minH="100px"
+              rowGap={3}
+              p={2}
+              dir="ltr"
+              w="full"
+              columnGap={3}
+              borderStyle="dashed"
+              borderRadius="md"
+              borderWidth={1}
+            >
+              {invoiceItems.map((item, index) => (
+                <Box
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  p={3}
+                  w="250px"
+                  boxShadow="md"
+                  position="relative"
+                  key={index + "-depotGood"}
+                  mx={isDesktop ? "" : "auto"}
+                >
+                  <Flex justify="space-between" align="center">
+                    <IconButton
+                      colorScheme="red"
+                      variant="ghost"
+                      size="xs"
+                      icon={<CircleX />}
+                      onClick={() => {
+                        handleRemoveItem(item);
+                      }}
+                    />
+
+                    <Text
+                      title={item?.good?.goodName}
+                      mx={1}
+                      dir="rtl"
+                      fontFamily="IranSans"
+                      fontWeight="bold"
+                      fontSize="md"
+                    >
+                      {item?.good?.goodName
+                        ? item?.good?.goodName?.length <= 25
+                          ? item?.good?.goodName
+                          : item?.good?.goodName.substring(0, 22) + "..."
+                        : "نا مشخص"}
+                    </Text>
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      تعداد
+                    </Text>
+                    <NumberInput
+                      variant="flushed"
+                      size="xs"
+                      textAlign="center"
+                      fontFamily="IranSans"
+                      defaultValue={1}
+                      dir="ltr"
+                      min={1}
+                      name="quantity"
+                      value={item?.quantity}
+                      onChange={(value) =>
+                        handleItemChange(index, "quantity", value)
+                      }
+                      placeholder="تعداد"
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                    <Text
+                      dir="rtl"
+                      fontFamily="iransans"
+                      fontSize="xs"
+                      my="auto"
+                    >
+                      {item?.good?.goodUnit?.unitName}
+                    </Text>
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      قیمت
+                    </Text>
+                    <Input
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="price"
+                      value={item?.price}
+                      onChange={(e) =>
+                        handleItemChange(index, "price", e.target.value)
+                      }
+                    />
+                  </Flex>
+                  <Flex justify="space-between" columnGap={8} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      جمع
+                    </Text>
+                    <Input
+                      readOnly
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="total"
+                      value={Number(
+                        item?.quantity * item.price
+                      ).toLocaleString()}
+                      onChange={(e) =>
+                        handleItemChange(index, "total", e.target.value)
+                      }
+                    />
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      توضیحات
+                    </Text>
+                    <Input
+                      variant="flushed"
+                      size="sm"
+                      name="description"
+                      value={item.description}
+                      onChange={(e) =>
+                        handleItemChange(index, "description", e.target.value)
+                      }
+                    />
+                  </Flex>
+                </Box>
+              ))}
+              <IconButton
+                ml={3}
+                icon={<PlusCircle size="lg" strokeWidth={1.2} />}
+                size="lg"
+                my="auto"
+                mx={isDesktop ? "" : "auto"}
+                colorScheme="green"
+                variant="ghost"
+                onClick={() => setShowSearchGood(true)}
+              />
+              <Flex
+                hidden={invoiceItems?.length == 0}
+                p={3}
+                justify="space-between"
+                columnGap={5}
+                dir="rtl"
+                mt="auto"
+                mx={isDesktop ? "" : "auto"}
+                borderWidth={0.5}
+                borderStyle="dashed"
+              >
+                <Text fontSize="md" textAlign="center" fontFamily="IranSans">
+                  جمع کل: {Number(totalPrice).toLocaleString()}
+                </Text>
+
+                <Text
+                  px={5}
+                  fontSize="md"
+                  textAlign="center"
+                  fontFamily="IranSans"
+                  borderRightWidth={0.5}
+                  borderColor="gray.300"
+                >
+                  تعداد کل: {totalQuantity}
+                </Text>
+              </Flex>
+            </Flex>
+
             <Input
               placeholder="توضیحات فاکتور"
               name="description"
@@ -786,56 +733,41 @@ export const EditInvoice = ({
               onChange={handleChangeFormData}
             />
 
+            <Flex alignItems="center" mt={3} dir="rtl">
+              <FormLabel> تصویر</FormLabel>
+              {formData.approvedFile && (
+                <Box
+                  onClick={() => setShowModal(true)}
+                  _hover={{ cursor: "pointer", borderColor: "orange" }}
+                  overflow="hidden"
+                  borderRadius="6px"
+                  borderWidth="1px"
+                  hidden={approvedFile == null || approvedFile == ""}
+                  boxSize={"150px"}
+                >
+                  <Image
+                    src={approvedFile ? approvedFile : ""}
+                    objectFit="cover"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    alt="تاییدیه"
+                  />
+                </Box>
+              )}
+            </Flex>
+
             <Button colorScheme="blue" type="submit" isLoading={loading}>
               ثبت تغییرات فاکتور
             </Button>
-            {/* <Modal
-              dir="rtl"
-              onClose={onClose}
-              size={isDesktop ? "xl" : "full"}
-              isOpen={isOpen}
-            >
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>مشتری جدید</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody dir="rtl">
-                  <NewCustomer />
-                </ModalBody>
-                <ModalFooter>
-                  <Button onClick={onClose}>Close</Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal> */}
           </Flex>
         </CardBody>
         <CardFooter></CardFooter>
-        <SearchCustomer
-          searchItems={handleSearchCustomers}
-          isOpen={showSearchCustomer}
-          onClose={() => setShowSearchCustomer(false)}
-          onSelect={(g) => {
-            handleChangeFormData({
-              target: { name: "customer", value: g },
-            });
-            setShowSearchCustomer(false);
-          }}
-        />
-        <SearchGoods
-          searchItems={handleSearchGoods}
-          isOpen={showSearchGood}
-          onClose={() => setShowSearchGood(false)}
-          onSelect={(g) => {
-            handleItemChange(selectedItem, "good", g.id);
-            setShowSearchGood(false);
-          }}
-        />
       </Card>
       <MyModal
         modalHeader=" فایل تاییدیه مشتری"
         onClose={() => setShowModal(false)}
         isOpen={showModal}
-        size={isDesktop ? "xl" : "full"}
+        size={isDesktop ? "xl" : "lg"}
       >
         <Box
           overflow="auto"
@@ -854,6 +786,36 @@ export const EditInvoice = ({
           />
         </Box>
       </MyModal>
+      <SearchCustomer
+        searchItems={handleSearchCustomers}
+        isOpen={showSearchCustomer}
+        onClose={() => setShowSearchCustomer(false)}
+        onSelect={(g) => {
+          handleChangeFormData({
+            target: { name: "customer", value: g },
+          });
+          setShowSearchCustomer(false);
+        }}
+      />
+      <SearchGoods
+        searchItems={handleSearchGoods}
+        isOpen={showSearchGood}
+        onClose={() => setShowSearchGood(false)}
+        onSelect={(g) => {
+          handleAddNewItem(g);
+          setShowSearchGood(false);
+        }}
+      />
+      <SearchProforma
+        searchItems={handleSearchProforma}
+        isOpen={showSearchProforma}
+        onClose={() => setShowSearchProforma(false)}
+        onSelect={(g) => {
+          handleChangeFormData({ target: { name: "proforma", value: g } });
+          setShowSearchProforma(false);
+          handleChangeProformaData(g);
+        }}
+      />
       {loading && <MyLoading />}
     </Box>
   );

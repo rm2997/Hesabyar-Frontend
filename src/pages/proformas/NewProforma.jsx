@@ -10,48 +10,20 @@ import {
   IconButton,
   Input,
   Select,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
   useToast,
   Text,
-  Tfoot,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  TableContainer,
   Flex,
   Stack,
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Box,
-  Divider,
-  AbsoluteCenter,
-  Spinner,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
-import {
-  CircleX,
-  Ellipsis,
-  Minus,
-  PackageSearch,
-  Plus,
-  PlusCircle,
-  Trash2,
-  UserRoundPlus,
-  UserSearch,
-} from "lucide-react";
+import { CircleX, PlusCircle, UserRoundPlus, UserSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateProforma } from "../../api/services/proformaService";
 import { ShowAllCustomers } from "../../api/services/customerService";
@@ -105,21 +77,8 @@ export const NewProforma = ({ isDesktop }) => {
 
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
   const [showSearchGood, setShowSearchGood] = useState(false);
+
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      // await ShowAllCustomers(1, -1, "").then((res) =>
-      // setCustomers(res?.data?.items)
-      // );
-      await ShowAllGoods(1, -1, "").then((res) =>
-        setAllGoods(res?.data?.items)
-      );
-    };
-
-    loadData().finally(setLoading(false));
-  }, []);
 
   const handleSearchCustomers = async (query) => {
     const response = await ShowAllCustomers(1, 10, query);
@@ -253,20 +212,9 @@ export const NewProforma = ({ isDesktop }) => {
   const handleItemChange = (index, field, value) => {
     const newItems = [...proformaItems];
     newItems[index][field] =
-      field === "quantity" || field === "goodPrice" ? Number(value) : value;
+      field === "quantity" || field === "price" ? Number(value) : value;
 
-    if (field === "good" && Number(value) > 0) {
-      const selected = allGoods.find((p) => p.id === Number(value));
-      if (selected) {
-        newItems[index].goodPrice = selected.goodPrice;
-        newItems[index].price = selected.goodPrice;
-        newItems[index].goodName = selected.goodName;
-        newItems[index].goodUnitName = selected.goodUnit?.unitName;
-        newItems[index].total = selected.goodPrice * newItems[index].quantity;
-      }
-    }
-
-    if (field === "quantity" || field === "goodPrice") {
+    if (field === "quantity" || field === "price") {
       const qty = field === "quantity" ? value : newItems[index].quantity;
       const prc = field === "price" ? value : newItems[index].goodPrice;
       newItems[index].total = qty * prc;
@@ -512,7 +460,6 @@ export const NewProforma = ({ isDesktop }) => {
                       size="xs"
                       icon={<CircleX />}
                       onClick={() => {
-                        console.log(index);
                         handleRemoveItem(item);
                       }}
                     />

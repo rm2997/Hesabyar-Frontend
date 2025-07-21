@@ -10,17 +10,8 @@ import {
   IconButton,
   Input,
   Select,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  VStack,
   useToast,
   Text,
-  Spinner,
-  Tfoot,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -29,13 +20,17 @@ import {
   Flex,
   Box,
   Stack,
-  TableContainer,
-  Divider,
   SimpleGrid,
-  AbsoluteCenter,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import {
+  CircleX,
+  PlusCircle,
+  ScanSearch,
+  UserRoundPlus,
+  UserSearch,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateInvoice } from "../../api/services/invoiceService";
 import { useNavigate } from "react-router-dom";
@@ -49,18 +44,20 @@ import { MyLoading } from "../../my-components/MyLoading";
 import { PaperMoneyInput } from "../../my-components/paymentStatus/PaperMoneyInput";
 import { ChequeInput } from "../../my-components/paymentStatus/ChequeInput";
 import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
+import { SearchGoods } from "../../my-components/SearchGood";
+import { NewCustomer } from "../customers/NewCustomer";
+import { MyModal } from "../../my-components/MyModal";
+import { SearchCustomer } from "../../my-components/SearchCustomer";
+import { SearchProforma } from "../../my-components/SearchProforma";
 
 export const NewInvoice = ({ isDesktop }) => {
   const toast = useToast();
-  const [customers, setCustomers] = useState([]);
-  const [proformas, setProformas] = useState([]);
-  const [allGoods, setAllGoods] = useState([]);
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [formData, setFormData] = useState({
     id: 0,
     title: "",
-    proforma: {},
-    customer: {},
+    proforma: null,
+    customer: null,
     totalAmount: 0,
     paymentStatus: 0,
     chequeDate: "",
@@ -69,82 +66,118 @@ export const NewInvoice = ({ isDesktop }) => {
     paperMoneyAmount: 0,
     paperMoneySerial: 0,
     trustIssueDate: "",
-    invoiceGoods: [],
+    invoiceGoods: null,
   });
-
+  const [invoiceItems, setInvoiceItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
-
   const [selectedProforma, setSelectedProforma] = useState(0);
-
-  const [formError, setFormError] = useState(null);
-
+  const [showSearchCustomer, setShowSearchCustomer] = useState(false);
+  const [showSearchProforma, setShowSearchProforma] = useState(false);
+  const [showSearchGood, setShowSearchGood] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [customerLoading, setCustomerLoading] = useState(false);
-  const [proformaLoading, setProformaLoading] = useState(false);
-  const [goodLoading, setGoodLoading] = useState(false);
   const [invoiceGoodsStatus, setInvoiceGoodsStatus] = useState(true);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      const res1 = await ShowAllCustomers();
-      if (!res1.success) {
-        toast({
-          title: "خطایی رخ داد",
-          description: res1.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        setLoading(false);
-        return;
-      }
-      setCustomers(res1?.data?.items);
-
-      const res2 = await ShowUserAllProformas();
-      if (!res2.success) {
-        toast({
-          title: "خطایی رخ داد",
-          description: res2.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        setLoading(false);
-        return;
-      }
-      setProformas(res2?.data?.items);
-
-      const res3 = await ShowAllGoods();
-      if (!res3.success) {
-        toast({
-          title: "خطایی رخ داد",
-          description: res3.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        setLoading(false);
-        return;
-      }
-      setAllGoods(res3?.data?.items);
-    };
-    loadData();
-  }, []);
 
   useEffect(() => {
     recalculateTotal();
   }, [formData]);
 
+  const initForm = () => {
+    setFormData({
+      id: 0,
+      title: "",
+      proforma: null,
+      customer: null,
+      totalAmount: 0,
+      paymentStatus: 0,
+      chequeDate: "",
+      chequeAmount: 0,
+      chequeSerial: 0,
+      paperMoneyAmount: 0,
+      paperMoneySerial: 0,
+      trustIssueDate: "",
+      invoiceGoods: null,
+    });
+    setInvoiceItems([]);
+  };
+  const validateForm = async (data) => {
+    if (!data.customer) {
+      toast({
+        title: "توجه",
+        description: "باید مشتری را مشخص کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (!data.invoiceGoods || data.invoiceGoods?.length < 1) {
+      toast({
+        title: "توجه",
+        description: "باید حداقل یک کالا انتخاب کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    const goodQCheck = data.invoiceGoods.every((good) => {
+      let retVal = true;
+      if (!good.quantity || good.quantity == 0) {
+        toast({
+          title: "توجه",
+          description: ` تعداد  ${good?.good?.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retVal = false;
+      }
+      return retVal;
+    });
+    if (!goodQCheck) return false;
+
+    const goodACheck = data.invoiceGoods.every((good) => {
+      let retval = true;
+      if (!good.total || good.total == 0) {
+        console.log(good);
+
+        toast({
+          title: "توجه",
+          description: `قیمت کل ${good?.good?.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retval = false;
+      }
+      return retval;
+    });
+    if (!goodACheck) return false;
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const items = [...invoiceItems];
+    items.forEach((i) => (i.total = i.price * i.quantity));
+
+    const data = { ...formData };
+    data.invoiceGoods = [...items];
+    data.totalAmount = totalPrice;
+    data.totalQuantity = totalQuantity;
+
+    setFormData(data);
+
+    if ((await validateForm(data)) == false) return;
+
     setLoading(true);
-
-    const res = await CreateInvoice({ ...formData, totalAmount: totalPrice });
-
-    if (res.success) {
+    const res = await CreateInvoice(data);
+    if (!res.success) {
       toast({
         title: "خطایی رخ داد",
         description: res.error,
@@ -155,22 +188,7 @@ export const NewInvoice = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-
-    setFormData({
-      id: 0,
-      title: "",
-      proforma: {},
-      customer: {},
-      totalAmount: 0,
-      paymentStatus: 0,
-      chequeDate: "",
-      chequeAmount: 0,
-      chequeSerial: 0,
-      paperMoneyAmount: 0,
-      paperMoneySerial: 0,
-      trustIssueDate: "",
-      invoiceGoods: [],
-    });
+    initForm();
     toast({
       title: "ثبت شد",
       description: `اطلاعات فاکتور شما ذخیره شد`,
@@ -182,117 +200,79 @@ export const NewInvoice = ({ isDesktop }) => {
   };
 
   const handleItemChange = (index, field, value) => {
-    const newItems = formData.invoiceGoods;
-    if (newItems.length === 0)
-      newItems.push({
-        uniqueId: Date.now().toString(),
-        no: 1,
-        id: 0,
-        good: {},
-        price: 0,
-        quantity: 0,
-        total: 0,
-      });
+    const newItems = [...invoiceItems];
+    newItems[index][field] =
+      field === "quantity" || field === "price" ? Number(value) : value;
 
-    if (newItems.length > 0)
-      newItems[index][field] =
-        field === "quantity" || field === "goodPrice" ? Number(value) : value;
-
-    if (field === "good" && Number(value) > 0) {
-      const selected = allGoods.find((p) => p.id === Number(value));
-
-      if (selected) {
-        newItems[index].price = selected.goodPrice;
-        newItems[index].good = selected;
-        newItems[index].total = selected.goodPrice * newItems[index].quantity;
-      }
-    }
-
-    if (field === "quantity" || field === "goodPrice") {
+    if (field === "quantity" || field === "price") {
       const qty = field === "quantity" ? value : newItems[index].quantity;
-      const prc = field === "price" ? value : newItems[index].price;
+      const prc = field === "price" ? value : newItems[index].goodPrice;
       newItems[index].total = qty * prc;
     }
-    console.log("afterNewItems", newItems);
-    setFormData({ ...formData, invoiceGoods: newItems });
+
+    setInvoiceItems(newItems);
+    recalculateTotal();
   };
 
   const recalculateTotal = () => {
-    const items = formData.invoiceGoods;
-    const total = items.reduce((sum, i) => sum + i.total, 0);
-    const count = items.reduce((sum, i) => sum + i.quantity, 0);
-
+    const total = invoiceItems?.reduce(
+      (sum, i) => sum + i.quantity * i.price,
+      0
+    );
+    const count = invoiceItems?.reduce((sum, i) => sum + i.quantity, 0);
     setTotalPrice(total);
     setTotalQuantity(count);
   };
 
-  const handleAddNewItem = () => {
-    const items = [...formData.invoiceGoods];
+  const handleAddNewItem = (good) => {
+    const items = [...invoiceItems];
     const newItem = {
-      uniqueId: Date.now().toString(),
-      no: items?.length > 0 ? items[items.length - 1]?.no + 1 : 1,
-      id: 0,
-      good: {},
-      price: 0,
-      quantity: 0,
-      total: 0,
+      quantity: 1,
+      total: good?.goodPrice,
+      price: good?.goodPrice,
+      good: good,
+      description: "",
     };
     items.push(newItem);
-
-    setFormData({ ...formData, invoiceGoods: items });
+    setInvoiceItems([...items]);
+    setSelectedItem(items?.length);
+    recalculateTotal();
   };
 
-  const handleChangeCustomerData = (id) => {
-    const newCustomer = customers.find((c) => c.id == id);
-    if (newCustomer) setFormData({ ...formData, customer: newCustomer });
+  const handleSearchCustomers = async (query) => {
+    const response = await ShowAllCustomers(1, 10, query);
+    return response.data.items;
   };
 
-  const handleChangeProformaData = (id) => {
-    if (id === 0 || id === "") {
-      setInvoiceGoodsStatus(true);
-      setFormData({ ...formData, invoiceGoods: [] });
-      return;
-    }
-    const newProforma = proformas.find((p) => p.id == id);
+  const handleSearchProforma = async (query) => {
+    const response = await ShowUserAllProformas(1, 10, query);
+    return response?.data?.items;
+  };
 
-    if (newProforma) setFormData({ ...formData, proforma: newProforma });
-    else {
-      setInvoiceGoodsStatus(true);
-      return;
-    }
+  const handleSearchGoods = async (query) => {
+    const response = await ShowAllGoods(1, 10, query);
+    return response.data.items;
+  };
 
-    const items = newProforma.proformaGoods;
-    if (items?.length === 0) {
-      setInvoiceGoodsStatus(true);
-      toast({
-        title: "توجه",
-        description: `برای این پیش فاکتور کالایی ثبت نشده است`,
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-
-      return;
-    }
-    setInvoiceGoodsStatus(false);
-    setFormData({ ...formData, invoiceGoods: items, proforma: newProforma });
+  const handleChangeProformaData = (proforma) => {
+    const newItems = [...proforma.proformaGoods];
+    setInvoiceItems([...newItems]);
   };
 
   const handleRemoveItem = (item) => {
-    const items = [...formData.invoiceGoods];
-    const updated = items.filter((i) => i.uniqueId !== item.uniqueId);
-
-    for (let i = 0; i < updated.length; i++) {
-      updated[i].no = i + 1;
-    }
-    setFormData({ ...formData, invoiceGoods: updated });
+    const items = invoiceItems.filter((i) => i?.good?.id != item?.good?.id);
+    setInvoiceItems([...items]);
+    setSelectedItem(null);
+    recalculateTotal();
   };
 
-  const handleDeleteAllItems = () => {
-    setFormData({ ...formData, invoiceGoods: [] });
+  const handleAddNewUser = () => {
+    onOpen();
   };
 
   const handleChangeFormData = (e) => {
+    console.log(e);
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -304,7 +284,7 @@ export const NewInvoice = ({ isDesktop }) => {
       <Card
         overflowY="auto"
         minH="100%"
-        h={isDesktop ? "100%" : "110vh"}
+        h={isDesktop ? "100%" : "108vh"}
         m={1}
         filter={loading ? "blur(10px)" : ""}
       >
@@ -319,14 +299,14 @@ export const NewInvoice = ({ isDesktop }) => {
             ثبت فاکتور جدید
           </CardHeader>
         )}
-        <CardBody>
+        <CardBody borderTopWidth={2}>
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
             <Flex direction={{ base: "column", md: "row" }} gap={5}>
               <Box flex={1} p={1} borderRadius="md">
                 <Stack spacing={5} direction="column">
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} width="135px">
                         عنوان
                       </FormLabel>
                       <Input
@@ -339,61 +319,103 @@ export const NewInvoice = ({ isDesktop }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} width="230px">
                         نام مشتری
                       </FormLabel>
-                      <Select
-                        disabled={customerLoading}
-                        dir="ltr"
-                        name="customer"
-                        placeholder="یک نفر را انتخاب کنید"
-                        value={formData.customer.id}
-                        onChange={(e) =>
-                          handleChangeCustomerData(e.target.value)
+                      <Input
+                        placeholder="لطفا یک مشتری انتخاب کنید"
+                        maxW="560px"
+                        onClick={() => setShowSearchCustomer(true)}
+                        value={
+                          formData.customer !== null
+                            ? formData?.customer?.customerGender +
+                              " " +
+                              formData?.customer?.customerFName +
+                              " " +
+                              formData?.customer?.customerLName
+                            : ""
                         }
-                      >
-                        {customers.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.customerFName + " " + p.customerLName}
-                          </option>
-                        ))}
-                      </Select>
-                      {customerLoading && (
-                        <Spinner color="red.500" size={"sm"} />
+                        name="customer"
+                        readOnly
+                      />
+                      {formData?.customer && (
+                        <IconButton
+                          size={isDesktop ? "md" : "sm"}
+                          icon={<CircleX />}
+                          colorScheme="red"
+                          title="انصراف"
+                          variant="ghost"
+                          onClick={() =>
+                            setFormData({ ...formData, customer: null })
+                          }
+                        />
                       )}
+                      <IconButton
+                        size={isDesktop ? "md" : "sm"}
+                        icon={<UserSearch />}
+                        colorScheme="orange"
+                        onClick={() => setShowSearchCustomer(true)}
+                        title="جستجوی مشتری "
+                      />
+                      <IconButton
+                        size={isDesktop ? "md" : "sm"}
+                        colorScheme="green"
+                        icon={<UserRoundPlus />}
+                        onClick={handleAddNewUser}
+                        title="ثبت مشتری جدید"
+                      />
                     </HStack>
                   </FormControl>
 
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
-                        شماره پیش‌ فاکتور
+                      <FormLabel hidden={!isDesktop} width="170px">
+                        پیش‌ فاکتور
                       </FormLabel>
-                      <Select
-                        disabled={proformaLoading}
-                        dir="ltr"
+                      <Input
+                        placeholder="لطفا یک پیش فاکتور انتخاب کنید"
+                        maxW="560px"
+                        onClick={() => setShowSearchProforma(true)}
+                        value={
+                          formData?.proforma
+                            ? formData?.proforma?.title +
+                              " - " +
+                              formData?.proforma?.id
+                            : ""
+                        }
                         name="proforma"
-                        placeholder="یک پیش‌فاکتور انتخاب کنید"
-                        value={formData.proforma.id}
-                        onChange={(e) => {
-                          handleChangeProformaData(e.target.value);
-                        }}
-                      >
-                        {proformas.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.id + " - " + p.title}
-                          </option>
-                        ))}
-                      </Select>
-                      {proformaLoading && (
-                        <Spinner color="red.500" size={"sm"} />
+                        readOnly
+                      />
+                      {formData?.proforma && (
+                        <IconButton
+                          size={isDesktop ? "md" : "sm"}
+                          icon={<CircleX />}
+                          colorScheme="red"
+                          title="انصراف"
+                          variant="ghost"
+                          onClick={() => {
+                            setFormData({
+                              ...formData,
+                              proforma: null,
+                              invoiceGoods: null,
+                            });
+                            setInvoiceItems([]);
+                          }}
+                        />
                       )}
+                      <IconButton
+                        size={isDesktop ? "md" : "sm"}
+                        icon={<ScanSearch />}
+                        colorScheme="orange"
+                        onClick={() => setShowSearchProforma(true)}
+                        title="جستجوی پیش فاکتور "
+                      />
                     </HStack>
                   </FormControl>
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} width="130px">
                         نوع پرداخت
                       </FormLabel>
                       <Select
@@ -453,262 +475,188 @@ export const NewInvoice = ({ isDesktop }) => {
                 </SimpleGrid>
               </Box>
             </Flex>
-            <Divider />
-            <Box p={1} borderRadius="md">
-              <TableContainer dir="rtl">
-                <Table
-                  variant="simple"
-                  borderColor="blackAlpha.200"
-                  borderWidth={1}
-                  bor
-                  derRadius="md"
-                  _disabled={!invoiceGoodsStatus}
+
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel width="170px">انتخاب کالا</FormLabel>
+              </HStack>
+            </FormControl>
+
+            <Flex
+              direction={isDesktop ? "" : "column"}
+              flexWrap={isDesktop ? "wrap" : ""}
+              minH="100px"
+              rowGap={3}
+              p={2}
+              dir="ltr"
+              w="full"
+              columnGap={3}
+              borderStyle="dashed"
+              borderRadius="md"
+              borderWidth={1}
+            >
+              {invoiceItems.map((item, index) => (
+                <Box
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  p={3}
+                  w="250px"
+                  boxShadow="md"
+                  position="relative"
+                  key={index + "-depotGood"}
+                  mx={isDesktop ? "" : "auto"}
                 >
-                  <Thead h="50px" bg="#666c85" textFillColor="white">
-                    <Tr>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        width="100px"
-                      >
-                        ردیف
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        width="400px"
-                      >
-                        نام کالا
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        width="100px"
-                      >
-                        تعداد
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        width="200px"
-                      >
-                        واحد
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        width="300px"
-                      >
-                        قیمت واحد
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="Vaziri"
-                        width="300px"
-                      >
-                        قیمت کل
-                      </Th>
-                      <Th
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="Vaziri"
-                        width="300px"
-                      >
-                        توضیحات
-                      </Th>
-                      <Th bg="white">
-                        <IconButton
-                          isDisabled={!invoiceGoodsStatus}
-                          icon={<Plus />}
-                          onClick={handleAddNewItem}
-                          colorScheme="green"
-                        />
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {formData.invoiceGoods.map((item, index) => (
-                      <Tr key={item.no}>
-                        <Td>
-                          <Input
-                            readOnly
-                            isDisabled={!invoiceGoodsStatus}
-                            value={item.no}
-                            onChange={(e) =>
-                              handleItemChange(index, "no", e.target.value)
-                            }
-                            fontSize="md"
-                            fontFamily="IranSans"
-                            placeholder="ردیف"
-                          />
-                        </Td>
-                        <Td>
-                          <HStack>
-                            <Select
-                              disabled={goodLoading || !invoiceGoodsStatus}
-                              name="id"
-                              key={item.good}
-                              defaultValue={0}
-                              dir="ltr"
-                              placeholder="انتخاب کنید"
-                              value={item.good.id}
-                              onChange={(e) =>
-                                handleItemChange(index, "good", e.target.value)
-                              }
-                            >
-                              {allGoods.map((i) => (
-                                <option key={i.id} value={i.id}>
-                                  {i.goodName}
-                                </option>
-                              ))}
-                            </Select>
-                            {goodLoading && (
-                              <Spinner size={"sm"} color="red.500" />
-                            )}
-                          </HStack>
-                        </Td>
-                        <Td>
-                          <NumberInput
-                            fontSize="md"
-                            fontFamily="IranSans"
-                            isDisabled={!invoiceGoodsStatus}
-                            defaultValue={1}
-                            key={"quantity" + item.id}
-                            dir="ltr"
-                            min={1}
-                            name="quantity"
-                            value={item.quantity}
-                            onChange={(value) =>
-                              handleItemChange(index, "quantity", value)
-                            }
-                            placeholder="تعداد"
-                          >
-                            <NumberInputField />
-                            <NumberInputStepper>
-                              <NumberIncrementStepper />
-                              <NumberDecrementStepper />
-                            </NumberInputStepper>
-                          </NumberInput>
-                        </Td>
-                        <Td>
-                          <Input
-                            disabled
-                            placeholder="واحد"
-                            name="unitName"
-                            value={item?.good?.goodUnit?.unitName}
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            textAlign="left"
-                            fontSize="md"
-                            fontFamily="IranSans"
-                            isDisabled={!invoiceGoodsStatus}
-                            type="number"
-                            name="goodPrice"
-                            value={item.price}
-                            placeholder="قیمت واحد"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "goodPrice",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            textAlign="left"
-                            fontSize="md"
-                            fontFamily="IranSans"
-                            readOnly
-                            type="number"
-                            name="goodPrice"
-                            value={Number(item.total).toLocaleString()}
-                            placeholder="قیمت"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "goodPrice",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <Input
-                            isDisabled={!invoiceGoodsStatus}
-                            name="description"
-                            value={item.description}
-                            key={"description" + item.id}
-                            placeholder="توضیحات"
-                            onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "description",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          <IconButton
-                            isDisabled={!invoiceGoodsStatus}
-                            icon={<Minus />}
-                            key={item.no}
-                            onClick={() => handleRemoveItem(item)}
-                            colorScheme="red"
-                          />
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                  <Tfoot>
-                    <Th width="100px"></Th>
-                    <Th width="200px"></Th>
-                    <Th width="200px">
-                      <Text
-                        textAlign="center"
-                        fontSize="md"
-                        fontFamily="IranSans"
-                      >
-                        تعداد کل: {Number(totalQuantity).toLocaleString()}
-                      </Text>
-                    </Th>
-                    <Th width="200px"></Th>
-                    <Th width="300px"></Th>
-                    <Th width="300px">
-                      <Text
-                        textAlign="center"
-                        fontSize="md"
-                        fontFamily="IranSans"
-                      >
-                        جمع کل: {Number(totalPrice).toLocaleString()}
-                      </Text>
-                    </Th>
-                    <Th width="300px"></Th>
-                    <Th>
-                      {formData.invoiceGoods.length > 0 && (
-                        <IconButton
-                          isDisabled={!invoiceGoodsStatus}
-                          bg="maroon"
-                          color="white"
-                          icon={<Trash2 />}
-                          onClick={handleDeleteAllItems}
-                        />
-                      )}
-                    </Th>
-                  </Tfoot>
-                </Table>
-              </TableContainer>
-            </Box>
+                  <Flex justify="space-between" align="center">
+                    <IconButton
+                      colorScheme="red"
+                      variant="ghost"
+                      size="xs"
+                      icon={<CircleX />}
+                      onClick={() => {
+                        handleRemoveItem(item);
+                      }}
+                    />
+
+                    <Text
+                      title={item?.good?.goodName}
+                      mx={1}
+                      dir="rtl"
+                      fontFamily="IranSans"
+                      fontWeight="bold"
+                      fontSize="md"
+                    >
+                      {item?.good?.goodName
+                        ? item?.good?.goodName?.length <= 25
+                          ? item?.good?.goodName
+                          : item?.good?.goodName.substring(0, 22) + "..."
+                        : "نا مشخص"}
+                    </Text>
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      تعداد
+                    </Text>
+                    <NumberInput
+                      variant="flushed"
+                      size="xs"
+                      textAlign="center"
+                      fontFamily="IranSans"
+                      defaultValue={1}
+                      dir="ltr"
+                      min={1}
+                      name="quantity"
+                      value={item?.quantity}
+                      onChange={(value) =>
+                        handleItemChange(index, "quantity", value)
+                      }
+                      placeholder="تعداد"
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                    <Text
+                      dir="rtl"
+                      fontFamily="iransans"
+                      fontSize="xs"
+                      my="auto"
+                    >
+                      {item?.good?.goodUnit?.unitName}
+                    </Text>
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      قیمت
+                    </Text>
+                    <Input
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="price"
+                      value={item?.price}
+                      onChange={(e) =>
+                        handleItemChange(index, "price", e.target.value)
+                      }
+                    />
+                  </Flex>
+                  <Flex justify="space-between" columnGap={8} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      جمع
+                    </Text>
+                    <Input
+                      readOnly
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="total"
+                      value={Number(
+                        item?.quantity * item.price
+                      ).toLocaleString()}
+                      onChange={(e) =>
+                        handleItemChange(index, "total", e.target.value)
+                      }
+                    />
+                  </Flex>
+
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      توضیحات
+                    </Text>
+                    <Input
+                      variant="flushed"
+                      size="sm"
+                      name="description"
+                      value={item.description}
+                      onChange={(e) =>
+                        handleItemChange(index, "description", e.target.value)
+                      }
+                    />
+                  </Flex>
+                </Box>
+              ))}
+              <IconButton
+                ml={3}
+                icon={<PlusCircle size="lg" strokeWidth={1.2} />}
+                size="lg"
+                my="auto"
+                mx={isDesktop ? "" : "auto"}
+                colorScheme="green"
+                variant="ghost"
+                onClick={() => setShowSearchGood(true)}
+              />
+              <Flex
+                hidden={invoiceItems?.length == 0}
+                p={3}
+                justify="space-between"
+                columnGap={5}
+                dir="rtl"
+                mt="auto"
+                mx={isDesktop ? "" : "auto"}
+                borderWidth={0.5}
+                borderStyle="dashed"
+              >
+                <Text fontSize="md" textAlign="center" fontFamily="IranSans">
+                  جمع کل: {Number(totalPrice).toLocaleString()}
+                </Text>
+
+                <Text
+                  px={5}
+                  fontSize="md"
+                  textAlign="center"
+                  fontFamily="IranSans"
+                  borderRightWidth={0.5}
+                  borderColor="gray.300"
+                >
+                  تعداد کل: {totalQuantity}
+                </Text>
+              </Flex>
+            </Flex>
 
             <Input
               placeholder=" توضیحات فاکتور"
@@ -723,6 +671,39 @@ export const NewInvoice = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
+      <SearchCustomer
+        searchItems={handleSearchCustomers}
+        isOpen={showSearchCustomer}
+        onClose={() => setShowSearchCustomer(false)}
+        onSelect={(g) => {
+          handleChangeFormData({
+            target: { name: "customer", value: g },
+          });
+          setShowSearchCustomer(false);
+        }}
+      />
+      <MyModal modalHeader={"ثبت مشتری جدید"} onClose={onClose} isOpen={isOpen}>
+        <NewCustomer />
+      </MyModal>
+      <SearchGoods
+        searchItems={handleSearchGoods}
+        isOpen={showSearchGood}
+        onClose={() => setShowSearchGood(false)}
+        onSelect={(g) => {
+          handleAddNewItem(g);
+          setShowSearchGood(false);
+        }}
+      />
+      <SearchProforma
+        searchItems={handleSearchProforma}
+        isOpen={showSearchProforma}
+        onClose={() => setShowSearchProforma(false)}
+        onSelect={(g) => {
+          handleChangeFormData({ target: { name: "proforma", value: g } });
+          setShowSearchProforma(false);
+          handleChangeProformaData(g);
+        }}
+      />
       {loading && <MyLoading />}
     </Box>
   );

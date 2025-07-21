@@ -190,7 +190,6 @@ export const InvoiceRequests = ({ isDesktop }) => {
       <Flex
         direction="column"
         height="100vh"
-        ml="auto"
         filter={loading ? "blur(10px)" : ""}
       >
         <SearchBar
@@ -202,15 +201,11 @@ export const InvoiceRequests = ({ isDesktop }) => {
           loadData={loadInvoiceData}
           userInfo="جستجوی فاکتور"
         />
-        <Box flex="1" overflowY="auto" p={5} zIndex={0}>
-          <SimpleGrid
-            mr={1}
-            columns={{ base: 1, md: 2, lg: 3 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
-            spacing={3}
-          >
+        <Box flex="1" overflowY="auto" p={1}>
+          <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 3 }} spacing={3}>
             {invoices.map((row) => (
               <Card
-                maxW="350px"
+                maxW="370px"
                 _hover={{
                   cursor: "",
                   borderColor: "green.500",
@@ -220,7 +215,13 @@ export const InvoiceRequests = ({ isDesktop }) => {
               >
                 <CardHeader
                   borderTopRadius={5}
-                  bg={row?.isAccepted ? "green.200" : "orange.200"}
+                  bg={
+                    !row.isConverted
+                      ? row?.isAccepted
+                        ? "green.400"
+                        : "blue.200"
+                      : "gray.400"
+                  }
                   _hover={{ cursor: "pointer" }}
                   onClick={(e) => {
                     setInvoiceSelectedID(row.id);
@@ -229,22 +230,43 @@ export const InvoiceRequests = ({ isDesktop }) => {
                 >
                   <HStack>
                     <Text fontFamily="IranSans" fontSize="md">
-                      {" "}
-                      پیش فاکتور شماره :{row.id}
+                      شماره :{row.id}
                     </Text>
                     <Box mr="auto">
-                      {row.isSent ? (
-                        <SquareArrowUp color="green" />
-                      ) : (
-                        <Tooltip label="منتظر ارسال">
-                          <Icon
-                            as={CircleFadingArrowUp}
-                            _hover={{
-                              color: "green",
-                            }}
-                          />
-                        </Tooltip>
-                      )}
+                      <HStack>
+                        {row.isAccepted ? (
+                          <Tooltip label="تایید کاربر ارشد">
+                            <ShieldUser color="green" />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip label="منتظر تایید کاربر ارشد ">
+                            <UserLock
+                              color="yellow"
+                              _hover={{ color: "green" }}
+                            />
+                          </Tooltip>
+                        )}
+
+                        {row.approvedFile ? (
+                          <Tooltip label="تایید مشتری">
+                            <UserRoundCheck color="green" />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip label="منتظر تایید مشتری">
+                            <Handshake color="white" />
+                          </Tooltip>
+                        )}
+
+                        {row.isSent ? (
+                          <Tooltip label="لینک به مشتری ارسال شده است">
+                            <MailCheck color="green" />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip label="منتظر ارسال">
+                            <CircleFadingArrowUp color="orange" />
+                          </Tooltip>
+                        )}
+                      </HStack>
                     </Box>
                   </HStack>
                 </CardHeader>
