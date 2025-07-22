@@ -296,9 +296,9 @@ export const EditDepotEntry = ({
     tmpformData.totalQuantity = totalQuantity;
     tmpformData.totalAmount = totalAmount;
     tmpformData.depotGoods = [...tmpDepotGoods];
-    if (isForAccept) {
-      tmpformData.isAccepted = true;
-    } else tmpformData.isAccepted = null;
+    // if (isForAccept) {
+    //   tmpformData.isAccepted = true;
+    // } else tmpformData.isAccepted = null;
 
     setLoading(true);
     const response = await UpdateDepot(tmpformData.id, tmpformData);

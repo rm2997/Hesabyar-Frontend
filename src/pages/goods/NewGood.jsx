@@ -155,7 +155,11 @@ export const NewGood = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+      <Card
+        m={1}
+        minH={isDesktop ? "85vh" : "80vh"}
+        filter={loading ? "blur(10px)" : ""}
+      >
         {isDesktop && (
           <CardHeader
             bg="#68C15A"

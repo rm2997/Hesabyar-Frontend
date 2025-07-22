@@ -37,6 +37,7 @@ import { MyLoading } from "../MyLoading";
 import {
   RemoveDepot,
   SetDepotExitIsAccepted,
+  SetDepotIsAccepted,
   ShowAllDepots,
 } from "../../api/services/depotService";
 import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
@@ -87,9 +88,6 @@ export const DepotExitRequests = ({ isDesktop }) => {
     const tmpDepotExitsReq = res?.data?.items?.filter(
       (exitReq) => exitReq.isAccepted === null
     );
-    console.log("reza:", tmpDepotExitsReq);
-    console.log("total:", tmpDepotExitsReq.length);
-
     setDepotEntry(tmpDepotExitsReq);
     setTotalPages(Math.ceil(tmpDepotExitsReq.length / itemsPerPage));
     setLoading(false);
@@ -128,7 +126,7 @@ export const DepotExitRequests = ({ isDesktop }) => {
 
   const handleAcceptDepotExit = async (id) => {
     setLoading(true);
-    const res = await SetDepotExitIsAccepted(id);
+    const res = await SetDepotIsAccepted(id);
     if (!res.success) {
       toast({
         title: "خطایی رخ داد",
@@ -147,7 +145,10 @@ export const DepotExitRequests = ({ isDesktop }) => {
       duration: 3000,
       isClosable: true,
     });
-    updateDepotEntryInList(res?.data);
+
+    const depot = depotEntry?.find((d) => d.id == id);
+    depot.isAccepted = true;
+    updateDepotEntryInList(depot);
     setLoading(false);
   };
 

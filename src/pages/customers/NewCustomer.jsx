@@ -12,7 +12,6 @@ import {
   HStack,
   Select,
   SimpleGrid,
-  Spinner,
   Textarea,
   useToast,
 } from "@chakra-ui/react";
@@ -36,7 +35,6 @@ export const NewCustomer = ({ isDesktop }) => {
 
   const toast = useToast();
 
- 
   const validateForm = async () => {
     if (!formData) {
       toast({
@@ -48,7 +46,7 @@ export const NewCustomer = ({ isDesktop }) => {
       });
       return false;
     }
-    if (formData?.customerFName?.trim().length < 2 ) {
+    if (formData?.customerFName?.trim().length < 2) {
       toast({
         title: "توجه",
         description: "لطفا نام صحیح را وارد کنید",
@@ -58,7 +56,27 @@ export const NewCustomer = ({ isDesktop }) => {
       });
       return false;
     }
-    if (formData?.customerLName.trim()?.length < 2 ) {
+    if (!isNaN(Number(formData?.customerFName))) {
+      toast({
+        title: "توجه",
+        description: "درج عدد برای نام مجاز نمی باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (!isNaN(Number(formData?.customerLName))) {
+      toast({
+        title: "توجه",
+        description: "درج عدد برای نام خانوادگی مجاز نمی باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.customerLName.trim()?.length < 2) {
       toast({
         title: "توجه",
         description: "لطفا نام خانوادگی صحیح را وارد کنید",
@@ -69,7 +87,11 @@ export const NewCustomer = ({ isDesktop }) => {
       return false;
     }
 
-    if (formData?.customerNationalCode?.trim().length > 0 && (formData?.customerNationalCode.trim()?.length != 10 || isNaN(Number(formData?.customerNationalCode)))) {
+    if (
+      formData?.customerNationalCode?.trim().length > 0 &&
+      (formData?.customerNationalCode.trim()?.length != 10 ||
+        isNaN(Number(formData?.customerNationalCode)))
+    ) {
       toast({
         title: "توجه",
         description: "کد ملی صحیح نیست",
@@ -79,7 +101,10 @@ export const NewCustomer = ({ isDesktop }) => {
       });
       return false;
     }
-    if (formData?.customerMobile?.trim().length != 11 || isNaN(Number(formData?.customerMobile))) {
+    if (
+      formData?.customerMobile?.trim().length != 11 ||
+      isNaN(Number(formData?.customerMobile))
+    ) {
       toast({
         title: "توجه",
         description: "موبایل صحیح نیست",
@@ -89,7 +114,11 @@ export const NewCustomer = ({ isDesktop }) => {
       });
       return false;
     }
-    if (formData?.customerPhone?.trim().length > 0 && (formData?.customerPhone?.trim().length < 5 || isNaN(Number(formData?.customerPhone)))) {
+    if (
+      formData?.customerPhone?.trim().length > 0 &&
+      (formData?.customerPhone?.trim().length < 5 ||
+        isNaN(Number(formData?.customerPhone)))
+    ) {
       toast({
         title: "توجه",
         description: "شماره تلفن صحیح نیست",
@@ -99,7 +128,11 @@ export const NewCustomer = ({ isDesktop }) => {
       });
       return false;
     }
-    if (formData?.customerPostalCode?.trim().length > 0 && (formData?.customerPostalCode?.trim().length != 10 || isNaN(Number(formData?.customerPostalCode)))) {
+    if (
+      formData?.customerPostalCode?.trim().length > 0 &&
+      (formData?.customerPostalCode?.trim().length != 10 ||
+        isNaN(Number(formData?.customerPostalCode)))
+    ) {
       toast({
         title: "توجه",
         description: "کد پستی صحیح نیست",
@@ -113,11 +146,9 @@ export const NewCustomer = ({ isDesktop }) => {
     return true;
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (await validateForm() == false)
-      return;
+    if ((await validateForm()) == false) return;
     setLoading(true);
     console.log(formData);
     const response = await CreateCustomer(formData);
@@ -162,7 +193,7 @@ export const NewCustomer = ({ isDesktop }) => {
   return (
     <Box>
       <Card
-        h="105vh"
+        minH={isDesktop ? "85vh" : "80vh"}
         borderWidth={1}
         m={1}
         borderColor="gray.200"
@@ -298,7 +329,7 @@ export const NewCustomer = ({ isDesktop }) => {
                 </HStack>
               </FormControl>
             </SimpleGrid>
-            <FormControl >
+            <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="120px">
                   آدرس

@@ -73,29 +73,27 @@ export const InvoiceRequests = ({ isDesktop }) => {
 
   const loadInvoiceData = async (resetPage = false) => {
     setLoading(true);
-    await ShowUserAllInvoices(
+    const res = await ShowUserAllInvoices(
       resetPage ? 1 : currentInvoicePage,
       itemsPerPage,
       resetPage ? "" : invoiceSearch
-    )
-      .then((res) => {
-        if (!res?.data) return;
-        setTotalInvoicePages(Math.ceil(res?.data?.total / itemsPerPage));
-        const newInvoices = res.data.items.filter(
-          (i) =>
-            i.isAccepted == false && i.isSent == true && i.approvedFile !== null
-        );
-        setInvoices(newInvoices);
-      })
-      .catch((err) => {
-        toast({
-          title: "خطا در دریافت داده‌ها",
-          description: err.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+    );
+    if (!res.success) {
+      toast({
+        title: "خطا در دریافت داده‌ها",
+        description: res?.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
+      setLoading(false);
+      return;
+    }
+    setTotalInvoicePages(Math.ceil(res?.data?.total / itemsPerPage));
+    const newInvoices = res.data.items.filter(
+      (i) => i.isAccepted == false && i.isSent == true && i.approvedFile
+    );
+    setInvoices(newInvoices);
     setLoading(false);
   };
 
@@ -106,14 +104,23 @@ export const InvoiceRequests = ({ isDesktop }) => {
 
   const handleShowInvoicePicture = async (id) => {
     setLoading(true);
-    await ShowInvoiceApprovedFile(id)
-      .then((res) => {
-        if (!res.data) return;
-        const url = URL.createObjectURL(res.data);
-        setApprovedFile(url);
-        setShowModal(true);
-      })
-      .catch((err) => console.log(err.message));
+    const res = await ShowInvoiceApprovedFile(id);
+    if (!res?.success) {
+      if (res?.status !== 404)
+        toast({
+          title: "خطایی رخ داد",
+          description: res?.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      setLoading(false);
+      return;
+    }
+    const url = URL.createObjectURL(res.data);
+    setApprovedFile(url);
+    setShowModal(true);
+
     setLoading(false);
   };
 
@@ -131,27 +138,28 @@ export const InvoiceRequests = ({ isDesktop }) => {
   const handleDeleteInvoice = async (id) => {
     setInvoiceSelectedID(id);
     setLoading(true);
-    await RemoveInvoice(id)
-      .then(() => {
-        const newInvoices = invoices.filter((p) => p.id != id);
-        setInvoices(newInvoices);
-        toast({
-          title: "توجه",
-          description: `اطلاعات فاکتور شما حذف شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .catch((err) =>
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        })
-      );
+    const res = await RemoveInvoice(id);
+    if (!res?.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res?.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    const newInvoices = invoices.filter((p) => p.id != id);
+    setInvoices(newInvoices);
+    toast({
+      title: "توجه",
+      description: `اطلاعات فاکتور شما حذف شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+
     setLoading(false);
   };
 
@@ -202,10 +210,9 @@ export const InvoiceRequests = ({ isDesktop }) => {
           userInfo="جستجوی فاکتور"
         />
         <Box flex="1" overflowY="auto" p={1}>
-          <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 3 }} spacing={3}>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }}>
             {invoices.map((row) => (
               <Card
-                maxW="370px"
                 _hover={{
                   cursor: "",
                   borderColor: "green.500",

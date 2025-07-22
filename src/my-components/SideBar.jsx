@@ -129,7 +129,7 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
               icon: <LucideLayers />,
             },
             {
-              id: "proformaStat",
+              id: "allProformas",
               name: "همه پیش فاکتورها",
               type: "text",
               icon: <LucideLayers />,
@@ -157,30 +157,15 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
               icon: <Newspaper />,
             },
             {
-              id: "invoiceStat",
-              name: "لیست فاکتورها",
+              id: "allInvoices",
+              name: "همه  فاکتورها",
               type: "text",
               icon: <Layers />,
             },
           ]}
           onMenuItemClick={onMenuItemClick}
         />
-        <SidebarItem
-          id={3}
-          title="درخواست ها"
-          justIcon={sidebarWidth === 300 ? false : true}
-          color="yellow.400"
-          icon={<ShieldUser />}
-          children={[
-            {
-              id: "acceptRequest",
-              name: "درخواست های تایید",
-              type: "text",
-              icon: <ShieldCheck />,
-            },
-          ]}
-          onMenuItemClick={onMenuItemClick}
-        />
+
         {/* <SidebarItem
           id={4}
           title="فروش"
@@ -233,6 +218,22 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
               name: "سوابق ثبت خروجی ",
               type: "text",
               icon: <GalleryHorizontalEnd />,
+            },
+          ]}
+          onMenuItemClick={onMenuItemClick}
+        />
+        <SidebarItem
+          id={3}
+          title="درخواست ها"
+          justIcon={sidebarWidth === 300 ? false : true}
+          color="yellow.400"
+          icon={<ShieldUser />}
+          children={[
+            {
+              id: "acceptRequest",
+              name: "درخواست های تایید",
+              type: "text",
+              icon: <ShieldCheck />,
             },
           ]}
           onMenuItemClick={onMenuItemClick}

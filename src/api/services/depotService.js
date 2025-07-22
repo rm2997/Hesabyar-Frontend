@@ -108,7 +108,7 @@ export const ShowAllDepots = async (
   });
 };
 
-export const SetDepotExitIsAccepted = async (id) => {
+export const SetDepotIsAccepted = async (id) => {
   return apiRequest({
     method: "PATCH",
     url: endpoints.depot.setDepotIsAccepted(id),

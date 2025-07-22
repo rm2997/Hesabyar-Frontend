@@ -80,7 +80,7 @@ export const DepotEntryList = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-    console.log(res.data);
+
     setDepotEntry(res?.data.items);
     setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
     setLoading(false);

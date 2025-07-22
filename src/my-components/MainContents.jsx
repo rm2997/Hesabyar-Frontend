@@ -19,9 +19,7 @@ import { UnitsDataTable } from "./units/UnitsDataTable";
 import { NotificationSentDataTable } from "./notifications/NotificationSentDataTable";
 import { NotificationReceivedDataTable } from "./notifications/NotificationReceivedDataTable";
 import { UploadCustomers } from "./customers/UploadCustomers";
-import { RequestsDataTable } from "./requests/RequestsDataTable";
 import { Logout } from "./Logout";
-import { ChangePassword } from "./users/ChangePassword";
 import { ChangePasswordByUser } from "./users/ChangePasswordByUser";
 import { UserContext } from "../contexts/UserContext";
 import { MyModal } from "./MyModal";
@@ -36,10 +34,10 @@ import { DepotExitList } from "./depot/DepotExitList";
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
   { name: "myProformas", value: " پیش فاکتور های من" },
-  { name: "proformaStat", value: "پیش فاکتور ها" },
+  { name: "allProformas", value: "همه پیش فاکتور ها" },
   { name: "newInvoice", value: "فاکتور جدید" },
   { name: "myInvoices", value: "فاکتور های من" },
-  { name: "invoiceStat", value: "فاکتور ها" },
+  { name: "allInvoices", value: "همه  فاکتور ها" },
   { name: "newSale", value: "فروش جدید" },
   { name: "saleStat", value: "لیست فروش" },
   { name: "newDepotEntery", value: "ورود کالای جدید" },
@@ -89,15 +87,15 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         case "newProforma":
           return <NewProforma isDesktop={isDesktop} />;
         case "myProformas":
-          return <ProformaDataTable isDesktop={isDesktop} />;
-        case "proformaStat":
-          return <></>;
+          return <ProformaDataTable listAll={false} isDesktop={isDesktop} />;
+        case "allProformas":
+          return <ProformaDataTable listAll={true} isDesktop={isDesktop} />;
         case "newInvoice":
           return <NewInvoice isDesktop={isDesktop} />;
-        case "invoiceStat":
-          return <></>;
+        case "allInvoices":
+          return <InvoiceDataTable listAll={true} isDesktop={isDesktop} />;
         case "myInvoices":
-          return <InvoiceDataTable isDesktop={isDesktop} />;
+          return <InvoiceDataTable listAll={false} isDesktop={isDesktop} />;
         case "newDepotEntery":
           return <NewDepotEntry isDesktop={isDesktop} />;
         case "depotEntryList":

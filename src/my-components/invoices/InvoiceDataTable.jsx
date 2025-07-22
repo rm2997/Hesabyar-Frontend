@@ -39,6 +39,7 @@ import {
   GenerateNewToken,
   RemoveInvoice,
   SetInvoiceIsSent,
+  ShowAllInvoices,
   ShowUserAllInvoices,
 } from "../../api/services/invoiceService";
 import { useEffect, useState } from "react";
@@ -48,7 +49,7 @@ import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
 import { MyLoading } from "../MyLoading";
 
-export const InvoiceDataTable = ({ isDesktop }) => {
+export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const itemsPerPage = 10;
@@ -67,11 +68,18 @@ export const InvoiceDataTable = ({ isDesktop }) => {
 
   const loadData = async (resetPage = false) => {
     setLoading(true);
-    const res = await ShowUserAllInvoices(
-      resetPage ? 1 : currentPage,
-      itemsPerPage,
-      resetPage ? "" : search
-    );
+
+    const res = listAll
+      ? await ShowAllInvoices(
+          resetPage ? 1 : currentPage,
+          itemsPerPage,
+          resetPage ? "" : search
+        )
+      : await ShowUserAllInvoices(
+          resetPage ? 1 : currentPage,
+          itemsPerPage,
+          resetPage ? "" : search
+        );
     if (!res?.success) {
       toast({
         title: "خطا در دریافت داده‌ها",
@@ -96,6 +104,10 @@ export const InvoiceDataTable = ({ isDesktop }) => {
   useEffect(() => {
     loadData();
   }, [currentPage]);
+
+  useEffect(() => {
+    loadData();
+  }, [listAll]);
 
   dayjs.extend(jalali);
 
@@ -183,6 +195,7 @@ export const InvoiceDataTable = ({ isDesktop }) => {
       duration: 3000,
       isClosable: true,
     });
+    setLoading(false);
   };
 
   const handleDeleteInvoice = async (id) => {
@@ -214,41 +227,41 @@ export const InvoiceDataTable = ({ isDesktop }) => {
     // setModalContetnt(<DeleteInvoice id={id} onClose={AlertOnClose} />);
   };
 
-  const handleGenerateNewLink = (id) => {
+  const handleGenerateNewLink = async (id) => {
     setSelectedID(id);
     setLoading(true);
-    GenerateNewToken(id)
-      .then((res) => {
-        toast({
-          title: "توجه",
-          description: ` لینک جدید ساخته شد می توانید آن را دوباره به مشتری ارسال کنید`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        setInvoices((prev) =>
-          prev.map((p) =>
-            p.id == id
-              ? {
-                  ...p,
-                  customerLink: res.data,
-                  isSent: false,
-                  approvedFile: "",
-                }
-              : p
-          )
-        );
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(setLoading(false));
+    const res = await GenerateNewToken(id);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res?.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    toast({
+      title: "توجه",
+      description: ` لینک جدید ساخته شد می توانید آن را دوباره به مشتری ارسال کنید`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setInvoices((prev) =>
+      prev.map((p) =>
+        p.id == id
+          ? {
+              ...p,
+              customerLink: res.data,
+              isSent: false,
+              approvedFile: "",
+            }
+          : p
+      )
+    );
+    setLoading(false);
   };
 
   const handleEditInvoice = (id) => {

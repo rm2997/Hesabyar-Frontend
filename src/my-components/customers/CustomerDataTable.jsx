@@ -142,8 +142,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
       <Flex
         filter={loading ? "blur(10px)" : ""}
         direction="column"
-        height="100vh"
-        minH="100%"
+        minH={isDesktop ? "85vh" : "80vh"}
       >
         <SearchBar
           search={search}

@@ -143,8 +143,6 @@ export const NewInvoice = ({ isDesktop }) => {
     const goodACheck = data.invoiceGoods.every((good) => {
       let retval = true;
       if (!good.total || good.total == 0) {
-        console.log(good);
-
         toast({
           title: "توجه",
           description: `قیمت کل ${good?.good?.goodName} را ثبت کنید`,
@@ -271,8 +269,6 @@ export const NewInvoice = ({ isDesktop }) => {
   };
 
   const handleChangeFormData = (e) => {
-    console.log(e);
-
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,

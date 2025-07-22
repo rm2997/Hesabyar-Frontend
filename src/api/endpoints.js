@@ -25,8 +25,10 @@ const endpoints = {
     checkPassword: (id) => `/users/checkPassword/${id}`,
   },
   proforma: {
-    listAll: (page, limit, search) =>
+    listMy: (page, limit, search) =>
       `/proforma/user/my?page=${page}&limit=${limit}&search=${search}`,
+    listAll: (page, limit, search) =>
+      `/proforma?page=${page}&limit=${limit}&search=${search}`,
     getApprovedFile: (id) => `/proforma/file/${id}`,
     convert: (id) => `/proforma/convert/${id}`,
     listByToken: (token) => `/proforma/token/${token}`,
@@ -42,6 +44,8 @@ const endpoints = {
   },
   invoice: {
     listAll: (page, limit, search) =>
+      `/invoice?page=${page}&limit=${limit}&search=${search}`,
+    listMy: (page, limit, search) =>
       `/invoice/user/my?page=${page}&limit=${limit}&search=${search}`,
     update: (id) => `/invoice/${id}`,
     listOne: (id) => `/invoice/${id}`,

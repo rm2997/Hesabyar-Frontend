@@ -43,6 +43,7 @@ import {
   SendUpdateProformaSms,
   SetProformaIsSent,
   ShowUserAllProformas,
+  ShowUserMyProformas,
 } from "../../api/services/proformaService";
 import { useEffect, useState } from "react";
 import { CreateInvoice } from "../../api/services/invoiceService";
@@ -52,7 +53,7 @@ import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
 import { MyLoading } from "../MyLoading";
 
-export const ProformaDataTable = ({ isDesktop }) => {
+export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const itemsPerPage = 10;
@@ -72,11 +73,18 @@ export const ProformaDataTable = ({ isDesktop }) => {
 
   const loadData = async (resetPage = false) => {
     setLoading(true);
-    const res = await ShowUserAllProformas(
-      resetPage ? 1 : currentPage,
-      itemsPerPage,
-      resetPage ? "" : search
-    );
+
+    const res = listAll
+      ? await ShowUserAllProformas(
+          resetPage ? 1 : currentPage,
+          itemsPerPage,
+          resetPage ? "" : search
+        )
+      : await ShowUserMyProformas(
+          resetPage ? 1 : currentPage,
+          itemsPerPage,
+          resetPage ? "" : search
+        );
     if (!res.success) {
       toast({
         title: "خطایی رخ داد",
@@ -104,6 +112,10 @@ export const ProformaDataTable = ({ isDesktop }) => {
   useEffect(() => {
     loadData();
   }, [currentPage]);
+
+  useEffect(() => {
+    loadData();
+  }, [listAll]);
 
   dayjs.extend(jalali);
 

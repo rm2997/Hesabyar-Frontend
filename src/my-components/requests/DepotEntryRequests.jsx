@@ -32,7 +32,11 @@ import { MyAlert } from "../MyAlert";
 import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
 import { MyLoading } from "../MyLoading";
-import { RemoveDepot, ShowAllDepots } from "../../api/services/depotService";
+import {
+  RemoveDepot,
+  SetDepotIsAccepted,
+  ShowAllDepots,
+} from "../../api/services/depotService";
 import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -86,7 +90,62 @@ export const DepotEntryRequest = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleAcceptDepotEntry = async (id) => {};
+  const handleAcceptDepotEntry = async (id) => {
+    setLoading(true);
+    const depot = depotEntry?.find((d) => d.id == id);
+    const checkDepot = depot?.depotGoods?.every((element) => {
+      let retval = true;
+      if (element.price == 0) {
+        toast({
+          title: "هشدار",
+          description: "برای کالاهای این سند مبلغ  درج نشده است",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        retval = false;
+      }
+      if (element.quantity == 0) {
+        toast({
+          title: "هشدار",
+          description: "برای کالاهای این سند  تعداد درج نشده است",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        retval = false;
+      }
+      return retval;
+    });
+
+    if (!checkDepot) {
+      setLoading(false);
+      return;
+    }
+
+    const res = await SetDepotIsAccepted(id);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res?.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    toast({
+      title: "توجه",
+      description: "تایید شد",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    depot.isAccepted = true;
+    updateDepotEntryInList(depot);
+    setLoading(false);
+  };
 
   const handleResetSearch = () => {
     setSearch("");
@@ -243,7 +302,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
                       align={"stretch"}
                       mr="auto"
                     >
-                      {/* <Link
+                      <Link
                         _hover={{ color: "#ffd54f" }}
                         color="orange.300"
                         onClick={(e) => {
@@ -259,7 +318,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
                         <Tooltip label="تایید">
                           <Icon w={6} h={6} as={ShieldCheck} />
                         </Tooltip>
-                      </Link> */}
+                      </Link>
                       <Link
                         _hover={{
                           color: "orange",

@@ -689,7 +689,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                     input={
                       <input
                         style={{ borderColor: "gray", borderWidth: "1px" }}
-                        placeholder="تاریخ ورود را انتخاب کنید..."
+                        placeholder="تاریخ خروج را انتخاب کنید..."
                       />
                     }
                     id="chequeDate"

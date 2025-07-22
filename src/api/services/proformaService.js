@@ -53,6 +53,17 @@ export const ShowUserAllProformas = async (
   });
 };
 
+export const ShowUserMyProformas = async (
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
+  return apiRequest({
+    method: "GET",
+    url: endpoints.proforma.listMy(page, limit, search),
+  });
+};
+
 export const ShowProformasByID = async (id) => {
   return apiRequest({
     method: "GET",
