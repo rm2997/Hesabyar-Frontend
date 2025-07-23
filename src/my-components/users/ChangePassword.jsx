@@ -128,7 +128,7 @@ export const ChangePassword = ({ isDesktop, user }) => {
                   کاربر
                 </FormLabel>
                 <Select
-                  disabled={user?.role != "admin"}
+                  disabled={!user?.role == "admin"}
                   dir="ltr"
                   placeholder="یک کاربر انتخاب کنید"
                   maxW="397px"

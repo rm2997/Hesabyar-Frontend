@@ -53,7 +53,6 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
   useEffect(() => {
     const loadData = async () => {
       const res = await GetUserByUserid(user.sub);
-
       if (res.success)
         setUserName(res.data.userfname + " " + res.data.userlname);
       else setUserName("نا مشخص");
