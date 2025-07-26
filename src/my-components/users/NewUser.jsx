@@ -58,8 +58,88 @@ export const NewUser = ({ isDesktop }) => {
     loadUsersData();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validateForm = async () => {
+    if (!formData) {
+      toast({
+        title: "توجه",
+        description: "اطلاعات کاربر باید تکمیل گردد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    const usernameRegex = /^[a-zA-Z](?!.*[^\x00-\x7F])[a-zA-Z0-9._]{3,}$/;
+
+    const isValidUsername = (username) => {
+      return usernameRegex.test(username);
+    };
+    if (!isValidUsername(formData.username)) {
+      toast({
+        title: "توجه",
+        description:
+          "نام کاربری باید حداقل 4 کاراکتر ، با حروف انگلیسی شروع شده و هیچ کاراکتر غیر انگلیسی در آن مجاز نیست.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    if (formData?.userfname?.trim().length < 2) {
+      toast({
+        title: "توجه",
+        description: "لطفا نام صحیح را وارد کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (!isNaN(Number(formData?.userfname?.trim()))) {
+      toast({
+        title: "توجه",
+        description: "استفاده اعداد در نام کاربر مجاز نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.userlname.trim()?.length < 2) {
+      toast({
+        title: "توجه",
+        description: "لطفا نام خانوادگی صحیح را وارد کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (!isNaN(Number(formData?.userlname?.trim()))) {
+      toast({
+        title: "توجه",
+        description: "استفاده اعداد در نام خانوادگی کاربر مجاز نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    if (
+      formData?.usermobilenumber?.trim().length != 11 ||
+      isNaN(Number(formData?.usermobilenumber))
+    ) {
+      toast({
+        title: "توجه",
+        description: "موبایل صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
 
     if (formData.password !== formData.confirm) {
       toast({
@@ -69,8 +149,31 @@ export const NewUser = ({ isDesktop }) => {
         duration: 3000,
         isClosable: true,
       });
-      return;
+      return false;
     }
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>/?]).{6,}$/;
+
+    const isValidPassword = (password) => {
+      return passwordRegex.test(password);
+    };
+    if (!isValidPassword(formData?.password)) {
+      toast({
+        title: "خطایی رخ داد",
+        description: `کلمه عبور باید باید حداقل شش کاراکتر و شامل حروف کوچک و بزرگ و یک کاراکتر خاص باشد`,
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if ((await validateForm()) == false) return;
 
     setLoading(true);
     const res = await CreateUser(formData);
@@ -82,6 +185,8 @@ export const NewUser = ({ isDesktop }) => {
         duration: 3000,
         isClosable: true,
       });
+      setLoading(false);
+      return;
     }
     setFormData({
       role: "",

@@ -52,9 +52,10 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
   const [userName, setUserName] = useState("");
   useEffect(() => {
     const loadData = async () => {
-      const res = await GetUserByUserid(user.sub);
-      if (res.success)
-        setUserName(res.data.userfname + " " + res.data.userlname);
+      if (!user) return;
+      const res = await GetUserByUserid(user?.sub);
+      if (res?.success)
+        setUserName(res?.data?.userfname + " " + res?.data?.userlname);
       else setUserName("نا مشخص");
     };
     loadData();
@@ -127,12 +128,14 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
               type: "text",
               icon: <LucideLayers />,
             },
-            {
-              id: "allProformas",
-              name: "همه پیش فاکتورها",
-              type: "text",
-              icon: <LucideLayers />,
-            },
+            user?.role == "admin"
+              ? {
+                  id: "allProformas",
+                  name: "همه پیش فاکتورها",
+                  type: "text",
+                  icon: <LucideLayers />,
+                }
+              : "",
           ]}
           onMenuItemClick={onMenuItemClick}
         />
@@ -149,18 +152,21 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
               type: "text",
               icon: <Newspaper />,
             },
+
             {
               id: "myInvoices",
               name: "فاکتورهای من",
               type: "text",
               icon: <Newspaper />,
             },
-            {
-              id: "allInvoices",
-              name: "همه  فاکتورها",
-              type: "text",
-              icon: <Layers />,
-            },
+            user?.role == "admin"
+              ? {
+                  id: "allInvoices",
+                  name: "همه  فاکتورها",
+                  type: "text",
+                  icon: <Layers />,
+                }
+              : "",
           ]}
           onMenuItemClick={onMenuItemClick}
         />
@@ -187,56 +193,61 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
           ]}
           onMenuItemClick={onMenuItemClick}
         /> */}
-        <SidebarItem
-          id={5}
-          title="انبار"
-          color="orange.400"
-          justIcon={sidebarWidth === 300 ? false : true}
-          icon={<Warehouse />}
-          children={[
-            {
-              id: "newDepotEntery",
-              name: "ورود کالای جدید",
-              type: "text",
-              icon: <DecimalsArrowLeft />,
-            },
-            {
-              id: "depotEntryList",
-              name: "سوابق ثبت ورودی ",
-              type: "text",
-              icon: <SquareStack />,
-            },
-            {
-              id: "newDepotExit",
-              name: "خروج کالا",
-              type: "text",
-              icon: <Combine />,
-            },
-            {
-              id: "depotExitList",
-              name: "سوابق ثبت خروجی ",
-              type: "text",
-              icon: <GalleryHorizontalEnd />,
-            },
-          ]}
-          onMenuItemClick={onMenuItemClick}
-        />
-        <SidebarItem
-          id={3}
-          title="درخواست ها"
-          justIcon={sidebarWidth === 300 ? false : true}
-          color="yellow.400"
-          icon={<ShieldUser />}
-          children={[
-            {
-              id: "acceptRequest",
-              name: "درخواست های تایید",
-              type: "text",
-              icon: <ShieldCheck />,
-            },
-          ]}
-          onMenuItemClick={onMenuItemClick}
-        />
+
+        {user?.role == "admin" && (
+          <SidebarItem
+            id={5}
+            title="انبار"
+            color="orange.400"
+            justIcon={sidebarWidth === 300 ? false : true}
+            icon={<Warehouse />}
+            children={[
+              {
+                id: "newDepotEntery",
+                name: "ورود کالای جدید",
+                type: "text",
+                icon: <DecimalsArrowLeft />,
+              },
+              {
+                id: "depotEntryList",
+                name: "سوابق ثبت ورودی ",
+                type: "text",
+                icon: <SquareStack />,
+              },
+              {
+                id: "newDepotExit",
+                name: "خروج کالا",
+                type: "text",
+                icon: <Combine />,
+              },
+              {
+                id: "depotExitList",
+                name: "سوابق ثبت خروجی ",
+                type: "text",
+                icon: <GalleryHorizontalEnd />,
+              },
+            ]}
+            onMenuItemClick={onMenuItemClick}
+          />
+        )}
+        {user?.role == "admin" && (
+          <SidebarItem
+            id={3}
+            title="درخواست ها"
+            justIcon={sidebarWidth === 300 ? false : true}
+            color="yellow.400"
+            icon={<ShieldUser />}
+            children={[
+              {
+                id: "acceptRequest",
+                name: "درخواست های تایید",
+                type: "text",
+                icon: <ShieldCheck />,
+              },
+            ]}
+            onMenuItemClick={onMenuItemClick}
+          />
+        )}
         <SidebarItem
           id={6}
           title="مشتریان"
@@ -359,7 +370,7 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
         /> */}
       </Accordion>
       <Divider mt={5} />
-      <PieChart sidebarWidth={sidebarWidth} />
+      <PieChart sidebarWidth={sidebarWidth} User={user} />
     </Box>
   );
 };

@@ -6,14 +6,14 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { ShowUserAllProformas } from "../api/services/proformaService";
-import { ShowUserAllInvoices } from "../api/services/invoiceService";
 import {
-  ShowUserAllNotifications,
-  ShowUserRcvAllNotifications,
-} from "../api/services/notificationService";
+  ShowUserAllProformas,
+  ShowUserMyProformas,
+} from "../api/services/proformaService";
+import { ShowUserAllInvoices } from "../api/services/invoiceService";
+import { ShowUserRcvAllNotifications } from "../api/services/notificationService";
 
 // const data = [
 //   { name: "بیش فاکتورها", value: 400 },
@@ -24,25 +24,46 @@ import {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-export const PieChart = ({ sidebarWidth }) => {
+export const PieChart = ({ sidebarWidth, User }) => {
   const [pieData, setPieData] = useState([]);
   const [showPie, setShowPie] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       const data = [];
-      await ShowUserAllProformas().then((p) =>
-        data.push({ name: "پیش فاکتورها", value: p?.data?.total })
-      );
-      await ShowUserAllInvoices().then((i) =>
-        data.push({ name: "فاکتورها", value: i?.data?.total })
-      );
-      await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
-        data.push({ name: "پیام های دریافتی", value: n?.data?.total })
-      );
-      await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
-        data.push({ name: "پیام های ارسالی", value: n?.data?.total })
-      );
+      if (User?.role == "admin") {
+        await ShowUserAllProformas().then((p) =>
+          data.push({ name: "همه پیش فاکتورها", value: p?.data?.total })
+        );
+        await ShowUserMyProformas().then((p) =>
+          data.push({ name: "پیش فاکتورهای من", value: p?.data?.total })
+        );
+        await ShowUserAllInvoices().then((i) =>
+          data.push({ name: "فاکتورهای من", value: i?.data?.total })
+        );
+        await ShowUserAllInvoices().then((i) =>
+          data.push({ name: "همه فاکتورها", value: i?.data?.total })
+        );
+        await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
+          data.push({ name: "پیام های دریافتی", value: n?.data?.total })
+        );
+        await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
+          data.push({ name: "پیام های ارسالی", value: n?.data?.total })
+        );
+      } else {
+        await ShowUserMyProformas().then((p) =>
+          data.push({ name: "پیش فاکتورهای من", value: p?.data?.total })
+        );
+        await ShowUserAllInvoices().then((i) =>
+          data.push({ name: "فاکتورهای من", value: i?.data?.total })
+        );
+        await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
+          data.push({ name: "پیام های دریافتی", value: n?.data?.total })
+        );
+        await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
+          data.push({ name: "پیام های ارسالی", value: n?.data?.total })
+        );
+      }
       setPieData(data);
     };
     loadData();
@@ -64,7 +85,16 @@ export const PieChart = ({ sidebarWidth }) => {
         borderRadius="md"
         hidden={showPie}
       >
-        <Text mb={1}>وضعیت</Text>
+        <Text fontFamily="iransans" fontSize="md" mb={1}>
+          میزان فعالیت
+        </Text>
+        {!pieData.length == 0 && (
+          <Flex mx="auto" my="auto">
+            <Text fontFamily="iransans" fontSize="sm">
+              شما هیچ فعالیتی نداشتید.
+            </Text>
+          </Flex>
+        )}
         <ResponsiveContainer width="100%" height="70%">
           <RechartPieChart>
             <Pie

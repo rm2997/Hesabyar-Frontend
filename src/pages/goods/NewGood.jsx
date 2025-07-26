@@ -8,17 +8,20 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  IconButton,
   Select,
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { DollarSign, Info, Package2, SquareCheckBig } from "lucide-react";
+import { DollarSign, Info, Package2, Plus, SquareCheckBig } from "lucide-react";
 import { useState, useEffect } from "react";
 import { CreateGood } from "../../api/services/goodsService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../../my-components/MyLoading";
 import { ShowAllUnits } from "../../api/services/unitsService";
+import { MyModal } from "../../my-components/MyModal";
+import { NewUnit } from "../units/NewUnit";
 
 export const NewGood = ({ isDesktop }) => {
   const [units, setUnits] = new useState([]);
@@ -26,6 +29,7 @@ export const NewGood = ({ isDesktop }) => {
   const [formData, setFormData] = useState({});
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -212,6 +216,13 @@ export const NewGood = ({ isDesktop }) => {
                     </option>
                   ))}
                 </Select>
+                <IconButton
+                  size={isDesktop ? "md" : "sm"}
+                  colorScheme="green"
+                  icon={<Plus />}
+                  onClick={() => setShowModal(true)}
+                  title="ثبت واحد جدید"
+                />
               </HStack>
             </FormControl>
             <FormControl isRequired>
@@ -257,6 +268,14 @@ export const NewGood = ({ isDesktop }) => {
         </CardBody>
         <CardFooter></CardFooter>
       </Card>
+      <MyModal
+        size="md"
+        modalHeader={"ثبت واحد جدید"}
+        onClose={() => setShowModal(false)}
+        isOpen={showModal}
+      >
+        <NewUnit />
+      </MyModal>
       {loading && <MyLoading />}
     </Box>
   );

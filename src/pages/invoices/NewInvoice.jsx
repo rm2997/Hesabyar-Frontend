@@ -113,7 +113,7 @@ export const NewInvoice = ({ isDesktop }) => {
       });
       return false;
     }
-    if (!data.invoiceGoods || data.invoiceGoods?.length < 1) {
+    if (!data?.invoiceGoods || data?.invoiceGoods?.length < 1) {
       toast({
         title: "توجه",
         description: "باید حداقل یک کالا انتخاب کنید",
@@ -124,9 +124,9 @@ export const NewInvoice = ({ isDesktop }) => {
       return false;
     }
 
-    const goodQCheck = data.invoiceGoods.every((good) => {
+    const goodQCheck = data?.invoiceGoods?.every((good) => {
       let retVal = true;
-      if (!good.quantity || good.quantity == 0) {
+      if (!good?.quantity || good?.quantity == 0) {
         toast({
           title: "توجه",
           description: ` تعداد  ${good?.good?.goodName} را ثبت کنید`,
@@ -140,9 +140,9 @@ export const NewInvoice = ({ isDesktop }) => {
     });
     if (!goodQCheck) return false;
 
-    const goodACheck = data.invoiceGoods.every((good) => {
+    const goodACheck = data?.invoiceGoods?.every((good) => {
       let retval = true;
-      if (!good.total || good.total == 0) {
+      if (!good?.total || good?.total == 0) {
         toast({
           title: "توجه",
           description: `قیمت کل ${good?.good?.goodName} را ثبت کنید`,
@@ -239,7 +239,7 @@ export const NewInvoice = ({ isDesktop }) => {
 
   const handleSearchCustomers = async (query) => {
     const response = await ShowAllCustomers(1, 10, query);
-    return response.data.items;
+    return response?.data?.items;
   };
 
   const handleSearchProforma = async (query) => {
@@ -253,12 +253,12 @@ export const NewInvoice = ({ isDesktop }) => {
   };
 
   const handleChangeProformaData = (proforma) => {
-    const newItems = [...proforma.proformaGoods];
+    const newItems = [...proforma?.proformaGoods];
     setInvoiceItems([...newItems]);
   };
 
   const handleRemoveItem = (item) => {
-    const items = invoiceItems.filter((i) => i?.good?.id != item?.good?.id);
+    const items = invoiceItems?.filter((i) => i?.good?.id != item?.good?.id);
     setInvoiceItems([...items]);
     setSelectedItem(null);
     recalculateTotal();
@@ -490,7 +490,7 @@ export const NewInvoice = ({ isDesktop }) => {
               borderRadius="md"
               borderWidth={1}
             >
-              {invoiceItems.map((item, index) => (
+              {invoiceItems?.map((item, index) => (
                 <Box
                   borderWidth="1px"
                   borderRadius="lg"
@@ -523,7 +523,7 @@ export const NewInvoice = ({ isDesktop }) => {
                       {item?.good?.goodName
                         ? item?.good?.goodName?.length <= 25
                           ? item?.good?.goodName
-                          : item?.good?.goodName.substring(0, 22) + "..."
+                          : item?.good?.goodName?.substring(0, 22) + "..."
                         : "نا مشخص"}
                     </Text>
                   </Flex>
@@ -591,7 +591,7 @@ export const NewInvoice = ({ isDesktop }) => {
                       fontFamily="IranSans"
                       name="total"
                       value={Number(
-                        item?.quantity * item.price
+                        item?.quantity * item?.price
                       ).toLocaleString()}
                       onChange={(e) =>
                         handleItemChange(index, "total", e.target.value)
@@ -656,7 +656,7 @@ export const NewInvoice = ({ isDesktop }) => {
             <Input
               placeholder=" توضیحات فاکتور"
               name="description"
-              value={formData.description}
+              value={formData?.description}
               onChange={handleChangeFormData}
             />
             <Button colorScheme="blue" type="submit" isLoading={loading}>

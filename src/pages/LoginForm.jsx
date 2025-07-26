@@ -349,6 +349,16 @@ export const LoginForm = () => {
               خانه
             </Link>
           </Flex>
+          <Flex mt="auto">
+            <Text
+              mx="auto"
+              fontFamily="iransans"
+              fontSize="2xs"
+              color="whiteAlpha.600"
+            >
+              نسخه 1.0.0.0 *** 04 مرداد 1404
+            </Text>
+          </Flex>
         </Flex>
       </Box>
     </Box>

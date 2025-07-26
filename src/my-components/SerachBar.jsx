@@ -40,7 +40,7 @@ export const SearchBar = ({
       borderColor="gray.600"
       borderWidth={showSearch ? 0 : 0.5}
       borderRadius={7}
-      boxShadow={!isDesktop ? "sm" : "lg"}
+      _hover={{ boxShadow: !isDesktop ? "sm" : "lg" }}
     >
       <Flex direction={showSearch ? "row" : "row-reverse"} overflow="hidden">
         <IconButton

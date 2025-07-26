@@ -6,9 +6,14 @@ import { UserContext } from "../contexts/UserContext";
 export const Logout = () => {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
+
   useEffect(() => {
-    clearTokens();
-    setUser(null);
-    navigate("/home");
+    const logoutUser = async () => {
+      clearTokens();
+      navigate("/home");
+      setUser(null);
+    };
+
+    logoutUser();
   }, []);
 };

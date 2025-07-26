@@ -38,7 +38,6 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
   const { user } = useContext(UserContext);
 
   useEffect(() => {
-    console.log(user);
     const loadData = async () => {
       setLoading(true);
 
@@ -74,8 +73,52 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
     loadData();
   }, []);
 
+  const validateForm = async () => {
+    if (!formData) {
+      toast({
+        title: "توجه",
+        description: "اطلاعات فرم باید تکمیل گردد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    if (formData.new !== formData.confirm) {
+      toast({
+        title: "خطایی رخ داد",
+        description: `کلمه عبور باید با تکرار آن برابر باشد`,
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>/?]).{6,}$/;
+
+    const isValidPassword = (password) => {
+      return passwordRegex.test(password);
+    };
+    if (!isValidPassword(formData?.new)) {
+      toast({
+        title: "خطایی رخ داد",
+        description: `کلمه عبور باید باید حداقل شش کاراکتر و شامل حروف کوچک و بزرگ و یک کاراکتر خاص باشد`,
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if ((await validateForm()) == false) return;
+
     setLoading(true);
     const checkPass = await CheckUserPassword(userData.id, formData.current);
     if (!checkPass.success) {

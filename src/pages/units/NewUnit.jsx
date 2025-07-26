@@ -8,10 +8,11 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  IconButton,
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { Info, Ruler, SquareCheckBig } from "lucide-react";
+import { Info, Ruler, SquareCheckBig, UserRoundPlus } from "lucide-react";
 import { useState } from "react";
 import { CreateUnit } from "../../api/services/unitsService";
 import { MyInputBox } from "../../my-components/MyInputBox";
@@ -22,7 +23,7 @@ export const NewUnit = ({ isDesktop }) => {
 
   const toast = useToast();
 
- const validateForm = async () => {
+  const validateForm = async () => {
     if (!formData) {
       toast({
         title: "توجه",
@@ -33,7 +34,7 @@ export const NewUnit = ({ isDesktop }) => {
       });
       return false;
     }
-    if (formData?.unitName?.trim().length < 2 ) {
+    if (formData?.unitName?.trim().length < 2) {
       toast({
         title: "توجه",
         description: "لطفا نام صحیح را وارد کنید",
@@ -43,7 +44,10 @@ export const NewUnit = ({ isDesktop }) => {
       });
       return false;
     }
-     if (formData?.unitName?.trim().length >0 && !isNaN(Number(formData?.unitName)) ) {
+    if (
+      formData?.unitName?.trim().length > 0 &&
+      !isNaN(Number(formData?.unitName))
+    ) {
       toast({
         title: "توجه",
         description: "نام واحد باید از جنس حروف باشد",
@@ -54,14 +58,12 @@ export const NewUnit = ({ isDesktop }) => {
       return false;
     }
 
-
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (await validateForm()==false)
-      return;
+    if ((await validateForm()) == false) return;
     setLoading(true);
 
     const response = await CreateUnit(formData);
@@ -133,7 +135,7 @@ export const NewUnit = ({ isDesktop }) => {
                   title="نام واحد"
                   value={formData.unitName}
                   onChange={handleChangeFormData}
-                ></MyInputBox>
+                />
               </HStack>
             </FormControl>
             <FormControl>

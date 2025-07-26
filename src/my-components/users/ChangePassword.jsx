@@ -47,6 +47,7 @@ export const ChangePassword = ({ isDesktop, user }) => {
     };
     loadData();
   }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
