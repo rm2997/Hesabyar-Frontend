@@ -43,6 +43,17 @@ export const ShowUserAllInvoices = async (
   });
 };
 
+export const ShowUserAcceptedInvoices = async (
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
+  return apiRequest({
+    method: "GET",
+    url: endpoints.invoice.listMyAccepted(page, limit, search),
+  });
+};
+
 export const ShowInvoicesByID = async (id) => {
   return apiRequest({
     method: "GET",

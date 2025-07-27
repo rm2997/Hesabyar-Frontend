@@ -88,7 +88,7 @@ export const PieChart = ({ sidebarWidth, User }) => {
         <Text fontFamily="iransans" fontSize="md" mb={1}>
           میزان فعالیت
         </Text>
-        {!pieData.length == 0 && (
+        {pieData.length == 0 && (
           <Flex mx="auto" my="auto">
             <Text fontFamily="iransans" fontSize="sm">
               شما هیچ فعالیتی نداشتید.

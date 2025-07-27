@@ -94,7 +94,7 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
                 mt={1}
               >
                 <List spacing={0}>
-                  {results.map((item) => (
+                  {results?.map((item) => (
                     <ListItem
                       key={item?.id}
                       p={2}

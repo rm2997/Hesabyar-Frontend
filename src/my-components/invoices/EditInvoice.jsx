@@ -71,7 +71,10 @@ import { SearchGoods } from "../SearchGood";
 import { SearchCustomer } from "../SearchCustomer";
 import { MyModal } from "../MyModal";
 import { SearchProforma } from "../SearchProforma";
-import { ShowUserAllProformas } from "../../api/services/proformaService";
+import {
+  ShowMyAcceptedProformas,
+  ShowUserAllProformas,
+} from "../../api/services/proformaService";
 
 export const EditInvoice = ({
   isDesktop,
@@ -337,7 +340,7 @@ export const EditInvoice = ({
   };
 
   const handleSearchProforma = async (query) => {
-    const response = await ShowUserAllProformas(1, 10, query);
+    const response = await ShowMyAcceptedProformas(1, 10, query);
     return response?.data?.items;
   };
 

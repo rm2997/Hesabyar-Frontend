@@ -64,6 +64,17 @@ export const ShowUserMyProformas = async (
   });
 };
 
+export const ShowMyAcceptedProformas = async (
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
+  return apiRequest({
+    method: "GET",
+    url: endpoints.proforma.listMyAccepted(page, limit, search),
+  });
+};
+
 export const ShowProformasByID = async (id) => {
   return apiRequest({
     method: "GET",

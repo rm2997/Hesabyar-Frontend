@@ -80,7 +80,7 @@ export const SearchInvoices = ({ onSelect, isOpen, onClose, searchItems }) => {
             {loading && (
               <Spinner size="sm" position="absolute" top="12px" right="12px" />
             )}
-            {results.length > 0 && (
+            {results?.length > 0 && (
               <Box
                 position="absolute"
                 top="80%"

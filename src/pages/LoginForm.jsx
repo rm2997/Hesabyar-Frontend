@@ -126,7 +126,6 @@ export const LoginForm = () => {
     setIsFormDisabled(true);
     try {
       const res = await login(form);
-      console.log(res);
 
       if (!res.success) {
         setShowCaptcha(true);
@@ -356,7 +355,7 @@ export const LoginForm = () => {
               fontSize="2xs"
               color="whiteAlpha.600"
             >
-              نسخه 1.0.0.0 *** 04 مرداد 1404
+              نسخه 1.0.0.0 *** 05 مرداد 1404
             </Text>
           </Flex>
         </Flex>

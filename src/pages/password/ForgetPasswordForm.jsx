@@ -41,6 +41,7 @@ export const ForgotPasswordForm = () => {
     e.preventDefault();
     navigate("/login");
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);

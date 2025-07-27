@@ -36,6 +36,7 @@ import { CreateInvoice } from "../../api/services/invoiceService";
 import { useNavigate } from "react-router-dom";
 import { ShowAllCustomers } from "../../api/services/customerService";
 import {
+  ShowMyAcceptedProformas,
   ShowProformasByID,
   ShowUserAllProformas,
 } from "../../api/services/proformaService";
@@ -243,7 +244,7 @@ export const NewInvoice = ({ isDesktop }) => {
   };
 
   const handleSearchProforma = async (query) => {
-    const response = await ShowUserAllProformas(1, 10, query);
+    const response = await ShowMyAcceptedProformas(1, 10, query);
     return response?.data?.items;
   };
 

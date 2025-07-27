@@ -69,6 +69,7 @@ import { ShowAllCustomers } from "../../api/services/customerService";
 import { NewCustomer } from "../customers/NewCustomer";
 import {
   ShowInvoicesByID,
+  ShowUserAcceptedInvoices,
   ShowUserAllInvoices,
 } from "../../api/services/invoiceService";
 import { SearchInvoices } from "../../my-components/SearchInvoic";
@@ -399,7 +400,7 @@ export const NewDepotExit = ({ isDesktop }) => {
   };
 
   const handleSearchInvoices = async (query) => {
-    const response = await ShowUserAllInvoices(1, 10, query);
+    const response = await ShowUserAcceptedInvoices(1, 10, query);
     return response.data.items;
   };
 

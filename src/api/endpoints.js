@@ -27,6 +27,8 @@ const endpoints = {
   proforma: {
     listMy: (page, limit, search) =>
       `/proforma/user/my?page=${page}&limit=${limit}&search=${search}`,
+    listMyAccepted: (page, limit, search) =>
+      `/proforma/user/accepted?page=${page}&limit=${limit}&search=${search}`,
     listAll: (page, limit, search) =>
       `/proforma?page=${page}&limit=${limit}&search=${search}`,
     getApprovedFile: (id) => `/proforma/file/${id}`,
@@ -47,6 +49,8 @@ const endpoints = {
       `/invoice?page=${page}&limit=${limit}&search=${search}`,
     listMy: (page, limit, search) =>
       `/invoice/user/my?page=${page}&limit=${limit}&search=${search}`,
+    listMyAccepted: (page, limit, search) =>
+      `/invoice/user/accepted?page=${page}&limit=${limit}&search=${search}`,
     update: (id) => `/invoice/${id}`,
     listOne: (id) => `/invoice/${id}`,
     detail: (id) => `/invoice/${id}`,
