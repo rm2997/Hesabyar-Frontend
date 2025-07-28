@@ -21,12 +21,14 @@ import { saveTokens, loadTokens } from "../api/tokenUtils";
 import { UserContext } from "../contexts/UserContext";
 import { jwtDecode } from "jwt-decode";
 import { CircleUserRound, DoorOpen, LogIn } from "lucide-react";
-import { login } from "../api/services/authService";
+import { GetNewCaptcha, login } from "../api/services/authService";
+import endpoints from "../api/endpoints";
 
 export const LoginForm = () => {
   const isDesktop = useBreakpointValue({ base: false, md: true });
   const [showCaptcha, setShowCaptcha] = useState(false);
-  const [captcha, setCaptcha] = useState("");
+  //const [captcha, setCaptcha] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
   const [captchaImage, setCaptchaImage] = useState("");
   const [inputCaptha, setInputCaptha] = useState("");
   const { setUser } = useContext(UserContext);
@@ -35,6 +37,8 @@ export const LoginForm = () => {
     username: "",
     password: "",
     userLocation: "",
+    captchaToken: "",
+    captchaAnswer: "",
   });
 
   const [isFormDisabled, setIsFormDisabled] = useState(false);
@@ -57,44 +61,48 @@ export const LoginForm = () => {
     setInputCaptha(value);
   };
 
-  const createCaptchaImage = async () => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const rotations = [-15, -10, -5, 0, 5, 10, 15];
-    const colors = ["green", "red", "brown", "blue", "purple"];
-    const fonts = ["Arial", "Verdana", "Georgia", "monospace", "cursive"];
-    const rndText = Math.random().toString(36).substring(2, 7); // 5 حرف
-    canvas.width = 150;
-    canvas.height = 80;
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.textBaseline = "middle";
-    ctx.textAlign = "center";
+  // const createCaptchaImage = async (rndText) => {
+  //   const canvas = document.createElement("canvas");
+  //   const ctx = canvas.getContext("2d");
+  //   const rotations = [-15, -10, -5, 0, 5, 10, 15];
+  //   const colors = ["green", "red", "brown", "blue", "purple"];
+  //   const fonts = ["Arial", "Verdana", "Georgia", "monospace", "cursive"];
+  //   //const rndText = Math.random().toString(36).substring(2, 7);
+  //   canvas.width = 150;
+  //   canvas.height = 80;
+  //   ctx.fillStyle = "white";
+  //   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  //   ctx.textBaseline = "middle";
+  //   ctx.textAlign = "center";
 
-    for (let i = 0; i < rndText.length; i++) {
-      const char = rndText[i];
-      const rndX = 25 + i * 25;
-      const rndY = 40;
-      const rndFontSize = Math.floor(Math.random() * (40 - 20 + 1)) + 20;
-      const rndFont = fonts[Math.floor(Math.random() * fonts.length)];
-      const rndColor = colors[Math.floor(Math.random() * colors.length)];
-      const rndRotate = rotations[Math.floor(Math.random() * rotations.length)];
-      ctx.save(); // ذخیره حالت فعلی
-      ctx.translate(rndX, rndY); // انتقال مرکز چرخش
-      ctx.rotate((rndRotate * Math.PI) / 180); // چرخش به رادیان
-      ctx.font = `bold ${rndFontSize}px ${rndFont}`;
-      ctx.fillStyle = rndColor;
-      ctx.fillText(char, 0, 0);
-      ctx.restore(); // بازگشت به حالت اولیه
-    }
+  //   for (let i = 0; i < rndText.length; i++) {
+  //     const char = rndText[i];
+  //     const rndX = 25 + i * 25;
+  //     const rndY = 40;
+  //     const rndFontSize = Math.floor(Math.random() * (40 - 20 + 1)) + 20;
+  //     const rndFont = fonts[Math.floor(Math.random() * fonts.length)];
+  //     const rndColor = colors[Math.floor(Math.random() * colors.length)];
+  //     const rndRotate = rotations[Math.floor(Math.random() * rotations.length)];
+  //     ctx.save(); // ذخیره حالت فعلی
+  //     ctx.translate(rndX, rndY); // انتقال مرکز چرخش
+  //     ctx.rotate((rndRotate * Math.PI) / 180); // چرخش به رادیان
+  //     ctx.font = `bold ${rndFontSize}px ${rndFont}`;
+  //     ctx.fillStyle = rndColor;
+  //     ctx.fillText(char, 0, 0);
+  //     ctx.restore(); // بازگشت به حالت اولیه
+  //   }
 
-    const dataUrl = canvas.toDataURL("image/png");
-    setCaptcha(rndText);
-    setCaptchaImage(dataUrl);
-  };
+  //   const dataUrl = canvas.toDataURL("image/png");
+  //   setCaptcha(rndText);
+  //   setCaptchaImage(dataUrl);
+  // };
 
   const handleGeneratCaptcha = async () => {
-    await createCaptchaImage();
+    const { svg, token } = await getNewCaptchaFromServer();
+    setCaptchaToken(token);
+    setCaptchaImage(svg);
+    setInputCaptha("");
+    //await createCaptchaImage(svg);
   };
 
   const handleClick = (e) => {
@@ -110,22 +118,29 @@ export const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (showCaptcha && inputCaptha != captcha) {
-      toast({
-        title: "خطا",
-        description: "کد تصادفی صحیح نیست",
-        status: "error",
-        duration: 3000,
-        isClosable: false,
-      });
-      handleGeneratCaptcha();
-      setInputCaptha("");
-      setForm({ username: "", password: "", userLocation: "" });
-      return;
-    }
+    // if (showCaptcha && inputCaptha != captcha) {
+    //   toast({
+    //     title: "خطا",
+    //     description: "کد تصادفی صحیح نیست",
+    //     status: "error",
+    //     duration: 3000,
+    //     isClosable: false,
+    //   });
+    //   const { svg, token } = await getNewCaptchaFromServer();
+
+    //   handleGeneratCaptcha();
+    //   setInputCaptha("");
+    //   setForm({ username: "", password: "", userLocation: "" });
+    //   return;
+    // }
     setIsFormDisabled(true);
     try {
-      const res = await login(form);
+      const formData = {
+        ...form,
+        captchaToken: captchaToken,
+        captchaAnswer: inputCaptha,
+      };
+      const res = await login(formData);
 
       if (!res.success) {
         setShowCaptcha(true);
@@ -135,10 +150,7 @@ export const LoginForm = () => {
         setIsFormDisabled(false);
         toast({
           title: "خطا",
-          description:
-            res?.status == null
-              ? "سرور اصلی پاسخ نمی دهد یا شبکه قطع است"
-              : res?.error,
+          description: res.error,
           status: "error",
           duration: 5000,
           isClosable: false,
@@ -188,6 +200,20 @@ export const LoginForm = () => {
     setIsFormDisabled(false);
   };
 
+  const getNewCaptchaFromServer = async () => {
+    const rndTextRes = await GetNewCaptcha();
+    if (!rndTextRes.success) {
+      toast({
+        title: "خطا",
+        description: "مشکلی در دریافت کد تصادفی جدید پیش آمده است.",
+        status: "error",
+        duration: 3000,
+        isClosable: false,
+      });
+      return { success: false };
+    }
+    return rndTextRes?.data;
+  };
   return (
     <Box
       p="10px"
@@ -287,30 +313,32 @@ export const LoginForm = () => {
                     colorScheme="teal"
                     _placeholder={{ color: "whiteAlpha.700" }}
                     textColor="white"
-                    dir="ltr"
+                    dir={isDesktop ? "ltr" : "rtl"}
                     width="50%"
                     name="captcha"
                     type="text"
                     variant="flushed"
                     value={inputCaptha}
                     onChange={(e) => handleChangeCaptcha(e.target.value)}
-                    placeholder="کد تصویر مقابل را وارد کنید"
+                    placeholder={
+                      isDesktop ? "کد تصویر مقابل را وارد کنید" : "کد تصویر"
+                    }
                   />
                   <Box
-                    p="2px"
                     width="150px"
-                    borderRadius="lg"
-                    borderWidth="1px"
-                    borderColor="black"
+                    dangerouslySetInnerHTML={{ __html: captchaImage }}
                     onClick={() => handleGeneratCaptcha()}
+                    mx={1}
+                    borderWidth={1}
+                    borderColor="gray"
                   >
-                    <Image
+                    {/* <Image
                       objectFit="cover"
                       target="_blank"
                       rel="noopener noreferrer"
-                      src={captchaImage}
+                      src={endpoints.auth.newCaptcha}
                       onClick={() => handleGeneratCaptcha()}
-                    />
+                    /> */}
                   </Box>
                 </Flex>
               </FormControl>
@@ -355,7 +383,7 @@ export const LoginForm = () => {
               fontSize="2xs"
               color="whiteAlpha.600"
             >
-              نسخه 1.0.0.0 *** 05 مرداد 1404
+              نسخه 1.0.0.0 *** 06 مرداد 1404
             </Text>
           </Flex>
         </Flex>

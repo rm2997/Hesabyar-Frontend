@@ -21,6 +21,13 @@ export const secondLogin = async (data) => {
   });
 };
 
+export const GetNewCaptcha = async () => {
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.auth.newCaptcha,
+  });
+};
+
 // export const refreshTokens = async (oldRefreshToken) => {
 //   try {
 //     if (!oldRefreshToken) return;

@@ -7,6 +7,7 @@ const endpoints = {
     refresh: "/auth/refresh",
     resendValidationKey: "/auth/resendValidationKey",
     secondLogin: "/auth/secondLogin",
+    newCaptcha: "/auth/captcha",
   },
   user: {
     create: "/users",

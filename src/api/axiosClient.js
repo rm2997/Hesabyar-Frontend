@@ -73,11 +73,15 @@ export const apiRequest = async ({
 
       switch (statusCode) {
         case 401:
-          errorMessage =
-            "نشست شما منقضی شده است یا شما دسترسی به این قسمت را ندارید، لطفا مجددا لاگین کنید";
+          errorMessage = !error?.response?.data
+            ? "نشست شما منقضی شده است یا شما دسترسی به این قسمت را ندارید، لطفا مجددا لاگین کنید"
+            : error?.response?.data?.message;
           break;
         case 404:
-          errorMessage = ` اطلاعات مورد نظر موجود نیست - ${error.message}`;
+          errorMessage = !error?.response?.data
+            ? " اطلاعات مورد نظر موجود نیست "
+            : error?.response?.data?.message;
+
           break;
         default:
           errorMessage = serverErrorData?.message || `خطا با کد ${statusCode}`;
