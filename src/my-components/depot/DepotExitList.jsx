@@ -168,7 +168,7 @@ export const DepotExitList = ({ isDesktop }) => {
                   _hover={{ cursor: "", borderColor: "green.500" }}
                 >
                   <CardHeader
-                    bg={depotEntry?.isAccepted ? "green.400" : "blue.200"}
+                    bg={row?.isAccepted ? "green.400" : "blue.200"}
                     borderTopRadius={5}
                     _hover={{ cursor: "pointer", borderColor: "green.500" }}
                     onClick={(e) => {
@@ -187,7 +187,7 @@ export const DepotExitList = ({ isDesktop }) => {
                       </Text>
                       <Box mr="auto">
                         <HStack>
-                          {depotEntry?.isAccepted ? (
+                          {row?.isAccepted ? (
                             <Tooltip label="تایید کاربر ارشد">
                               <ShieldUser color="green" />
                             </Tooltip>

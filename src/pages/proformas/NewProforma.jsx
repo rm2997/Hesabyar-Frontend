@@ -246,6 +246,10 @@ export const NewProforma = ({ isDesktop }) => {
     items.push(newItem);
     setProformaItems([...items]);
     setSelectedItem(items?.length);
+    const total = items.reduce((sum, i) => sum + i.quantity * i.price, 0);
+    const count = items.reduce((sum, i) => sum + i.quantity, 0);
+    setTotalPrice(total);
+    setTotalQuantity(count);
   };
 
   const handleRemoveItem = (item) => {

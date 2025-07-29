@@ -81,7 +81,7 @@ export const DepotEntryList = ({ isDesktop }) => {
       return;
     }
 
-    setDepotEntry(res?.data.items);
+    setDepotEntry(res?.data?.items);
     setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
     setLoading(false);
   };
@@ -103,7 +103,7 @@ export const DepotEntryList = ({ isDesktop }) => {
   const updateDepotEntryInList = (updatedDepotEntry) => {
     console.log("updatedDepotEntry:", updatedDepotEntry);
     setDepotEntry((prev) =>
-      prev.map((g) => (g.id === updatedDepotEntry.id ? updatedDepotEntry : g))
+      prev.map((g) => (g.id == updatedDepotEntry.id ? updatedDepotEntry : g))
     );
   };
 
@@ -168,7 +168,7 @@ export const DepotEntryList = ({ isDesktop }) => {
                   _hover={{ cursor: "", borderColor: "green.500" }}
                 >
                   <CardHeader
-                    bg={depotEntry?.isAccepted ? "green.400" : "blue.200"}
+                    bg={row?.isAccepted ? "green.400" : "blue.200"}
                     borderTopRadius={5}
                     _hover={{ cursor: "pointer", borderColor: "green.500" }}
                     onClick={(e) => {
@@ -187,7 +187,7 @@ export const DepotEntryList = ({ isDesktop }) => {
                       </Text>
                       <Box mr="auto">
                         <HStack>
-                          {depotEntry?.isAccepted ? (
+                          {row?.isAccepted ? (
                             <Tooltip label="تایید کاربر ارشد">
                               <ShieldUser color="green" />
                             </Tooltip>
@@ -208,7 +208,7 @@ export const DepotEntryList = ({ isDesktop }) => {
                       <HStack>
                         <Text> تاریخ ثبت :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {dayjs(row.createdAt)
+                          {dayjs(row?.createdAt)
                             .locale("fa")
                             .format("YYYY/MM/DD")}
                         </Text>
@@ -245,7 +245,7 @@ export const DepotEntryList = ({ isDesktop }) => {
                         }}
                         color="blue.600"
                         onClick={(e) => {
-                          setSelectedID(row.id);
+                          setSelectedID(row?.id);
                           setDialogGears({
                             title: "ویرایش",
                             text: "",

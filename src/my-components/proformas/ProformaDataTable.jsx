@@ -239,7 +239,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
   };
 
   const handleConvertToInvoice = async (id) => {
-    const proforma = proformas.find((p) => (p.id = id));
+    const proforma = proformas.find((p) => p.id == id);
     if (!proforma) return;
 
     const newInvoice = {
@@ -251,7 +251,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       customerLink: "",
       acceptedBy: null,
       customer: { ...proforma.customer },
-      invoiceGoods: proforma.proformaGoods,
+      invoiceGoods: [...proforma.proformaGoods],
       proforma: { ...proforma },
     };
 
@@ -560,7 +560,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                           <Link
                             _hover={{ color: "#ffd54f" }}
                             color="purple.600"
-                            onClick={() => handleConvertToInvoice(row.id)}
+                            onClick={() => handleConvertToInvoice(row?.id)}
                           >
                             <Tooltip label="تبدیل به فاکتور">
                               <Icon w={6} h={6} as={Replace} />

@@ -128,6 +128,7 @@ export const NewDepotExit = ({ isDesktop }) => {
       issuedAt: "",
       driver: "",
       driverCarNumber: "",
+      driverMobile: "",
       driverNatCode: "",
     });
     setDepotGoods([]);
@@ -185,12 +186,22 @@ export const NewDepotExit = ({ isDesktop }) => {
       });
       return false;
     }
+    if (!formData?.driverMobile || formData?.driverMobile?.length != 11) {
+      toast({
+        title: "توجه",
+        description: "شماره موبایل راننده صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
     const serialCheck = depotGoods.every((good) => {
       let retVal = true;
       if (!good.serial) {
         toast({
           title: "توجه",
-          description: `شماره سریال  ${good?.good.goodName} را ثبت کنید`,
+          description: `شماره سریال  \"${good?.good.goodName}\" را ثبت کنید`,
           status: "warning",
           duration: 3000,
           isClosable: true,
@@ -323,7 +334,6 @@ export const NewDepotExit = ({ isDesktop }) => {
     data.forEach(async (element, index) => {
       const form = new FormData();
       form.append("image", depotGoods[index].imageFile);
-      console.log(element.id, form);
       const imageRes = await UpdateDepotImageFile(element.id, form);
       if (!imageRes.success)
         toast({
@@ -761,6 +771,21 @@ export const NewDepotExit = ({ isDesktop }) => {
                   name="driver"
                   title="مشخصات راننده"
                   value={formData.driver}
+                  onChange={handleChangeFormData}
+                ></MyInputBox>
+              </HStack>
+            </FormControl>
+
+            <FormControl>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  موبایل راننده
+                </FormLabel>
+                <MyInputBox
+                  icon={Info}
+                  name="driverMobile"
+                  title="موبایل راننده"
+                  value={formData?.driverMobile}
                   onChange={handleChangeFormData}
                 ></MyInputBox>
               </HStack>
