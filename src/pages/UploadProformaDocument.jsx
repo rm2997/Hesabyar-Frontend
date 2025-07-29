@@ -1,8 +1,4 @@
 import {
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
   HStack,
   Table,
   Tbody,
@@ -12,9 +8,7 @@ import {
   Tr,
   useToast,
   Text,
-  Tfoot,
   TableContainer,
-  useDisclosure,
   VStack,
   Divider,
   Checkbox,
@@ -28,12 +22,10 @@ import {
   Heading,
   SimpleGrid,
   Stack,
-  AbsoluteCenter,
-  Spinner,
   useBreakpointValue,
   Flex,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { MyLoading } from "../my-components/MyLoading";
 import {
@@ -43,8 +35,12 @@ import {
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { CheckCircle2, CircleX, Download } from "lucide-react";
+import { ProformaPdf } from "./ProformaPdf";
+import { useReactToPrint } from "react-to-print";
 
 export const UploadProformaDocument = ({}) => {
+  const contentRef = useRef();
+  const reactToPrintFn = useReactToPrint({ contentRef: contentRef });
   const toast = useToast();
   const [itemsCount, setItemsCount] = useState(0);
   const [searchParams] = useSearchParams();
@@ -228,7 +224,7 @@ export const UploadProformaDocument = ({}) => {
               ساعت
             </Text>
             <Text
-              px={3}
+              px={4}
               borderRadius="md"
               borderWidth={1}
               borderColor="black"
@@ -743,6 +739,7 @@ export const UploadProformaDocument = ({}) => {
                   isDisabled={!formData.isAcceptedByCustomer}
                   colorScheme="green"
                   leftIcon={<Download />}
+                  onClick={reactToPrintFn}
                 >
                   دانلود پیش فاکتور
                 </Button>
@@ -752,6 +749,9 @@ export const UploadProformaDocument = ({}) => {
         </Box>
       </Box>
       {loading && <MyLoading />}
+      <Box hidden={true}>
+        <ProformaPdf ref={contentRef} />
+      </Box>
     </Box>
   );
 };

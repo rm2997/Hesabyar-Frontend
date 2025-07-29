@@ -12,41 +12,28 @@ import {
   VStack,
   Divider,
   Checkbox,
-  Input,
-  Button,
-  InputGroup,
-  InputLeftElement,
-  IconButton,
-  Image,
   Box,
   Heading,
   SimpleGrid,
   Stack,
   useBreakpointValue,
   Flex,
+  GridItem,
 } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { MyLoading } from "../my-components/MyLoading";
 
-import { useReactToPrint } from "react-to-print";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import { CheckCircle2, CircleX, Download } from "lucide-react";
-import {
-  ShowInvoiceByToken,
-  UpdateInvoiceCustomerFile,
-} from "../api/services/invoiceService";
-import { InvoicePdf } from "./InvoicePdf";
 
-export const UploadInvoiceDocument = ({}) => {
-  const contentRef = useRef();
-  const reactToPrintFn = useReactToPrint({ contentRef: contentRef });
+import { ShowInvoiceByToken } from "../api/services/invoiceService";
+
+export const InvoicePdf = ({ ref }) => {
   const toast = useToast();
   const [itemsCount, setItemsCount] = useState(0);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
-  const [imagePreview, setImagePreview] = useState("");
+
   const isDesktop = useBreakpointValue({ base: false, md: true });
   dayjs.extend(jalali);
   const [formData, setFormData] = useState({
@@ -126,82 +113,14 @@ export const UploadInvoiceDocument = ({}) => {
     loadInvoiceData();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const form = new FormData();
-    form.append("image", formData.imageFile);
-
-    const res = await UpdateInvoiceCustomerFile(token, form);
-    if (!res) {
-      toast({
-        title: "خطا",
-        description: res.error,
-        status: "error",
-        duration: 3000,
-        isClosable: false,
-      });
-      setLoading(false);
-      setTimeout(() => navigate("/NotFound"), 1000);
-      return;
-    }
-    toast({
-      title: "توجه",
-      description: "تاییدیه شما ارسال گردید",
-      status: "success",
-      duration: 3000,
-      isClosable: false,
-    });
-    setTimeout(() => navigate("/home"), 1000);
-    setLoading(false);
-  };
-
-  // const handleDownloadPdf = async () => {
-  //   const element = printRef.current;
-  //   if (!element) return;
-
-  //   const canvas = await html2canvas(element, {
-  //     scale: 2,
-  //     useCORS: true, // اگر تصاویر داری
-  //   });
-
-  //   const imgData = canvas.toDataURL("image/png");
-  //   const pdf = new jsPDF({
-  //     orientation: "portrait",
-  //     unit: "px",
-  //     format: [canvas.width, canvas.height],
-  //   });
-
-  //   pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
-  //   pdf.save("download.pdf");
-  // };
-
   return (
-    <Box borderTopRadius="md" p={2} borderColor="gray.100" borderWidth="1px">
-      <Flex mx={2} dir="rtl">
-        <Flex direction="column">
-          <Text fontFamily="Aseman" fontSize="2xl">
-            شرکت تجارت آسانبر علیا
-          </Text>
-          <Text
-            mx="auto"
-            fontSize="xl"
-            fontFamily="EnglishHeader"
-            color="gray.300"
-          >
-            OLIAEI GROUP
-          </Text>
-        </Flex>
-        <Box mr="auto" mt={2} boxSize="150px" maxH={5}>
-          <Image
-            borderRadius="10%"
-            src="/assets/images/logos/logo1.png"
-            objectFit="cover"
-            target="_blank"
-            rel="noopener noreferrer"
-          />
-        </Box>
-      </Flex>
+    <Box
+      ref={ref}
+      borderTopRadius="md"
+      p={2}
+      borderColor="gray.100"
+      borderWidth="1px"
+    >
       <Box
         minH={isDesktop ? "85vh" : "90vh"}
         overflowY="auto"
@@ -278,12 +197,9 @@ export const UploadInvoiceDocument = ({}) => {
               <Text fontFamily="iransans" mx="auto" bg="gray.200" width="full">
                 مشخصات فروشنده
               </Text>
-              <SimpleGrid p={1} columns={{ base: 1, md: 2, lg: 4 }} spacing={2}>
+              <SimpleGrid p={1} columns={{ base: 3 }} columnGap={5} rowGap={2}>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     نام شخصی حقیقی/حقوقی :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
@@ -291,10 +207,7 @@ export const UploadInvoiceDocument = ({}) => {
                   </Text>
                 </HStack>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     شماره اقتصادی :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
@@ -302,10 +215,7 @@ export const UploadInvoiceDocument = ({}) => {
                   </Text>
                 </HStack>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     شماره ثبت/ملی :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
@@ -313,29 +223,7 @@ export const UploadInvoiceDocument = ({}) => {
                   </Text>
                 </HStack>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                    ml={1}
-                    minW="50px"
-                  >
-                    نشانی :
-                  </Text>
-                  <Text
-                    textAlign="justify"
-                    name="customer"
-                    fontFamily="iransans"
-                    fontSize="xs"
-                  >
-                    تهران - بزرگراه 65 متری فتح ، ابتدای لاین کندرو، جنب پایگاه
-                    یکم شکاری، ساختمان شهر آسانسور یاران، طبقه 4، واحد446
-                  </Text>
-                </HStack>
-                <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     کدپستی :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
@@ -343,10 +231,7 @@ export const UploadInvoiceDocument = ({}) => {
                   </Text>
                 </HStack>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     شماره تلفن :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
@@ -354,21 +239,37 @@ export const UploadInvoiceDocument = ({}) => {
                   </Text>
                 </HStack>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     شماره همراه :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
                     09125793556
                   </Text>
                 </HStack>
+                <GridItem colSpan={3}>
+                  <HStack>
+                    <Text
+                      fontFamily="iransans"
+                      fontSize={"md"}
+                      ml={1}
+                      minW="50px"
+                    >
+                      نشانی :
+                    </Text>
+                    <Text
+                      textAlign="justify"
+                      name="customer"
+                      fontFamily="iransans"
+                      fontSize="xs"
+                    >
+                      تهران - بزرگراه 65 متری فتح ، ابتدای لاین کندرو، جنب
+                      پایگاه یکم شکاری، ساختمان شهر آسانسور یاران، طبقه 4،
+                      واحد446
+                    </Text>
+                  </HStack>
+                </GridItem>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     ایمیل :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
@@ -381,30 +282,23 @@ export const UploadInvoiceDocument = ({}) => {
               <Text fontFamily="iransans" mx="auto" bg="gray.200" width="full">
                 مشخصات خریدار
               </Text>
-              <SimpleGrid p={1} columns={{ base: 1, md: 2, lg: 4 }} spacing={2}>
+              <SimpleGrid p={1} columns={{ base: 3 }} columnGap={5} rowGap={2}>
+                <GridItem colSpan={2}>
+                  <HStack>
+                    <Text fontFamily="iransans" fontSize={"md"}>
+                      نام شخصی حقیقی/حقوقی :
+                    </Text>
+                    <Text fontFamily="iransans" fontSize={"xs"}>
+                      {formData?.customer?.customerGender +
+                        " " +
+                        formData?.customer?.customerFName +
+                        " " +
+                        formData?.customer?.customerLName}
+                    </Text>
+                  </HStack>
+                </GridItem>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
-                    نام شخصی حقیقی/حقوقی :
-                  </Text>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
-                    {formData?.customer?.customerGender +
-                      " " +
-                      formData?.customer?.customerFName +
-                      " " +
-                      formData?.customer?.customerLName}
-                  </Text>
-                </HStack>
-                <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     شماره اقتصادی :
                   </Text>
                   <Text
@@ -414,10 +308,7 @@ export const UploadInvoiceDocument = ({}) => {
                   ></Text>
                 </HStack>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     شماره ثبت/ملی :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
@@ -425,26 +316,7 @@ export const UploadInvoiceDocument = ({}) => {
                   </Text>
                 </HStack>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
-                    نشانی :
-                  </Text>
-                  <Text
-                    textAlign="justify"
-                    name="customer"
-                    fontFamily="iransans"
-                    fontSize="xs"
-                  >
-                    {formData?.customer?.customerAddress}
-                  </Text>
-                </HStack>
-                <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     کدپستی :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
@@ -452,10 +324,7 @@ export const UploadInvoiceDocument = ({}) => {
                   </Text>
                 </HStack>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     شماره تلفن :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
@@ -463,16 +332,28 @@ export const UploadInvoiceDocument = ({}) => {
                   </Text>
                 </HStack>
                 <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
+                  <Text fontFamily="iransans" fontSize={"md"}>
                     شماره همراه :
                   </Text>
                   <Text name="customer" fontFamily="iransans" fontSize="xs">
                     {formData?.customer?.customerMobile}
                   </Text>
                 </HStack>
+                <GridItem colSpan={3}>
+                  <HStack>
+                    <Text fontFamily="iransans" fontSize={"md"}>
+                      نشانی :
+                    </Text>
+                    <Text
+                      textAlign="justify"
+                      name="customer"
+                      fontFamily="iransans"
+                      fontSize="xs"
+                    >
+                      {formData?.customer?.customerAddress}
+                    </Text>
+                  </HStack>
+                </GridItem>
               </SimpleGrid>
             </Flex>
           </Flex>
@@ -487,7 +368,6 @@ export const UploadInvoiceDocument = ({}) => {
               mb={10}
               rowGap={5}
               as="form"
-              onSubmit={handleSubmit}
             >
               <Stack w="full" align="stretch">
                 <TableContainer
@@ -498,17 +378,13 @@ export const UploadInvoiceDocument = ({}) => {
                   borderRadius="md"
                   borderWidth={1}
                 >
-                  <Table
-                    columnGap={5}
-                    size={isDesktop ? "md" : "xs"}
-                    variant="striped"
-                  >
+                  <Table columnGap={5} size={"md"} variant="striped">
                     <Thead h="50px" borderBottomWidth={2}>
                       <Tr columnGap={5} bg="gray.300" textFillColor="black">
                         <Th
                           px={2}
                           fontFamily="IranSans"
-                          fontSize={isDesktop ? "md" : "xs"}
+                          fontSize={"md"}
                           textAlign="center"
                         >
                           ردیف
@@ -516,7 +392,7 @@ export const UploadInvoiceDocument = ({}) => {
                         <Th
                           px={2}
                           fontFamily="IranSans"
-                          fontSize={isDesktop ? "md" : "xs"}
+                          fontSize={"md"}
                           textAlign="center"
                         >
                           نام کالا
@@ -524,7 +400,7 @@ export const UploadInvoiceDocument = ({}) => {
                         <Th
                           px={2}
                           fontFamily="IranSans"
-                          fontSize={isDesktop ? "md" : "xs"}
+                          fontSize={"md"}
                           textAlign="center"
                         >
                           تعداد
@@ -532,7 +408,7 @@ export const UploadInvoiceDocument = ({}) => {
                         <Th
                           px={2}
                           fontFamily="IranSans"
-                          fontSize={isDesktop ? "md" : "xs"}
+                          fontSize={"md"}
                           textAlign="center"
                         >
                           واحد
@@ -540,7 +416,7 @@ export const UploadInvoiceDocument = ({}) => {
                         <Th
                           px={2}
                           fontFamily="IranSans"
-                          fontSize={isDesktop ? "md" : "xs"}
+                          fontSize={"md"}
                           textAlign="center"
                         >
                           فی
@@ -548,7 +424,7 @@ export const UploadInvoiceDocument = ({}) => {
                         <Th
                           px={2}
                           fontFamily="IranSans"
-                          fontSize={isDesktop ? "md" : "xs"}
+                          fontSize={"md"}
                           textAlign="center"
                         >
                           جمع کل
@@ -561,7 +437,7 @@ export const UploadInvoiceDocument = ({}) => {
                           <Td>
                             <Text
                               fontFamily="IranSans"
-                              fontSize={isDesktop ? "md" : "xs"}
+                              fontSize={"md"}
                               textAlign="center"
                             >
                               {index + 1}
@@ -570,7 +446,7 @@ export const UploadInvoiceDocument = ({}) => {
                           <Td>
                             <Text
                               fontFamily="IranSans"
-                              fontSize={isDesktop ? "md" : "xs"}
+                              fontSize={"md"}
                               textAlign="center"
                             >
                               {item?.good?.goodName}
@@ -579,7 +455,7 @@ export const UploadInvoiceDocument = ({}) => {
                           <Td>
                             <Text
                               fontFamily="IranSans"
-                              fontSize={isDesktop ? "md" : "xs"}
+                              fontSize={"md"}
                               textAlign="center"
                             >
                               {item?.quantity}
@@ -588,7 +464,7 @@ export const UploadInvoiceDocument = ({}) => {
                           <Td>
                             <Text
                               fontFamily="IranSans"
-                              fontSize={isDesktop ? "md" : "xs"}
+                              fontSize={"md"}
                               textAlign="center"
                             >
                               {item?.good?.goodUnit?.unitName}
@@ -598,7 +474,7 @@ export const UploadInvoiceDocument = ({}) => {
                           <Td>
                             <Text
                               fontFamily="IranSans"
-                              fontSize={isDesktop ? "md" : "xs"}
+                              fontSize={"md"}
                               textAlign="center"
                             >
                               {Number(item?.price).toLocaleString()}{" "}
@@ -607,7 +483,7 @@ export const UploadInvoiceDocument = ({}) => {
                           <Td>
                             <Text
                               fontFamily="IranSans"
-                              fontSize={isDesktop ? "md" : "xs"}
+                              fontSize={"md"}
                               textAlign="center"
                             >
                               {Number(
@@ -622,31 +498,19 @@ export const UploadInvoiceDocument = ({}) => {
                         <Td colSpan={2}>
                           <VStack bg="gray.100" m={1}>
                             <HStack mx="auto">
-                              <Text
-                                fontFamily="IranSans"
-                                fontSize={isDesktop ? "md" : "xs"}
-                              >
+                              <Text fontFamily="IranSans" fontSize="md">
                                 تعداد کل :
                               </Text>
-                              <Text
-                                fontFamily="IranSans"
-                                fontSize={isDesktop ? "md" : "xs"}
-                              >
+                              <Text fontFamily="IranSans" fontSize={"md"}>
                                 {itemsCount} مورد
                               </Text>
                             </HStack>
                             <Divider />
                             <HStack mx="auto">
-                              <Text
-                                fontFamily="IranSans"
-                                fontSize={isDesktop ? "md" : "xs"}
-                              >
+                              <Text fontFamily="IranSans" fontSize={"md"}>
                                 مبلغ نهایی :
                               </Text>
-                              <Text
-                                fontFamily="IranSans"
-                                fontSize={isDesktop ? "md" : "xs"}
-                              >
+                              <Text fontFamily="IranSans" fontSize={"md"}>
                                 {Number(formData?.totalAmount).toLocaleString()}
                               </Text>
                             </HStack>
@@ -659,77 +523,21 @@ export const UploadInvoiceDocument = ({}) => {
               </Stack>
               <Divider />
               <HStack>
-                <Text fontFamily="IranSans" fontSize={isDesktop ? "md" : "xs"}>
+                <Text fontFamily="IranSans" fontSize={"md"}>
                   توضیحات فاکتور :
                 </Text>
                 <Text value={formData?.description} />
               </HStack>
               <Divider />
-              <SimpleGrid spacing={1} columns={{ base: 1, md: 2, lg: 3 }}>
-                <Text textAlign="justify">
-                  لطفا بنویسید اطلاعات را قبول دارم - امضا کرده - عکس بگیرید و
-                  اینجا قرار دهید.
-                </Text>
-                <InputGroup maxW="500px">
-                  <InputLeftElement>
-                    <IconButton
-                      colorScheme="red"
-                      variant="ghost"
-                      icon={<CircleX />}
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          approvedFile: "",
-                          isAcceptedByCustomer: false,
-                        })
-                      }
-                    />
-                  </InputLeftElement>
-                  <Input
-                    accept="image/*"
-                    capture="environment"
-                    pt="5px"
-                    pb="5px"
-                    type="file"
-                    name="approvedFile"
-                    value={formData?.approvedFile}
-                    onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        approvedFile: e.target.value,
-                        imageFile: e.target.files[0],
-                      });
-                      setImagePreview(URL.createObjectURL(e.target.files[0]));
-                    }}
-                  />
-                </InputGroup>
-                <Box
-                  overflow="auto"
-                  borderRadius="6px"
-                  borderColor="orange"
-                  borderWidth="1px"
-                  hidden={
-                    formData.approvedFile == null || formData.approvedFile == ""
-                  }
-                  boxSize="20"
-                >
-                  <Image
-                    src={imagePreview}
-                    objectFit="cover"
-                    alt={formData?.approvedFile}
-                  />
-                </Box>
-              </SimpleGrid>
-              <Divider />
               <HStack>
                 <Checkbox
+                  isChecked
                   textAlign="justify"
                   isDisabled={
                     formData?.approvedFile == null ||
                     formData?.approvedFile == ""
                   }
                   name="isAcceptedByCustomer"
-                  isChecked={formData?.isAcceptedByCustomer}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -747,31 +555,9 @@ export const UploadInvoiceDocument = ({}) => {
                 </Checkbox>
               </HStack>
               <Divider />
-              <Flex px={1} my={1} dir="rtl" direction="column" rowGap={2}>
-                <Button
-                  isDisabled={!formData?.isAcceptedByCustomer}
-                  type="submit"
-                  colorScheme="blue"
-                  leftIcon={<CheckCircle2 />}
-                >
-                  تایید
-                </Button>
-                <Button
-                  isDisabled={!formData?.isAcceptedByCustomer}
-                  colorScheme="green"
-                  onClick={reactToPrintFn}
-                  leftIcon={<Download />}
-                >
-                  دانلود فاکتور
-                </Button>
-              </Flex>
             </SimpleGrid>
           </Flex>
         </Box>
-      </Box>
-      {loading && <MyLoading />}
-      <Box hidden={true}>
-        <InvoicePdf ref={contentRef} />
       </Box>
     </Box>
   );
