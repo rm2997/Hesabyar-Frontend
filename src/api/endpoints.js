@@ -117,6 +117,8 @@ const endpoints = {
     create: "/depot/",
     delete: (id) => `/depot/${id}`,
     setDepotIsAccepted: (id) => `/depot/accept/${id}`,
+    setDepotIsSent: (id) => `/depot/sent/${id}`,
+    generateNewToken: (id) => `/depot/generateNewToken/${id}`,
   },
   sms: {
     likeToLike: "https://api.sms.ir/v1/send/likeToLike",

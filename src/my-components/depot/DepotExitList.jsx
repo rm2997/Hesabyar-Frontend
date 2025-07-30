@@ -18,13 +18,19 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import {
+  ArrowBigRight,
+  ArrowBigRightDash,
+  ArrowRight,
   Combine,
   DecimalsArrowLeft,
   FilePenLine,
+  Link2,
+  Send,
   ShieldUser,
   Trash2,
   UserLock,
   WalletCards,
+  Warehouse,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
@@ -33,7 +39,12 @@ import { MyAlert } from "../MyAlert";
 import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
 import { MyLoading } from "../MyLoading";
-import { RemoveDepot, ShowAllDepots } from "../../api/services/depotService";
+import {
+  GenerateNewToken,
+  RemoveDepot,
+  SetDepotIsSent,
+  ShowAllDepots,
+} from "../../api/services/depotService";
 import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -107,6 +118,12 @@ export const DepotExitList = ({ isDesktop }) => {
     );
   };
 
+  const updateFieldDepotEntryInList = (id, key, value) => {
+    setDepotEntry((prev) =>
+      prev.map((i) => (i.id == id ? { ...i, [key]: value } : i))
+    );
+  };
+
   const deleteDepotEntryFromList = (id) => {
     setDepotEntry((prev) => prev.filter((g) => g.id !== id));
   };
@@ -139,6 +156,107 @@ export const DepotExitList = ({ isDesktop }) => {
       duration: 3000,
       isClosable: true,
     });
+    setLoading(false);
+  };
+
+  const handleSendCustomerLink = async (id) => {
+    const depot = depotEntry.find((i) => i.id == id);
+
+    if (!depot) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "اطلاعات مشتری در دسترس نیست",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (!depot?.depotInvoice?.customer?.customerMobile) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "شماره موبایل مشتری ثبت نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (!depot?.customerToken) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "لینک موقت مشتری ساخته نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    setLoading(true);
+    const res = await SetDepotIsSent(depot?.id);
+    if (!res.success) {
+      toast({
+        title: "خطا بعد از ارسال",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    updateFieldDepotEntryInList(id, "isSent", "true");
+    toast({
+      title: "توجه",
+      description:
+        "لینک تاییدیه به شماره موبایل" +
+        " " +
+        depot?.depotInvoice?.customer?.customerMobile +
+        " به نام " +
+        depot?.depotInvoice?.customer?.customerFName +
+        " " +
+        depot?.depotInvoice?.customer?.customerLName +
+        " ارسال شد. ",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
+  };
+
+  const handleGenerateNewLink = async (id) => {
+    setSelectedID(id);
+    setLoading(true);
+    const res = await GenerateNewToken(id);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res?.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    toast({
+      title: "توجه",
+      description: ` لینک جدید ساخته شد می توانید آن را دوباره به مشتری ارسال کنید`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setDepotEntry((prev) =>
+      prev.map((p) =>
+        p.id == id
+          ? {
+              ...p,
+              customerToken: res?.data,
+              isSent: false,
+            }
+          : p
+      )
+    );
     setLoading(false);
   };
 
@@ -182,13 +300,26 @@ export const DepotExitList = ({ isDesktop }) => {
                     }}
                   >
                     <HStack>
+                      <Flex
+                        borderWidth={1}
+                        p={1}
+                        borderRadius="md"
+                        borderColor="whiteAlpha.300"
+                      >
+                        <ArrowBigRight
+                          color="#e49b5bff"
+                          height={18}
+                          width={18}
+                        />
+                        <Warehouse color="#e49b5bff" height={18} width={18} />
+                      </Flex>
                       <Text fontFamily="IranSans" fontSize="md">
                         شماره : {row.id}
                       </Text>
                       <Box mr="auto">
                         <HStack>
                           {row?.isAccepted ? (
-                            <Tooltip label="تایید کاربر ارشد">
+                            <Tooltip label="تاییدیه کاربر ارشد">
                               <ShieldUser color="green" />
                             </Tooltip>
                           ) : (
@@ -243,55 +374,104 @@ export const DepotExitList = ({ isDesktop }) => {
                             row?.createdBy?.userlname}
                         </Text>
                       </HStack>
-                      <Divider />
+
+                      {row?.isAccepted && (
+                        <>
+                          <Divider />
+                          <HStack>
+                            <Text> تایید کننده :</Text>
+                            <Text fontFamily="IranSans" fontSize="md" mr="auto">
+                              {row?.acceptedBy?.userfname +
+                                " " +
+                                row?.acceptedBy?.userlname}
+                            </Text>
+                          </HStack>
+                        </>
+                      )}
                     </VStack>
                   </CardBody>
                   <CardFooter borderBottomRadius={5} bg="gray.200">
-                    <Stack
-                      direction={["row"]}
-                      spacing={2}
-                      align={"stretch"}
-                      mr="auto"
-                    >
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "ویرایش",
-                            text: "",
-                            callBack: null,
-                          });
-                          onOpen();
-                        }}
+                    {!row?.isAccepted && (
+                      <Stack
+                        direction={["row"]}
+                        spacing={2}
+                        align={"stretch"}
+                        mr="auto"
                       >
-                        <Tooltip label="ویرایش">
-                          <Icon w={6} h={6} as={FilePenLine} />
-                        </Tooltip>
-                      </Link>
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="red.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "حذف",
-                            text: "آیا واقعا می خواهید این رکورد را حذف کنید؟",
-                            callBack: () => {
-                              handleDeleteDepotEntry(row.id);
-                            },
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="حذف">
-                          <Icon w={6} h={6} as={Trash2} />
-                        </Tooltip>
-                      </Link>
-                    </Stack>
+                        {!row?.isSent && (
+                          <Link
+                            _disabled={true}
+                            _hover={{ color: "#ffd54f" }}
+                            color="green.600"
+                            onClick={(e) => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "ارسال لینک به مشتری",
+                                text: `آیا می خواهید لینک به شماره ${row?.depotInvoice?.customer?.customerMobile} به نام ${row?.depotInvoice?.customer?.customerLName} ارسال گردد؟`,
+                                callBack: handleSendCustomerLink,
+                              });
+
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <Tooltip label="ارسال درخواست ثبت مشخصات راننده به مشتری">
+                              <Icon w={6} h={6} as={Send} />
+                            </Tooltip>
+                          </Link>
+                        )}
+
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => handleGenerateNewLink(row.id)}
+                        >
+                          <Tooltip label="تولید لینک جدید">
+                            <Icon w={6} h={6} as={Link2} />
+                          </Tooltip>
+                        </Link>
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "ویرایش",
+                              text: "",
+                              callBack: null,
+                            });
+                            onOpen();
+                          }}
+                        >
+                          <Tooltip label="ویرایش">
+                            <Icon w={6} h={6} as={FilePenLine} />
+                          </Tooltip>
+                        </Link>
+
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="red.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "حذف",
+                              text: "آیا واقعا می خواهید این رکورد را حذف کنید؟",
+                              callBack: () => {
+                                handleDeleteDepotEntry(row.id);
+                              },
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="حذف">
+                            <Icon w={6} h={6} as={Trash2} />
+                          </Tooltip>
+                        </Link>
+                      </Stack>
+                    )}
                   </CardFooter>
                 </Card>
               ))}

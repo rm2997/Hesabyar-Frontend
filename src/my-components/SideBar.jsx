@@ -204,13 +204,13 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
             children={[
               {
                 id: "newDepotEntery",
-                name: "ورود کالای جدید",
+                name: "ورود کالا",
                 type: "text",
                 icon: <DecimalsArrowLeft />,
               },
               {
                 id: "depotEntryList",
-                name: "سوابق ثبت ورودی ",
+                name: "سوابق ورود کالا ",
                 type: "text",
                 icon: <SquareStack />,
               },
@@ -222,7 +222,7 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
               },
               {
                 id: "depotExitList",
-                name: "سوابق ثبت خروجی ",
+                name: "سوابق خروج کالا ",
                 type: "text",
                 icon: <GalleryHorizontalEnd />,
               },

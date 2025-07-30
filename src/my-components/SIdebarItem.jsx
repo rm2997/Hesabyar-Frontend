@@ -22,7 +22,7 @@ export const SidebarItem = ({
     <AccordionItem id={id}>
       <h2>
         <AccordionButton>
-          <HStack spacing={2}>
+          <HStack spacing={2} _hover={{ color: "orange" }}>
             <Icon color={color}>{icon}</Icon>
             {!justIcon && (
               <Box flex="2" textAlign="right">
@@ -38,8 +38,9 @@ export const SidebarItem = ({
           <AccordionButton
             id={child.id}
             onClick={() => onMenuItemClick(child.id)}
+            _hover={{ bgColor: "gray" }}
           >
-            <Box as="h3" flex="3" textAlign="right">
+            <Box as="h3" flex="3" textAlign="right" fontSize="sm">
               {child.type === "text" ? (
                 <HStack>
                   <Icon color="#50b742">{child.icon}</Icon>

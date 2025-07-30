@@ -817,6 +817,12 @@ export const EditDepotEntry = ({
               colorScheme="blue"
               type="submit"
               isLoading={loading}
+              isDisabled={formData?.isAccepted}
+              title={
+                formData?.isAccepted
+                  ? "این سند ورود کالا قبلا تایید شده است و قایل ویرایش نیست"
+                  : ""
+              }
             >
               تایید
             </Button>

@@ -411,7 +411,7 @@ export const NewDepotExit = ({ isDesktop }) => {
 
   const handleSearchInvoices = async (query) => {
     const response = await ShowUserAcceptedInvoices(1, 10, query);
-    return response.data.items;
+    return response?.data?.items;
   };
 
   const handleAddNewUser = () => {

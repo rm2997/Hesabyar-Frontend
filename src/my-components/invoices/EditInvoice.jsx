@@ -759,7 +759,17 @@ export const EditInvoice = ({
               )}
             </Flex>
 
-            <Button colorScheme="blue" type="submit" isLoading={loading}>
+            <Button
+              colorScheme="blue"
+              type="submit"
+              isLoading={loading}
+              isDisabled={formData?.finished}
+              title={
+                formData?.finished
+                  ? "سند خروج این فاکتور ثبت شده است بنابراین امکان ویرایش وجود ندارد"
+                  : ""
+              }
+            >
               ثبت تغییرات فاکتور
             </Button>
           </Flex>

@@ -775,6 +775,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   مشخصات راننده
                 </FormLabel>
                 <MyInputBox
+                  readOnly
                   icon={Info}
                   name="driver"
                   title="مشخصات راننده"
@@ -790,6 +791,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   موبایل راننده
                 </FormLabel>
                 <MyInputBox
+                  readOnly
                   icon={Info}
                   name="driverMobile"
                   title="موبایل راننده"
@@ -805,6 +807,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   کد ملی راننده
                 </FormLabel>
                 <MyInputBox
+                  readOnly
                   icon={Info}
                   name="driverNatCode"
                   title="کد ملی راننده"
@@ -820,6 +823,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   پلاک خوردو
                 </FormLabel>
                 <MyInputBox
+                  readOnly
                   icon={Info}
                   name="driverCarNumber"
                   title="پلاک خوردو"
@@ -849,6 +853,12 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
               colorScheme="blue"
               type="submit"
               isLoading={loading}
+              isDisabled={formData?.isAccepted}
+              title={
+                formData?.isAccepted
+                  ? "این سند خروج کالا قبلا تایید شده است و قابل ویرایش نیست"
+                  : ""
+              }
             >
               تایید
             </Button>

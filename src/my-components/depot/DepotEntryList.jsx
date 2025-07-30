@@ -18,6 +18,8 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import {
+  ArrowBigLeft,
+  ArrowLeft,
   Combine,
   DecimalsArrowLeft,
   FilePenLine,
@@ -25,6 +27,7 @@ import {
   Trash2,
   UserLock,
   WalletCards,
+  Warehouse,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
@@ -182,13 +185,27 @@ export const DepotEntryList = ({ isDesktop }) => {
                     }}
                   >
                     <HStack>
+                      <Flex
+                        borderWidth={1}
+                        p={1}
+                        borderRadius="md"
+                        borderColor="whiteAlpha.300"
+                      >
+                        <ArrowBigLeft
+                          color="#bddb75ff"
+                          height={18}
+                          width={18}
+                        />
+                        <Warehouse color="#bddb75ff" height={18} width={18} />
+                      </Flex>
                       <Text fontFamily="IranSans" fontSize="md">
                         شماره : {row.id}
                       </Text>
+
                       <Box mr="auto">
                         <HStack>
                           {row?.isAccepted ? (
-                            <Tooltip label="تایید کاربر ارشد">
+                            <Tooltip label="تاییدیه کاربر ارشد">
                               <ShieldUser color="green" />
                             </Tooltip>
                           ) : (
@@ -222,6 +239,13 @@ export const DepotEntryList = ({ isDesktop }) => {
                       </HStack>
                       <Divider />
                       <HStack>
+                        <Text>جمع کل</Text>
+                        <Text fontFamily="iransans" fontSize="md" mr="auto">
+                          {Number(row?.totalAmount).toLocaleString()}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
                         <Text> ثبت کننده :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
                           {row?.createdBy?.userfname +
@@ -230,54 +254,66 @@ export const DepotEntryList = ({ isDesktop }) => {
                         </Text>
                       </HStack>
                       <Divider />
+                      {row?.isAccepted && (
+                        <HStack>
+                          <Text> تایید کننده :</Text>
+                          <Text fontFamily="IranSans" fontSize="md" mr="auto">
+                            {row?.acceptedBy?.userfname +
+                              " " +
+                              row?.acceptedBy?.userlname}
+                          </Text>
+                        </HStack>
+                      )}
                     </VStack>
                   </CardBody>
                   <CardFooter borderBottomRadius={5} bg="gray.200">
-                    <Stack
-                      direction={["row"]}
-                      spacing={2}
-                      align={"stretch"}
-                      mr="auto"
-                    >
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => {
-                          setSelectedID(row?.id);
-                          setDialogGears({
-                            title: "ویرایش",
-                            text: "",
-                            callBack: null,
-                          });
-                          onOpen();
-                        }}
+                    {!row?.isAccepted && (
+                      <Stack
+                        direction={["row"]}
+                        spacing={2}
+                        align={"stretch"}
+                        mr="auto"
                       >
-                        <Tooltip label="ویرایش">
-                          <Icon w={6} h={6} as={FilePenLine} />
-                        </Tooltip>
-                      </Link>
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="red.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "حذف",
-                            text: "آیا واقعا می خواهید این رکورد را حذف کنید؟",
-                            callBack: () => {
-                              handleDeleteDepotEntry(row.id);
-                            },
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="حذف">
-                          <Icon w={6} h={6} as={Trash2} />
-                        </Tooltip>
-                      </Link>
-                    </Stack>
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => {
+                            setSelectedID(row?.id);
+                            setDialogGears({
+                              title: "ویرایش",
+                              text: "",
+                              callBack: null,
+                            });
+                            onOpen();
+                          }}
+                        >
+                          <Tooltip label="ویرایش">
+                            <Icon w={6} h={6} as={FilePenLine} />
+                          </Tooltip>
+                        </Link>
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="red.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "حذف",
+                              text: "آیا واقعا می خواهید این رکورد را حذف کنید؟",
+                              callBack: () => {
+                                handleDeleteDepotEntry(row.id);
+                              },
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="حذف">
+                            <Icon w={6} h={6} as={Trash2} />
+                          </Tooltip>
+                        </Link>
+                      </Stack>
+                    )}
                   </CardFooter>
                 </Card>
               ))}

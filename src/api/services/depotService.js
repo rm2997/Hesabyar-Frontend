@@ -114,3 +114,17 @@ export const SetDepotIsAccepted = async (id) => {
     url: endpoints.depot.setDepotIsAccepted(id),
   });
 };
+
+export const SetDepotIsSent = async (id) => {
+  return apiRequest({
+    method: "PATCH",
+    url: endpoints.depot.setDepotIsSent(id),
+  });
+};
+
+export const GenerateNewToken = async (id) => {
+  return apiRequest({
+    method: "POST",
+    url: endpoints.depot.generateNewToken(id),
+  });
+};

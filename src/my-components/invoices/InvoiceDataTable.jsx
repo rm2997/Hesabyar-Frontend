@@ -32,6 +32,8 @@ import {
   UserLock,
   ShieldUser,
   Link2,
+  ArrowRight,
+  Warehouse,
 } from "lucide-react";
 
 import { EditInvoice } from "./EditInvoice";
@@ -133,6 +135,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
   const deleteInvoiceFromList = (id) => {
     setInvoices((prev) => prev.filter((u) => u.id != id));
   };
+
   const handleSendCustomerLink = async (id) => {
     const invoice = invoices.find((i) => i.id == id);
 
@@ -171,7 +174,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
     if (!res.success) {
       toast({
         title: "خطا بعد از ارسال",
-        description: <res className="error"></res>,
+        description: res.error,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -301,7 +304,13 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                 >
                   <CardHeader
                     borderTopRadius={5}
-                    bg={row?.isAccepted ? "green.400" : "blue.200"}
+                    bg={
+                      row?.finished
+                        ? "green.500"
+                        : row?.isAccepted
+                        ? "green.400"
+                        : "blue.200"
+                    }
                     _hover={{ cursor: "pointer" }}
                     onClick={(e) => handleEditInvoice(row.id)}
                   >
@@ -309,12 +318,22 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                       <Text>شماره :{row.id}</Text>
                       <Box mr="auto">
                         <HStack>
+                          {row?.finished ? (
+                            <Tooltip label="از انبار خارج شده است">
+                              <Flex mt={-0.5}>
+                                <ArrowRight color="#e6746eff" />
+                                <Warehouse color="green" />
+                              </Flex>
+                            </Tooltip>
+                          ) : (
+                            <></>
+                          )}
                           {row.isAccepted ? (
-                            <Tooltip label="تایید کاربر ارشد">
+                            <Tooltip label="تاییدیه کاربر ارشد">
                               <ShieldUser color="green" />
                             </Tooltip>
                           ) : (
-                            <Tooltip label="منتظر تایید کاربر ارشد ">
+                            <Tooltip label="منتظر تاییدیه کاربر ارشد ">
                               <UserLock
                                 color="yellow"
                                 _hover={{ color: "green" }}
@@ -395,76 +414,78 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                     </VStack>
                   </CardBody>
                   <CardFooter borderBottomRadius={5} bg="gray.100">
-                    <Stack
-                      direction={["row"]}
-                      spacing={2}
-                      align={"stretch"}
-                      mr="auto"
-                    >
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => handleEditInvoice(row.id)}
+                    {!row?.finished && (
+                      <Stack
+                        direction={["row"]}
+                        spacing={2}
+                        align={"stretch"}
+                        mr="auto"
                       >
-                        <Tooltip label="ویرایش">
-                          <Icon w={6} h={6} as={FilePenLine} />
-                        </Tooltip>
-                      </Link>
-
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => handleGenerateNewLink(row.id)}
-                      >
-                        <Tooltip label="تولید لینک جدید">
-                          <Icon w={6} h={6} as={Link2} />
-                        </Tooltip>
-                      </Link>
-
-                      {!row.isSent && (
                         <Link
-                          _disabled={true}
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => handleEditInvoice(row.id)}
+                        >
+                          <Tooltip label="ویرایش">
+                            <Icon w={6} h={6} as={FilePenLine} />
+                          </Tooltip>
+                        </Link>
+
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => handleGenerateNewLink(row.id)}
+                        >
+                          <Tooltip label="تولید لینک جدید">
+                            <Icon w={6} h={6} as={Link2} />
+                          </Tooltip>
+                        </Link>
+
+                        {!row.isSent && (
+                          <Link
+                            _disabled={true}
+                            _hover={{ color: "#ffd54f" }}
+                            color="green.600"
+                            onClick={(e) => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "ارسال لینک به مشتری",
+                                text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                                callBack: handleSendCustomerLink,
+                              });
+
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <Tooltip label="ارسال به مشتری">
+                              <Icon w={6} h={6} as={Send} />
+                            </Tooltip>
+                          </Link>
+                        )}
+
+                        <Link
                           _hover={{ color: "#ffd54f" }}
-                          color="green.600"
+                          color="red.600"
                           onClick={(e) => {
                             setSelectedID(row.id);
                             setDialogGears({
-                              title: "ارسال لینک به مشتری",
-                              text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
-                              callBack: handleSendCustomerLink,
+                              title: "حذف فاکتور",
+                              text: "آیا واقعا می خواهید این فاکتور را حذف کنید؟",
+                              callBack: handleDeleteInvoice,
                             });
-
                             setIsDialogOpen(true);
                           }}
                         >
-                          <Tooltip label="ارسال به مشتری">
-                            <Icon w={6} h={6} as={Send} />
+                          <Tooltip label="حذف">
+                            <Icon w={6} h={6} as={Trash2} />
                           </Tooltip>
                         </Link>
-                      )}
-
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="red.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "حذف فاکتور",
-                            text: "آیا واقعا می خواهید این فاکتور را حذف کنید؟",
-                            callBack: handleDeleteInvoice,
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="حذف">
-                          <Icon w={6} h={6} as={Trash2} />
-                        </Tooltip>
-                      </Link>
-                    </Stack>
+                      </Stack>
+                    )}
                   </CardFooter>
                 </Card>
               ))}
