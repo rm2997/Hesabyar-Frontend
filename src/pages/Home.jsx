@@ -14,7 +14,6 @@ import {
   Image,
   Img,
   Link,
-  LinkBox,
   SimpleGrid,
   Text,
   useBreakpointValue,
@@ -62,13 +61,13 @@ const sliderData = [
     description: "بالاترین استحکام کششی نسبت به موارد مشابه موجود",
   },
   {
-    title: "موتور الکو",
+    title: "موتور گیربکس الکو",
     image: "/assets/images/slider/motor1.jpg",
     description:
       "نمایندگی رسمی شرکت الکو، اولین تولیدکننده موتور وگیربکس در ایران",
   },
   {
-    title: "گیربکس الکو",
+    title: "موتور گیربکس الکو",
     image: "/assets/images/slider/motor2.jpg",
     description:
       "نمایندگی رسمی شرکت الکو، اولین تولیدکننده موتور وگیربکس در ایران",
@@ -241,7 +240,7 @@ export const Home = () => {
           aria-label="ورود به سیستم"
           onClick={() => navigate("/myhome")}
         />
-        <Link href="tel:+989123456789" mr={1}>
+        <Link href="tel:+989125793556" mr={1}>
           <IconButton
             size={isDesktop ? "md" : "sm"}
             icon={<Phone size={24} />}
@@ -696,9 +695,9 @@ export const Home = () => {
               <Text fontWeight="medium">
                 ‌info@hesab-yaar.ir : پست الکترونیک
               </Text>
-              <Text fontWeight="medium">‌09121234567 : مدیریت</Text>
-              <Text fontWeight="medium">‌09121234567 : مدیر فروش</Text>
-              <Text fontWeight="medium">‌09121234567 : حسابداری</Text>
+              <Text fontWeight="medium">09125793556 : مدیریت</Text>
+              <Text fontWeight="medium">09125793556 : مدیر فروش</Text>
+              <Text fontWeight="medium">09125793556 : حسابداری</Text>
               <Flex mx="auto" mt={2} direction="row" columnGap={3}>
                 <Link _hover={{ color: "orange" }}>
                   <Twitter />
@@ -772,7 +771,7 @@ export const Home = () => {
               fontSize={isDesktop ? "lg" : "md"}
               m={2}
             >
-              کلیه حقوق مادی و معنی متعلق به گروه صنعتی علیایی می باشد
+              کلیه حقوق مادی و معنی متعلق به گروه صنعتی آسانسورلند می باشد
             </Heading>
             <Text fontSize={isDesktop ? "lg" : "md"} fontFamily="Aseman" m={2}>
               طراحی و توسعه داده شده توسط رضا میرعسگری - 09125213288

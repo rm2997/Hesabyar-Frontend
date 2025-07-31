@@ -12,7 +12,10 @@ import {
   ShowUserAllProformas,
   ShowUserMyProformas,
 } from "../api/services/proformaService";
-import { ShowUserAllInvoices } from "../api/services/invoiceService";
+import {
+  ShowAllInvoices,
+  ShowUserAllInvoices,
+} from "../api/services/invoiceService";
 import { ShowUserRcvAllNotifications } from "../api/services/notificationService";
 
 // const data = [
@@ -41,7 +44,7 @@ export const PieChart = ({ sidebarWidth, User }) => {
         await ShowUserAllInvoices().then((i) =>
           data.push({ name: "فاکتورهای من", value: i?.data?.total })
         );
-        await ShowUserAllInvoices().then((i) =>
+        await ShowAllInvoices().then((i) =>
           data.push({ name: "همه فاکتورها", value: i?.data?.total })
         );
         await ShowUserRcvAllNotifications(1, 10, "").then((n) =>
