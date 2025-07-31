@@ -15,26 +15,18 @@ import {
   Tooltip,
   Icon,
   Flex,
-  Center,
-  Grid,
-  GridItem,
-  AbsoluteCenter,
-  Spinner,
   Image,
-  Heading,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import {
   Trash2,
   CircleFadingArrowUp,
-  Replace,
   Handshake,
   UserRoundCheck,
   MailCheck,
   UserLock,
   ShieldUser,
-  SquareArrowUp,
   ScanEye,
   ShieldCheck,
 } from "lucide-react";
@@ -339,7 +331,7 @@ export const InvoiceRequests = ({ isDesktop }) => {
                           setInvoiceSelectedID(row.id);
                           setDialogGears({
                             title: "تایید  فاکتور",
-                            text: "آیا واقعا این فاکتور را تایید میکنید؟",
+                            text: "از تایید این فاکتور اطمینان دارید؟",
                             callBack: () => handleAcceptInvoice(row.id),
                           });
                           setIsDialogOpen(true);
@@ -371,7 +363,7 @@ export const InvoiceRequests = ({ isDesktop }) => {
                         setInvoiceSelectedID(row.id);
                         setDialogGears({
                           title: "حذف فاکتور",
-                          text: "آیا واقعا می خواهید این فاکتور را حذف کنید؟",
+                          text: "از حذف این فاکتور اطمینان دارید؟",
                           callBack: handleDeleteInvoice,
                         });
                         setIsDialogOpen(true);

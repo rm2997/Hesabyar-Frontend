@@ -353,6 +353,9 @@ export const NewDepotEntry = ({ isDesktop }) => {
     tmpDepotGoods.push(newDepotGood);
     setDepotGoods([...tmpDepotGoods]);
     setSelectedDepotGood(tmpDepotGoods.length);
+
+    const count = tmpDepotGoods.reduce((sum, i) => sum + i.quantity, 0);
+    setTotalQuantity(count);
   };
 
   const handleSearchGoods = async (query) => {

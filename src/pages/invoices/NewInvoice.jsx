@@ -235,7 +235,10 @@ export const NewInvoice = ({ isDesktop }) => {
     items.push(newItem);
     setInvoiceItems([...items]);
     setSelectedItem(items?.length);
-    recalculateTotal();
+    const total = items?.reduce((sum, i) => sum + i.quantity * i.price, 0);
+    const count = items?.reduce((sum, i) => sum + i.quantity, 0);
+    setTotalPrice(total);
+    setTotalQuantity(count);
   };
 
   const handleSearchCustomers = async (query) => {

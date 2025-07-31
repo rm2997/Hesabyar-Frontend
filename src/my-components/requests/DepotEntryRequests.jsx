@@ -310,7 +310,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
                           //setInvoiceSelectedID(row.id);
                           setDialogGears({
                             title: "تایید",
-                            text: "آیا واقعا رکورد را تایید میکنید؟",
+                            text: "از تایید سند ورودی انبار اطمینان دارید؟",
                             callBack: () => handleAcceptDepotEntry(row.id),
                           });
                           setIsDialogOpen(true);
@@ -346,7 +346,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
                           setSelectedID(row.id);
                           setDialogGears({
                             title: "حذف",
-                            text: "آیا واقعا می خواهید این رکورد را حذف کنید؟",
+                            text: "از حذف این سند ورودی انبار اطمینان دارید؟",
                             callBack: () => {
                               handleDeleteDepotEntry(row.id);
                             },

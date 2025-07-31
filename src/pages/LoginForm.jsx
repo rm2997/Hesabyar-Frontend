@@ -386,6 +386,18 @@ export const LoginForm = () => {
               نسخه 1.0.0.0 *** 09 مرداد 1404
             </Text>
           </Flex>
+          <Flex
+            hidden={!isFormDisabled}
+            direction={"column"}
+            top={0}
+            left={0}
+            position="absolute"
+            zIndex={100}
+            minHeight="50%"
+            h="100%"
+            minW="full"
+            bg="blackAlpha.300"
+          />
         </Flex>
       </Box>
     </Box>
