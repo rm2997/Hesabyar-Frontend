@@ -24,6 +24,7 @@ import {
   Stack,
   useBreakpointValue,
   Flex,
+  GridItem,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -38,6 +39,10 @@ import {
   UpdateInvoiceCustomerFile,
 } from "../api/services/invoiceService";
 import { InvoicePdf } from "./InvoicePdf";
+import {
+  ShowDepotByToken,
+  UpdateDepotDriverInfo,
+} from "../api/services/depotService";
 
 export const UpdateDriverInfo = ({}) => {
   const contentRef = useRef();
@@ -65,6 +70,7 @@ export const UpdateDriverInfo = ({}) => {
     createdAt: "",
     createdBy: {},
     acceptedBy: {},
+    isAcceptedByCustomer: false,
   });
   const [depotGoods, setDepotGoods] = useState([
     {
@@ -99,6 +105,8 @@ export const UpdateDriverInfo = ({}) => {
         setTimeout(() => navigate("/NotFound"), 1000);
         return;
       }
+      console.log(token);
+
       const res = await ShowDepotByToken(token);
       if (!res.success) {
         toast({
@@ -124,12 +132,102 @@ export const UpdateDriverInfo = ({}) => {
     loadDepotData();
   }, []);
 
+  const validateForm = async () => {
+    if (formData?.driver?.length < 3 || !isNaN(Number(formData?.driver))) {
+      toast({
+        title: "توجه",
+        description: "نام یا نام خانوادگی صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.driverNatCode?.length > 0 &&
+      formData?.driverNatCode?.length != 10
+    ) {
+      toast({
+        title: "توجه",
+        description: "شماره ملی صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (isNaN(Number(formData?.driverNatCode))) {
+      toast({
+        title: "توجه",
+        description: "شماره ملی باید به شکل عددی باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.driverMobile?.length > 0 &&
+      formData?.driverMobile?.length != 11
+    ) {
+      toast({
+        title: "توجه",
+        description: "شماره موبایل  صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (isNaN(Number(formData?.driverMobile))) {
+      toast({
+        title: "توجه",
+        description: "شماره موبایل باید به شکل عددی باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    if (
+      formData?.driver?.length == 0 &&
+      formData?.driverCarNumber?.length == 0 &&
+      formData?.driverNatCode?.length == 0
+    ) {
+      toast({
+        title: "توجه",
+        description: "باید حداقل یکی از مشخصات راننده یا خودرو را مشخص کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleChangeFormData = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validate = await validateForm();
+    if (validate == false) return;
     setLoading(true);
-
-    const res = await UpdateDepotDriverInfo(token, formData);
-    if (!res) {
+    const finalFormData = {
+      driver: formData?.driver,
+      driverCarNumber: formData?.driverCarNumber,
+      driverMobile: formData?.driverMobile,
+      driverNatCode: formData?.driverNatCode,
+    };
+    const res = await UpdateDepotDriverInfo(token, finalFormData);
+    if (!res.success) {
       toast({
         title: "خطا",
         description: res.error,
@@ -143,11 +241,13 @@ export const UpdateDriverInfo = ({}) => {
     }
     toast({
       title: "توجه",
-      description: "تاییدیه شما ارسال گردید",
+      description: "مشخصات نماینده یا راننده شما تایید شد",
       status: "success",
       duration: 3000,
       isClosable: false,
     });
+    console.log(res.data);
+
     setTimeout(() => navigate("/home"), 1000);
     setLoading(false);
   };
@@ -254,7 +354,7 @@ export const UpdateDriverInfo = ({}) => {
               <Text fontFamily="iransans" mx="auto" bg="gray.200" width="full">
                 مشخصات فروشنده
               </Text>
-              <SimpleGrid p={1} columns={{ base: 1, md: 2, lg: 4 }} spacing={2}>
+              <SimpleGrid p={1} columns={{ base: 1, md: 2, lg: 3 }} spacing={2}>
                 <HStack>
                   <Text
                     fontFamily="iransans"
@@ -262,7 +362,7 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     نام شخصی حقیقی/حقوقی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     آسانسورلند
                   </Text>
                 </HStack>
@@ -273,7 +373,7 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     شماره اقتصادی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     14012045705
                   </Text>
                 </HStack>
@@ -284,29 +384,31 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     شماره ثبت/ملی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     609813
                   </Text>
                 </HStack>
-                <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                    ml={1}
-                    minW="50px"
-                  >
-                    نشانی :
-                  </Text>
-                  <Text
-                    textAlign="justify"
-                    name="customer"
-                    fontFamily="iransans"
-                    fontSize="xs"
-                  >
-                    تهران - بزرگراه 65 متری فتح ، ابتدای لاین کندرو، جنب پایگاه
-                    یکم شکاری، ساختمان شهر آسانسور یاران، طبقه 4، واحد446
-                  </Text>
-                </HStack>
+                <GridItem colSpan={{ lg: 2, md: 2, sm: 1 }}>
+                  <HStack>
+                    <Text
+                      fontFamily="iransans"
+                      fontSize={isDesktop ? "md" : "xs"}
+                      ml={1}
+                      minW="50px"
+                    >
+                      نشانی :
+                    </Text>
+                    <Text
+                      textAlign="justify"
+                      fontFamily="iransans"
+                      fontSize="xs"
+                    >
+                      تهران - بزرگراه 65 متری فتح ، ابتدای لاین کندرو، جنب
+                      پایگاه یکم شکاری، ساختمان شهر آسانسور یاران، طبقه 4،
+                      واحد446
+                    </Text>
+                  </HStack>
+                </GridItem>
                 <HStack>
                   <Text
                     fontFamily="iransans"
@@ -314,7 +416,7 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     کدپستی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     1387836295
                   </Text>
                 </HStack>
@@ -325,7 +427,7 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     شماره تلفن :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     021-65812952
                   </Text>
                 </HStack>
@@ -336,7 +438,7 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     شماره همراه :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     09125793556
                   </Text>
                 </HStack>
@@ -347,7 +449,7 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     ایمیل :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     info@hesab-yaar.ir
                   </Text>
                 </HStack>
@@ -357,7 +459,7 @@ export const UpdateDriverInfo = ({}) => {
               <Text fontFamily="iransans" mx="auto" bg="gray.200" width="full">
                 مشخصات خریدار
               </Text>
-              <SimpleGrid p={1} columns={{ base: 1, md: 2, lg: 4 }} spacing={2}>
+              <SimpleGrid p={1} columns={{ base: 1, md: 2, lg: 3 }} spacing={2}>
                 <HStack>
                   <Text
                     fontFamily="iransans"
@@ -369,11 +471,11 @@ export const UpdateDriverInfo = ({}) => {
                     fontFamily="iransans"
                     fontSize={isDesktop ? "md" : "xs"}
                   >
-                    {formData?.customer?.customerGender +
+                    {formData?.depotInvoice?.customer?.customerGender +
                       " " +
-                      formData?.customer?.customerFName +
+                      formData?.depotInvoice?.customer?.customerFName +
                       " " +
-                      formData?.customer?.customerLName}
+                      formData?.depotInvoice?.customer?.customerLName}
                   </Text>
                 </HStack>
                 <HStack>
@@ -383,11 +485,7 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     شماره اقتصادی :
                   </Text>
-                  <Text
-                    name="customer"
-                    fontFamily="iransans"
-                    fontSize="xs"
-                  ></Text>
+                  <Text fontFamily="iransans" fontSize="xs"></Text>
                 </HStack>
                 <HStack>
                   <Text
@@ -396,26 +494,27 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     شماره ثبت/ملی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
-                    {formData?.customer?.customerNationalCode}
+                  <Text fontFamily="iransans" fontSize="xs">
+                    {formData?.depotInvoice?.customer?.customerNationalCode}
                   </Text>
                 </HStack>
-                <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
-                    نشانی :
-                  </Text>
-                  <Text
-                    textAlign="justify"
-                    name="customer"
-                    fontFamily="iransans"
-                    fontSize="xs"
-                  >
-                    {formData?.customer?.customerAddress}
-                  </Text>
-                </HStack>
+                <GridItem colSpan={{ lg: 2, md: 2, sm: 1 }}>
+                  <HStack>
+                    <Text
+                      fontFamily="iransans"
+                      fontSize={isDesktop ? "md" : "xs"}
+                    >
+                      نشانی :
+                    </Text>
+                    <Text
+                      textAlign="justify"
+                      fontFamily="iransans"
+                      fontSize="xs"
+                    >
+                      {formData?.depotInvoice?.customer?.customerAddress}
+                    </Text>
+                  </HStack>
+                </GridItem>
                 <HStack>
                   <Text
                     fontFamily="iransans"
@@ -423,8 +522,8 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     کدپستی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
-                    {formData?.customer?.customerPostalCode}
+                  <Text fontFamily="iransans" fontSize="xs">
+                    {formData?.depotInvoice?.customer?.customerPostalCode}
                   </Text>
                 </HStack>
                 <HStack>
@@ -434,8 +533,8 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     شماره تلفن :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
-                    {formData?.customer?.customerPhone}
+                  <Text fontFamily="iransans" fontSize="xs">
+                    {formData?.depotInvoice?.customer?.customerPhone}
                   </Text>
                 </HStack>
                 <HStack>
@@ -445,8 +544,8 @@ export const UpdateDriverInfo = ({}) => {
                   >
                     شماره همراه :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
-                    {formData?.customer?.customerMobile}
+                  <Text fontFamily="iransans" fontSize="xs">
+                    {formData?.depotInvoice?.customer?.customerMobile}
                   </Text>
                 </HStack>
               </SimpleGrid>
@@ -460,10 +559,8 @@ export const UpdateDriverInfo = ({}) => {
               columns={{ base: 1, md: 1, lg: 1 }}
               dir="rtl"
               mt={3}
-              mb={10}
+              mb={5}
               rowGap={5}
-              as="form"
-              onSubmit={handleSubmit}
             >
               <Stack w="full" align="stretch">
                 <TableContainer
@@ -633,67 +730,141 @@ export const UpdateDriverInfo = ({}) => {
                   </Table>
                 </TableContainer>
               </Stack>
-              <Divider />
+            </SimpleGrid>
+          </Flex>
+          <Flex px={1} borderWidth={1} my={1} dir="rtl" direction="column">
+            <Text fontFamily="iransans" mx="auto" bg="gray.200" width="full">
+              مشخصات نماینده یا راننده
+            </Text>
+            <SimpleGrid
+              columns={{ base: 1, md: 2, lg: 3 }}
+              dir="rtl"
+              mt={3}
+              mb={2}
+              rowGap={5}
+              columnGap={5}
+              as="form"
+              onSubmit={handleSubmit}
+            >
               <HStack>
-                <Text fontFamily="IranSans" fontSize={isDesktop ? "md" : "xs"}>
-                  توضیحات سند خروج کالا :
+                <Text
+                  textAlign={"right"}
+                  width={"150px"}
+                  fontFamily="iransans"
+                  fontSize={isDesktop ? "md" : "xs"}
+                >
+                  نام و نام خانوادگی
                 </Text>
-                <Text value={formData?.description} />
+                <Input
+                  name="driver"
+                  value={formData.driver}
+                  onChange={handleChangeFormData}
+                />
               </HStack>
-
-              <Divider />
               <HStack>
-                <Checkbox
-                  textAlign="justify"
-                  isDisabled={
-                    formData?.approvedFile == null ||
-                    formData?.approvedFile == ""
-                  }
-                  name="isAcceptedByCustomer"
-                  isChecked={formData?.isAcceptedByCustomer}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      isAcceptedByCustomer: e.target.checked,
-                    })
-                  }
+                <Text
+                  textAlign={"right"}
+                  width={"150px"}
+                  fontFamily="iransans"
+                  fontSize={isDesktop ? "md" : "xs"}
                 >
-                  اینجانب
-                  {" " +
-                    formData.customer.customerFName +
-                    " " +
-                    formData.customer.customerLName +
-                    " "}
-                  سند خروج کالا را مطالعه کرده و اطلاعات آن را قبول دارم.
-                </Checkbox>
+                  کد ملی
+                </Text>
+                <Input
+                  name="driverNatCode"
+                  value={formData?.driverNatCode}
+                  onChange={handleChangeFormData}
+                />
               </HStack>
-              <Divider />
-              <Flex px={1} my={1} dir="rtl" direction="column" rowGap={2}>
-                <Button
-                  isDisabled={!formData?.isAcceptedByCustomer}
-                  type="submit"
-                  colorScheme="blue"
-                  leftIcon={<CheckCircle2 />}
+              <HStack>
+                <Text
+                  textAlign={"right"}
+                  width={"150px"}
+                  fontFamily="iransans"
+                  fontSize={isDesktop ? "md" : "xs"}
                 >
-                  تایید
-                </Button>
-                <Button
-                  isDisabled={!formData?.isAcceptedByCustomer}
-                  colorScheme="green"
-                  onClick={reactToPrintFn}
-                  leftIcon={<Download />}
+                  موبایل
+                </Text>
+                <Input
+                  name="driverMobile"
+                  value={formData?.driverMobile}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+              <HStack>
+                <Text
+                  textAlign={"right"}
+                  width={"150px"}
+                  fontFamily="iransans"
+                  fontSize={isDesktop ? "md" : "xs"}
                 >
-                  دانلود سند خروج کالا
-                </Button>
-              </Flex>
+                  پلاک خودرو
+                </Text>
+                <Input
+                  name="driverCarNumber"
+                  value={formData?.driverCarNumber}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+              <GridItem colSpan={{ lg: 3, md: 2, sm: 1 }}>
+                <HStack>
+                  <Checkbox
+                    name="isAcceptedByCustomer"
+                    isChecked={formData?.isAcceptedByCustomer}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        isAcceptedByCustomer: e.target.checked,
+                      })
+                    }
+                  >
+                    <Text
+                      fontFamily="iransans"
+                      fontSize={isDesktop ? "md" : "xs"}
+                      textAlign="justify"
+                    >
+                      اینجانب
+                      {" " +
+                        formData?.depotInvoice?.customer?.customerFName +
+                        " " +
+                        formData?.depotInvoice?.customer?.customerLName +
+                        " "}
+                      سند خروج کالا را مطالعه کرده و اطلاعات آن را قبول دارم.
+                    </Text>
+                  </Checkbox>
+                </HStack>
+              </GridItem>
+              <GridItem colSpan={{ lg: 3, md: 2, sm: 1 }}>
+                <Divider />
+              </GridItem>
+              <GridItem colSpan={{ lg: 3, md: 2, sm: 1 }}>
+                <Flex px={1} my={1} dir="rtl" direction="column" rowGap={2}>
+                  <Button
+                    isDisabled={!formData?.isAcceptedByCustomer}
+                    type="submit"
+                    colorScheme="blue"
+                    leftIcon={<CheckCircle2 />}
+                  >
+                    تایید
+                  </Button>
+                  {/* <Button
+                    isDisabled={!formData?.isAcceptedByCustomer}
+                    colorScheme="green"
+                    onClick={reactToPrintFn}
+                    leftIcon={<Download />}
+                  >
+                    دانلود سند خروج کالا
+                  </Button> */}
+                </Flex>
+              </GridItem>
             </SimpleGrid>
           </Flex>
         </Box>
       </Box>
       {loading && <MyLoading />}
-      <Box hidden={true}>
+      {/* <Box hidden={true}>
         <InvoicePdf ref={contentRef} />
-      </Box>
+      </Box> */}
     </Box>
   );
 };

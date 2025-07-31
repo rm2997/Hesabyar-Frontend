@@ -24,6 +24,7 @@ import {
   Stack,
   useBreakpointValue,
   Flex,
+  GridItem,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -278,7 +279,7 @@ export const UploadInvoiceDocument = ({}) => {
               <Text fontFamily="iransans" mx="auto" bg="gray.200" width="full">
                 مشخصات فروشنده
               </Text>
-              <SimpleGrid p={1} columns={{ base: 1, md: 2, lg: 4 }} spacing={2}>
+              <SimpleGrid p={1} columns={{ base: 1, md: 2, lg: 3 }} spacing={2}>
                 <HStack>
                   <Text
                     fontFamily="iransans"
@@ -301,6 +302,7 @@ export const UploadInvoiceDocument = ({}) => {
                     14012045705
                   </Text>
                 </HStack>
+
                 <HStack>
                   <Text
                     fontFamily="iransans"
@@ -312,25 +314,28 @@ export const UploadInvoiceDocument = ({}) => {
                     609813
                   </Text>
                 </HStack>
-                <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                    ml={1}
-                    minW="50px"
-                  >
-                    نشانی :
-                  </Text>
-                  <Text
-                    textAlign="justify"
-                    name="customer"
-                    fontFamily="iransans"
-                    fontSize="xs"
-                  >
-                    تهران - بزرگراه 65 متری فتح ، ابتدای لاین کندرو، جنب پایگاه
-                    یکم شکاری، ساختمان شهر آسانسور یاران، طبقه 4، واحد446
-                  </Text>
-                </HStack>
+                <GridItem colSpan={{ sm: 1, md: 2, lg: 2 }}>
+                  <HStack>
+                    <Text
+                      fontFamily="iransans"
+                      fontSize={isDesktop ? "md" : "xs"}
+                      ml={1}
+                      minW="50px"
+                    >
+                      نشانی :
+                    </Text>
+                    <Text
+                      textAlign="justify"
+                      name="customer"
+                      fontFamily="iransans"
+                      fontSize="xs"
+                    >
+                      تهران - بزرگراه 65 متری فتح ، ابتدای لاین کندرو، جنب
+                      پایگاه یکم شکاری، ساختمان شهر آسانسور یاران، طبقه 4،
+                      واحد446
+                    </Text>
+                  </HStack>
+                </GridItem>
                 <HStack>
                   <Text
                     fontFamily="iransans"
@@ -381,7 +386,7 @@ export const UploadInvoiceDocument = ({}) => {
               <Text fontFamily="iransans" mx="auto" bg="gray.200" width="full">
                 مشخصات خریدار
               </Text>
-              <SimpleGrid p={1} columns={{ base: 1, md: 2, lg: 4 }} spacing={2}>
+              <SimpleGrid p={1} columns={{ base: 1, md: 2, lg: 3 }} spacing={2}>
                 <HStack>
                   <Text
                     fontFamily="iransans"
@@ -424,22 +429,24 @@ export const UploadInvoiceDocument = ({}) => {
                     {formData?.customer?.customerNationalCode}
                   </Text>
                 </HStack>
-                <HStack>
-                  <Text
-                    fontFamily="iransans"
-                    fontSize={isDesktop ? "md" : "xs"}
-                  >
-                    نشانی :
-                  </Text>
-                  <Text
-                    textAlign="justify"
-                    name="customer"
-                    fontFamily="iransans"
-                    fontSize="xs"
-                  >
-                    {formData?.customer?.customerAddress}
-                  </Text>
-                </HStack>
+                <GridItem colSpan={{ sm: 1, md: 2, lg: 2 }}>
+                  <HStack>
+                    <Text
+                      fontFamily="iransans"
+                      fontSize={isDesktop ? "md" : "xs"}
+                    >
+                      نشانی :
+                    </Text>
+                    <Text
+                      textAlign="justify"
+                      name="customer"
+                      fontFamily="iransans"
+                      fontSize="xs"
+                    >
+                      {formData?.customer?.customerAddress}
+                    </Text>
+                  </HStack>
+                </GridItem>
                 <HStack>
                   <Text
                     fontFamily="iransans"

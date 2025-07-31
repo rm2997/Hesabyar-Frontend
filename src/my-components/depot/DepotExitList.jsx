@@ -21,14 +21,18 @@ import {
   ArrowBigRight,
   ArrowBigRightDash,
   ArrowRight,
+  CircleFadingArrowUp,
   Combine,
   DecimalsArrowLeft,
   FilePenLine,
+  Handshake,
   Link2,
+  MailCheck,
   Send,
   ShieldUser,
   Trash2,
   UserLock,
+  UserRoundCheck,
   WalletCards,
   Warehouse,
 } from "lucide-react";
@@ -328,6 +332,28 @@ export const DepotExitList = ({ isDesktop }) => {
                                 color="yellow"
                                 _hover={{ color: "green" }}
                               />
+                            </Tooltip>
+                          )}
+                          {row?.driverNatCode ||
+                          row?.driverCarNumber ||
+                          row?.driver ||
+                          row?.driverMobile ? (
+                            <Tooltip label="تایید مشتری">
+                              <UserRoundCheck color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر تایید مشتری">
+                              <Handshake color="white" />
+                            </Tooltip>
+                          )}
+
+                          {row?.isSent ? (
+                            <Tooltip label="لینک به مشتری ارسال شده است">
+                              <MailCheck color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر ارسال">
+                              <CircleFadingArrowUp color="orange" />
                             </Tooltip>
                           )}
                         </HStack>

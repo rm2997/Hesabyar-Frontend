@@ -203,16 +203,16 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
       });
       return false;
     }
-    if (!formData?.driverMobile || formData?.driverMobile?.length != 11) {
-      toast({
-        title: "توجه",
-        description: "شماره موبایل راننده صحیح نیست",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return false;
-    }
+    // if (!formData?.driverMobile || formData?.driverMobile?.length != 11) {
+    //   toast({
+    //     title: "توجه",
+    //     description: "شماره موبایل راننده صحیح نیست",
+    //     status: "warning",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   return false;
+    // }
     const serialCheck = depotGoods.every((good) => {
       let retVal = true;
       if (!good.serial) {
@@ -244,20 +244,20 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
       return retval;
     });
     if (!imageCheck) return false;
-    if (
-      formData?.driver?.length == 0 &&
-      formData?.driverCarNumber?.length == 0 &&
-      formData?.driverNatCode?.length == 0
-    ) {
-      toast({
-        title: "توجه",
-        description: "باید حداقل یکی از مشخصات راننده یا خودرو را مشخص کنید",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return false;
-    }
+    // if (
+    //   formData?.driver?.length == 0 &&
+    //   formData?.driverCarNumber?.length == 0 &&
+    //   formData?.driverNatCode?.length == 0
+    // ) {
+    //   toast({
+    //     title: "توجه",
+    //     description: "باید حداقل یکی از مشخصات راننده یا خودرو را مشخص کنید",
+    //     status: "warning",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   return false;
+    // }
 
     return true;
   };
@@ -336,6 +336,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
     await handleSubmitImages(response?.data?.depotGoods);
     await initFormData();
     setLoading(false);
+    closeMe();
   };
 
   const handleSubmitImages = async (data) => {
@@ -778,7 +779,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   readOnly
                   icon={Info}
                   name="driver"
-                  title="مشخصات راننده"
+                  title="مشخصات راننده - این قسمت توسط مشتری پر می شود"
                   value={formData.driver}
                   onChange={handleChangeFormData}
                 ></MyInputBox>
@@ -794,7 +795,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   readOnly
                   icon={Info}
                   name="driverMobile"
-                  title="موبایل راننده"
+                  title="موبایل راننده - این قسمت توسط مشتری پر می شود"
                   value={formData?.driverMobile}
                   onChange={handleChangeFormData}
                 ></MyInputBox>
@@ -810,7 +811,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   readOnly
                   icon={Info}
                   name="driverNatCode"
-                  title="کد ملی راننده"
+                  title="کد ملی راننده - این قسمت توسط مشتری پر می شود"
                   value={formData.driverNatCode}
                   onChange={handleChangeFormData}
                 ></MyInputBox>
@@ -826,7 +827,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   readOnly
                   icon={Info}
                   name="driverCarNumber"
-                  title="پلاک خوردو"
+                  title="پلاک خوردو - این قسمت توسط مشتری پر می شود"
                   value={formData.driverCarNumber}
                   onChange={handleChangeFormData}
                 ></MyInputBox>

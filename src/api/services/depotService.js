@@ -1,4 +1,4 @@
-import axiosClient, { apiRequest } from "../axiosClient";
+import { apiRequest } from "../axiosClient";
 import endpoints from "../endpoints";
 
 export const CreateDepot = async (DepotData) => {
@@ -16,27 +16,6 @@ export const UpdateDepotImageFile = async (id, data) => {
     data: data,
     headers: { "Content-Type": "multipart/form-data" },
   });
-
-  // try {
-  //   const response = await axiosClient.patch(
-  //     endpoints.depot.updateDepotImageFile(id),
-  //     data,
-  //     { headers: { "Content-Type": "multipart/form-data" } }
-  //   );
-  //   if (!response) throw new Error();
-  //   return response;
-  // } catch (error) {
-  //   if (error.response) {
-  //     // پاسخ از سمت سرور (۴xx یا ۵xx)
-  //     throw new Error(error?.response?.data?.message || "خطای سرور");
-  //   } else if (error?.request) {
-  //     // درخواست فرستاده شده ولی پاسخی نیومده
-  //     throw new Error("پاسخی از سرور دریافت نشد");
-  //   } else {
-  //     // خطای دیگر (مثلاً در خود کد)
-  //     throw new Error(`مشکلی در ارسال درخواست رخ داد : ${error.message}`);
-  //   }
-  // }
 };
 
 export const UpdateDepot = async (id, depotData) => {
@@ -61,25 +40,6 @@ export const UploadDepotsFile = async (formData) => {
     data: formData,
     headers: { "Content-Type": "multipart/form-data" },
   });
-  // try {
-  //   const response = await axiosClient.post(
-  //     endpoints.depot.uploadExcel,
-  //     formData,
-  //     { headers: { "Content-Type": "multipart/form-data" } }
-  //   );
-  //   return response;
-  // } catch (error) {
-  //   if (error.response) {
-  //     // پاسخ از سمت سرور (۴xx یا ۵xx)
-  //     throw new Error(error.response.data?.message || "خطای سرور");
-  //   } else if (error.request) {
-  //     // درخواست فرستاده شده ولی پاسخی نیومده
-  //     throw new Error("پاسخی از سرور دریافت نشد");
-  //   } else {
-  //     // خطای دیگر (مثلاً در خود کد)
-  //     throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
-  //   }
-  // }
 };
 
 export const RemoveDepot = async (id) => {
@@ -108,6 +68,18 @@ export const ShowAllDepots = async (
   });
 };
 
+export const ShowDepotAcceptList = async (
+  page = 1,
+  limit = 10,
+  type,
+  search = ""
+) => {
+  return apiRequest({
+    method: "GET",
+    url: endpoints.depot.acceptList(page, limit, type, search),
+  });
+};
+
 export const SetDepotIsAccepted = async (id) => {
   return apiRequest({
     method: "PATCH",
@@ -126,5 +98,20 @@ export const GenerateNewToken = async (id) => {
   return apiRequest({
     method: "POST",
     url: endpoints.depot.generateNewToken(id),
+  });
+};
+
+export const ShowDepotByToken = async (token) => {
+  return apiRequest({
+    method: "GET",
+    url: endpoints.depot.listByToken(token),
+  });
+};
+
+export const UpdateDepotDriverInfo = async (token, data) => {
+  return apiRequest({
+    method: "PATCH",
+    url: endpoints.depot.updateDriverInfo(token),
+    data: data,
   });
 };

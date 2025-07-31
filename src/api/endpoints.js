@@ -109,6 +109,8 @@ const endpoints = {
   depot: {
     listAll: (page, limit, type, search) =>
       `/depot?page=${page}&limit=${limit}&type=${type}&search=${search}`,
+    acceptList: (page, limit, type, search) =>
+      `/depot/accept-request?page=${page}&limit=${limit}&type=${type}&search=${search}`,
     update: (id) => `/depot/${id}`,
     updateDepotImageFile: (id) => `/depot/image/${id}`,
     getDepotImageFile: (id) => `/depot/image/${id}`,
@@ -119,6 +121,8 @@ const endpoints = {
     setDepotIsAccepted: (id) => `/depot/accept/${id}`,
     setDepotIsSent: (id) => `/depot/sent/${id}`,
     generateNewToken: (id) => `/depot/generateNewToken/${id}`,
+    listByToken: (token) => `/depot/token/${token}`,
+    updateDriverInfo: (token) => `/depot/token/${token}`,
   },
   sms: {
     likeToLike: "https://api.sms.ir/v1/send/likeToLike",

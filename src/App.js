@@ -23,6 +23,7 @@ import { UploadInvoiceDocument } from "./pages/UploadInvoiceDocument";
 import { Home } from "./pages/Home";
 import { ChangeUserPassword } from "./pages/password/ChangeUserPassword";
 import { MyHome } from "./pages/MyHome";
+import { UpdateDriverInfo } from "./pages/UpdateDriverInfo";
 function App() {
   return (
     <ChakraProvider theme={theme}>
@@ -36,6 +37,20 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/forget-password" element={<ForgotPasswordForm />} />
             <Route path="/change-password" element={<ChangeUserPassword />} />
+            <Route path="/second-login" element={<SecondLogin />} />
+            <Route
+              path="/update-depot-document"
+              element={<UpdateDriverInfo />}
+            />
+            <Route
+              path="/upload-proforma-document"
+              element={<UploadProformaDocument />}
+            />
+            <Route
+              path="/upload-invoice-document"
+              element={<UploadInvoiceDocument />}
+            />
+            <Route path="*" element={<NotFoundPage />} />
             <Route
               path="/dashbord"
               element={
@@ -56,16 +71,6 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route path="/second-login" element={<SecondLogin />} />
-            <Route
-              path="/upload-proforma-document"
-              element={<UploadProformaDocument />}
-            />
-            <Route
-              path="/upload-invoice-document"
-              element={<UploadInvoiceDocument />}
-            />
-            <Route path="*" element={<NotFoundPage />} />
           </Routes>
           {/* </AuthProvider> */}
         </Router>

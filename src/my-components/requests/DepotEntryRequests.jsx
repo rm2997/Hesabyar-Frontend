@@ -36,6 +36,7 @@ import {
   RemoveDepot,
   SetDepotIsAccepted,
   ShowAllDepots,
+  ShowDepotAcceptList,
 } from "../../api/services/depotService";
 import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
@@ -64,7 +65,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
   const loadData = async (resetPage = false) => {
     setLoading(true);
 
-    const res = await ShowAllDepots(
+    const res = await ShowDepotAcceptList(
       resetPage ? 1 : currentPage,
       itemsPerPage,
       DepotTypes.find((t) => t.key == "in").value,
@@ -81,10 +82,10 @@ export const DepotEntryRequest = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-    const tmpEntryReq = res?.data?.items?.filter(
-      (entry) => entry.isAccepted == null
-    );
-
+    // const tmpEntryReq = res?.data?.items?.filter(
+    //   (entry) => entry.isAccepted == null
+    // );
+    const tmpEntryReq = res?.data?.items;
     setDepotEntry(tmpEntryReq);
     setTotalPages(Math.ceil(tmpEntryReq.length / itemsPerPage));
     setLoading(false);

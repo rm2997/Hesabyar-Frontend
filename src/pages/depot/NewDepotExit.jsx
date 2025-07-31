@@ -186,16 +186,16 @@ export const NewDepotExit = ({ isDesktop }) => {
       });
       return false;
     }
-    if (!formData?.driverMobile || formData?.driverMobile?.length != 11) {
-      toast({
-        title: "توجه",
-        description: "شماره موبایل راننده صحیح نیست",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return false;
-    }
+    // if (!formData?.driverMobile || formData?.driverMobile?.length != 11) {
+    //   toast({
+    //     title: "توجه",
+    //     description: "شماره موبایل راننده صحیح نیست",
+    //     status: "warning",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   return false;
+    // }
     const serialCheck = depotGoods.every((good) => {
       let retVal = true;
       if (!good.serial) {
@@ -227,20 +227,20 @@ export const NewDepotExit = ({ isDesktop }) => {
       return retval;
     });
     if (!imageCheck) return false;
-    if (
-      formData?.driver?.length == 0 &&
-      formData?.driverCarNumber?.length == 0 &&
-      formData?.driverNatCode?.length == 0
-    ) {
-      toast({
-        title: "توجه",
-        description: "باید حداقل یکی از مشخصات راننده یا خودرو را مشخص کنید",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return false;
-    }
+    // if (
+    //   formData?.driver?.length == 0 &&
+    //   formData?.driverCarNumber?.length == 0 &&
+    //   formData?.driverNatCode?.length == 0
+    // ) {
+    //   toast({
+    //     title: "توجه",
+    //     description: "باید حداقل یکی از مشخصات راننده یا خودرو را مشخص کنید",
+    //     status: "warning",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   return false;
+    // }
 
     return true;
   };
@@ -761,7 +761,7 @@ export const NewDepotExit = ({ isDesktop }) => {
               </HStack>
             </FormControl>
 
-            <FormControl>
+            {/* <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
                   مشخصات راننده
@@ -774,9 +774,9 @@ export const NewDepotExit = ({ isDesktop }) => {
                   onChange={handleChangeFormData}
                 ></MyInputBox>
               </HStack>
-            </FormControl>
+            </FormControl> */}
 
-            <FormControl>
+            {/* <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
                   موبایل راننده
@@ -789,9 +789,9 @@ export const NewDepotExit = ({ isDesktop }) => {
                   onChange={handleChangeFormData}
                 ></MyInputBox>
               </HStack>
-            </FormControl>
+            </FormControl> */}
 
-            <FormControl>
+            {/* <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
                   کد ملی راننده
@@ -804,9 +804,9 @@ export const NewDepotExit = ({ isDesktop }) => {
                   onChange={handleChangeFormData}
                 ></MyInputBox>
               </HStack>
-            </FormControl>
+            </FormControl> */}
 
-            <FormControl>
+            {/* <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
                   پلاک خوردو
@@ -819,7 +819,7 @@ export const NewDepotExit = ({ isDesktop }) => {
                   onChange={handleChangeFormData}
                 ></MyInputBox>
               </HStack>
-            </FormControl>
+            </FormControl> */}
 
             <FormControl>
               <HStack>
