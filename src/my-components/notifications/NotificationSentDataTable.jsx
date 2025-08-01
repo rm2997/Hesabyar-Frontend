@@ -112,10 +112,14 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
 
-  const handleDeleteNotification = async () => {
-    setLoading(true);
+  const deleteNotificationFromList = (id) => {
+    setUserData((prev) => prev.filter((n) => n.id !== id));
+  };
 
-    const res = await RemoveNotification(selectedID);
+  const handleDeleteNotification = async (id) => {
+    setLoading(true);
+    if (id == 0) return;
+    const res = await RemoveNotification(id);
     if (!res.success) {
       toast({
         title: "خطایی رخ داد",
@@ -127,8 +131,7 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-    const notifs = userMessages.filter((n) => n.id !== selectedID);
-    setUserMessages(notifs);
+    deleteNotificationFromList(id);
     toast({
       title: "توجه",
       description: ` پیام حذف شد`,
@@ -247,7 +250,7 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
                           setDialogGears({
                             title: "حذف پیام",
                             text: "آیا واقعا می خواهید این پیام را حذف کنید؟",
-                            callBack: handleDeleteNotification,
+                            callBack: () => handleDeleteNotification(row.id),
                           });
                           setIsDialogOpen(true);
                         }}

@@ -162,9 +162,14 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
 
-  const handleDeleteNotification = async () => {
+  const deleteNotificationFromList = (id) => {
+    setUserMessages((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const handleDeleteNotification = async (id) => {
+    if (id == 0) return;
     setLoading(true);
-    const res = await RemoveNotification(selectedID);
+    const res = await RemoveNotification(id);
     if (!res.success) {
       toast({
         title: "خطایی رخ داد",
@@ -176,8 +181,8 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-    const notifs = userMessages.filter((n) => n.id !== selectedID);
-    setUserMessages(notifs);
+    deleteNotificationFromList(id);
+
     toast({
       title: "توجه",
       description: ` پیام حذف شد`,
@@ -188,10 +193,10 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleShowNotification = async () => {
-    if (selectedID === 0) return;
+  const handleShowNotification = async (id) => {
+    if (id === 0) return;
 
-    handleMarkAsReadNotification(selectedID).then(() => onOpen());
+    handleMarkAsReadNotification(id).then(() => onOpen());
   };
 
   dayjs.extend(jalali);
@@ -319,7 +324,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                           setDialogGears({
                             title: "حذف پیام",
                             text: "آیا واقعا می خواهید این پیام را حذف کنید؟",
-                            callBack: handleDeleteNotification,
+                            callBack: () => handleDeleteNotification(row?.id),
                           });
                           setIsDialogOpen(true);
                         }}
