@@ -78,6 +78,8 @@ export const ShowUserNotification = ({ id, notifications, onClose }) => {
           <HStack>
             <FormLabel width={110}>محتوا</FormLabel>
             <Textarea
+              overflowWrap="normal"
+              overflow="auto"
               readonly
               size={19}
               icon={ScrollText}
