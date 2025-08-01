@@ -97,7 +97,7 @@ export const SearchProforma = ({ onSelect, isOpen, onClose, searchItems }) => {
                 <List spacing={0}>
                   {results?.map((item) => (
                     <ListItem
-                      key={item.id}
+                      key={item?.id}
                       p={2}
                       _hover={{ bg: "gray.100", cursor: "pointer" }}
                       onClick={() => {

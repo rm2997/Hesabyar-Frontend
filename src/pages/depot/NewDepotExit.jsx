@@ -305,10 +305,10 @@ export const NewDepotExit = ({ isDesktop }) => {
 
     setLoading(true);
     const response = await CreateDepot(tmpformData);
-    if (!response.success) {
+    if (!response?.success) {
       toast({
         title: "خطایی رخ داد",
-        description: response.error,
+        description: response?.error,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -373,7 +373,7 @@ export const NewDepotExit = ({ isDesktop }) => {
 
   const handleSearchCustomers = async (query) => {
     const response = await ShowAllCustomers(1, 10, query);
-    return response.data.items;
+    return response?.data?.items;
   };
 
   const handleShowSearchInvoice = async () => {
@@ -383,14 +383,14 @@ export const NewDepotExit = ({ isDesktop }) => {
   const handleInvoiceChange = async (id) => {
     //setSelectedInvoice(id);
     const res = await ShowInvoicesByID(id);
-    if (!res.success) {
+    if (!res?.success) {
       return;
     }
     setFormData({ ...formData, depotInvoice: res?.data });
 
     const tmpDepotGoods = [];
     const goods = [...res?.data?.invoiceGoods];
-    goods.forEach((good) => {
+    goods?.forEach((good) => {
       const depotGood = {
         quantity: good.quantity,
         price: good.price,
@@ -403,7 +403,7 @@ export const NewDepotExit = ({ isDesktop }) => {
         imagePreview: "",
         imageFile: null,
       };
-      tmpDepotGoods.push(depotGood);
+      tmpDepotGoods?.push(depotGood);
     });
     setDepotGoods(tmpDepotGoods);
     //setInvoiceGoods(res?.data.invoiceGoods);
@@ -495,7 +495,7 @@ export const NewDepotExit = ({ isDesktop }) => {
                 columnGap={3}
                 mt={2}
               >
-                {depotGoods.map((depotItem, index) => (
+                {depotGoods?.map((depotItem, index) => (
                   <Box
                     borderWidth="1px"
                     borderRadius="lg"
@@ -591,14 +591,14 @@ export const NewDepotExit = ({ isDesktop }) => {
                       {/* <Text w="5px" /> */}
                     </Flex>
                     <Flex justify="space-between" mt={3} dir="rtl">
-                      <FormLabel
-                        fontSize="xs"
+                      <Text
+                        dir="rtl"
                         fontFamily="iransans"
-                        my="auto"
-                        hidden={!isDesktop}
+                        fontSize="xs"
+                        mt={2}
                       >
                         تصویر
-                      </FormLabel>
+                      </Text>
                       <label
                         style={{ marginLeft: "auto" }}
                         htmlFor={"image" + index}

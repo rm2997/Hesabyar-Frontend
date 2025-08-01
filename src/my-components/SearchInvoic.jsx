@@ -95,9 +95,9 @@ export const SearchInvoices = ({ onSelect, isOpen, onClose, searchItems }) => {
                 mt={1}
               >
                 <List spacing={0}>
-                  {results.map((item) => (
+                  {results?.map((item) => (
                     <ListItem
-                      key={item.id}
+                      key={item?.id}
                       p={2}
                       _hover={{ bg: "gray.100", cursor: "pointer" }}
                       onClick={() => {
@@ -107,10 +107,10 @@ export const SearchInvoices = ({ onSelect, isOpen, onClose, searchItems }) => {
                       }}
                     >
                       <Text>
-                        {item.title}
+                        {item?.title}
 
                         <Badge colorScheme="blue" mr="10px">
-                          ID: {item.id}
+                          ID: {item?.id}
                         </Badge>
                       </Text>
                     </ListItem>
