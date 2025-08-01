@@ -230,6 +230,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
         </Box>
       </Flex>
       <MyModal
+        size="md"
         modalHeader={dialogGears.title}
         isOpen={isOpen}
         onClose={onClose}

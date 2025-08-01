@@ -160,7 +160,7 @@ export const NewUser = ({ isDesktop }) => {
     if (!isValidPassword(formData?.password)) {
       toast({
         title: "خطایی رخ داد",
-        description: `کلمه عبور باید باید حداقل شش کاراکتر و شامل حروف کوچک و بزرگ و یک کاراکتر خاص باشد`,
+        description: `کلمه عبور  باید حداقل شش کاراکتر و شامل حروف کوچک و بزرگ و یک کاراکتر خاص باشد`,
         status: "warning",
         duration: 5000,
         isClosable: true,

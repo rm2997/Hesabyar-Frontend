@@ -354,6 +354,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
             </SimpleGrid>
 
             <MyModal
+              size="md"
               modalHeader={dialogGears.title}
               isOpen={isOpen}
               onClose={onClose}

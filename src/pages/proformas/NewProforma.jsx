@@ -287,7 +287,7 @@ export const NewProforma = ({ isDesktop }) => {
     <Box>
       <Card
         overflowY="auto"
-        minH={isDesktop ? "85vh" : "80vh"}
+        minH={isDesktop ? "75vh" : "70vh"}
         m={1}
         filter={loading ? "blur(10px)" : ""}
       >
@@ -306,7 +306,7 @@ export const NewProforma = ({ isDesktop }) => {
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
             <Flex direction={{ base: "column", md: "row" }} gap={5}>
               <Box flex={1} p={1} borderRadius="md">
-                <Stack spacing={5} direction="column">
+                <Stack columnGap={5} rowGap={3} direction="column">
                   <FormControl>
                     <HStack>
                       <FormLabel hidden={!isDesktop} width="120px">

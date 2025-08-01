@@ -183,11 +183,7 @@ export const ProformaRequests = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Flex
-        direction="column"
-        height="100vh"
-        filter={loading ? "blur(10px)" : ""}
-      >
+      <Flex direction="column" minH="72vh" filter={loading ? "blur(10px)" : ""}>
         <SearchBar
           yTop="0px"
           search={proformaSearch}

@@ -5,6 +5,7 @@ export const MyLoading = () => {
     <Flex
       direction={"column"}
       top={0}
+      left={0}
       position="absolute"
       zIndex={100}
       minHeight="78%"

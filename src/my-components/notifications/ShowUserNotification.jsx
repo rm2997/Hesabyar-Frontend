@@ -1,4 +1,10 @@
-import { FormControl, FormLabel, HStack, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  HStack,
+  Textarea,
+  VStack,
+} from "@chakra-ui/react";
 import { Captions, ScrollText, User } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -28,7 +34,8 @@ export const ShowUserNotification = ({ id, notifications, onClose }) => {
 
   useEffect(() => {
     const loadData = async () => {
-      const notification = notifications.find((n) => n.id === id);
+      const notification = notifications.find((n) => n.id == id);
+
       setFormData(notification);
     };
     loadData();
@@ -41,10 +48,11 @@ export const ShowUserNotification = ({ id, notifications, onClose }) => {
       dir="rtl"
       filter={loading ? "blur(10px)" : ""}
     >
-      <FormControl isDisabled>
+      <FormControl>
         <HStack>
           <FormLabel width={110}>عنوان</FormLabel>
           <MyInputBox
+            readonly
             size={19}
             icon={Captions}
             name="title"
@@ -53,22 +61,12 @@ export const ShowUserNotification = ({ id, notifications, onClose }) => {
           />
         </HStack>
       </FormControl>
-      <FormControl isDisabled>
-        <HStack>
-          <FormLabel width={110}>محتوا</FormLabel>
-          <MyInputBox
-            size={19}
-            icon={ScrollText}
-            title="محتوا"
-            name="message"
-            value={formData?.message}
-          />
-        </HStack>
-      </FormControl>
-      <FormControl isDisabled>
+
+      <FormControl>
         <HStack>
           <FormLabel width={110}>گیرنده</FormLabel>
           <MyInputBox
+            readonly
             size={19}
             icon={User}
             title="گیرنده"
@@ -76,6 +74,19 @@ export const ShowUserNotification = ({ id, notifications, onClose }) => {
             value={formData?.toUser?.userfname}
           />
         </HStack>
+        <FormControl>
+          <HStack>
+            <FormLabel width={110}>محتوا</FormLabel>
+            <Textarea
+              readonly
+              size={19}
+              icon={ScrollText}
+              title="محتوا"
+              name="message"
+              value={formData?.message}
+            />
+          </HStack>
+        </FormControl>
       </FormControl>
     </VStack>
   );

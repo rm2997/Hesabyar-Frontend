@@ -283,7 +283,7 @@ export const NewInvoice = ({ isDesktop }) => {
     <Box>
       <Card
         overflowY="auto"
-        minH={isDesktop ? "85vh" : "80vh"}
+        minH={isDesktop ? "75vh" : "70vh"}
         m={1}
         filter={loading ? "blur(10px)" : ""}
       >
@@ -300,9 +300,13 @@ export const NewInvoice = ({ isDesktop }) => {
         )}
         <CardBody borderTopWidth={2}>
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
-            <Flex direction={{ base: "column", md: "row" }} gap={5}>
+            <Flex
+              direction={{ base: "column", md: "row" }}
+              columnGap={5}
+              rowGap={3}
+            >
               <Box flex={1} p={1} borderRadius="md">
-                <Stack spacing={5} direction="column">
+                <Stack columnGap={5} rowGap={3} direction="column">
                   <FormControl>
                     <HStack>
                       <FormLabel hidden={!isDesktop} width="135px">
@@ -318,7 +322,7 @@ export const NewInvoice = ({ isDesktop }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="230px">
+                      <FormLabel hidden={!isDesktop} width="175px">
                         نام مشتری
                       </FormLabel>
                       <Input
@@ -368,7 +372,7 @@ export const NewInvoice = ({ isDesktop }) => {
 
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="170px">
+                      <FormLabel hidden={!isDesktop} width="150px">
                         پیش‌ فاکتور
                       </FormLabel>
                       <Input
@@ -414,7 +418,7 @@ export const NewInvoice = ({ isDesktop }) => {
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="130px">
+                      <FormLabel hidden={!isDesktop} width="135px">
                         نوع پرداخت
                       </FormLabel>
                       <Select
@@ -434,11 +438,11 @@ export const NewInvoice = ({ isDesktop }) => {
                   </FormControl>
                 </Stack>
               </Box>
-              <Box flex={3} p={4} borderRadius="md">
-                <SimpleGrid
-                  columns={{ base: 1, md: 3, lg: 3 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
-                  spacing={4}
-                  minChildWidth="260px"
+              <Box flex={1} p={1} borderRadius="md">
+                <Flex
+                  direction={{ base: "column", md: "row" }}
+                  columnGap={5}
+                  rowGap={3}
                 >
                   <PaperMoneyInput
                     isDesktop={isDesktop}
@@ -471,7 +475,7 @@ export const NewInvoice = ({ isDesktop }) => {
                     formData={formData}
                     handleChangeFormData={handleChangeFormData}
                   />
-                </SimpleGrid>
+                </Flex>
               </Box>
             </Flex>
 

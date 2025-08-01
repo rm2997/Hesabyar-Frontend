@@ -187,11 +187,7 @@ export const InvoiceRequests = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Flex
-        direction="column"
-        height="100vh"
-        filter={loading ? "blur(10px)" : ""}
-      >
+      <Flex direction="column" minH="72vh" filter={loading ? "blur(10px)" : ""}>
         <SearchBar
           zIndex="2"
           yTop="0px"

@@ -114,7 +114,7 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         case "outgoNotifications":
           return <NotificationSentDataTable isDesktop={isDesktop} />;
         case "newNotification":
-          return <NewNotification isDesktop={isDesktop} />;
+          return <NewNotification isDesktop={isDesktop} user={user} />;
         case "newCustomer":
           return <NewCustomer isDesktop={isDesktop} />;
         case "customers":

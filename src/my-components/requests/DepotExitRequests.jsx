@@ -183,11 +183,7 @@ export const DepotExitRequests = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Flex
-        height="100vh"
-        filter={loading ? "blur(10px)" : ""}
-        direction="column"
-      >
+      <Flex direction="column" minH="72vh" filter={loading ? "blur(10px)" : ""}>
         <SearchBar
           search={search}
           setSearch={setSearch}

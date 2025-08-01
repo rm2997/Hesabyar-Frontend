@@ -5,6 +5,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  GridItem,
   HStack,
   Select,
   SimpleGrid,
@@ -57,7 +58,7 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
     });
   };
 
- const validateForm = async () => {
+  const validateForm = async () => {
     if (!formData) {
       toast({
         title: "توجه",
@@ -68,7 +69,7 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
       });
       return false;
     }
-    if (formData?.customerFName?.trim().length < 2 ) {
+    if (formData?.customerFName?.trim().length < 2) {
       toast({
         title: "توجه",
         description: "لطفا نام صحیح را وارد کنید",
@@ -78,7 +79,7 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
       });
       return false;
     }
-    if (formData?.customerLName.trim()?.length < 2 ) {
+    if (formData?.customerLName.trim()?.length < 2) {
       toast({
         title: "توجه",
         description: "لطفا نام خانوادگی صحیح را وارد کنید",
@@ -89,7 +90,11 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
       return false;
     }
 
-    if (formData?.customerNationalCode?.trim().length > 0 && (formData?.customerNationalCode.trim()?.length != 10 || isNaN(Number(formData?.customerNationalCode)))) {
+    if (
+      formData?.customerNationalCode?.trim().length > 0 &&
+      (formData?.customerNationalCode.trim()?.length != 10 ||
+        isNaN(Number(formData?.customerNationalCode)))
+    ) {
       toast({
         title: "توجه",
         description: "کد ملی صحیح نیست",
@@ -99,7 +104,10 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
       });
       return false;
     }
-    if (formData?.customerMobile?.trim().length != 11 || isNaN(Number(formData?.customerMobile))) {
+    if (
+      formData?.customerMobile?.trim().length != 11 ||
+      isNaN(Number(formData?.customerMobile))
+    ) {
       toast({
         title: "توجه",
         description: "موبایل صحیح نیست",
@@ -109,7 +117,11 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
       });
       return false;
     }
-    if (formData?.customerPhone?.trim().length > 0 && (formData?.customerPhone?.trim().length < 5 || isNaN(Number(formData?.customerPhone)))) {
+    if (
+      formData?.customerPhone?.trim().length > 0 &&
+      (formData?.customerPhone?.trim().length < 5 ||
+        isNaN(Number(formData?.customerPhone)))
+    ) {
       toast({
         title: "توجه",
         description: "شماره تلفن صحیح نیست",
@@ -119,7 +131,11 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
       });
       return false;
     }
-    if (formData?.customerPostalCode?.trim().length > 0 && (formData?.customerPostalCode?.trim().length != 10 || isNaN(Number(formData?.customerPostalCode)))) {
+    if (
+      formData?.customerPostalCode?.trim().length > 0 &&
+      (formData?.customerPostalCode?.trim().length != 10 ||
+        isNaN(Number(formData?.customerPostalCode)))
+    ) {
       toast({
         title: "توجه",
         description: "کد پستی صحیح نیست",
@@ -133,11 +149,9 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
     return true;
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-      if (await validateForm() == false)
-      return;
+    if ((await validateForm()) == false) return;
     setLoading(true);
     const result = await UpdateCustomer(formData.id, formData);
     if (!result.success) {
@@ -279,19 +293,21 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
             </HStack>
           </FormControl>
         </SimpleGrid>
-        <FormControl >
-          <HStack>
-            <FormLabel width="160px">آدرس</FormLabel>
-            <Textarea
-              placeholder="آدرس"
-              name="customerAddress"
-              resize="horizontal"
-              maxW="780px"
-              value={formData.customerAddress}
-              onChange={handleChangeFormData}
-            />
-          </HStack>
-        </FormControl>
+        <GridItem colSpan={{ lg: 3 }}>
+          <FormControl>
+            <HStack>
+              <FormLabel width="115px">آدرس</FormLabel>
+              <Textarea
+                placeholder="آدرس"
+                name="customerAddress"
+                resize="horizontal"
+                maxW="780px"
+                value={formData.customerAddress}
+                onChange={handleChangeFormData}
+              />
+            </HStack>
+          </FormControl>
+        </GridItem>
         <Button
           leftIcon={<SquareCheckBig />}
           colorScheme="blue"

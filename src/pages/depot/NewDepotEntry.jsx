@@ -386,7 +386,8 @@ export const NewDepotEntry = ({ isDesktop }) => {
             align={"stretch"}
             direction={["column", "row"]}
             as="form"
-            spacing={5}
+            rowGap={3}
+            columnGap={5}
             onSubmit={handleSubmit}
           >
             <FormControl isRequired>
@@ -401,7 +402,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
               direction={isDesktop ? "" : "column"}
               flexWrap={isDesktop ? "wrap" : ""}
               minH="100px"
-              rowGap={3}
+              rowGap={2}
               p={2}
               dir="ltr"
               w="full"

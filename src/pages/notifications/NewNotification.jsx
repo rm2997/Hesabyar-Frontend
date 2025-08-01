@@ -25,13 +25,13 @@ import { MyLoading } from "../../my-components/MyLoading";
 import { GetAllUsers } from "../../api/services/userService";
 import { useNotification } from "../../contexts/NotificationContext";
 
-export const NewNotification = ({ isDesktop }) => {
+export const NewNotification = ({ isDesktop, user }) => {
   const [formData, setFormData] = useState({
-    id: 0,
     title: "",
     message: "",
     toUser: {},
   });
+
   const [usersData, setUsersData] = useState([]);
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -48,44 +48,92 @@ export const NewNotification = ({ isDesktop }) => {
         setLoading(false);
         return;
       }
-      setUsersData(res?.data?.items);
+      const tmpUsers = res?.data?.items?.filter((u) => u.id != user.sub);
+
+      setUsersData(tmpUsers);
       setLoading(false);
     };
     fetchUsersData();
   }, []);
 
+  const validateForm = async () => {
+    if (!formData) {
+      toast({
+        title: "توجه",
+        description: "اطلاعات پیام باید تکمیل گردد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    if (formData?.message?.trim().length < 4) {
+      toast({
+        title: "توجه",
+        description: "لطفا محتوای پیام را مشخص فرمایید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (formData?.title?.trim()?.length < 2) {
+      toast({
+        title: "توجه",
+        description: "لطفا عنوان پیام را مشخص فرمایید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (!formData?.toUser || formData?.toUser == {}) {
+      toast({
+        title: "توجه",
+        description: "لطفا گیرنده پیام را مشخص فرمایید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if ((await validateForm()) == false) return;
     setLoading(true);
-    await CreateNotification(formData)
-      .then((res) => {
-        if (res.status == 200 || res.status == 201) {
-          loadUnreadeNotif();
-          setFormData({
-            id: "",
-            title: "",
-            message: "",
-            toUser: {},
-          });
-          toast({
-            title: "ثبت شد",
-            description: `اطلاعات پیام شما ذخیره شد`,
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      })
-      .finally(setLoading(false));
+
+    const res = await CreateNotification(formData);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    await loadUnreadeNotif();
+    setFormData({
+      title: "",
+      message: "",
+      toUser: {},
+    });
+    toast({
+      title: "ثبت شد",
+      description: `اطلاعات پیام شما ذخیره شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+
+    setLoading(false);
   };
 
   const handleChangeUser = (id) => {
@@ -93,7 +141,7 @@ export const NewNotification = ({ isDesktop }) => {
       setFormData({ ...formData, toUser: {} });
       return;
     }
-    const user = usersData.find((u) => (u.id = id));
+    const user = usersData.find((u) => u.id == id);
     if (!user) return;
     setFormData({ ...formData, toUser: user });
   };
@@ -122,7 +170,7 @@ export const NewNotification = ({ isDesktop }) => {
         <CardBody>
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
             <SimpleGrid
-              columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+              columns={{ base: 1, md: 1, lg: 1 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
               spacing={4}
             >
               <FormControl isRequired>
@@ -150,8 +198,8 @@ export const NewNotification = ({ isDesktop }) => {
                       dir="ltr"
                       name="toUser"
                       placeholder="لطفا یکی از کاربران را انتخاب کنید"
-                      value={formData.toUser.id}
-                      onChange={(e) => handleChangeUser(e.target.value)}
+                      value={formData?.toUser}
+                      onChange={handleChangeFormData}
                     >
                       {usersData.map((user) => (
                         <option key={user.id} value={user.id}>

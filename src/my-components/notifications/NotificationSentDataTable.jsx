@@ -262,14 +262,12 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
               ))}
             </SimpleGrid>
             <MyModal
+              size="md"
               modalHeader={dialogGears.title}
               isOpen={isOpen}
               onClose={onClose}
             >
-              <ShowUserNotification
-                id={selectedID}
-                notifications={userMessages}
-              />
+              <ShowUserNotification id={selectedID} notifications={userData} />
             </MyModal>
             <MyAlert
               AlertHeader={dialogGears.title}

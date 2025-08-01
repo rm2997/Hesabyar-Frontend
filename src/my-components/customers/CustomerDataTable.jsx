@@ -279,6 +279,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
               AlertMessage={dialogGears.text}
             />
             <MyModal
+              size="2xl"
               modalHeader={dialogGears.title}
               onClose={onClose}
               isOpen={isOpen}
