@@ -1,6 +1,7 @@
-import { Flex, Heading, Spinner } from "@chakra-ui/react";
+import { Flex, Heading, Spinner, useBreakpointValue } from "@chakra-ui/react";
 
 export const MyLoading = () => {
+  const isDesktop = useBreakpointValue({ base: false, md: true });
   return (
     <Flex
       direction={"column"}
@@ -11,9 +12,14 @@ export const MyLoading = () => {
       minHeight="78%"
       h="100%"
       minW="full"
-      bg="blackAlpha.300"
+      bg="blackAlpha.500"
     >
-      <Flex alignItems="center" direction="column" my="auto">
+      <Flex
+        alignItems="center"
+        direction="column"
+        mx="auto"
+        my={isDesktop ? "20%" : "auto"}
+      >
         <Spinner
           thickness="4px"
           speed="0.65s"

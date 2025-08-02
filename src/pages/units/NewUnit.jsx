@@ -13,7 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Info, Ruler, SquareCheckBig, UserRoundPlus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CreateUnit } from "../../api/services/unitsService";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../../my-components/MyLoading";
@@ -103,7 +103,12 @@ export const NewUnit = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+      <Card
+        m={1}
+        filter={loading ? "blur(10px)" : ""}
+        overflowY="auto"
+        minH={isDesktop ? "40vh" : "30vh"}
+      >
         {isDesktop && (
           <CardHeader
             bg="#68C15A"

@@ -16,8 +16,6 @@ import {
   Tooltip,
   Icon,
   Flex,
-  AbsoluteCenter,
-  Spinner,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -34,6 +32,7 @@ import {
   Link2,
   ArrowRight,
   Warehouse,
+  Truck,
 } from "lucide-react";
 
 import { EditInvoice } from "./EditInvoice";
@@ -50,6 +49,7 @@ import { MyAlert } from "../MyAlert";
 import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
 import { MyLoading } from "../MyLoading";
+import { MyStepper } from "../MyStepper";
 
 export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -365,71 +365,101 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                     </HStack>
                   </CardHeader>
                   <CardBody>
-                    <VStack spacing={2} align="stretch">
-                      <HStack>
-                        <Text>عنوان : </Text>
-                        <Text fontFamily="IranSans" fontSize="md">
-                          {row.title}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>تاریخ : </Text>
-                        <Text fontFamily="IranSans" fontSize="md">
-                          {dayjs(row.createdAt)
-                            .locale("fa")
-                            .format("YYYY/MM/DD")}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>نام مشتری : </Text>
-                        <Text fontFamily="IranSans" fontSize="md">
-                          {row.customer?.customerFName +
-                            " " +
-                            row.customer?.customerLName}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>نوع پرداخت : </Text>
-                        <Text fontFamily="IranSans" fontSize="md">
-                          {row.paymentStatus}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text> تایید مشتری : </Text>
-                        <Text fontFamily="IranSans" fontSize="md">
-                          {row.approvedFile ? "دارد" : "ندارد"}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text> جمع کل : </Text>
-                        <Text fontFamily="IranSans" fontSize={"xl"}>
-                          {Number(row.totalAmount).toLocaleString()}
-                        </Text>
-                      </HStack>
-                    </VStack>
+                    <Flex direction="row" columnGap={5}>
+                      <MyStepper data={row} />
+                      <VStack spacing={2} align="stretch">
+                        <HStack>
+                          <Text fontSize="sm" fontFamily="IranSans">
+                            عنوان :
+                          </Text>
+                          <Text fontSize="sm" fontFamily="IranSans">
+                            {row.title}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontSize="sm" fontFamily="IranSans">
+                            تاریخ :{" "}
+                          </Text>
+                          <Text fontSize="sm" fontFamily="IranSans">
+                            {dayjs(row.createdAt)
+                              .locale("fa")
+                              .format("YYYY/MM/DD")}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontSize="sm" fontFamily="IranSans">
+                            مشتری :
+                          </Text>
+                          <Text fontSize="sm" fontFamily="IranSans">
+                            {row.customer?.customerFName +
+                              " " +
+                              row.customer?.customerLName}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontSize="sm" fontFamily="IranSans">
+                            نوع پرداخت :
+                          </Text>
+                          <Text fontFamily="IranSans" fontSize="md">
+                            {row.paymentStatus}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontSize="sm" fontFamily="IranSans">
+                            تایید مشتری :
+                          </Text>
+                          <Text fontSize="sm" fontFamily="IranSans">
+                            {row.approvedFile ? "دارد" : "ندارد"}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontSize="sm" fontFamily="IranSans">
+                            جمع کل :
+                          </Text>
+                          <Text fontSize="md" fontFamily="IranSans">
+                            {Number(row.totalAmount).toLocaleString()}
+                          </Text>
+                        </HStack>
+                      </VStack>
+                    </Flex>
                   </CardBody>
                   <CardFooter borderBottomRadius={5} bg="gray.100">
-                    {!row?.finished && (
+                    <Flex hidden={row?.finished} mr="auto">
                       <Stack
                         direction={["row"]}
                         spacing={2}
                         align={"stretch"}
                         mr="auto"
                       >
+                        <Link _hover={{ color: "#ffd54f" }} color="orange.600">
+                          <Tooltip label="درخواست ثبت راننده">
+                            <Icon w={6} h={6} as={Truck} />
+                          </Tooltip>
+                        </Link>
+
                         <Link
-                          _hover={{
-                            color: "orange",
+                          hidden={row.isSent}
+                          _disabled={true}
+                          _hover={{ color: "#ffd54f" }}
+                          color="green.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "ارسال لینک به مشتری",
+                              text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                              callBack: handleSendCustomerLink,
+                            });
+
+                            setIsDialogOpen(true);
                           }}
-                          color="blue.600"
-                          onClick={(e) => handleEditInvoice(row.id)}
                         >
-                          <Tooltip label="ویرایش">
-                            <Icon w={6} h={6} as={FilePenLine} />
+                          <Tooltip label="ارسال به مشتری">
+                            <Icon w={6} h={6} as={Send} />
                           </Tooltip>
                         </Link>
 
@@ -440,42 +470,20 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                           color="blue.600"
                           onClick={(e) => handleGenerateNewLink(row.id)}
                         >
-                          <Tooltip label="تولید لینک جدید">
+                          <Tooltip label="تولید توکن جدید">
                             <Icon w={6} h={6} as={Link2} />
                           </Tooltip>
                         </Link>
-
-                        {!row.isSent && (
-                          <Link
-                            _disabled={true}
-                            _hover={{ color: "#ffd54f" }}
-                            color="green.600"
-                            onClick={(e) => {
-                              setSelectedID(row.id);
-                              setDialogGears({
-                                title: "ارسال لینک به مشتری",
-                                text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
-                                callBack: handleSendCustomerLink,
-                              });
-
-                              setIsDialogOpen(true);
-                            }}
-                          >
-                            <Tooltip label="ارسال به مشتری">
-                              <Icon w={6} h={6} as={Send} />
-                            </Tooltip>
-                          </Link>
-                        )}
 
                         <Link
                           _hover={{ color: "#ffd54f" }}
                           color="red.600"
                           onClick={(e) => {
-                            setSelectedID(row.id);
+                            setSelectedID(row?.id);
                             setDialogGears({
                               title: "حذف فاکتور",
-                              text: "آیا واقعا می خواهید این فاکتور را حذف کنید؟",
-                              callBack: handleDeleteInvoice,
+                              text: "از حذف این فاکتور اطمینان دارید؟",
+                              callBack: () => handleDeleteInvoice(row?.id),
                             });
                             setIsDialogOpen(true);
                           }}
@@ -484,8 +492,20 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                             <Icon w={6} h={6} as={Trash2} />
                           </Tooltip>
                         </Link>
+
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={() => handleEditInvoice(row?.id)}
+                        >
+                          <Tooltip label="ویرایش">
+                            <Icon w={6} h={6} as={FilePenLine} />
+                          </Tooltip>
+                        </Link>
                       </Stack>
-                    )}
+                    </Flex>
                   </CardFooter>
                 </Card>
               ))}
@@ -513,23 +533,12 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
               />
             </SimpleGrid>
           </Box>
-          <Box
-            position="sticky"
-            bottom="0"
-            bg="#efefef"
-            p={1}
-            zIndex="1"
-            borderTopColor="gray.400"
-            borderTopWidth="1px"
-          >
-            <Flex justify="center" align="center">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={(page) => setCurrentPage(page)}
-              />
-            </Flex>
-          </Box>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
         </Flex>
         {loading && <MyLoading />}
       </Box>

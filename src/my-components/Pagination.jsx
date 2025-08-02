@@ -4,7 +4,6 @@ import {
   Button,
   Flex,
   HStack,
-  SimpleGrid,
   Wrap,
   WrapItem,
   useBreakpointValue,
@@ -32,45 +31,58 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const pages = getPageNumbers();
   const buttonSize = useBreakpointValue({ base: "sm", md: "md" }); // تغییر سایز تو موبایل
   return (
-    <Wrap hidden={totalPages < 2} spacing={1} justify="center" mt={4}>
-      <WrapItem>
-        <Button
-          size={buttonSize}
-          onClick={() => onPageChange(totalPages)}
-          isDisabled={currentPage === totalPages}
-          variant="outline"
-          leftIcon={<ArrowForwardIcon />}
-        >
-          آخر
-        </Button>
-      </WrapItem>
-
-      <HStack dir="ltr">
-        {pages.map((page) => (
-          <WrapItem key={page}>
+    <Box
+      hidden={totalPages < 2}
+      position="sticky"
+      bottom="0px"
+      bg="#efefef"
+      p={1}
+      zIndex="1"
+      borderTopColor="gray.400"
+      borderTopWidth="1px"
+    >
+      <Flex justify="center" align="center">
+        <Wrap hidden={totalPages < 2} spacing={1} justify="center" mt={4}>
+          <WrapItem>
             <Button
               size={buttonSize}
-              key={page}
-              onClick={() => onPageChange(page)}
-              colorScheme={page === currentPage ? "blue" : "gray"}
-              variant={page === currentPage ? "solid" : "outline"}
+              onClick={() => onPageChange(totalPages)}
+              isDisabled={currentPage === totalPages}
+              variant="outline"
+              leftIcon={<ArrowForwardIcon />}
             >
-              {page}
+              آخر
             </Button>
           </WrapItem>
-        ))}
-      </HStack>
-      <WrapItem>
-        <Button
-          size={buttonSize}
-          onClick={() => onPageChange(1)}
-          isDisabled={currentPage === 1}
-          variant="outline"
-          leftIcon={<ArrowBackIcon />}
-        >
-          اول
-        </Button>
-      </WrapItem>
-    </Wrap>
+
+          <HStack dir="ltr">
+            {pages.map((page) => (
+              <WrapItem key={page}>
+                <Button
+                  size={buttonSize}
+                  key={page}
+                  onClick={() => onPageChange(page)}
+                  colorScheme={page === currentPage ? "blue" : "gray"}
+                  variant={page === currentPage ? "solid" : "outline"}
+                >
+                  {page}
+                </Button>
+              </WrapItem>
+            ))}
+          </HStack>
+          <WrapItem>
+            <Button
+              size={buttonSize}
+              onClick={() => onPageChange(1)}
+              isDisabled={currentPage === 1}
+              variant="outline"
+              leftIcon={<ArrowBackIcon />}
+            >
+              اول
+            </Button>
+          </WrapItem>
+        </Wrap>
+      </Flex>
+    </Box>
   );
 };

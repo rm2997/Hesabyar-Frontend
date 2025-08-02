@@ -375,23 +375,12 @@ export const InvoiceRequests = ({ isDesktop }) => {
             ))}
           </SimpleGrid>
         </Box>
-        <Box
-          position="sticky"
-          bottom="0"
-          bg="#efefef"
-          p={1}
-          zIndex="1"
-          borderTopColor="gray.400"
-          borderTopWidth="1px"
-        >
-          <Flex justify="center" align="center">
-            <Pagination
-              currentPage={currentInvoicePage}
-              totalPages={totalInvoicePages}
-              onPageChange={(page) => setCurrentInvoicePage(page)}
-            />
-          </Flex>
-        </Box>
+
+        <Pagination
+          currentPage={currentInvoicePage}
+          totalPages={totalInvoicePages}
+          onPageChange={(page) => setCurrentInvoicePage(page)}
+        />
       </Flex>
       <MyAlert
         onClose={handleDialogClose}

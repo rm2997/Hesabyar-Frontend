@@ -105,7 +105,12 @@ export const ChangePassword = ({ isDesktop, user }) => {
 
   return (
     <Box>
-      <Card filter={loading ? "blur(10px)" : ""}>
+      <Card
+        filter={loading ? "blur(10px)" : ""}
+        minH={isDesktop ? "75vh" : "73vh"}
+        overflowY="auto"
+        m={1}
+      >
         <CardHeader
           bg="#68C15A"
           borderBottomColor="gray.400"
@@ -115,7 +120,7 @@ export const ChangePassword = ({ isDesktop, user }) => {
         >
           تغییر کلمه عبور
         </CardHeader>
-        <CardBody borderTopWidth={2} overflow="scroll">
+        <CardBody borderTopWidth={2}>
           <VStack
             align={"stretch"}
             direction={["column", "row"]}

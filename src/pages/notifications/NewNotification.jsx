@@ -155,7 +155,12 @@ export const NewNotification = ({ isDesktop, user }) => {
 
   return (
     <Box>
-      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+      <Card
+        filter={loading ? "blur(10px)" : ""}
+        m={1}
+        overflowY="auto"
+        minH={isDesktop ? "45vh" : "35vh"}
+      >
         {isDesktop && (
           <CardHeader
             bg="#68C15A"

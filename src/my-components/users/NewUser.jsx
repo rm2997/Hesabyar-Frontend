@@ -217,7 +217,12 @@ export const NewUser = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Card filter={loading ? "blur(10px)" : ""}>
+      <Card
+        filter={loading ? "blur(10px)" : ""}
+        minH={isDesktop ? "75vh" : "73vh"}
+        overflowY="auto"
+        m={1}
+      >
         <CardHeader
           bg="#68C15A"
           borderBottomColor="gray.400"

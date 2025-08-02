@@ -212,7 +212,12 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Card m={1} filter={loading ? "blur(10px)" : ""}>
+      <Card
+        m={1}
+        filter={loading ? "blur(10px)" : ""}
+        minH={isDesktop ? "83vh" : "73vh"}
+        overflowY="auto"
+      >
         <CardHeader
           bg="#68C15A"
           borderBottomColor="gray.400"

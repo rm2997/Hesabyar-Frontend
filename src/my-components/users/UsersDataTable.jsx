@@ -205,8 +205,10 @@ export const UsersDataTable = ({ isDesktop }) => {
     <Box>
       <Flex
         direction="column"
-        height="100vh"
         filter={loading ? "blur(10px)" : ""}
+        minH={isDesktop ? "76vh" : "73vh"}
+        overflowY="auto"
+        m={1}
       >
         <SearchBar
           isDesktop={isDesktop}
@@ -388,23 +390,12 @@ export const UsersDataTable = ({ isDesktop }) => {
             />
           </Flex>
         </Box>
-        <Box
-          position="sticky"
-          bottom="0px"
-          bg="#efefef"
-          p={1}
-          zIndex="1"
-          borderTopColor="gray.400"
-          borderTopWidth="1px"
-        >
-          <Flex justify="center" align="center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
-          </Flex>
-        </Box>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </Flex>
       {loading && <MyLoading />}
     </Box>

@@ -161,7 +161,7 @@ export const NewGood = ({ isDesktop }) => {
     <Box>
       <Card
         m={1}
-        minH={isDesktop ? "85vh" : "80vh"}
+        minH={isDesktop ? "45vh" : "35vh"}
         filter={loading ? "blur(10px)" : ""}
       >
         {isDesktop && (

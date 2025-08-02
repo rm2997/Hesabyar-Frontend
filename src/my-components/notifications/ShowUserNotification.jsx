@@ -44,7 +44,8 @@ export const ShowUserNotification = ({ id, notifications, onClose }) => {
   return (
     <VStack
       as="form"
-      spacing={5}
+      rowGap={3}
+      columnGap={5}
       dir="rtl"
       filter={loading ? "blur(10px)" : ""}
     >
@@ -74,21 +75,21 @@ export const ShowUserNotification = ({ id, notifications, onClose }) => {
             value={formData?.toUser?.userfname}
           />
         </HStack>
-        <FormControl>
-          <HStack>
-            <FormLabel width={110}>محتوا</FormLabel>
-            <Textarea
-              overflowWrap="normal"
-              overflow="auto"
-              readonly
-              size={19}
-              icon={ScrollText}
-              title="محتوا"
-              name="message"
-              value={formData?.message}
-            />
-          </HStack>
-        </FormControl>
+      </FormControl>
+      <FormControl>
+        <HStack>
+          <FormLabel width={110}>محتوا</FormLabel>
+          <Textarea
+            overflowWrap="normal"
+            overflow="auto"
+            readonly
+            size={19}
+            icon={ScrollText}
+            title="محتوا"
+            name="message"
+            value={formData?.message}
+          />
+        </HStack>
       </FormControl>
     </VStack>
   );

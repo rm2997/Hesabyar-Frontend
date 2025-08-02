@@ -320,23 +320,13 @@ export const DepotEntryList = ({ isDesktop }) => {
             </SimpleGrid>
           </Flex>
         </Box>
-        <Box
-          position="sticky"
-          bottom="0"
-          bg="#efefef"
-          p={1}
-          zIndex="1"
-          borderTopColor="gray.400"
-          borderTopWidth="1px"
-        >
-          <Flex justify="center" align="center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
-          </Flex>
-        </Box>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+
         <MyModal modalHeader="جزییات" isOpen={isOpen} onClose={onClose}>
           <EditDepotEntry
             isDesktop={isDesktop}

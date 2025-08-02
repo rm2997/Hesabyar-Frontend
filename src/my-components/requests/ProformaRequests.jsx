@@ -379,23 +379,12 @@ export const ProformaRequests = ({ isDesktop }) => {
             ))}
           </SimpleGrid>
         </Box>
-        <Box
-          position="sticky"
-          bottom="0px"
-          bg="#efefef"
-          p={1}
-          zIndex="1"
-          borderTopColor="gray.400"
-          borderTopWidth="1px"
-        >
-          <Flex justify="center" align="center">
-            <Pagination
-              currentPage={currentProformaPage}
-              totalPages={totalProformaPages}
-              onPageChange={(page) => setCurrentProformaPage(page)}
-            />
-          </Flex>
-        </Box>
+
+        <Pagination
+          currentPage={currentProformaPage}
+          totalPages={totalProformaPages}
+          onPageChange={(page) => setCurrentProformaPage(page)}
+        />
       </Flex>
       <MyAlert
         onClose={handleDialogClose}

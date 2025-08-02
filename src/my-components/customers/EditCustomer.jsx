@@ -9,10 +9,8 @@ import {
   HStack,
   Select,
   SimpleGrid,
-  Spinner,
   Textarea,
   useToast,
-  VStack,
 } from "@chakra-ui/react";
 import {
   IdCard,
@@ -29,7 +27,7 @@ import {
 import { MyLoading } from "../MyLoading";
 import { MyInputBox } from "../MyInputBox";
 
-export const EditCustomer = ({ id, onClose, onUpdate }) => {
+export const EditCustomer = ({ id, onClose, onUpdate, isDesktop }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const toast = useToast();
@@ -205,7 +203,9 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
         >
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="150px">هویت</FormLabel>
+              <FormLabel hidden={!isDesktop} width="150px">
+                هویت
+              </FormLabel>
               <Select
                 dir="ltr"
                 name="customerGender"
@@ -221,7 +221,9 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
           </FormControl>
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="150px">نام مشتری</FormLabel>
+              <FormLabel hidden={!isDesktop} width="150px">
+                نام مشتری
+              </FormLabel>
               <MyInputBox
                 icon={IdCard}
                 name="customerFName"
@@ -233,7 +235,9 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
           </FormControl>
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="150px">نام خانوادگی</FormLabel>
+              <FormLabel hidden={!isDesktop} width="150px">
+                نام خانوادگی
+              </FormLabel>
               <MyInputBox
                 icon={IdCard}
                 name="customerLName"
@@ -245,7 +249,9 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
           </FormControl>
           <FormControl>
             <HStack>
-              <FormLabel width="150px">شماره ملی</FormLabel>
+              <FormLabel hidden={!isDesktop} width="150px">
+                شماره ملی
+              </FormLabel>
               <MyInputBox
                 icon={IdCard}
                 name="customerNationalCode"
@@ -257,7 +263,9 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
           </FormControl>
           <FormControl isRequired>
             <HStack>
-              <FormLabel width="150px">شماره موبایل</FormLabel>
+              <FormLabel hidden={!isDesktop} width="150px">
+                شماره موبایل
+              </FormLabel>
               <MyInputBox
                 icon={Smartphone}
                 name="customerMobile"
@@ -269,7 +277,9 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
           </FormControl>
           <FormControl>
             <HStack>
-              <FormLabel width="150px">شماره تلفن</FormLabel>
+              <FormLabel hidden={!isDesktop} width="150px">
+                شماره تلفن
+              </FormLabel>
               <MyInputBox
                 icon={Phone}
                 name="customerPhone"
@@ -281,7 +291,9 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
           </FormControl>
           <FormControl>
             <HStack>
-              <FormLabel width="150px">کد پستی</FormLabel>
+              <FormLabel hidden={!isDesktop} width="150px">
+                کد پستی
+              </FormLabel>
               <MyInputBox
                 type="number"
                 icon={Mailbox}
@@ -296,7 +308,9 @@ export const EditCustomer = ({ id, onClose, onUpdate }) => {
         <GridItem colSpan={{ lg: 3 }}>
           <FormControl>
             <HStack>
-              <FormLabel width="115px">آدرس</FormLabel>
+              <FormLabel hidden={!isDesktop} width="115px">
+                آدرس
+              </FormLabel>
               <Textarea
                 placeholder="آدرس"
                 name="customerAddress"

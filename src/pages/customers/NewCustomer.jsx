@@ -9,6 +9,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  GridItem,
   HStack,
   Select,
   SimpleGrid,
@@ -193,7 +194,7 @@ export const NewCustomer = ({ isDesktop }) => {
   return (
     <Box>
       <Card
-        minH={isDesktop ? "85vh" : "80vh"}
+        minH={isDesktop ? "85vh" : "50vh"}
         borderWidth={1}
         m={1}
         borderColor="gray.200"
@@ -211,10 +212,11 @@ export const NewCustomer = ({ isDesktop }) => {
           </CardHeader>
         )}
         <CardBody>
-          <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
+          <Flex direction="column" rowGap={5} as="form" onSubmit={handleSubmit}>
             <SimpleGrid
-              columns={{ base: 1, md: 2, lg: 2 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
-              spacing={4}
+              columns={{ base: 1, md: 2, lg: 2 }}
+              columnGap={6}
+              rowGap={5}
             >
               <FormControl isRequired>
                 <HStack>
@@ -328,24 +330,24 @@ export const NewCustomer = ({ isDesktop }) => {
                   />
                 </HStack>
               </FormControl>
+              <GridItem colSpan={{ lg: 2, md: 1, sm: 1 }}>
+                <FormControl>
+                  <HStack>
+                    <FormLabel hidden={!isDesktop} width="135px">
+                      آدرس
+                    </FormLabel>
+                    <Textarea
+                      placeholder="آدرس"
+                      name="customerAddress"
+                      resize="horizontal"
+                      size="lg"
+                      value={formData.customerAddress}
+                      onChange={handleChangeFormData}
+                    />
+                  </HStack>
+                </FormControl>
+              </GridItem>
             </SimpleGrid>
-            <FormControl>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="120px">
-                  آدرس
-                </FormLabel>
-                <Textarea
-                  placeholder="آدرس"
-                  name="customerAddress"
-                  resize="horizontal"
-                  size="lg"
-                  minW="250px"
-                  maxW="1045px"
-                  value={formData.customerAddress}
-                  onChange={handleChangeFormData}
-                />
-              </HStack>
-            </FormControl>
             <Button
               leftIcon={<SquareCheckBig />}
               colorScheme="blue"
@@ -356,7 +358,6 @@ export const NewCustomer = ({ isDesktop }) => {
             </Button>
           </Flex>
         </CardBody>
-        <CardFooter></CardFooter>
       </Card>
       {loading && <MyLoading />}
     </Box>

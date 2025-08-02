@@ -129,9 +129,11 @@ export const UnitsDataTable = ({ isDesktop }) => {
   return (
     <Box>
       <Flex
-        filter={loading ? "blur(10px)" : ""}
         direction="column"
-        height="100vh"
+        m={1}
+        filter={loading ? "blur(10px)" : ""}
+        overflowY="auto"
+        minH={isDesktop ? "84vh" : "75vh"}
       >
         <SearchBar
           search={search}

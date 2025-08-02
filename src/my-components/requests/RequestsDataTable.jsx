@@ -741,23 +741,12 @@ export const RequestsDataTable = ({ isDesktop }) => {
                   </MyModal>
                 </SimpleGrid>
               </Box>
-              <Box
-                position="sticky"
-                bottom="68px"
-                bg="#efefef"
-                p={1}
-                zIndex="1"
-                borderTopColor="gray.400"
-                borderTopWidth="1px"
-              >
-                <Flex justify="center" align="center">
-                  <Pagination
-                    currentPage={currentInvoicePage}
-                    totalPages={totalInvoicePages}
-                    onPageChange={(page) => setCurrentInvoicePage(page)}
-                  />
-                </Flex>
-              </Box>
+
+              <Pagination
+                currentPage={currentInvoicePage}
+                totalPages={totalInvoicePages}
+                onPageChange={(page) => setCurrentInvoicePage(page)}
+              />
             </Flex>
           </GridItem>
         </Grid>
