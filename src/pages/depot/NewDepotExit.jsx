@@ -9,6 +9,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  GridItem,
   HStack,
   IconButton,
   Image,
@@ -70,6 +71,7 @@ import { NewCustomer } from "../customers/NewCustomer";
 import {
   ShowInvoicesByID,
   ShowUserAcceptedInvoices,
+  ShowUserAcceptedInvoicesByCustomerId,
   ShowUserAllInvoices,
 } from "../../api/services/invoiceService";
 import { SearchInvoices } from "../../my-components/SearchInvoic";
@@ -410,7 +412,12 @@ export const NewDepotExit = ({ isDesktop }) => {
   };
 
   const handleSearchInvoices = async (query) => {
-    const response = await ShowUserAcceptedInvoices(1, 10, query);
+    const response = await ShowUserAcceptedInvoicesByCustomerId(
+      formData?.issuedBy?.id,
+      1,
+      10,
+      query
+    );
     return response?.data?.items;
   };
 
@@ -418,6 +425,21 @@ export const NewDepotExit = ({ isDesktop }) => {
     onOpen();
   };
 
+  // const handleChangeCustomer = async (customerId) => {
+  //   setLoading(true);
+  //   const res = await ShowInvoicesCustomer(customerId);
+  //   if (!res.success) {
+  //     toast({
+  //       title: "خطایی  رخ داد",
+  //       description: res.error,
+  //       status: "error",
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //     setLoading(false);
+  //     return;
+  //   }
+  // };
   return (
     <Box>
       <Card m={1} filter={loading ? "blur(10px)" : ""}>
@@ -442,10 +464,66 @@ export const NewDepotExit = ({ isDesktop }) => {
           >
             <FormControl isRequired>
               <HStack>
+                <FormLabel hidden={!isDesktop} width="150px">
+                  مشتری
+                </FormLabel>
+                <Input
+                  placeholder="لطفا یک مشتری انتخاب کنید"
+                  maxW="560px"
+                  onClick={() => setShowSearchCustomer(true)}
+                  value={
+                    formData.issuedBy
+                      ? formData?.issuedBy?.customerGender +
+                        " " +
+                        formData?.issuedBy?.customerFName +
+                        " " +
+                        formData?.issuedBy?.customerLName
+                      : ""
+                  }
+                  name="issuedBy"
+                  readOnly
+                />
+                {formData.issuedBy && (
+                  <IconButton
+                    size={isDesktop ? "md" : "sm"}
+                    icon={<CircleX />}
+                    colorScheme="red"
+                    title="انصراف"
+                    variant="ghost"
+                    onClick={() => {
+                      setFormData({
+                        ...formData,
+                        issuedBy: null,
+                        depotInvoice: null,
+                      });
+                      setDepotGoods([]);
+                      setSelectedDepotGood(null);
+                    }}
+                  />
+                )}
+                <IconButton
+                  size={isDesktop ? "md" : "sm"}
+                  icon={<UserSearch />}
+                  colorScheme="orange"
+                  onClick={() => setShowSearchCustomer(true)}
+                  title="جستجوی مشتری "
+                />
+                <IconButton
+                  size={isDesktop ? "md" : "sm"}
+                  colorScheme="green"
+                  icon={<UserRoundPlus />}
+                  onClick={handleAddNewUser}
+                  title="ثبت مشتری جدید"
+                />
+              </HStack>
+            </FormControl>
+            <FormControl isRequired>
+              <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
                   فاکتور
                 </FormLabel>
                 <Input
+                  disabled={!formData.issuedBy}
                   placeholder="یک فاکتور انتخاب کنید"
                   type="text"
                   onClick={() =>
@@ -488,190 +566,218 @@ export const NewDepotExit = ({ isDesktop }) => {
             </FormControl>
             {depotGoods?.length > 0 && (
               <Flex
-                direction={isDesktop ? "" : "column"}
-                rowGap={3}
-                dir="ltr"
+                borderStyle="dashed"
+                borderColor="gray.300"
+                borderWidth={1}
+                borderRadius={"md"}
+                p={2}
+                direction="column"
+                dir="rtl"
                 w="full"
-                columnGap={3}
-                mt={2}
+                gap={10}
               >
-                {depotGoods?.map((depotItem, index) => (
-                  <Box
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    p={3}
-                    minW="150px"
-                    boxShadow="md"
-                    position="relative"
-                    key={index + "-depotGood"}
-                  >
-                    <Flex justify="space-between" align="center">
-                      <IconButton
-                        colorScheme="red"
-                        variant="ghost"
-                        size="xs"
-                        icon={<CircleX />}
-                        onClick={() => handleRemoveDepotGood(index)}
-                      />
-                      <Text
-                        fontFamily="IranSans"
-                        fontWeight="bold"
-                        fontSize="md"
-                      >
-                        {depotItem?.good?.goodName}
-                      </Text>
-                    </Flex>
-
-                    <Flex justify="space-between" mt={3} dir="rtl">
-                      <Text
-                        dir="rtl"
-                        fontFamily="iransans"
-                        fontSize="xs"
-                        my="auto"
-                      >
-                        تعداد
-                      </Text>
-                      <NumberInput
-                        size={"sm"}
-                        maxW="80px"
-                        fontFamily="IranSans"
-                        defaultValue={1}
-                        key={"quantity" + index}
-                        dir="ltr"
-                        min={1}
-                        max={depotItem?.quantity}
-                        value={depotItem?.quantity}
-                        onChange={(value) =>
-                          handleChangeGoodsData(index, {
-                            target: { name: "quantity", value: value },
-                          })
-                        }
-                        placeholder="تعداد"
-                      >
-                        <NumberInputField />
-                        <NumberInputStepper>
-                          <NumberIncrementStepper />
-                          <NumberDecrementStepper />
-                        </NumberInputStepper>
-                      </NumberInput>
-                      <Text
-                        dir="rtl"
-                        fontFamily="iransans"
-                        fontSize="xs"
-                        my="auto"
-                      >
-                        {depotItem?.good?.goodUnit?.unitName}
-                      </Text>
-                    </Flex>
-                    <Flex
-                      justify="space-between"
-                      mt={3}
-                      columnGap={3}
-                      dir="rtl"
+                <Text
+                  mx={!isDesktop ? "auto" : ""}
+                  fontFamily="iransans"
+                  fontSize="sm"
+                >
+                  لیست اقلام فاکتور
+                </Text>
+                <Flex
+                  direction={isDesktop ? "" : "column"}
+                  rowGap={3}
+                  dir="ltr"
+                  w="full"
+                  columnGap={3}
+                  mt={2}
+                >
+                  {depotGoods?.map((depotItem, index) => (
+                    <Box
+                      borderWidth="1px"
+                      borderRadius="lg"
+                      p={3}
+                      minW="150px"
+                      maxW="250px"
+                      boxShadow="md"
+                      position="relative"
+                      key={index + "-depotGood"}
                     >
-                      <Text
-                        dir="rtl"
-                        fontFamily="iransans"
-                        fontSize="xs"
-                        mt={2}
-                      >
-                        سریال
-                      </Text>
-                      <Input
-                        size="sm"
-                        dir="ltr"
-                        maxW="120px"
-                        autoComplete={false}
-                        name="serial"
-                        placeholder="شماره سریال"
-                        value={depotItem?.serial}
-                        onChange={(e) => handleChangeGoodsData(index, e)}
-                      />
-
-                      {/* <Text w="5px" /> */}
-                    </Flex>
-                    <Flex justify="space-between" mt={3} dir="rtl">
-                      <Text
-                        dir="rtl"
-                        fontFamily="iransans"
-                        fontSize="xs"
-                        mt={2}
-                      >
-                        تصویر
-                      </Text>
-                      <label
-                        style={{ marginLeft: "auto" }}
-                        htmlFor={"image" + index}
-                        disabled={loading}
-                      >
-                        <Box
-                          maxHeight={10}
-                          maxWidth={160}
-                          as="span"
-                          display="inline-flex"
-                          alignItems="center"
-                          p="5px 10px"
-                          bg="orange.300"
-                          color="black"
-                          borderRadius="md"
-                          borderWidth="0.5px"
-                          borderColor="gray.300"
-                          cursor={loading ? "not-allowed" : "pointer"}
-                          _hover={{ bg: "orange.100" }}
+                      <Flex justify="space-between" align="center">
+                        <IconButton
+                          colorScheme="red"
+                          variant="ghost"
+                          size="xs"
+                          icon={<CircleX />}
+                          onClick={() => handleRemoveDepotGood(index)}
+                        />
+                        <Text
+                          fontFamily="IranSans"
+                          fontWeight="bold"
+                          fontSize="md"
                         >
-                          <Ellipsis />
-                        </Box>
-                      </label>
+                          {depotItem?.good?.goodName}
+                        </Text>
+                      </Flex>
 
-                      <IconButton
-                        hidden={!depotGoods[index]?.imagePreview}
-                        colorScheme="red"
-                        variant="ghost"
-                        icon={<CircleX />}
-                        onClick={() => handleCancelImage(index)}
-                      />
-
-                      <Input
-                        id={"image" + index}
-                        hidden
-                        accept="image/*"
-                        capture="environment"
-                        pt="5px"
-                        pb="5px"
-                        type="file"
-                        name="image"
-                        onChange={(e) => {
-                          handleChangeImage(index, e);
-                        }}
-                      />
-
-                      {depotGoods[index]?.imagePreview && (
-                        <Box
-                          _hover={{
-                            cursor: "pointer",
-                            borderColor: "orange",
-                          }}
-                          overflow="auto"
-                          borderRadius="6px"
-                          borderColor="black"
-                          borderWidth="1px"
-                          boxSize="50px"
-                          onClick={() => {
-                            setShowImageModal(true);
-                          }}
+                      <Flex
+                        justify="space-between"
+                        columnGap={2}
+                        mt={3}
+                        dir="rtl"
+                      >
+                        <Text
+                          dir="rtl"
+                          fontFamily="iransans"
+                          fontSize="xs"
+                          my="auto"
                         >
-                          <Image
-                            src={depotGoods[index]?.imagePreview}
-                            objectFit="cover"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            alt={depotGoods[index]?.image}
-                          />
-                        </Box>
-                      )}
-                    </Flex>
-                  </Box>
-                ))}
+                          تعداد
+                        </Text>
+                        <GridItem colSpan={2}>
+                          <NumberInput
+                            size={"sm"}
+                            fontFamily="IranSans"
+                            defaultValue={1}
+                            key={"quantity" + index}
+                            dir="ltr"
+                            min={1}
+                            max={depotItem?.quantity}
+                            value={depotItem?.quantity}
+                            onChange={(value) =>
+                              handleChangeGoodsData(index, {
+                                target: { name: "quantity", value: value },
+                              })
+                            }
+                            placeholder="تعداد"
+                          >
+                            <NumberInputField />
+                            <NumberInputStepper>
+                              <NumberIncrementStepper />
+                              <NumberDecrementStepper />
+                            </NumberInputStepper>
+                          </NumberInput>
+                        </GridItem>
+                        <Text
+                          dir="rtl"
+                          fontFamily="iransans"
+                          fontSize="xs"
+                          my="auto"
+                        >
+                          {depotItem?.good?.goodUnit?.unitName}
+                        </Text>
+                      </Flex>
+
+                      <Flex
+                        justify="space-between"
+                        mt={3}
+                        columnGap={2}
+                        dir="rtl"
+                      >
+                        <Text
+                          dir="rtl"
+                          fontFamily="iransans"
+                          fontSize="xs"
+                          my="auto"
+                        >
+                          سریال
+                        </Text>
+
+                        <Input
+                          size="sm"
+                          dir="ltr"
+                          autoComplete={false}
+                          name="serial"
+                          placeholder="شماره سریال"
+                          value={depotItem?.serial}
+                          onChange={(e) => handleChangeGoodsData(index, e)}
+                        />
+
+                        {/* <Text w="5px" /> */}
+                      </Flex>
+                      <Flex justify="space-between" mt={3} dir="rtl">
+                        <Text
+                          dir="rtl"
+                          fontFamily="iransans"
+                          fontSize="xs"
+                          mt={2}
+                          ml={2}
+                        >
+                          تصویر
+                        </Text>
+                        <label
+                          style={{ marginLeft: "auto" }}
+                          htmlFor={"image" + index}
+                          disabled={loading}
+                        >
+                          <Box
+                            maxHeight={10}
+                            maxWidth={160}
+                            as="span"
+                            display="inline-flex"
+                            alignItems="center"
+                            p="5px 10px"
+                            bg="orange.300"
+                            color="black"
+                            borderRadius="md"
+                            borderWidth="0.5px"
+                            borderColor="gray.300"
+                            cursor={loading ? "not-allowed" : "pointer"}
+                            _hover={{ bg: "orange.100" }}
+                          >
+                            <Ellipsis />
+                          </Box>
+                        </label>
+
+                        <IconButton
+                          hidden={!depotGoods[index]?.imagePreview}
+                          colorScheme="red"
+                          variant="ghost"
+                          icon={<CircleX />}
+                          onClick={() => handleCancelImage(index)}
+                        />
+
+                        <Input
+                          id={"image" + index}
+                          hidden
+                          accept="image/*"
+                          capture="environment"
+                          pt="5px"
+                          pb="5px"
+                          type="file"
+                          name="image"
+                          onChange={(e) => {
+                            handleChangeImage(index, e);
+                          }}
+                        />
+
+                        {depotGoods[index]?.imagePreview && (
+                          <Box
+                            _hover={{
+                              cursor: "pointer",
+                              borderColor: "orange",
+                            }}
+                            overflow="auto"
+                            borderRadius="6px"
+                            borderColor="black"
+                            borderWidth="1px"
+                            boxSize="50px"
+                            onClick={() => {
+                              setShowImageModal(true);
+                            }}
+                          >
+                            <Image
+                              src={depotGoods[index]?.imagePreview}
+                              objectFit="cover"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              alt={depotGoods[index]?.image}
+                            />
+                          </Box>
+                        )}
+                      </Flex>
+                    </Box>
+                  ))}
+                </Flex>
               </Flex>
             )}
 
@@ -712,114 +818,6 @@ export const NewDepotExit = ({ isDesktop }) => {
                 </Box>
               </HStack>
             </FormControl>
-
-            <FormControl isRequired>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="150px">
-                  گیرنده
-                </FormLabel>
-                <Input
-                  placeholder="لطفا یک مشتری انتخاب کنید"
-                  maxW="560px"
-                  onClick={() => setShowSearchCustomer(true)}
-                  value={
-                    formData.issuedBy
-                      ? formData?.issuedBy?.customerGender +
-                        " " +
-                        formData?.issuedBy?.customerFName +
-                        " " +
-                        formData?.issuedBy?.customerLName
-                      : ""
-                  }
-                  name="issuedBy"
-                  readOnly
-                />
-                {formData.issuedBy && (
-                  <IconButton
-                    size={isDesktop ? "md" : "sm"}
-                    icon={<CircleX />}
-                    colorScheme="red"
-                    title="انصراف"
-                    variant="ghost"
-                    onClick={() => setFormData({ ...formData, issuedBy: null })}
-                  />
-                )}
-                <IconButton
-                  size={isDesktop ? "md" : "sm"}
-                  icon={<UserSearch />}
-                  colorScheme="orange"
-                  onClick={() => setShowSearchCustomer(true)}
-                  title="جستجوی مشتری "
-                />
-                <IconButton
-                  size={isDesktop ? "md" : "sm"}
-                  colorScheme="green"
-                  icon={<UserRoundPlus />}
-                  onClick={handleAddNewUser}
-                  title="ثبت مشتری جدید"
-                />
-              </HStack>
-            </FormControl>
-
-            {/* <FormControl>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
-                  مشخصات راننده
-                </FormLabel>
-                <MyInputBox
-                  icon={Info}
-                  name="driver"
-                  title="مشخصات راننده"
-                  value={formData.driver}
-                  onChange={handleChangeFormData}
-                ></MyInputBox>
-              </HStack>
-            </FormControl> */}
-
-            {/* <FormControl>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
-                  موبایل راننده
-                </FormLabel>
-                <MyInputBox
-                  icon={Info}
-                  name="driverMobile"
-                  title="موبایل راننده"
-                  value={formData?.driverMobile}
-                  onChange={handleChangeFormData}
-                ></MyInputBox>
-              </HStack>
-            </FormControl> */}
-
-            {/* <FormControl>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
-                  کد ملی راننده
-                </FormLabel>
-                <MyInputBox
-                  icon={Info}
-                  name="driverNatCode"
-                  title="کد ملی راننده"
-                  value={formData.driverNatCode}
-                  onChange={handleChangeFormData}
-                ></MyInputBox>
-              </HStack>
-            </FormControl> */}
-
-            {/* <FormControl>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
-                  پلاک خوردو
-                </FormLabel>
-                <MyInputBox
-                  icon={Info}
-                  name="driverCarNumber"
-                  title="پلاک خوردو"
-                  value={formData.driverCarNumber}
-                  onChange={handleChangeFormData}
-                ></MyInputBox>
-              </HStack>
-            </FormControl> */}
 
             <FormControl>
               <HStack>

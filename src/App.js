@@ -24,6 +24,7 @@ import { Home } from "./pages/Home";
 import { ChangeUserPassword } from "./pages/password/ChangeUserPassword";
 import { MyHome } from "./pages/MyHome";
 import { UpdateDriverInfo } from "./pages/UpdateDriverInfo";
+import { UpdateInvoiceDriverInfo } from "./pages/UpdateInvoiceDriverInfo";
 function App() {
   return (
     <ChakraProvider theme={theme}>
@@ -41,6 +42,10 @@ function App() {
             <Route
               path="/update-depot-document"
               element={<UpdateDriverInfo />}
+            />
+            <Route
+              path="/update-invoice-driverInfo"
+              element={<UpdateInvoiceDriverInfo />}
             />
             <Route
               path="/upload-proforma-document"

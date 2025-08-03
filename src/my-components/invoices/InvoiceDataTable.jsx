@@ -39,6 +39,7 @@ import { EditInvoice } from "./EditInvoice";
 import {
   GenerateNewToken,
   RemoveInvoice,
+  SendInvoiceDriverLink,
   SetInvoiceIsSent,
   ShowAllInvoices,
   ShowUserAllInvoices,
@@ -159,16 +160,16 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
       });
       return;
     }
-    if (!invoice?.customerLink) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "لینک موقت مشتری ساخته نشده است",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+    // if (!invoice?.customerLink) {
+    //   toast({
+    //     title: "امکان ارسال وجود ندارد",
+    //     description: "لینک موقت مشتری ساخته نشده است",
+    //     status: "error",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   return;
+    // }
     setLoading(true);
     const res = await SetInvoiceIsSent(invoice?.id);
     if (!res.success) {
@@ -186,13 +187,69 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
     toast({
       title: "توجه",
       description:
-        "لینک تاییدیه به شماره موبایل" +
+        "لینک درخواست آپلود مدارک واریز به شماره موبایل" +
         " " +
         invoice.customer.customerMobile +
         " به نام " +
         invoice.customer.customerFName +
         " " +
         invoice.customer.customerLName +
+        " ارسال شد. ",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
+  };
+
+  const handleSendDriverLink = async (id) => {
+    const invoice = invoices.find((i) => i.id == id);
+
+    if (!invoice) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "اطلاعات مشتری در دسترس نیست",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (!invoice?.customer?.customerMobile) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "شماره موبایل مشتری ثبت نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setLoading(true);
+    const res = await SendInvoiceDriverLink(invoice?.id);
+    if (!res.success) {
+      toast({
+        title: "خطا بعد از ارسال",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    updateFieldInvoiceInList(id, "driverTokenIsSent", "true");
+    toast({
+      title: "توجه",
+      description:
+        "لینک درخواست مشخصات راننده به شماره موبایل" +
+        " " +
+        invoice?.customer?.customerMobile +
+        " به نام " +
+        invoice?.customer?.customerFName +
+        " " +
+        invoice?.customer?.customerLName +
         " ارسال شد. ",
       status: "success",
       duration: 3000,
@@ -315,8 +372,10 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                     onClick={(e) => handleEditInvoice(row.id)}
                   >
                     <HStack>
-                      <Text>شماره :{row.id}</Text>
-                      <Box mr="auto">
+                      <Text fontSize="sm" fontFamily="IranSans">
+                        فاکتور شماره :{row.id}
+                      </Text>
+                      {/* <Box mr="auto">
                         <HStack>
                           {row?.finished ? (
                             <Tooltip label="از انبار خارج شده است">
@@ -361,7 +420,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                             </Tooltip>
                           )}
                         </HStack>
-                      </Box>
+                      </Box> */}
                     </HStack>
                   </CardHeader>
                   <CardBody>
@@ -369,19 +428,19 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                       <MyStepper data={row} />
                       <VStack spacing={2} align="stretch">
                         <HStack>
-                          <Text fontSize="sm" fontFamily="IranSans">
+                          <Text fontSize="10px" fontFamily="IranSans">
                             عنوان :
                           </Text>
-                          <Text fontSize="sm" fontFamily="IranSans">
+                          <Text fontSize="12px" fontFamily="IranSans">
                             {row.title}
                           </Text>
                         </HStack>
                         <Divider />
                         <HStack>
-                          <Text fontSize="sm" fontFamily="IranSans">
-                            تاریخ :{" "}
+                          <Text fontSize="10px" fontFamily="IranSans">
+                            تاریخ :
                           </Text>
-                          <Text fontSize="sm" fontFamily="IranSans">
+                          <Text fontSize="12px" fontFamily="IranSans">
                             {dayjs(row.createdAt)
                               .locale("fa")
                               .format("YYYY/MM/DD")}
@@ -389,10 +448,10 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                         </HStack>
                         <Divider />
                         <HStack>
-                          <Text fontSize="sm" fontFamily="IranSans">
+                          <Text fontSize="10px" fontFamily="IranSans">
                             مشتری :
                           </Text>
-                          <Text fontSize="sm" fontFamily="IranSans">
+                          <Text fontSize="12px" fontFamily="IranSans">
                             {row.customer?.customerFName +
                               " " +
                               row.customer?.customerLName}
@@ -400,25 +459,25 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                         </HStack>
                         <Divider />
                         <HStack>
-                          <Text fontSize="sm" fontFamily="IranSans">
+                          <Text fontSize="10px" fontFamily="IranSans">
                             نوع پرداخت :
                           </Text>
-                          <Text fontFamily="IranSans" fontSize="md">
+                          <Text fontFamily="IranSans" fontSize="12px">
                             {row.paymentStatus}
                           </Text>
                         </HStack>
                         <Divider />
                         <HStack>
-                          <Text fontSize="sm" fontFamily="IranSans">
+                          <Text fontSize="10px" fontFamily="IranSans">
                             تایید مشتری :
                           </Text>
-                          <Text fontSize="sm" fontFamily="IranSans">
+                          <Text fontSize="12px" fontFamily="IranSans">
                             {row.approvedFile ? "دارد" : "ندارد"}
                           </Text>
                         </HStack>
                         <Divider />
                         <HStack>
-                          <Text fontSize="sm" fontFamily="IranSans">
+                          <Text fontSize="10px" fontFamily="IranSans">
                             جمع کل :
                           </Text>
                           <Text fontSize="md" fontFamily="IranSans">
@@ -436,15 +495,28 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                         align={"stretch"}
                         mr="auto"
                       >
-                        <Link _hover={{ color: "#ffd54f" }} color="orange.600">
+                        <Link
+                          hidden={!row?.isSent || row?.driverTokenIsSent}
+                          _hover={{ color: "#ffd54f" }}
+                          color="orange.600"
+                          onClick={(e) => {
+                            setSelectedID(row?.id);
+                            setDialogGears({
+                              title: "ارسال لینک به مشتری",
+                              text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                              callBack: () => handleSendDriverLink(row?.id),
+                            });
+
+                            setIsDialogOpen(true);
+                          }}
+                        >
                           <Tooltip label="درخواست ثبت راننده">
                             <Icon w={6} h={6} as={Truck} />
                           </Tooltip>
                         </Link>
 
                         <Link
-                          hidden={row.isSent}
-                          _disabled={true}
+                          hidden={row?.isSent}
                           _hover={{ color: "#ffd54f" }}
                           color="green.600"
                           onClick={(e) => {
@@ -452,18 +524,18 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                             setDialogGears({
                               title: "ارسال لینک به مشتری",
                               text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
-                              callBack: handleSendCustomerLink,
+                              callBack: () => handleSendCustomerLink(row?.id),
                             });
 
                             setIsDialogOpen(true);
                           }}
                         >
-                          <Tooltip label="ارسال به مشتری">
+                          <Tooltip label="درخواست ثبت مدارک واریز وجه">
                             <Icon w={6} h={6} as={Send} />
                           </Tooltip>
                         </Link>
 
-                        <Link
+                        {/* <Link
                           _hover={{
                             color: "orange",
                           }}
@@ -473,7 +545,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                           <Tooltip label="تولید توکن جدید">
                             <Icon w={6} h={6} as={Link2} />
                           </Tooltip>
-                        </Link>
+                        </Link> */}
 
                         <Link
                           _hover={{ color: "#ffd54f" }}

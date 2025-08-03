@@ -50,8 +50,10 @@ const endpoints = {
       `/invoice?page=${page}&limit=${limit}&search=${search}`,
     listMy: (page, limit, search) =>
       `/invoice/user/my?page=${page}&limit=${limit}&search=${search}`,
-    listMyAccepted: (page, limit, search) =>
-      `/invoice/user/accepted?page=${page}&limit=${limit}&search=${search}`,
+    listUserAcceptedInvoices: (page, limit, search) =>
+      `/invoice/all/accepted?page=${page}&limit=${limit}&search=${search}`,
+    listUserAcceptedInvoicesByCustomerId: (customerId, page, limit, search) =>
+      `/invoice/customer/accepted/${customerId}?page=${page}&limit=${limit}&search=${search}`,
     update: (id) => `/invoice/${id}`,
     listOne: (id) => `/invoice/${id}`,
     detail: (id) => `/invoice/${id}`,
@@ -62,7 +64,9 @@ const endpoints = {
     getApprovedFile: (id) => `/invoice/file/${id}`,
     listByToken: (token) => `/invoice/token/${token}`,
     updateProformCustomerFile: (token) => `/invoice/token/${token}`,
+    updateInvoiceDriverInfo: (token) => `/invoice/driver/token/${token}`,
     generateNewToken: (id) => `/invoice/generateNewToken/${id}`,
+    sendInvoiceDriverLink: (id) => `/invoice/sendDriverLink/${id}`,
   },
   customer: {
     listAll: (page, limit, search) =>

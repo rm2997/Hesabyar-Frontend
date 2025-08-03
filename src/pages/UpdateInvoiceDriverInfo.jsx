@@ -34,15 +34,14 @@ import { useReactToPrint } from "react-to-print";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { CheckCircle2, CircleX, Download } from "lucide-react";
-import {
-  ShowInvoiceByToken,
-  UpdateInvoiceCustomerFile,
-} from "../api/services/invoiceService";
-import { InvoicePdf } from "./InvoicePdf";
 
-export const UploadInvoiceDocument = ({}) => {
+import {
+  UpdateInvoiceDriver,
+  ShowInvoiceByToken,
+} from "../api/services/invoiceService";
+
+export const UpdateInvoiceDriverInfo = ({}) => {
   const contentRef = useRef();
-  const [showDownload, setShowDownload] = useState(false);
   const reactToPrintFn = useReactToPrint({ contentRef: contentRef });
   const toast = useToast();
   const [itemsCount, setItemsCount] = useState(0);
@@ -101,6 +100,8 @@ export const UploadInvoiceDocument = ({}) => {
         setTimeout(() => navigate("/NotFound"), 1000);
         return;
       }
+      console.log(token);
+
       const res = await ShowInvoiceByToken(token);
       if (!res.success) {
         toast({
@@ -115,27 +116,113 @@ export const UploadInvoiceDocument = ({}) => {
         return;
       }
 
-      setFormData({ ...res.data, approvedFile: "" });
+      setFormData({ ...res?.data });
       let items = 0;
-      res?.data?.invoiceGoods.forEach((element) => {
+      res?.data?.invoiceGoods?.forEach((element) => {
         items += element.quantity;
       });
       setItemsCount(items);
-
       setLoading(false);
     };
-
     loadInvoiceData();
   }, []);
 
+  const validateForm = async () => {
+    if (formData?.driver?.length < 3 || !isNaN(Number(formData?.driver))) {
+      toast({
+        title: "توجه",
+        description: "نام یا نام خانوادگی صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.driverNatCode?.length > 0 &&
+      formData?.driverNatCode?.length != 10
+    ) {
+      toast({
+        title: "توجه",
+        description: "شماره ملی صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (isNaN(Number(formData?.driverNatCode))) {
+      toast({
+        title: "توجه",
+        description: "شماره ملی باید به شکل عددی باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.driverMobile?.length > 0 &&
+      formData?.driverMobile?.length != 11
+    ) {
+      toast({
+        title: "توجه",
+        description: "شماره موبایل  صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (isNaN(Number(formData?.driverMobile))) {
+      toast({
+        title: "توجه",
+        description: "شماره موبایل باید به شکل عددی باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    if (
+      formData?.driver?.length == 0 &&
+      formData?.driverCarNumber?.length == 0 &&
+      formData?.driverNatCode?.length == 0
+    ) {
+      toast({
+        title: "توجه",
+        description: "باید حداقل یکی از مشخصات راننده یا خودرو را مشخص کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleChangeFormData = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validate = await validateForm();
+    if (validate == false) return;
     setLoading(true);
-    const form = new FormData();
-    form.append("image", formData.imageFile);
-
-    const res = await UpdateInvoiceCustomerFile(token, form);
-    if (!res) {
+    const finalFormData = {
+      driver: formData?.driver,
+      driverCarNumber: formData?.driverCarNumber,
+      driverMobile: formData?.driverMobile,
+      driverNatCode: formData?.driverNatCode,
+    };
+    const res = await UpdateInvoiceDriver(token, finalFormData);
+    if (!res.success) {
       toast({
         title: "خطا",
         description: res.error,
@@ -149,35 +236,16 @@ export const UploadInvoiceDocument = ({}) => {
     }
     toast({
       title: "توجه",
-      description: "تاییدیه شما ارسال گردید",
+      description: "مشخصات نماینده یا راننده شما تایید شد",
       status: "success",
       duration: 3000,
-      isClosable: true,
+      isClosable: false,
     });
-    setTimeout(() => navigate("/home"), 40000);
-    setShowDownload(true);
+    console.log(res.data);
+
+    setTimeout(() => navigate("/home"), 1000);
     setLoading(false);
   };
-
-  // const handleDownloadPdf = async () => {
-  //   const element = printRef.current;
-  //   if (!element) return;
-
-  //   const canvas = await html2canvas(element, {
-  //     scale: 2,
-  //     useCORS: true, // اگر تصاویر داری
-  //   });
-
-  //   const imgData = canvas.toDataURL("image/png");
-  //   const pdf = new jsPDF({
-  //     orientation: "portrait",
-  //     unit: "px",
-  //     format: [canvas.width, canvas.height],
-  //   });
-
-  //   pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
-  //   pdf.save("download.pdf");
-  // };
 
   return (
     <Box borderTopRadius="md" p={2} borderColor="gray.100" borderWidth="1px">
@@ -267,7 +335,7 @@ export const UploadInvoiceDocument = ({}) => {
           borderWidth="1px"
         >
           <Heading fontFamily="IranSans" size="md" mx="auto">
-            فاکتور فروش کالا و خدمات
+            ثبت مشخصات راننده
           </Heading>
         </Box>
         <Box
@@ -289,7 +357,7 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     نام شخصی حقیقی/حقوقی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     آسانسورلند
                   </Text>
                 </HStack>
@@ -300,11 +368,10 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     شماره اقتصادی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     14012045705
                   </Text>
                 </HStack>
-
                 <HStack>
                   <Text
                     fontFamily="iransans"
@@ -312,11 +379,11 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     شماره ثبت/ملی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     609813
                   </Text>
                 </HStack>
-                <GridItem colSpan={{ sm: 1, md: 2, lg: 2 }}>
+                <GridItem colSpan={{ lg: 2, md: 2, sm: 1 }}>
                   <HStack>
                     <Text
                       fontFamily="iransans"
@@ -328,7 +395,6 @@ export const UploadInvoiceDocument = ({}) => {
                     </Text>
                     <Text
                       textAlign="justify"
-                      name="customer"
                       fontFamily="iransans"
                       fontSize="xs"
                     >
@@ -345,7 +411,7 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     کدپستی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     1387836295
                   </Text>
                 </HStack>
@@ -356,7 +422,7 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     شماره تلفن :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     021-65812952
                   </Text>
                 </HStack>
@@ -367,7 +433,7 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     شماره همراه :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     09125793556
                   </Text>
                 </HStack>
@@ -378,7 +444,7 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     ایمیل :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     info@hesab-yaar.ir
                   </Text>
                 </HStack>
@@ -414,11 +480,7 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     شماره اقتصادی :
                   </Text>
-                  <Text
-                    name="customer"
-                    fontFamily="iransans"
-                    fontSize="xs"
-                  ></Text>
+                  <Text fontFamily="iransans" fontSize="xs"></Text>
                 </HStack>
                 <HStack>
                   <Text
@@ -427,11 +489,11 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     شماره ثبت/ملی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     {formData?.customer?.customerNationalCode}
                   </Text>
                 </HStack>
-                <GridItem colSpan={{ sm: 1, md: 2, lg: 2 }}>
+                <GridItem colSpan={{ lg: 2, md: 2, sm: 1 }}>
                   <HStack>
                     <Text
                       fontFamily="iransans"
@@ -441,7 +503,6 @@ export const UploadInvoiceDocument = ({}) => {
                     </Text>
                     <Text
                       textAlign="justify"
-                      name="customer"
                       fontFamily="iransans"
                       fontSize="xs"
                     >
@@ -456,7 +517,7 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     کدپستی :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     {formData?.customer?.customerPostalCode}
                   </Text>
                 </HStack>
@@ -467,7 +528,7 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     شماره تلفن :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     {formData?.customer?.customerPhone}
                   </Text>
                 </HStack>
@@ -478,7 +539,7 @@ export const UploadInvoiceDocument = ({}) => {
                   >
                     شماره همراه :
                   </Text>
-                  <Text name="customer" fontFamily="iransans" fontSize="xs">
+                  <Text fontFamily="iransans" fontSize="xs">
                     {formData?.customer?.customerMobile}
                   </Text>
                 </HStack>
@@ -493,10 +554,8 @@ export const UploadInvoiceDocument = ({}) => {
               columns={{ base: 1, md: 1, lg: 1 }}
               dir="rtl"
               mt={3}
-              mb={10}
+              mb={5}
               rowGap={5}
-              as="form"
-              onSubmit={handleSubmit}
             >
               <Stack w="full" align="stretch">
                 <TableContainer
@@ -666,123 +725,141 @@ export const UploadInvoiceDocument = ({}) => {
                   </Table>
                 </TableContainer>
               </Stack>
-              <Divider />
+            </SimpleGrid>
+          </Flex>
+          <Flex px={1} borderWidth={1} my={1} dir="rtl" direction="column">
+            <Text fontFamily="iransans" mx="auto" bg="gray.200" width="full">
+              مشخصات نماینده یا راننده
+            </Text>
+            <SimpleGrid
+              columns={{ base: 1, md: 2, lg: 3 }}
+              dir="rtl"
+              mt={3}
+              mb={2}
+              rowGap={5}
+              columnGap={5}
+              as="form"
+              onSubmit={handleSubmit}
+            >
               <HStack>
-                <Text fontFamily="IranSans" fontSize={isDesktop ? "md" : "xs"}>
-                  توضیحات فاکتور :
+                <Text
+                  textAlign={"right"}
+                  width={"150px"}
+                  fontFamily="iransans"
+                  fontSize={isDesktop ? "md" : "xs"}
+                >
+                  نام و نام خانوادگی
                 </Text>
-                <Text value={formData?.description} />
+                <Input
+                  name="driver"
+                  value={formData.driver}
+                  onChange={handleChangeFormData}
+                />
               </HStack>
-              <Divider />
-              <SimpleGrid spacing={1} columns={{ base: 1, md: 2, lg: 3 }}>
-                <Text textAlign="justify">
-                  لطفا بنویسید اطلاعات را قبول دارم - امضا کرده - عکس بگیرید و
-                  اینجا قرار دهید.
+              <HStack>
+                <Text
+                  textAlign={"right"}
+                  width={"150px"}
+                  fontFamily="iransans"
+                  fontSize={isDesktop ? "md" : "xs"}
+                >
+                  کد ملی
                 </Text>
-                <InputGroup maxW="500px">
-                  <InputLeftElement>
-                    <IconButton
-                      colorScheme="red"
-                      variant="ghost"
-                      icon={<CircleX />}
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          approvedFile: "",
-                          isAcceptedByCustomer: false,
-                        })
-                      }
-                    />
-                  </InputLeftElement>
-                  <Input
-                    accept="image/*"
-                    capture="environment"
-                    pt="5px"
-                    pb="5px"
-                    type="file"
-                    name="approvedFile"
-                    value={formData?.approvedFile}
-                    onChange={(e) => {
+                <Input
+                  name="driverNatCode"
+                  value={formData?.driverNatCode}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+              <HStack>
+                <Text
+                  textAlign={"right"}
+                  width={"150px"}
+                  fontFamily="iransans"
+                  fontSize={isDesktop ? "md" : "xs"}
+                >
+                  موبایل
+                </Text>
+                <Input
+                  name="driverMobile"
+                  value={formData?.driverMobile}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+              <HStack>
+                <Text
+                  textAlign={"right"}
+                  width={"150px"}
+                  fontFamily="iransans"
+                  fontSize={isDesktop ? "md" : "xs"}
+                >
+                  پلاک خودرو
+                </Text>
+                <Input
+                  name="driverCarNumber"
+                  value={formData?.driverCarNumber}
+                  onChange={handleChangeFormData}
+                />
+              </HStack>
+              <GridItem colSpan={{ lg: 3, md: 2, sm: 1 }}>
+                <HStack>
+                  <Checkbox
+                    name="isAcceptedByCustomer"
+                    isChecked={formData?.isAcceptedByCustomer}
+                    onChange={(e) =>
                       setFormData({
                         ...formData,
-                        approvedFile: e.target.value,
-                        imageFile: e.target.files[0],
-                      });
-                      setImagePreview(URL.createObjectURL(e.target.files[0]));
-                    }}
-                  />
-                </InputGroup>
-                <Box
-                  overflow="auto"
-                  borderRadius="6px"
-                  borderColor="orange"
-                  borderWidth="1px"
-                  hidden={
-                    formData.approvedFile == null || formData.approvedFile == ""
-                  }
-                  boxSize="20"
-                >
-                  <Image
-                    src={imagePreview}
-                    objectFit="cover"
-                    alt={formData?.approvedFile}
-                  />
-                </Box>
-              </SimpleGrid>
-              <Divider />
-              <HStack>
-                <Checkbox
-                  textAlign="justify"
-                  isDisabled={
-                    formData?.approvedFile == null ||
-                    formData?.approvedFile == ""
-                  }
-                  name="isAcceptedByCustomer"
-                  isChecked={formData?.isAcceptedByCustomer}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      isAcceptedByCustomer: e.target.checked,
-                    })
-                  }
-                >
-                  اینجانب
-                  {" " +
-                    formData.customer.customerFName +
-                    " " +
-                    formData.customer.customerLName +
-                    " "}
-                  فاکتور را مطالعه کرده و اطلاعات آن را قبول دارم.
-                </Checkbox>
-              </HStack>
-              <Divider />
-              <Flex px={1} my={1} dir="rtl" direction="column" rowGap={2}>
-                <Button
-                  isDisabled={!formData?.isAcceptedByCustomer}
-                  hidden={showDownload}
-                  type="submit"
-                  colorScheme="blue"
-                  leftIcon={<CheckCircle2 />}
-                >
-                  تایید
-                </Button>
-                <Button
-                  hidden={!showDownload}
-                  colorScheme="green"
-                  onClick={reactToPrintFn}
-                  leftIcon={<Download />}
-                >
-                  دانلود فاکتور
-                </Button>
-              </Flex>
+                        isAcceptedByCustomer: e.target.checked,
+                      })
+                    }
+                  >
+                    <Text
+                      fontFamily="iransans"
+                      fontSize={isDesktop ? "md" : "xs"}
+                      textAlign="justify"
+                    >
+                      اینجانب
+                      {" " +
+                        formData?.customer?.customerFName +
+                        " " +
+                        formData?.customer?.customerLName +
+                        " "}
+                      سند خروج کالا را مطالعه کرده و اطلاعات آن را قبول دارم.
+                    </Text>
+                  </Checkbox>
+                </HStack>
+              </GridItem>
+              <GridItem colSpan={{ lg: 3, md: 2, sm: 1 }}>
+                <Divider />
+              </GridItem>
+              <GridItem colSpan={{ lg: 3, md: 2, sm: 1 }}>
+                <Flex px={1} my={1} dir="rtl" direction="column" rowGap={2}>
+                  <Button
+                    isDisabled={!formData?.isAcceptedByCustomer}
+                    type="submit"
+                    colorScheme="blue"
+                    leftIcon={<CheckCircle2 />}
+                  >
+                    تایید
+                  </Button>
+                  {/* <Button
+                    isDisabled={!formData?.isAcceptedByCustomer}
+                    colorScheme="green"
+                    onClick={reactToPrintFn}
+                    leftIcon={<Download />}
+                  >
+                    دانلود سند خروج کالا
+                  </Button> */}
+                </Flex>
+              </GridItem>
             </SimpleGrid>
           </Flex>
         </Box>
       </Box>
       {loading && <MyLoading />}
-      <Box hidden={true}>
+      {/* <Box hidden={true}>
         <InvoicePdf ref={contentRef} />
-      </Box>
+      </Box> */}
     </Box>
   );
 };

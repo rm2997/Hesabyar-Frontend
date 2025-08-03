@@ -19,7 +19,8 @@ import { useEffect } from "react";
 const steps = [
   {
     title: "ارسال لینک",
-    description: "یک لینک برای مشتری بفرستید تا فیش واریزی خود را ثبت کند",
+    description:
+      "یک لینک برای مشتری فرستاده میشود تا فیش واریزی خود را ثبت کند",
   },
   {
     title: "دریافت فیش ",
@@ -30,12 +31,17 @@ const steps = [
     description: "کاربر ارشد سیستم فاکتور را تایید میکند",
   },
   {
-    title: "تعیین راننده",
+    title: "درخواست راننده",
     description: "لینکی به مشتری ارسال می شود تا راننده را تعیین کند",
   },
   {
-    title: "پایان",
-    description: "همه مراحل انجام شده است",
+    title: "تعیین راننده",
+    description:
+      "مشتری مشخصات کسی که اقلام فاکتور را تحویل خواهد گرفت مشخص می کند",
+  },
+  {
+    title: "سند خروج",
+    description: "کالا از انبار خارج می شود",
   },
 ];
 export const MyStepper = ({ data }) => {
@@ -47,8 +53,10 @@ export const MyStepper = ({ data }) => {
     if (!data?.isSent) return setActiveStep(0);
     if (!data?.approvedFile) return setActiveStep(1);
     if (!data?.isAccepted) return setActiveStep(2);
-    if (!data?.finished) return setActiveStep(3);
-    return setActiveStep(4);
+    if (!data?.driverTokenIsSent) return setActiveStep(3);
+    if (!data?.driver) return setActiveStep(4);
+    if (!data?.finished) return setActiveStep(5);
+    return setActiveStep(6);
   };
 
   useEffect(() => {
@@ -56,8 +64,14 @@ export const MyStepper = ({ data }) => {
   }, [data]);
 
   return (
-    <Flex float="right">
+    <Flex
+      borderLeftColor="gray.300"
+      borderLeftWidth={1}
+      borderLeftStyle="dashed"
+      float="right"
+    >
       <Stepper
+        ml={2}
         size="sm"
         dir="ltr"
         index={activeStep}
@@ -68,18 +82,24 @@ export const MyStepper = ({ data }) => {
       >
         {steps.map((step, index) => (
           <Step key={index}>
-            <StepIndicator>
+            <StepIndicator fontFamily="iransans">
               <StepStatus
-                complete={<StepIcon />}
-                incomplete={<StepNumber />}
-                active={<StepNumber />}
+                complete={<StepIcon fontFamily="iransans" />}
+                incomplete={<StepNumber fontFamily="iransans" />}
+                active={<StepNumber fontFamily="iransans" />}
               />
             </StepIndicator>
 
             <Box flexShrink="0">
               <StepTitle textAlign="right">
-                <Text fontFamily="Beiruti" fontSize="xs">
-                  <Tooltip label={step.description}>{step.title}</Tooltip>
+                <Text fontFamily="iransans" fontSize="10px">
+                  <Tooltip
+                    dir="rtl"
+                    textAlign="justify"
+                    label={step.description}
+                  >
+                    {step.title}
+                  </Tooltip>
                 </Text>
               </StepTitle>
               {/* <StepDescription>

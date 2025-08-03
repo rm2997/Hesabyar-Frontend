@@ -49,7 +49,24 @@ export const ShowUserAcceptedInvoices = async (
 ) => {
   return apiRequest({
     method: "GET",
-    url: endpoints.invoice.listMyAccepted(page, limit, search),
+    url: endpoints.invoice.listUserAcceptedInvoices(page, limit, search),
+  });
+};
+
+export const ShowUserAcceptedInvoicesByCustomerId = async (
+  customerId,
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
+  return apiRequest({
+    method: "GET",
+    url: endpoints.invoice.listUserAcceptedInvoicesByCustomerId(
+      customerId,
+      page,
+      limit,
+      search
+    ),
   });
 };
 
@@ -98,9 +115,25 @@ export const UpdateInvoiceCustomerFile = async (token, data) => {
   });
 };
 
+export const UpdateInvoiceDriver = async (token, data) => {
+  return apiRequest({
+    method: "PATCH",
+    url: endpoints.invoice.updateInvoiceDriverInfo(token),
+
+    data: data,
+  });
+};
+
 export const SetInvoiceIsSent = async (id) => {
   return apiRequest({
     method: "PATCH",
     url: endpoints.invoice.setInvoiceIsSent(id),
+  });
+};
+
+export const SendInvoiceDriverLink = async (id) => {
+  return apiRequest({
+    method: "PATCH",
+    url: endpoints.invoice.sendInvoiceDriverLink(id),
   });
 };
