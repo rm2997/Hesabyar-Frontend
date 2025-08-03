@@ -50,7 +50,7 @@ import { MyAlert } from "../MyAlert";
 import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
 import { MyLoading } from "../MyLoading";
-import { MyStepper } from "../MyStepper";
+import { MyInvoiceStepper } from "../MyInvoiceStepper";
 
 export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -425,7 +425,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                   </CardHeader>
                   <CardBody>
                     <Flex direction="row" columnGap={5}>
-                      <MyStepper data={row} />
+                      <MyInvoiceStepper data={row} />
                       <VStack spacing={2} align="stretch">
                         <HStack>
                           <Text fontSize="10px" fontFamily="IranSans">

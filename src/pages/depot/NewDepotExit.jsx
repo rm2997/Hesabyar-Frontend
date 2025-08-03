@@ -295,6 +295,13 @@ export const NewDepotExit = ({ isDesktop }) => {
 
     const tmpDepotGoods = [...depotGoods];
     const tmpformData = formData;
+    tmpformData.driver = tmpformData?.depotInvoice?.driver;
+    tmpformData.driverCarNumber = tmpformData?.depotInvoice?.driverCarNumber;
+    tmpformData.driverNatCode = tmpformData?.depotInvoice?.driverNatCode;
+    tmpformData.driverMobile = tmpformData?.depotInvoice?.driverMobile;
+    tmpformData.isSent = tmpformData?.depotInvoice?.isSent;
+    tmpformData.customerToken = tmpformData?.depotInvoice?.driverToken;
+
     tmpDepotGoods.forEach((g) => {
       g.issuedAt = tmpformData.issuedAt;
       g.issuedBy = tmpformData.issuedBy;

@@ -44,7 +44,7 @@ const steps = [
     description: "کالا از انبار خارج می شود",
   },
 ];
-export const MyStepper = ({ data }) => {
+export const MyInvoiceStepper = ({ data }) => {
   const { activeStep, setActiveStep } = useSteps({
     index: 1,
     count: steps.length,
