@@ -96,7 +96,7 @@ export const HeaderBar = ({
           >
             <Image
               borderRadius="10%"
-              src="/assets/images/logos/logo1.png"
+              src="/assets/images/logos/logo1.jpg"
               objectFit="cover"
               target="_blank"
               rel="noopener noreferrer"

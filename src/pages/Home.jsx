@@ -143,7 +143,7 @@ export const Home = () => {
         >
           <Image
             borderRadius="10%"
-            src="/assets/images/logos/logo1.png"
+            src="/assets/images/logos/logo1.jpg"
             objectFit="cover"
             target="_blank"
             rel="noopener noreferrer"
@@ -720,7 +720,7 @@ export const Home = () => {
             <VStack textAlign="right" alignItems="end">
               <Box boxSize={100} maxH={10} mb={8} mr="auto" ml="auto">
                 <Image
-                  src="/assets/images/logos/logo1.png"
+                  src="/assets/images/logos/logo1.jpg"
                   objectFit="cover"
                   target="_blank"
                   rel="noopener noreferrer"

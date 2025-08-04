@@ -198,7 +198,7 @@ export const UploadInvoiceDocument = ({}) => {
         <Box mr="auto" mt={2} boxSize="150px" maxH={5}>
           <Image
             borderRadius="10%"
-            src="/assets/images/logos/logo1.png"
+            src="/assets/images/logos/logo1.jpg"
             objectFit="cover"
             target="_blank"
             rel="noopener noreferrer"
