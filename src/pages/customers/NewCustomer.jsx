@@ -1,10 +1,8 @@
 import {
-  AbsoluteCenter,
   Box,
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Flex,
   FormControl,
@@ -13,6 +11,8 @@ import {
   HStack,
   Select,
   SimpleGrid,
+  Switch,
+  Text,
   Textarea,
   useToast,
 } from "@chakra-ui/react";
@@ -28,6 +28,10 @@ import { CreateCustomer } from "../../api/services/customerService";
 
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../../my-components/MyLoading";
+import { CustomerTypes } from "../../api/services/enums/customerTypes";
+import { AddressTypes } from "../../api/services/enums/addressTypes";
+import { PhoneTypes } from "../../api/services/enums/phoneTypes";
+import { CustomerParties } from "../../api/services/enums/customerParties";
 
 export const NewCustomer = ({ isDesktop }) => {
   const [formData, setFormData] = useState({});
@@ -214,138 +218,408 @@ export const NewCustomer = ({ isDesktop }) => {
         <CardBody>
           <Flex direction="column" rowGap={5} as="form" onSubmit={handleSubmit}>
             <SimpleGrid
-              columns={{ base: 1, md: 2, lg: 2 }}
+              columns={{ base: 1, md: 1, lg: 2 }}
               columnGap={6}
               rowGap={5}
             >
-              <FormControl isRequired>
-                <HStack>
-                  <FormLabel hidden={!isDesktop} width="150px">
-                    هویت
-                  </FormLabel>
-                  <Select
-                    dir="ltr"
-                    name="customerGender"
-                    placeholder="هویت را انتخاب کنید"
-                    value={formData.customerGender}
-                    onChange={handleChangeFormData}
+              <GridItem colSpan={isDesktop ? 2 : 1}>
+                <Flex
+                  columnGap={2}
+                  rowGap={3}
+                  mt={3}
+                  dir="rtl"
+                  direction="column"
+                  borderWidth={1}
+                  borderColor="gray.200"
+                  borderStyle="dashed"
+                  borderRadius="md"
+                  p={2}
+                  fontFamily="iransans"
+                  fontSize="13px"
+                >
+                  <Text bg="gray.100" textAlign="center" fontSize="17px">
+                    نوع مشتری
+                  </Text>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        نوع مشتری
+                      </FormLabel>
+                      <Select
+                        dir="ltr"
+                        name="customerType"
+                        placeholder="نوع مشتری را انتخاب کنید"
+                        value={formData?.customerType}
+                        onChange={handleChangeFormData}
+                      >
+                        {CustomerTypes.map((p) => (
+                          <option key={p.key} value={p.value}>
+                            {p.value}
+                          </option>
+                        ))}
+                      </Select>
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        نوع ارتباط
+                      </FormLabel>
+                      <Select
+                        dir="ltr"
+                        name="customerBase"
+                        placeholder="نوع ارتباط را انتخاب کنید"
+                        value={formData.customerBase}
+                        onChange={handleChangeFormData}
+                      >
+                        {CustomerParties.map((p) => (
+                          <option key={p.key} value={p.value}>
+                            {p.value}
+                          </option>
+                        ))}
+                      </Select>
+                    </HStack>
+                  </FormControl>
+                </Flex>
+              </GridItem>
+
+              <GridItem colSpan={isDesktop ? 2 : 1}>
+                <Flex
+                  columnGap={2}
+                  rowGap={3}
+                  mt={3}
+                  dir="rtl"
+                  direction="column"
+                  borderWidth={1}
+                  borderColor="gray.200"
+                  borderStyle="dashed"
+                  borderRadius="md"
+                  p={2}
+                  fontFamily="iransans"
+                  fontSize="13px"
+                >
+                  <Text bg="gray.100" textAlign="center" fontSize="17px">
+                    اطلاعات هویتی
+                  </Text>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        هویت
+                      </FormLabel>
+                      <Select
+                        dir="ltr"
+                        name="customerGender"
+                        placeholder="هویت را انتخاب کنید"
+                        value={formData.customerGender}
+                        onChange={handleChangeFormData}
+                      >
+                        <option>شرکت</option>
+                        <option>آقای</option>
+                        <option>خانم</option>
+                      </Select>
+                    </HStack>
+                  </FormControl>
+                  <FormControl>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        عنوان
+                      </FormLabel>
+                      <MyInputBox
+                        icon={IdCard}
+                        name="customerTitle"
+                        title="عنوان"
+                        value={formData.customerTitle}
+                        onChange={handleChangeFormData}
+                      />
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        نام مشتری
+                      </FormLabel>
+                      <MyInputBox
+                        icon={IdCard}
+                        name="customerFName"
+                        title="نام"
+                        value={formData.customerFName}
+                        onChange={handleChangeFormData}
+                      />
+                    </HStack>
+                  </FormControl>
+                  <FormControl
+                    isRequired={
+                      formData?.customerType == "حقوقی" ? false : true
+                    }
                   >
-                    <option>شرکت</option>
-                    <option>آقای</option>
-                    <option>خانم</option>
-                  </Select>
-                </HStack>
-              </FormControl>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        نام خانوادگی
+                      </FormLabel>
+                      <MyInputBox
+                        icon={IdCard}
+                        name="customerLName"
+                        title="نام خانوادگی"
+                        value={formData.customerLName}
+                        onChange={handleChangeFormData}
+                      />
+                    </HStack>
+                  </FormControl>
+                  <FormControl>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        {formData?.customerType == "حقوقی"
+                          ? "شماره ثبت"
+                          : "کد ملی"}
+                      </FormLabel>
+                      <MyInputBox
+                        maxLength="10"
+                        type="number"
+                        icon={IdCard}
+                        name="customerNationalCode"
+                        title={
+                          formData?.customerType == "حقوقی"
+                            ? "شماره ثبت"
+                            : "کد ملی"
+                        }
+                        value={formData.customerNationalCode}
+                        onChange={handleChangeFormData}
+                      />
+                    </HStack>
+                  </FormControl>
+                  <FormControl>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        شماره اقتصادی
+                      </FormLabel>
+                      <MyInputBox
+                        maxLength="10"
+                        type="number"
+                        icon={IdCard}
+                        name="customerEconomicCode"
+                        title="شماره اقتصادی"
+                        value={formData.customerEconomicCode}
+                        onChange={handleChangeFormData}
+                      />
+                    </HStack>
+                  </FormControl>
+                </Flex>
+              </GridItem>
 
-              <FormControl isRequired>
-                <HStack>
-                  <FormLabel hidden={!isDesktop} width="150px">
-                    نام مشتری
-                  </FormLabel>
-                  <MyInputBox
-                    icon={IdCard}
-                    name="customerFName"
-                    title="نام"
-                    value={formData.customerFName}
-                    onChange={handleChangeFormData}
-                  />
-                </HStack>
-              </FormControl>
-
-              <FormControl isRequired>
-                <HStack>
-                  <FormLabel hidden={!isDesktop} width="150px">
-                    نام خانوادگی
-                  </FormLabel>
-                  <MyInputBox
-                    icon={IdCard}
-                    name="customerLName"
-                    title="نام خانوادگی"
-                    value={formData.customerLName}
-                    onChange={handleChangeFormData}
-                  />
-                </HStack>
-              </FormControl>
-
-              <FormControl>
-                <HStack>
-                  <FormLabel hidden={!isDesktop} width="150px">
-                    شماره ملی
-                  </FormLabel>
-                  <MyInputBox
-                    maxLength="10"
-                    type="number"
-                    icon={IdCard}
-                    name="customerNationalCode"
-                    title="شماره ملی"
-                    value={formData.customerNationalCode}
-                    onChange={handleChangeFormData}
-                  />
-                </HStack>
-              </FormControl>
-
-              <FormControl>
-                <HStack>
-                  <FormLabel hidden={!isDesktop} width="150px">
-                    شماره تلفن
-                  </FormLabel>
-                  <MyInputBox
-                    type="number"
-                    icon={Phone}
-                    name="customerPhone"
-                    title="شماره تلفن"
-                    size={19}
-                    value={formData.customerPhone}
-                    onChange={handleChangeFormData}
-                  ></MyInputBox>
-                </HStack>
-              </FormControl>
-              <FormControl isRequired>
-                <HStack>
-                  <FormLabel hidden={!isDesktop} width="150px">
-                    شماره موبایل
-                  </FormLabel>
-                  <MyInputBox
-                    type="number"
-                    icon={Smartphone}
-                    name="customerMobile"
-                    title="شماره موبایل"
-                    value={formData.customerMobile}
-                    onChange={handleChangeFormData}
-                  ></MyInputBox>
-                </HStack>
-              </FormControl>
-              <FormControl>
-                <HStack>
-                  <FormLabel hidden={!isDesktop} width="150px">
-                    کد پستی
-                  </FormLabel>
-                  <MyInputBox
-                    type="number"
-                    icon={Mailbox}
-                    name="customerPostalCode"
-                    title="کد پستی"
-                    value={formData.customerPostalCode}
-                    onChange={handleChangeFormData}
-                  />
-                </HStack>
-              </FormControl>
-              <GridItem colSpan={{ lg: 2, md: 1, sm: 1 }}>
-                <FormControl>
-                  <HStack>
-                    <FormLabel hidden={!isDesktop} width="135px">
-                      آدرس
-                    </FormLabel>
-                    <Textarea
-                      placeholder="آدرس"
-                      name="customerAddress"
-                      resize="horizontal"
-                      size="lg"
-                      value={formData.customerAddress}
-                      onChange={handleChangeFormData}
+              <GridItem colSpan={isDesktop ? 2 : 1}>
+                <Flex
+                  columnGap={2}
+                  mt={3}
+                  dir="rtl"
+                  direction={"column"}
+                  borderWidth={1}
+                  borderColor="gray.200"
+                  borderStyle="dashed"
+                  borderRadius="md"
+                  p={2}
+                  fontFamily="iransans"
+                  fontSize="13px"
+                >
+                  <Text bg="gray.100" textAlign="center" fontSize="17px">
+                    نوع فعالیت
+                  </Text>
+                  <Flex
+                    columnGap={4}
+                    p={2}
+                    direction={isDesktop ? "row" : "column"}
+                  >
+                    <FormLabel htmlFor="customer">مشتری</FormLabel>
+                    <Switch
+                      defaultChecked
+                      isChecked={formData.isCustomer}
+                      id="customer"
+                      title="مشتری"
+                      name="isCustomer"
+                      value={formData.isCustomer}
                     />
-                  </HStack>
-                </FormControl>
+                    <FormLabel htmlFor="provider">تامین کننده</FormLabel>
+                    <Switch
+                      id="provider"
+                      title="تامین کننده"
+                      value={formData.isProvider}
+                      name="isProvider"
+                    />
+                    <FormLabel htmlFor="broker">واسطه</FormLabel>
+                    <Switch
+                      id="broker"
+                      title="واسطه"
+                      value={formData.isBroker}
+                      name="isBroker"
+                    />
+                    <FormLabel htmlFor="buyer"> مامور خرید</FormLabel>
+                    <Switch
+                      id="buyer"
+                      title="مامور خرید"
+                      value={formData.isBuyerAgent}
+                      name="isBuyerAgent"
+                    />
+                  </Flex>
+                </Flex>
+              </GridItem>
+
+              <GridItem colSpan={isDesktop ? 2 : 1}>
+                <Flex
+                  columnGap={2}
+                  rowGap={3}
+                  mt={3}
+                  dir="rtl"
+                  direction="column"
+                  borderWidth={1}
+                  borderColor="gray.200"
+                  borderStyle="dashed"
+                  borderRadius="md"
+                  p={2}
+                  fontFamily="iransans"
+                  fontSize="13px"
+                >
+                  <Text bg="gray.100" textAlign="center" fontSize="17px">
+                    اطلاعات تماس
+                  </Text>
+                  <FormControl
+                    isRequired={
+                      formData?.customerBase == "ارتباط با تلفن" ? true : false
+                    }
+                  >
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        نوع تلفن
+                      </FormLabel>
+                      <Select
+                        dir="ltr"
+                        name="customerAddressType"
+                        placeholder="نوع تلفن را انتخاب کنید"
+                        value={formData.customerPhoneType}
+                        onChange={handleChangeFormData}
+                      >
+                        {PhoneTypes.map((p) => (
+                          <option key={p.key} value={p.value}>
+                            {p.value}
+                          </option>
+                        ))}
+                      </Select>
+                    </HStack>
+                  </FormControl>
+                  <FormControl
+                    isRequired={
+                      formData?.customerBase == "ارتباط با تلفن" ? true : false
+                    }
+                  >
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        شماره تلفن
+                      </FormLabel>
+                      <MyInputBox
+                        type="number"
+                        icon={Phone}
+                        name="customerPhone"
+                        title="شماره تلفن"
+                        size={19}
+                        value={formData.customerPhone}
+                        onChange={handleChangeFormData}
+                      ></MyInputBox>
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        شماره موبایل
+                      </FormLabel>
+                      <MyInputBox
+                        type="number"
+                        icon={Smartphone}
+                        name="customerMobile"
+                        title="شماره موبایل"
+                        value={formData.customerMobile}
+                        onChange={handleChangeFormData}
+                      ></MyInputBox>
+                    </HStack>
+                  </FormControl>
+                </Flex>
+              </GridItem>
+              <GridItem colSpan={isDesktop ? 2 : 1}>
+                <Flex
+                  columnGap={2}
+                  rowGap={3}
+                  mt={3}
+                  dir="rtl"
+                  direction="column"
+                  borderWidth={1}
+                  borderColor="gray.200"
+                  borderStyle="dashed"
+                  borderRadius="md"
+                  p={2}
+                  fontFamily="iransans"
+                  fontSize="13px"
+                >
+                  <Text bg="gray.100" textAlign="center" fontSize="17px">
+                    اطلاعات نشانی
+                  </Text>
+
+                  <FormControl>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        کد پستی
+                      </FormLabel>
+                      <MyInputBox
+                        type="number"
+                        icon={Mailbox}
+                        name="customerPostalCode"
+                        title="کد پستی"
+                        value={formData.customerPostalCode}
+                        onChange={handleChangeFormData}
+                      />
+                    </HStack>
+                  </FormControl>
+                  <FormControl
+                    isRequired={
+                      formData?.customerBase == "ارتباط با آدرس" ? true : false
+                    }
+                  >
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="150px">
+                        نوع آدرس
+                      </FormLabel>
+                      <Select
+                        dir="ltr"
+                        name="customerAddressType"
+                        placeholder="نوع آدرس را انتخاب کنید"
+                        value={formData.customerAddressType}
+                        onChange={handleChangeFormData}
+                      >
+                        {AddressTypes.map((p) => (
+                          <option key={p.key} value={p.value}>
+                            {p.value}
+                          </option>
+                        ))}
+                      </Select>
+                    </HStack>
+                  </FormControl>
+
+                  <FormControl
+                    isRequired={
+                      formData?.customerBase == "ارتباط با آدرس" ? true : false
+                    }
+                  >
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="135px">
+                        آدرس
+                      </FormLabel>
+                      <Textarea
+                        placeholder="آدرس"
+                        name="customerAddress"
+                        resize="horizontal"
+                        size="lg"
+                        value={formData.customerAddress}
+                        onChange={handleChangeFormData}
+                      />
+                    </HStack>
+                  </FormControl>
+                </Flex>
               </GridItem>
             </SimpleGrid>
             <Button
