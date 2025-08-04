@@ -162,25 +162,28 @@ export const GoodsDataTable = ({ isDesktop }) => {
                     onClick={(e) => {
                       setSelectedID(row?.id);
                       setDialogGears({
-                        title: "ویرایش کالا",
+                        title: "مشاهده و ویرایش کالا",
                         text: "",
                         callBack: null,
                       });
                       onOpen();
                     }}
                   >
-                    <HStack>
+                    <Flex justify="space-between" columnGap={3}>
                       <WalletCards color="purple" />
-                      <Tooltip label={row.goodName}>
-                        <Text mr="auto">
-                          {row?.goodName?.length > 25
-                            ? row?.goodName?.substring(0, 25) + "..."
-                            : row?.goodName}
-                        </Text>
-                      </Tooltip>
-                    </HStack>
+                      <Flex columnGap={3}>
+                        <Text fontFamily="iransans">نام کالا :</Text>
+                        <Tooltip label={row.goodName}>
+                          <Text fontFamily="iransans">
+                            {row?.goodName?.length > 25
+                              ? row?.goodName?.substring(0, 25) + "..."
+                              : row?.goodName}
+                          </Text>
+                        </Tooltip>
+                      </Flex>
+                    </Flex>
                   </CardHeader>
-                  <CardBody>
+                  <CardBody px={4} py={2}>
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
                         <Text> واحد :</Text>
@@ -211,13 +214,30 @@ export const GoodsDataTable = ({ isDesktop }) => {
                       </HStack>
                     </VStack>
                   </CardBody>
-                  <CardFooter borderBottomRadius={5} bg="gray.200">
+                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
                     <Stack
                       direction={["row"]}
                       spacing={2}
                       align={"stretch"}
                       mr="auto"
                     >
+                      <Link
+                        _hover={{ color: "#ffd54f" }}
+                        color="red.600"
+                        onClick={(e) => {
+                          setSelectedID(row?.id);
+                          setDialogGears({
+                            title: "حذف کالا",
+                            text: "آیا واقعا می خواهید این کالا را حذف کنید؟",
+                            callBack: () => handleDeleteGood(row?.id),
+                          });
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        <Tooltip label="حذف">
+                          <Icon w={6} h={6} as={Trash2} />
+                        </Tooltip>
+                      </Link>
                       <Link
                         _hover={{
                           color: "orange",
@@ -237,23 +257,6 @@ export const GoodsDataTable = ({ isDesktop }) => {
                           <Icon w={6} h={6} as={FilePenLine} />
                         </Tooltip>
                       </Link>
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="red.600"
-                        onClick={(e) => {
-                          setSelectedID(row?.id);
-                          setDialogGears({
-                            title: "حذف کالا",
-                            text: "آیا واقعا می خواهید این کالا را حذف کنید؟",
-                            callBack: () => handleDeleteGood(row?.id),
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="حذف">
-                          <Icon w={6} h={6} as={Trash2} />
-                        </Tooltip>
-                      </Link>
                     </Stack>
                   </CardFooter>
                 </Card>
@@ -271,7 +274,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
 
       <MyModal
         size="md"
-        modalHeader="مشاهده کالا"
+        modalHeader="مشاهده و ویرایش کالا"
         isOpen={isOpen}
         onClose={onClose}
       >

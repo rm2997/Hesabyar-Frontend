@@ -52,6 +52,7 @@ import { MyAlert } from "../MyAlert";
 import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
 import { MyLoading } from "../MyLoading";
+import { MyProformaStepper } from "../MyProformaSteper";
 
 export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -149,16 +150,16 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       });
       return;
     }
-    if (!proforma?.customerLink) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "لینک موقت مشتری ساخته نشده است",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+    // if (!proforma?.customerLink) {
+    //   toast({
+    //     title: "امکان ارسال وجود ندارد",
+    //     description: "لینک موقت مشتری ساخته نشده است",
+    //     status: "error",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   return;
+    // }
     setLoading(true);
     const res = await SetProformaIsSent(proforma.id);
     if (!res.success) {
@@ -366,11 +367,11 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
             loadData={loadData}
             userInfo="جستجوی پیش فاکتور"
           />
-          <Box flex="1" overflowY="auto" p={5}>
+          <Box flex="1" overflowY="auto" px={2}>
             <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
               {proformas.map((row) => (
                 <Card
-                  maxW="370px"
+                  maxW="350px"
                   _hover={{
                     cursor: "",
                     borderColor: "orange.300",
@@ -379,7 +380,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                   borderColor="gray.300"
                 >
                   <CardHeader
-                    borderTopRadius={5}
+                    borderTopRadius="md"
                     _hover={{ cursor: "pointer" }}
                     onClick={(e) => handleEditProforma(row.id)}
                     bg={
@@ -392,10 +393,9 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                   >
                     <HStack>
                       <Text fontFamily="IranSans" fontSize="md">
-                        {" "}
-                        شماره :{row.id}
+                        پیش فاکتور شماره : {row.id}
                       </Text>
-                      <Box mr="auto">
+                      {/* <Box mr="auto">
                         <HStack>
                           {row.isConverted ? (
                             <Tooltip label="فاکتور شده">
@@ -437,81 +437,99 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                             </Tooltip>
                           )}
                         </HStack>
-                      </Box>
+                      </Box> */}
                     </HStack>
                   </CardHeader>
-                  <CardBody>
-                    <VStack spacing={2} align="stretch">
-                      <HStack>
-                        <Text>عنوان : </Text>
-                        <Text fontFamily="IranSans" fontSize="md">
-                          {row.title}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>تاریخ : </Text>
-                        <Text fontFamily="IranSans" fontSize="md">
-                          {dayjs(row.createdAt)
-                            .locale("fa")
-                            .format("YYYY/MM/DD")}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>نام مشتری : </Text>
-                        <Text fontFamily="IranSans" fontSize="md">
-                          {row.customer?.customerFName +
-                            " " +
-                            row.customer?.customerLName}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>نوع پرداخت : </Text>
-                        <Text fontFamily="IranSans" fontSize="md">
-                          {row.paymentStatus}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text> تایید مشتری : </Text>
-                        <Text fontFamily="IranSans" fontSize="md">
-                          {row.approvedFile ? "دارد" : "ندارد"}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text> جمع کل : </Text>
-                        <Text fontFamily="IranSans" fontSize={"xl"}>
-                          {Number(row.totalAmount).toLocaleString()}
-                        </Text>
-                      </HStack>
-                    </VStack>
+                  <CardBody p={2}>
+                    <Flex justify="space-between" direction="row" columnGap={1}>
+                      <MyProformaStepper data={row} />
+                      <VStack mx={2} w="60%" spacing={2} align="stretch">
+                        <HStack>
+                          <Text fontSize="10px" fontFamily="IranSans">
+                            عنوان :
+                          </Text>
+                          <Text fontFamily="IranSans" fontSize="12px">
+                            {row.title}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontSize="10px" fontFamily="IranSans">
+                            تاریخ :
+                          </Text>
+                          <Text fontFamily="IranSans" fontSize="12px">
+                            {dayjs(row.createdAt)
+                              .locale("fa")
+                              .format("YYYY/MM/DD")}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontSize="10px" fontFamily="IranSans">
+                            نام مشتری :
+                          </Text>
+                          <Text fontFamily="IranSans" fontSize="12px">
+                            {row.customer?.customerFName +
+                              " " +
+                              row.customer?.customerLName}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack fontSize="10px" fontFamily="IranSans">
+                          <Text>نوع پرداخت : </Text>
+                          <Text fontFamily="IranSans" fontSize="12px">
+                            {row.paymentStatus}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontSize="10px" fontFamily="IranSans">
+                            تایید مشتری :
+                          </Text>
+                          <Text fontFamily="IranSans" fontSize="12px">
+                            {row.approvedFile ? "دارد" : "ندارد"}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontSize="10px" fontFamily="IranSans">
+                            جمع کل :
+                          </Text>
+                          <Text fontFamily="IranSans" fontSize="md">
+                            {Number(row.totalAmount).toLocaleString()}
+                          </Text>
+                        </HStack>
+                      </VStack>
+                    </Flex>
                   </CardBody>
-                  <CardFooter borderBottomRadius={5} bg="gray.100">
-                    <Stack
-                      direction={["row"]}
-                      spacing={2}
-                      align={"stretch"}
-                      mr="auto"
-                    >
-                      {!row.isConverted && (
+                  <CardFooter
+                    p={row?.isConverted ? 0 : 2}
+                    borderBottomRadius="md"
+                    bg="gray.100"
+                  >
+                    <Flex hidden={row?.isConverted} mr="auto">
+                      <Stack
+                        direction={["row"]}
+                        spacing={2}
+                        align={"stretch"}
+                        mr="auto"
+                      >
                         <Link
-                          _hover={{
-                            color: "orange",
-                          }}
-                          color="blue.600"
-                          onClick={(e) => handleEditProforma(row.id)}
+                          hidden={
+                            !row?.isSent ||
+                            !row?.isAccepted ||
+                            !row?.approvedFile
+                          }
+                          _hover={{ color: "#ffd54f" }}
+                          color="purple.600"
+                          onClick={() => handleConvertToInvoice(row?.id)}
                         >
-                          <Tooltip label="ویرایش">
-                            <Icon w={6} h={6} as={FilePenLine} />
+                          <Tooltip label="تبدیل به فاکتور">
+                            <Icon w={6} h={6} as={Replace} />
                           </Tooltip>
                         </Link>
-                      )}
 
-                      {!row.isConverted && (
-                        <Link
+                        {/* <Link
                           _hover={{
                             color: "orange",
                           }}
@@ -521,11 +539,10 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                           <Tooltip label="تولید لینک جدید">
                             <Icon w={6} h={6} as={Link2} />
                           </Tooltip>
-                        </Link>
-                      )}
+                        </Link> */}
 
-                      {!row.isConverted && row?.isSent == false && (
                         <Link
+                          hidden={row?.isSent && row?.approvedFile}
                           _hover={{ color: "#ffd54f" }}
                           color="green.600"
                           onClick={(e) => {
@@ -547,28 +564,17 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                             setIsDialogOpen(true);
                           }}
                         >
-                          <Tooltip label="ارسال لینک به مشتری">
+                          <Tooltip
+                            label={
+                              !row?.isSent
+                                ? "ارسال درخواست به مشتری"
+                                : "ارسال مجدد"
+                            }
+                          >
                             <Icon w={6} h={6} as={Send} />
                           </Tooltip>
                         </Link>
-                      )}
 
-                      {!row.isConverted &&
-                        row?.isSent &&
-                        row?.approvedFile &&
-                        row?.isAccepted && (
-                          <Link
-                            _hover={{ color: "#ffd54f" }}
-                            color="purple.600"
-                            onClick={() => handleConvertToInvoice(row?.id)}
-                          >
-                            <Tooltip label="تبدیل به فاکتور">
-                              <Icon w={6} h={6} as={Replace} />
-                            </Tooltip>
-                          </Link>
-                        )}
-
-                      {!row.isConverted && (
                         <Link
                           _hover={{ color: "#ffd54f" }}
                           color="red.600"
@@ -576,8 +582,8 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                             setSelectedID(row.id);
                             setDialogGears({
                               title: "حذف پیش فاکتور",
-                              text: "آیا واقعا می خواهید این پیش فاکتور را حذف کنید؟",
-                              callBack: handleDeleteProforma,
+                              text: "از حذف این پیش فاکتور اطمینان دارید؟",
+                              callBack: () => handleDeleteProforma(row?.id),
                             });
                             setIsDialogOpen(true);
                           }}
@@ -586,8 +592,20 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                             <Icon w={6} h={6} as={Trash2} />
                           </Tooltip>
                         </Link>
-                      )}
-                    </Stack>
+
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={() => handleEditProforma(row?.id)}
+                        >
+                          <Tooltip label="ویرایش">
+                            <Icon w={6} h={6} as={FilePenLine} />
+                          </Tooltip>
+                        </Link>
+                      </Stack>
+                    </Flex>
                   </CardFooter>
                 </Card>
               ))}

@@ -143,7 +143,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
           userInfo="جستجوی مشتری"
         />
 
-        <Box flex="1" overflowY="auto" p={5}>
+        <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
               {unitsData.map((row) => (
@@ -157,7 +157,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
                     borderTopRadius={5}
                     color="white"
                     _hover={{ cursor: "pointer" }}
-                    onClick={(e) => {
+                    onClick={() => {
                       setSelectedID(row.id);
                       setDialogGears({
                         title: "ویرایش واحد",
@@ -165,12 +165,17 @@ export const UnitsDataTable = ({ isDesktop }) => {
                       onOpen();
                     }}
                   >
-                    <HStack>
+                    <Flex justify="space-between" columnGap={3}>
                       <Ruler color="purple" />
-                      <Text mr="auto">{row.unitName}</Text>
-                    </HStack>
+                      <Flex columnGap={3}>
+                        <Text fontFamily="iransans">نام واحد :</Text>
+                        <Text fontSize="md" fontFamily="iransans">
+                          {row.unitName}
+                        </Text>
+                      </Flex>
+                    </Flex>
                   </CardHeader>
-                  <CardBody>
+                  <CardBody px={4} py={2}>
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
                         <Text>توضیحات :</Text>
@@ -182,30 +187,13 @@ export const UnitsDataTable = ({ isDesktop }) => {
                       </HStack>
                     </VStack>
                   </CardBody>
-                  <CardFooter borderBottomRadius={5} bg="gray.200">
+                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
                     <Stack
                       direction={["row"]}
                       spacing={2}
                       align={"stretch"}
                       mr="auto"
                     >
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "ویرایش واحد",
-                          });
-                          onOpen();
-                        }}
-                      >
-                        <Tooltip label="ویرایش">
-                          <Icon w={6} h={6} as={FilePenLine} />
-                        </Tooltip>
-                      </Link>
                       <Link
                         _hover={{ color: "#ffd54f" }}
                         color="red.600"
@@ -221,6 +209,23 @@ export const UnitsDataTable = ({ isDesktop }) => {
                       >
                         <Tooltip label="حذف">
                           <Icon w={6} h={6} as={Trash2} />
+                        </Tooltip>
+                      </Link>
+                      <Link
+                        _hover={{
+                          color: "orange",
+                        }}
+                        color="blue.600"
+                        onClick={(e) => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "مشاهده و ویرایش واحد",
+                          });
+                          onOpen();
+                        }}
+                      >
+                        <Tooltip label="ویرایش">
+                          <Icon w={6} h={6} as={FilePenLine} />
                         </Tooltip>
                       </Link>
                     </Stack>

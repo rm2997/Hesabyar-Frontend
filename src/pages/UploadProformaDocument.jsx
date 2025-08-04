@@ -39,6 +39,7 @@ import { ProformaPdf } from "./ProformaPdf";
 import { useReactToPrint } from "react-to-print";
 
 export const UploadProformaDocument = ({}) => {
+  const [showDownload, setShowDownload] = useState(false);
   const contentRef = useRef();
   const reactToPrintFn = useReactToPrint({ contentRef: contentRef });
   const toast = useToast();
@@ -147,11 +148,10 @@ export const UploadProformaDocument = ({}) => {
       description: "تاییدیه شما ارسال گردید",
       status: "success",
       duration: 3000,
-      isClosable: false,
+      isClosable: true,
     });
-    navigate("/home");
-
-    setLoading(false);
+    setTimeout(() => navigate("/home"), 40000);
+    setShowDownload(true);
     setLoading(false);
   };
 
@@ -729,6 +729,7 @@ export const UploadProformaDocument = ({}) => {
               <Flex px={1} my={1} dir="rtl" direction="column" rowGap={2}>
                 <Button
                   isDisabled={!formData.isAcceptedByCustomer}
+                  hidden={showDownload}
                   type="submit"
                   colorScheme="blue"
                   leftIcon={<CheckCircle2 />}
@@ -736,6 +737,7 @@ export const UploadProformaDocument = ({}) => {
                   تایید
                 </Button>
                 <Button
+                  hidden={!showDownload}
                   isDisabled={!formData.isAcceptedByCustomer}
                   colorScheme="green"
                   leftIcon={<Download />}

@@ -75,6 +75,22 @@ export const ShowMyAcceptedProformas = async (
   });
 };
 
+export const ShowUserAcceptedProformasByCustomerId = (
+  customerId,
+  page,
+  limit,
+  search
+) => {
+  return apiRequest({
+    method: "GET",
+    url: endpoints.proforma.listUserAcceptedInvoicesByCustomerId(
+      customerId,
+      page,
+      limit,
+      search
+    ),
+  });
+};
 export const ShowProformasByID = async (id) => {
   return apiRequest({
     method: "GET",

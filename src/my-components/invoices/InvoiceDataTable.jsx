@@ -347,7 +347,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
             loadData={loadData}
             userInfo="جستجوی فاکتور"
           />
-          <Box flex="1" overflowY="auto" p={5}>
+          <Box flex="1" overflowY="auto" px={2}>
             <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
               {invoices.map((row) => (
                 <Card
@@ -356,11 +356,11 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                     cursor: "",
                     borderColor: "green.500",
                   }}
-                  borderWidth="1px"
+                  borderWidth={1}
                   borderColor="gray.300"
                 >
                   <CardHeader
-                    borderTopRadius={5}
+                    borderTopRadius="md"
                     bg={
                       row?.finished
                         ? "green.500"
@@ -373,7 +373,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                   >
                     <HStack>
                       <Text fontSize="sm" fontFamily="IranSans">
-                        فاکتور شماره :{row.id}
+                        فاکتور شماره : {row.id}
                       </Text>
                       {/* <Box mr="auto">
                         <HStack>
@@ -423,10 +423,10 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                       </Box> */}
                     </HStack>
                   </CardHeader>
-                  <CardBody>
-                    <Flex direction="row" columnGap={5}>
+                  <CardBody p={2}>
+                    <Flex justify="space-between" direction="row" columnGap={1}>
                       <MyInvoiceStepper data={row} />
-                      <VStack spacing={2} align="stretch">
+                      <VStack mx={2} w="60%" spacing={2} align="stretch">
                         <HStack>
                           <Text fontSize="10px" fontFamily="IranSans">
                             عنوان :
@@ -487,7 +487,11 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                       </VStack>
                     </Flex>
                   </CardBody>
-                  <CardFooter borderBottomRadius={5} bg="gray.100">
+                  <CardFooter
+                    p={row?.finished ? 0 : 2}
+                    borderBottomRadius="md"
+                    bg="gray.100"
+                  >
                     <Flex hidden={row?.finished} mr="auto">
                       <Stack
                         direction={["row"]}
@@ -496,14 +500,18 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                         mr="auto"
                       >
                         <Link
-                          hidden={!row?.isSent || row?.driverTokenIsSent}
+                          hidden={
+                            !row?.approvedFile ||
+                            !row?.isAccepted ||
+                            (row?.driverTokenIsSent && row?.driver)
+                          }
                           _hover={{ color: "#ffd54f" }}
                           color="orange.600"
                           onClick={(e) => {
                             setSelectedID(row?.id);
                             setDialogGears({
-                              title: "ارسال لینک به مشتری",
-                              text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                              title: "ارسال درخواست ثبت راننده به مشتری",
+                              text: `آیا می خواهید درخواست به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
                               callBack: () => handleSendDriverLink(row?.id),
                             });
 
@@ -516,7 +524,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                         </Link>
 
                         <Link
-                          hidden={row?.isSent}
+                          hidden={row?.isSent && row?.approvedFile}
                           _hover={{ color: "#ffd54f" }}
                           color="green.600"
                           onClick={(e) => {

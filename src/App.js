@@ -47,6 +47,7 @@ function App() {
               path="/update-invoice-driverInfo"
               element={<UpdateInvoiceDriverInfo />}
             />
+            <Route path="/view-depot-exit" />
             <Route
               path="/upload-proforma-document"
               element={<UploadProformaDocument />}

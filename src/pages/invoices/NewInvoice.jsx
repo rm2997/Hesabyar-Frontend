@@ -38,6 +38,7 @@ import { ShowAllCustomers } from "../../api/services/customerService";
 import {
   ShowMyAcceptedProformas,
   ShowProformasByID,
+  ShowUserAcceptedProformasByCustomerId,
   ShowUserAllProformas,
 } from "../../api/services/proformaService";
 import { ShowAllGoods } from "../../api/services/goodsService";
@@ -247,7 +248,12 @@ export const NewInvoice = ({ isDesktop }) => {
   };
 
   const handleSearchProforma = async (query) => {
-    const response = await ShowMyAcceptedProformas(1, 10, query);
+    const response = await ShowUserAcceptedProformasByCustomerId(
+      formData?.customer?.id,
+      1,
+      10,
+      query
+    );
     return response?.data?.items;
   };
 
@@ -322,7 +328,7 @@ export const NewInvoice = ({ isDesktop }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="175px">
+                      <FormLabel hidden={!isDesktop} width="160px">
                         نام مشتری
                       </FormLabel>
                       <Input
@@ -348,9 +354,15 @@ export const NewInvoice = ({ isDesktop }) => {
                           colorScheme="red"
                           title="انصراف"
                           variant="ghost"
-                          onClick={() =>
-                            setFormData({ ...formData, customer: null })
-                          }
+                          onClick={() => {
+                            setFormData({
+                              ...formData,
+                              customer: null,
+                              proforma: null,
+                              invoiceGoods: null,
+                            });
+                            setInvoiceItems([]);
+                          }}
                         />
                       )}
                       <IconButton
@@ -372,12 +384,11 @@ export const NewInvoice = ({ isDesktop }) => {
 
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="150px">
+                      <FormLabel hidden={!isDesktop} width="145px">
                         پیش‌ فاکتور
                       </FormLabel>
                       <Input
                         placeholder="لطفا یک پیش فاکتور انتخاب کنید"
-                        maxW="560px"
                         onClick={() => setShowSearchProforma(true)}
                         value={
                           formData?.proforma
@@ -685,7 +696,12 @@ export const NewInvoice = ({ isDesktop }) => {
           setShowSearchCustomer(false);
         }}
       />
-      <MyModal modalHeader={"ثبت مشتری جدید"} onClose={onClose} isOpen={isOpen}>
+      <MyModal
+        size="xl"
+        modalHeader={"ثبت مشتری جدید"}
+        onClose={onClose}
+        isOpen={isOpen}
+      >
         <NewCustomer />
       </MyModal>
       <SearchGoods

@@ -100,6 +100,12 @@ export const EditInvoice = ({
     trustIssueDate: "",
     invoiceGoods: null,
     description: "",
+    driver: "",
+    driverCarNumber: "",
+    driverNatCode: "",
+    driverMobile: "",
+    driverToken: "",
+    driverTokenIsSent: false,
   });
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
@@ -133,7 +139,6 @@ export const EditInvoice = ({
         const url = URL.createObjectURL(res?.data);
         setApprovedFile(url);
       }
-
       setFormData({ ...invoice, invoiceGoods: [...invoice.invoiceGoods] });
       setInvoiceItems([...invoice.invoiceGoods]);
       setLoading(false);
@@ -161,6 +166,12 @@ export const EditInvoice = ({
       invoiceGoods: null,
       approvedFile: "",
       description: "",
+      driver: "",
+      driverCarNumber: "",
+      driverNatCode: "",
+      driverMobile: "",
+      driverToken: "",
+      driverTokenIsSent: false,
     });
     setInvoiceItems([]);
   };
@@ -234,14 +245,10 @@ export const EditInvoice = ({
     data.totalAmount = totalPrice;
     data.totalQuantity = totalQuantity;
     setFormData(data);
-
-    console.log("before:", data);
-
     if ((await validateForm(data)) == false) return;
 
     setLoading(true);
     const res = await UpdateInvoice(formData.id, data);
-    console.log("after:", res.data);
     if (!res.success) {
       toast({
         title: "خطایی رخ داد",
@@ -254,9 +261,6 @@ export const EditInvoice = ({
       return;
     }
     onUpdate(res?.data);
-    // const newInvoices = invoices.filter((p) => p.id != formData.id);
-    // newInvoices.push(formData);
-    // setInvoices(newInvoices);
     initForm();
     toast({
       title: "ثبت شد",
@@ -729,16 +733,24 @@ export const EditInvoice = ({
               </Flex>
             </Flex>
 
-            <Input
-              placeholder="توضیحات فاکتور"
-              name="description"
-              value={formData.description}
-              onChange={handleChangeFormData}
-            />
-
-            <Flex alignItems="center" mt={3} dir="rtl">
-              <FormLabel> تصویر</FormLabel>
-              {formData.approvedFile && (
+            <Flex
+              columnGap={2}
+              hidden={!formData?.driver}
+              mt={3}
+              dir="rtl"
+              direction="column"
+              borderWidth={1}
+              borderColor="gray.100"
+              borderStyle="dashed"
+              borderRadius="md"
+              p={2}
+              fontFamily="iransans"
+              fontSize="13px"
+            >
+              <Text bg="gray.100" textAlign="center" fontSize="17px">
+                مدارک واریز وجه
+              </Text>
+              <Flex columnGap={2} p={2}>
                 <Box
                   onClick={() => setShowModal(true)}
                   _hover={{ cursor: "pointer", borderColor: "orange" }}
@@ -756,9 +768,48 @@ export const EditInvoice = ({
                     alt="تاییدیه"
                   />
                 </Box>
-              )}
+              </Flex>
             </Flex>
-
+            <Flex
+              columnGap={2}
+              hidden={!formData?.driver}
+              mt={3}
+              dir="rtl"
+              direction="column"
+              borderWidth={1}
+              borderColor="gray.100"
+              borderStyle="dashed"
+              borderRadius="md"
+              p={2}
+              fontFamily="iransans"
+              fontSize="13px"
+            >
+              <Text bg="gray.100" textAlign="center" fontSize="17px">
+                مشخصات راننده
+              </Text>
+              <Flex columnGap={2} p={2}>
+                <Text>نام و نام خانوادگی :</Text>
+                <Text>{formData?.driver}</Text>
+              </Flex>
+              <Flex columnGap={2} p={2}>
+                <Text>شماره ملی :</Text>
+                <Text>{formData?.driverNatCode}</Text>
+              </Flex>
+              <Flex columnGap={2} p={2}>
+                <Text>شماره موبایل :</Text>
+                <Text>{formData?.driverMobile}</Text>
+              </Flex>
+              <Flex columnGap={2} p={2}>
+                <Text>شماره خودرو :</Text>
+                <Text>{formData?.driverCarNumber}</Text>
+              </Flex>
+            </Flex>
+            <Input
+              placeholder="توضیحات فاکتور"
+              name="description"
+              value={formData.description}
+              onChange={handleChangeFormData}
+            />
             <Button
               colorScheme="blue"
               type="submit"

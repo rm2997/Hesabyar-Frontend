@@ -152,7 +152,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
           userInfo="جستجوی مشتری"
         />
 
-        <Box flex="1" overflowY="auto" p={5}>
+        <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
               {customersData.map((row) => (
@@ -178,36 +178,51 @@ export const CustomerDataTable = ({ isDesktop }) => {
                   >
                     <HStack>
                       <UsersRound color="purple" />
-                      <Text mr="auto">
+                      <Text fontFamily="iransans" mr="auto">
                         {row?.customerFName + " " + row?.customerLName}
                       </Text>
                     </HStack>
                   </CardHeader>
-                  <CardBody>
+                  <CardBody p={2}>
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
-                        <Text> شماره موبایل :</Text>
-                        <Text mr="auto">{row?.customerMobile}</Text>
+                        <Text fontFamily="iransans">نقش :</Text>
+                        <Text fontFamily="iransans" mr="auto">
+                          {}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
-                        <Text> شماره تلفن :</Text>
-                        <Text mr="auto">{row?.customerPhone}</Text>
+                        <Text fontFamily="iransans"> شماره موبایل :</Text>
+                        <Text fontFamily="iransans" mr="auto">
+                          {row?.customerMobile}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
-                        <Text> شماره ملی :</Text>
-                        <Text mr="auto">{row?.customerNationalCode}</Text>
+                        <Text fontFamily="iransans"> شماره تلفن :</Text>
+                        <Text fontFamily="iransans" mr="auto">
+                          {row?.customerPhone}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
-                        <Text> کد پستی :</Text>
-                        <Text mr="auto">{row?.customerPostalCode}</Text>
+                        <Text fontFamily="iransans"> شماره ملی :</Text>
+                        <Text fontFamily="iransans" mr="auto">
+                          {row?.customerNationalCode}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
-                        <Text>آدرس :</Text>
-                        <Text mr="auto">
+                        <Text fontFamily="iransans"> کد پستی :</Text>
+                        <Text fontFamily="iransans" mr="auto">
+                          {row?.customerPostalCode}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text fontFamily="iransans">آدرس :</Text>
+                        <Text fontFamily="iransans" mr="auto">
                           {row?.customerAddress?.length > 15
                             ? row?.customerAddress?.substring(0, 12) + "..."
                             : row?.customerAddress}
@@ -215,32 +230,13 @@ export const CustomerDataTable = ({ isDesktop }) => {
                       </HStack>
                     </VStack>
                   </CardBody>
-                  <CardFooter borderBottomRadius={5} bg="gray.200">
+                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
                     <Stack
                       direction={["row"]}
                       spacing={2}
                       align={"stretch"}
                       mr="auto"
                     >
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "ویرایش مشتری",
-                            text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
-                            callBack: () => handleEditCustomer(row.id),
-                          });
-                          onOpen();
-                        }}
-                      >
-                        <Tooltip label="ویرایش">
-                          <Icon w={6} h={6} as={FilePenLine} />
-                        </Tooltip>
-                      </Link>
                       <Link
                         _disabled={true}
                         _hover={{ color: "#ffd54f" }}
@@ -265,6 +261,25 @@ export const CustomerDataTable = ({ isDesktop }) => {
                       >
                         <Tooltip label="حذف">
                           <Icon w={6} h={6} as={Trash2} />
+                        </Tooltip>
+                      </Link>
+                      <Link
+                        _hover={{
+                          color: "orange",
+                        }}
+                        color="blue.600"
+                        onClick={(e) => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "ویرایش مشتری",
+                            text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
+                            callBack: () => handleEditCustomer(row.id),
+                          });
+                          onOpen();
+                        }}
+                      >
+                        <Tooltip label="ویرایش">
+                          <Icon w={6} h={6} as={FilePenLine} />
                         </Tooltip>
                       </Link>
                     </Stack>

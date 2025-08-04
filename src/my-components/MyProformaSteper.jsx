@@ -13,37 +13,29 @@ import {
   Tooltip,
   useSteps,
 } from "@chakra-ui/react";
+
 import { useEffect } from "react";
 
 const steps = [
   {
-    title: "درخواست واریز",
+    title: "درخواست تایید",
     description:
-      "یک لینک برای مشتری فرستاده می شود تا مدارک واریزی خود را ثبت کند",
+      "یک لینک برای مشتری فرستاده می شود تا اطلاعات پیش فاکتور را تایید کند",
   },
   {
-    title: "دریافت فیش ",
-    description: "مشتری مدارک واریز خود را به فاکتور الصاق میکند",
+    title: "تایید مشتری",
+    description: "مشتری پیش فاکتور خود را تایید می نماید",
   },
   {
     title: "اخذ تاییدیه",
-    description: "کاربر ارشد سیستم فاکتور را تایید میکند",
+    description: "کاربر ارشد سیستم پیش فاکتور را تایید میکند",
   },
   {
-    title: "درخواست راننده",
-    description: "لینکی به مشتری ارسال می شود تا راننده را تعیین کند",
-  },
-  {
-    title: "تعیین راننده",
-    description:
-      "مشتری مشخصات کسی که اقلام فاکتور را تحویل خواهد گرفت مشخص می کند",
-  },
-  {
-    title: "خروج از انبار",
-    description: "کالا از انبار خارج می شود",
+    title: "تهیه فاکتور",
+    description: "پیش فاکتور تبدیل به فاکتور می شود",
   },
 ];
-export const MyInvoiceStepper = ({ data }) => {
+export const MyProformaStepper = ({ data }) => {
   const { activeStep, setActiveStep } = useSteps({
     index: 1,
     count: steps.length,
@@ -52,10 +44,8 @@ export const MyInvoiceStepper = ({ data }) => {
     if (!data?.isSent) return setActiveStep(0);
     if (!data?.approvedFile) return setActiveStep(1);
     if (!data?.isAccepted) return setActiveStep(2);
-    if (!data?.driverTokenIsSent) return setActiveStep(3);
-    if (!data?.driver) return setActiveStep(4);
-    if (!data?.finished) return setActiveStep(5);
-    return setActiveStep(6);
+    if (!data?.isConverted) return setActiveStep(3);
+    return setActiveStep(4);
   };
 
   useEffect(() => {
@@ -75,7 +65,7 @@ export const MyInvoiceStepper = ({ data }) => {
         dir="ltr"
         index={activeStep}
         orientation="vertical"
-        height="250px"
+        height="200px"
         gap="0"
         colorScheme="orange"
       >

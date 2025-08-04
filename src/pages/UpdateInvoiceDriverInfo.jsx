@@ -804,6 +804,7 @@ export const UpdateInvoiceDriverInfo = ({}) => {
               <GridItem colSpan={{ lg: 3, md: 2, sm: 1 }}>
                 <HStack>
                   <Checkbox
+                    alignItems={isDesktop ? "center" : "start"}
                     name="isAcceptedByCustomer"
                     isChecked={formData?.isAcceptedByCustomer}
                     onChange={(e) =>
@@ -817,6 +818,7 @@ export const UpdateInvoiceDriverInfo = ({}) => {
                       fontFamily="iransans"
                       fontSize={isDesktop ? "md" : "xs"}
                       textAlign="justify"
+                      color="maroon"
                     >
                       اینجانب
                       {" " +
@@ -824,7 +826,9 @@ export const UpdateInvoiceDriverInfo = ({}) => {
                         " " +
                         formData?.customer?.customerLName +
                         " "}
-                      سند خروج کالا را مطالعه کرده و اطلاعات آن را قبول دارم.
+                      اطلاعات نماینده / راننده خود را ثبت کرده و تائید می نمایم.
+                      بدیهی است پس از تحویل بار کلیه مسئولیت های صحت و سلامت
+                      اقلام بر عهده نماینده / راننده اینجانب می باشد.
                     </Text>
                   </Checkbox>
                 </HStack>
