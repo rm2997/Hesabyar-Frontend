@@ -18,14 +18,21 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import {
-  ArrowBigLeft,
-  ArrowLeft,
+  ArrowBigRight,
+  ArrowBigRightDash,
+  ArrowRight,
+  CircleFadingArrowUp,
   Combine,
   DecimalsArrowLeft,
   FilePenLine,
+  Handshake,
+  Link2,
+  MailCheck,
+  Send,
   ShieldUser,
   Trash2,
   UserLock,
+  UserRoundCheck,
   WalletCards,
   Warehouse,
 } from "lucide-react";
@@ -36,15 +43,19 @@ import { MyAlert } from "../MyAlert";
 import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
 import { MyLoading } from "../MyLoading";
-import { RemoveDepot, ShowAllDepots } from "../../api/services/depotService";
+import {
+  GenerateNewToken,
+  RemoveDepot,
+  SetDepotIsSent,
+  ShowAllDepots,
+  ShowDepotWareHouseList,
+} from "../../api/services/depotService";
 import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import { EditDepotEntry } from "./EditDepotEntry";
-import { EditDepotExit } from "./EditDepotExit";
-import { MyDepotEntryStepper } from "../MyDepotEntryStepper";
+import { MyWareHouseDepotExitStepper } from "../MyWareHouseDepotExitStepper";
 
-export const DepotEntryList = ({ isDesktop }) => {
+export const DepotWareHouseExitRequests = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,10 +78,10 @@ export const DepotEntryList = ({ isDesktop }) => {
   const loadData = async (resetPage = false) => {
     setLoading(true);
 
-    const res = await ShowAllDepots(
+    const res = await ShowDepotWareHouseList(
       resetPage ? 1 : currentPage,
       itemsPerPage,
-      DepotTypes.find((t) => t.key == "in").value,
+      DepotTypes.find((t) => t.key == "out").value,
       resetPage ? "" : search
     );
     if (!res.success) {
@@ -84,8 +95,7 @@ export const DepotEntryList = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-
-    setDepotEntry(res?.data?.items);
+    setDepotEntry(res?.data.items);
     setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
     setLoading(false);
   };
@@ -107,7 +117,13 @@ export const DepotEntryList = ({ isDesktop }) => {
   const updateDepotEntryInList = (updatedDepotEntry) => {
     console.log("updatedDepotEntry:", updatedDepotEntry);
     setDepotEntry((prev) =>
-      prev.map((g) => (g.id == updatedDepotEntry.id ? updatedDepotEntry : g))
+      prev.map((g) => (g.id === updatedDepotEntry.id ? updatedDepotEntry : g))
+    );
+  };
+
+  const updateFieldDepotEntryInList = (id, key, value) => {
+    setDepotEntry((prev) =>
+      prev.map((i) => (i.id == id ? { ...i, [key]: value } : i))
     );
   };
 
@@ -146,6 +162,107 @@ export const DepotEntryList = ({ isDesktop }) => {
     setLoading(false);
   };
 
+  const handleSendCustomerLink = async (id) => {
+    const depot = depotEntry.find((i) => i.id == id);
+
+    if (!depot) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "اطلاعات مشتری در دسترس نیست",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (!depot?.depotInvoice?.customer?.customerMobile) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "شماره موبایل مشتری ثبت نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (!depot?.customerToken) {
+      toast({
+        title: "امکان ارسال وجود ندارد",
+        description: "لینک موقت مشتری ساخته نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    setLoading(true);
+    const res = await SetDepotIsSent(depot?.id);
+    if (!res.success) {
+      toast({
+        title: "خطا بعد از ارسال",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    updateFieldDepotEntryInList(id, "isSent", "true");
+    toast({
+      title: "توجه",
+      description:
+        "لینک تاییدیه به شماره موبایل" +
+        " " +
+        depot?.depotInvoice?.customer?.customerMobile +
+        " به نام " +
+        depot?.depotInvoice?.customer?.customerFName +
+        " " +
+        depot?.depotInvoice?.customer?.customerLName +
+        " ارسال شد. ",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
+  };
+
+  const handleGenerateNewLink = async (id) => {
+    setSelectedID(id);
+    setLoading(true);
+    const res = await GenerateNewToken(id);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res?.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    toast({
+      title: "توجه",
+      description: ` لینک جدید ساخته شد می توانید آن را دوباره به مشتری ارسال کنید`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setDepotEntry((prev) =>
+      prev.map((p) =>
+        p.id == id
+          ? {
+              ...p,
+              customerToken: res?.data,
+              isSent: false,
+            }
+          : p
+      )
+    );
+    setLoading(false);
+  };
+
   return (
     <Box>
       <Flex
@@ -158,7 +275,7 @@ export const DepotEntryList = ({ isDesktop }) => {
           setSearch={setSearch}
           handleResetSearch={handleResetSearch}
           loadData={loadData}
-          userInfo="جستجوی ورودی انبار"
+          userInfo="جستجوی خروجی انبار"
         />
 
         <Box flex="1" overflowY="auto" p={1}>
@@ -172,7 +289,6 @@ export const DepotEntryList = ({ isDesktop }) => {
                   _hover={{ cursor: "", borderColor: "green.500" }}
                 >
                   <CardHeader
-                    py={4}
                     bg={row?.isAccepted ? "green.400" : "blue.200"}
                     borderTopRadius={5}
                     _hover={{ cursor: "pointer", borderColor: "green.500" }}
@@ -193,17 +309,16 @@ export const DepotEntryList = ({ isDesktop }) => {
                         borderRadius="md"
                         borderColor="whiteAlpha.300"
                       >
-                        <ArrowBigLeft
-                          color="#bddb75ff"
+                        <ArrowBigRight
+                          color="#e49b5bff"
                           height={18}
                           width={18}
                         />
-                        <Warehouse color="#bddb75ff" height={18} width={18} />
+                        <Warehouse color="#e49b5bff" height={18} width={18} />
                       </Flex> */}
                       <Text fontFamily="IranSans" fontSize="md">
-                        سند ورودی شماره : {row?.id}
+                        سند خروجی شماره : {row?.id}
                       </Text>
-
                       {/* <Box mr="auto">
                         <HStack>
                           {row?.isAccepted ? (
@@ -218,27 +333,54 @@ export const DepotEntryList = ({ isDesktop }) => {
                               />
                             </Tooltip>
                           )}
+                          {row?.driverNatCode ||
+                          row?.driverCarNumber ||
+                          row?.driver ||
+                          row?.driverMobile ? (
+                            <Tooltip label="تایید مشتری">
+                              <UserRoundCheck color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر تایید مشتری">
+                              <Handshake color="white" />
+                            </Tooltip>
+                          )}
+
+                          {row?.isSent ? (
+                            <Tooltip label="لینک به مشتری ارسال شده است">
+                              <MailCheck color="green" />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip label="منتظر ارسال">
+                              <CircleFadingArrowUp color="orange" />
+                            </Tooltip>
+                          )}
                         </HStack>
                       </Box> */}
                     </HStack>
                   </CardHeader>
-                  <CardBody p={2}>
+                  <CardBody>
                     <Flex justify="space-between" direction="row" columnGap={1}>
-                      <MyDepotEntryStepper data={row} />
+                      <MyWareHouseDepotExitStepper data={row} />
                       <VStack
-                        w="60%"
-                        spacing={2}
-                        align="stretch"
                         fontFamily="IranSans"
                         fontSize="10px"
-                        mx={2}
+                        align={"stretch"}
+                        spacing={2}
                       >
                         <HStack>
                           <Text fontFamily="IranSans"> تاریخ ثبت :</Text>
-                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
-                            {dayjs(row?.createdAt)
+                          <Text fontFamily="IranSans" fontSize="15px" mr="auto">
+                            {dayjs(row.createdAt)
                               .locale("fa")
                               .format("YYYY/MM/DD")}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="IranSans">شماره فاکتور:</Text>
+                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
+                            {row.depotInvoice?.id}
                           </Text>
                         </HStack>
                         <Divider />
@@ -264,43 +406,67 @@ export const DepotEntryList = ({ isDesktop }) => {
                               row?.createdBy?.userlname}
                           </Text>
                         </HStack>
+
                         <Divider />
-                        {row?.isAccepted && (
-                          <HStack>
-                            <Text fontFamily="IranSans"> تایید کننده :</Text>
-                            <Text
-                              fontFamily="IranSans"
-                              fontSize="12px"
-                              mr="auto"
-                            >
-                              {row?.acceptedBy?.userfname +
-                                " " +
-                                row?.acceptedBy?.userlname}
-                            </Text>
-                          </HStack>
-                        )}
+                        <HStack>
+                          <Text fontFamily="IranSans"> تایید کننده :</Text>
+                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
+                            {row?.acceptedBy?.userfname +
+                              " " +
+                              row?.acceptedBy?.userlname}
+                          </Text>
+                        </HStack>
                       </VStack>
                     </Flex>
                   </CardBody>
-                  <CardFooter
-                    p={row?.warehouseAcceptedBy ? 0 : 2}
-                    borderBottomRadius={5}
-                    bg="gray.200"
-                  >
-                    <Flex hidden={row?.warehouseAcceptedBy} mr="auto">
+                  {/* <CardFooter borderBottomRadius={5} bg="gray.200">
+                    {!row?.isAccepted && (
                       <Stack
                         direction={["row"]}
                         spacing={2}
                         align={"stretch"}
                         mr="auto"
                       >
+                        {!row?.isSent && (
+                          <Link
+                            _disabled={true}
+                            _hover={{ color: "#ffd54f" }}
+                            color="green.600"
+                            onClick={(e) => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "ارسال لینک به مشتری",
+                                text: `آیا می خواهید لینک به شماره ${row?.depotInvoice?.customer?.customerMobile} به نام ${row?.depotInvoice?.customer?.customerLName} ارسال گردد؟`,
+                                callBack: handleSendCustomerLink,
+                              });
+
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <Tooltip label="ارسال درخواست ثبت مشخصات راننده به مشتری">
+                              <Icon w={6} h={6} as={Send} />
+                            </Tooltip>
+                          </Link>
+                        )}
+
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => handleGenerateNewLink(row.id)}
+                        >
+                          <Tooltip label="تولید لینک جدید">
+                            <Icon w={6} h={6} as={Link2} />
+                          </Tooltip>
+                        </Link>
                         <Link
                           _hover={{
                             color: "orange",
                           }}
                           color="blue.600"
                           onClick={(e) => {
-                            setSelectedID(row?.id);
+                            setSelectedID(row.id);
                             setDialogGears({
                               title: "ویرایش",
                               text: "",
@@ -313,6 +479,7 @@ export const DepotEntryList = ({ isDesktop }) => {
                             <Icon w={6} h={6} as={FilePenLine} />
                           </Tooltip>
                         </Link>
+
                         <Link
                           _hover={{ color: "#ffd54f" }}
                           color="red.600"
@@ -333,8 +500,8 @@ export const DepotEntryList = ({ isDesktop }) => {
                           </Tooltip>
                         </Link>
                       </Stack>
-                    </Flex>
-                  </CardFooter>
+                    )}
+                  </CardFooter> */}
                 </Card>
               ))}
             </SimpleGrid>
@@ -348,13 +515,13 @@ export const DepotEntryList = ({ isDesktop }) => {
         />
 
         <MyModal modalHeader="جزییات" isOpen={isOpen} onClose={onClose}>
-          <EditDepotEntry
+          {/* <EditDepotExit
             isDesktop={isDesktop}
             id={selectedID}
             closeMe={onClose}
             onUpdate={updateDepotEntryInList}
             depot={findDepotEntryFromList(selectedID)}
-          />
+          /> */}
         </MyModal>
         <MyAlert
           AlertHeader={dialogGears.title}

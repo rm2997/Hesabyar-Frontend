@@ -54,6 +54,7 @@ import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { EditDepotEntry } from "./EditDepotEntry";
 import { EditDepotExit } from "./EditDepotExit";
+import { MyDepotExitStepper } from "../MyDepotExitStepper";
 
 export const DepotExitList = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
@@ -290,6 +291,7 @@ export const DepotExitList = ({ isDesktop }) => {
                   _hover={{ cursor: "", borderColor: "green.500" }}
                 >
                   <CardHeader
+                    py={4}
                     bg={row?.isAccepted ? "green.400" : "blue.200"}
                     borderTopRadius={5}
                     _hover={{ cursor: "pointer", borderColor: "green.500" }}
@@ -304,7 +306,7 @@ export const DepotExitList = ({ isDesktop }) => {
                     }}
                   >
                     <HStack>
-                      <Flex
+                      {/* <Flex
                         borderWidth={1}
                         p={1}
                         borderRadius="md"
@@ -316,11 +318,11 @@ export const DepotExitList = ({ isDesktop }) => {
                           width={18}
                         />
                         <Warehouse color="#e49b5bff" height={18} width={18} />
-                      </Flex>
+                      </Flex> */}
                       <Text fontFamily="IranSans" fontSize="md">
-                        شماره : {row.id}
+                        سند خروجی شماره : {row.id}
                       </Text>
-                      <Box mr="auto">
+                      {/* <Box mr="auto">
                         <HStack>
                           {row?.isAccepted ? (
                             <Tooltip label="تاییدیه کاربر ارشد">
@@ -357,106 +359,91 @@ export const DepotExitList = ({ isDesktop }) => {
                             </Tooltip>
                           )}
                         </HStack>
-                      </Box>
+                      </Box> */}
                     </HStack>
                   </CardHeader>
-                  <CardBody>
-                    <VStack align={"stretch"} spacing={2}>
-                      <HStack>
-                        <Text> تاریخ ثبت :</Text>
-                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {dayjs(row.createdAt)
-                            .locale("fa")
-                            .format("YYYY/MM/DD")}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>شماره فاکتور:</Text>
-                        <Text fontFamily="iransans" fontSize="md" mr="auto">
-                          {row.depotInvoice?.id}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>تعداد کالا</Text>
-                        <Text fontFamily="iransans" fontSize="md" mr="auto">
-                          {row?.totalQuantity}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>جمع کل</Text>
-                        <Text fontFamily="iransans" fontSize="md" mr="auto">
-                          {Number(row?.totalAmount).toLocaleString()}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text> ثبت کننده :</Text>
-                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row?.createdBy?.userfname +
-                            " " +
-                            row?.createdBy?.userlname}
-                        </Text>
-                      </HStack>
+                  <CardBody p={2}>
+                    <Flex justify="space-between" direction="row" columnGap={1}>
+                      <MyDepotExitStepper data={row} />
+                      <VStack
+                        w="60%"
+                        spacing={2}
+                        align="stretch"
+                        fontFamily="IranSans"
+                        fontSize="10px"
+                        mx={2}
+                      >
+                        <HStack>
+                          <Text fontFamily="IranSans"> تاریخ ثبت :</Text>
+                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
+                            {dayjs(row.createdAt)
+                              .locale("fa")
+                              .format("YYYY/MM/DD")}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="IranSans">شماره فاکتور:</Text>
+                          <Text fontFamily="iransans" fontSize="12px" mr="auto">
+                            {row.depotInvoice?.id}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="IranSans">تعداد کالا</Text>
+                          <Text fontFamily="iransans" fontSize="12px" mr="auto">
+                            {row?.totalQuantity}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="IranSans">جمع کل</Text>
+                          <Text fontFamily="iransans" fontSize="15px" mr="auto">
+                            {Number(row?.totalAmount).toLocaleString()}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="IranSans"> ثبت کننده :</Text>
+                          <Text fontSize="12px" mr="auto">
+                            {row?.createdBy?.userfname +
+                              " " +
+                              row?.createdBy?.userlname}
+                          </Text>
+                        </HStack>
 
-                      {row?.isAccepted && (
-                        <>
-                          <Divider />
-                          <HStack>
-                            <Text> تایید کننده :</Text>
-                            <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                              {row?.acceptedBy?.userfname +
-                                " " +
-                                row?.acceptedBy?.userlname}
-                            </Text>
-                          </HStack>
-                        </>
-                      )}
-                    </VStack>
+                        {row?.isAccepted && (
+                          <>
+                            <Divider />
+                            <HStack>
+                              <Text fontFamily="IranSans"> تایید کننده :</Text>
+                              <Text
+                                fontFamily="IranSans"
+                                fontSize="12px"
+                                mr="auto"
+                              >
+                                {row?.acceptedBy?.userfname +
+                                  " " +
+                                  row?.acceptedBy?.userlname}
+                              </Text>
+                            </HStack>
+                          </>
+                        )}
+                      </VStack>
+                    </Flex>
                   </CardBody>
-                  <CardFooter borderBottomRadius={5} bg="gray.200">
-                    {!row?.isAccepted && (
+                  <CardFooter
+                    p={row?.warehouseAcceptedBy ? 0 : 2}
+                    borderBottomRadius={5}
+                    bg="gray.200"
+                  >
+                    <Flex hidden={row?.warehouseAcceptedBy} mr="auto">
                       <Stack
                         direction={["row"]}
                         spacing={2}
                         align={"stretch"}
                         mr="auto"
                       >
-                        {!row?.isSent && (
-                          <Link
-                            _disabled={true}
-                            _hover={{ color: "#ffd54f" }}
-                            color="green.600"
-                            onClick={(e) => {
-                              setSelectedID(row.id);
-                              setDialogGears({
-                                title: "ارسال لینک به مشتری",
-                                text: `آیا می خواهید لینک به شماره ${row?.depotInvoice?.customer?.customerMobile} به نام ${row?.depotInvoice?.customer?.customerLName} ارسال گردد؟`,
-                                callBack: handleSendCustomerLink,
-                              });
-
-                              setIsDialogOpen(true);
-                            }}
-                          >
-                            <Tooltip label="ارسال درخواست ثبت مشخصات راننده به مشتری">
-                              <Icon w={6} h={6} as={Send} />
-                            </Tooltip>
-                          </Link>
-                        )}
-
-                        <Link
-                          _hover={{
-                            color: "orange",
-                          }}
-                          color="blue.600"
-                          onClick={(e) => handleGenerateNewLink(row.id)}
-                        >
-                          <Tooltip label="تولید لینک جدید">
-                            <Icon w={6} h={6} as={Link2} />
-                          </Tooltip>
-                        </Link>
                         <Link
                           _hover={{
                             color: "orange",
@@ -497,7 +484,7 @@ export const DepotExitList = ({ isDesktop }) => {
                           </Tooltip>
                         </Link>
                       </Stack>
-                    )}
+                    </Flex>
                   </CardFooter>
                 </Card>
               ))}

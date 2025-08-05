@@ -55,28 +55,28 @@ import {
   ShowGoodByID,
 } from "../../api/services/goodsService";
 import { useNavigate } from "react-router-dom";
-import { MyInputBox } from "../../my-components/MyInputBox";
-import { MyLoading } from "../../my-components/MyLoading";
+import { MyInputBox } from "../MyInputBox";
+import { MyLoading } from "../MyLoading";
 import { ShowAllUnits } from "../../api/services/unitsService";
-import { SearchGoods } from "../../my-components/SearchGood";
+import { SearchGoods } from "../SearchGood";
 import {
   CreateDepot,
   UpdateDepotImageFile,
 } from "../../api/services/depotService";
-import { MyModal } from "../../my-components/MyModal";
+import { MyModal } from "../MyModal";
 import { Datepicker } from "@ijavad805/react-datepicker";
-import { SearchCustomer } from "../../my-components/SearchCustomer";
+import { SearchCustomer } from "../SearchCustomer";
 import { ShowAllCustomers } from "../../api/services/customerService";
-import { NewCustomer } from "../customers/NewCustomer";
+import { NewCustomer } from "../../pages/customers/NewCustomer";
 import {
   ShowInvoiceApprovedFile,
   ShowInvoicesByID,
   ShowUserAcceptedInvoicesByCustomerId,
 } from "../../api/services/invoiceService";
-import { SearchInvoices } from "../../my-components/SearchInvoic";
+import { SearchInvoices } from "../SearchInvoic";
 import { PersianAlphabet } from "../../api/services/enums/persianAlphabets.enum";
 
-export const NewDepotExit = ({ isDesktop }) => {
+export const EditDepotExitByWareHouseMan = ({ isDesktop }) => {
   const [formData, setFormData] = useState({
     depotInvoice: null,
     depotType: "",

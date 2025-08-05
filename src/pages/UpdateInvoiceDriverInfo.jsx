@@ -25,6 +25,7 @@ import {
   useBreakpointValue,
   Flex,
   GridItem,
+  Select,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -39,6 +40,7 @@ import {
   UpdateInvoiceDriver,
   ShowInvoiceByToken,
 } from "../api/services/invoiceService";
+import { PersianAlphabet } from "../api/services/enums/persianAlphabets.enum";
 
 export const UpdateInvoiceDriverInfo = ({}) => {
   const contentRef = useRef();
@@ -68,6 +70,10 @@ export const UpdateInvoiceDriverInfo = ({}) => {
     isAccepted: false,
     isAcceptedByCustomer: false,
     imageFile: 0,
+    driverNatCode: "",
+    driverMobile: "",
+    driver: "",
+    driverCarNumber: "",
   });
   const [invoiceItems, setInvoiceItems] = useState([
     {
@@ -82,6 +88,10 @@ export const UpdateInvoiceDriverInfo = ({}) => {
       description: "",
     },
   ]);
+  const [carNoFirst, setCarNoFirst] = useState("");
+  const [carNoAlphabet, setCarNoAlphabet] = useState("");
+  const [carNoThird, setCarNoThird] = useState("");
+  const [carNoForth, setCarNoForth] = useState("");
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -127,8 +137,8 @@ export const UpdateInvoiceDriverInfo = ({}) => {
     loadInvoiceData();
   }, []);
 
-  const validateForm = async () => {
-    if (formData?.driver?.length < 3 || !isNaN(Number(formData?.driver))) {
+  const validateForm = async (data) => {
+    if (data?.driver?.length < 3 || !isNaN(Number(data?.driver))) {
       toast({
         title: "توجه",
         description: "نام یا نام خانوادگی صحیح نیست",
@@ -138,10 +148,7 @@ export const UpdateInvoiceDriverInfo = ({}) => {
       });
       return false;
     }
-    if (
-      formData?.driverNatCode?.length > 0 &&
-      formData?.driverNatCode?.length != 10
-    ) {
+    if (data?.driverNatCode?.length > 0 && data?.driverNatCode?.length != 10) {
       toast({
         title: "توجه",
         description: "شماره ملی صحیح نیست",
@@ -151,7 +158,7 @@ export const UpdateInvoiceDriverInfo = ({}) => {
       });
       return false;
     }
-    if (isNaN(Number(formData?.driverNatCode))) {
+    if (isNaN(Number(data?.driverNatCode))) {
       toast({
         title: "توجه",
         description: "شماره ملی باید به شکل عددی باشد",
@@ -161,10 +168,7 @@ export const UpdateInvoiceDriverInfo = ({}) => {
       });
       return false;
     }
-    if (
-      formData?.driverMobile?.length > 0 &&
-      formData?.driverMobile?.length != 11
-    ) {
+    if (data?.driverMobile?.length > 0 && data?.driverMobile?.length != 11) {
       toast({
         title: "توجه",
         description: "شماره موبایل  صحیح نیست",
@@ -174,7 +178,7 @@ export const UpdateInvoiceDriverInfo = ({}) => {
       });
       return false;
     }
-    if (isNaN(Number(formData?.driverMobile))) {
+    if (isNaN(Number(data?.driverMobile))) {
       toast({
         title: "توجه",
         description: "شماره موبایل باید به شکل عددی باشد",
@@ -184,11 +188,24 @@ export const UpdateInvoiceDriverInfo = ({}) => {
       });
       return false;
     }
-
     if (
-      formData?.driver?.length == 0 &&
-      formData?.driverCarNumber?.length == 0 &&
-      formData?.driverNatCode?.length == 0
+      data?.driverCarNumber?.length > 0 &&
+      (data?.driverCarNumber?.length < 8 ||
+        isNaN(Number(data?.driverCarNumber)))
+    ) {
+      toast({
+        title: "توجه",
+        description: "شماره خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      data?.driver?.length == 0 &&
+      data?.driverCarNumber?.length == 0 &&
+      data?.driverNatCode?.length == 0
     ) {
       toast({
         title: "توجه",
@@ -210,17 +227,83 @@ export const UpdateInvoiceDriverInfo = ({}) => {
     });
   };
 
+  const validateCarNumber = async () => {
+    if (
+      carNoFirst?.length > 0 &&
+      (carNoFirst?.length != 2 ||
+        isNaN(Number(carNoFirst)) ||
+        Number(carNoFirst) == 0)
+    ) {
+      toast({
+        title: "توجه",
+        description: "قسمت اول پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (carNoAlphabet?.length > 0 && carNoAlphabet?.trim() == "") {
+      toast({
+        title: "توجه",
+        description: " حروف پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      carNoThird?.length > 0 &&
+      (carNoThird?.length != 3 ||
+        isNaN(Number(carNoThird)) ||
+        Number(carNoThird) == 0)
+    ) {
+      toast({
+        title: "توجه",
+        description: "قسمت سوم پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      carNoForth?.length > 0 &&
+      (carNoForth?.length != 2 ||
+        isNaN(Number(carNoForth)) ||
+        Number(carNoForth) == 0)
+    ) {
+      toast({
+        title: "توجه",
+        description: "قسمت آخر پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validate = await validateForm();
-    if (validate == false) return;
-    setLoading(true);
+
+    const tmpCarNo = carNoFirst + carNoAlphabet + carNoThird + carNoForth;
     const finalFormData = {
       driver: formData?.driver,
-      driverCarNumber: formData?.driverCarNumber,
+      driverCarNumber: tmpCarNo,
       driverMobile: formData?.driverMobile,
       driverNatCode: formData?.driverNatCode,
     };
+    setFormData(finalFormData);
+    const carValidate = await validateCarNumber();
+    if (carValidate == false) return;
+
+    const validate = await validateForm(finalFormData);
+    if (validate == false) return;
+
+    setLoading(true);
     const res = await UpdateInvoiceDriver(token, finalFormData);
     if (!res.success) {
       toast({
@@ -245,6 +328,13 @@ export const UpdateInvoiceDriverInfo = ({}) => {
 
     setTimeout(() => navigate("/home"), 1000);
     setLoading(false);
+  };
+
+  const handleChangeCarNo = async () => {
+    setFormData({
+      ...formData,
+      driverCarNumber: carNoFirst + carNoAlphabet + carNoThird + carNoForth,
+    });
   };
 
   return (
@@ -766,6 +856,13 @@ export const UpdateInvoiceDriverInfo = ({}) => {
                   کد ملی
                 </Text>
                 <Input
+                  isInvalid={
+                    (formData?.driverNatCode !== undefined &&
+                      formData?.driverNatCode?.length > 0 &&
+                      formData?.driverNatCode?.length != 10) ||
+                    isNaN(Number(formData?.driverNatCode))
+                  }
+                  maxLength={10}
                   name="driverNatCode"
                   value={formData?.driverNatCode}
                   onChange={handleChangeFormData}
@@ -773,6 +870,7 @@ export const UpdateInvoiceDriverInfo = ({}) => {
               </HStack>
               <HStack>
                 <Text
+                  maxLength={11}
                   textAlign={"right"}
                   width={"150px"}
                   fontFamily="iransans"
@@ -781,6 +879,13 @@ export const UpdateInvoiceDriverInfo = ({}) => {
                   موبایل
                 </Text>
                 <Input
+                  isInvalid={
+                    (formData?.driverMobile?.length > 0 &&
+                      formData?.driverMobile?.length != 11) ||
+                    isNaN(Number(formData?.driverMobile))
+                  }
+                  maxLength={11}
+                  type="text"
                   name="driverMobile"
                   value={formData?.driverMobile}
                   onChange={handleChangeFormData}
@@ -796,6 +901,85 @@ export const UpdateInvoiceDriverInfo = ({}) => {
                   پلاک خودرو
                 </Text>
                 <Input
+                  isInvalid={
+                    carNoForth?.length > 0 &&
+                    (carNoForth?.length != 2 ||
+                      isNaN(Number(carNoForth)) ||
+                      Number(carNoForth) == 0)
+                  }
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  width="100px"
+                  type="text"
+                  maxLength={2}
+                  name="carNoForth"
+                  value={carNoForth}
+                  onChange={(e) => {
+                    setCarNoForth(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                />
+                <Input
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  width="180px"
+                  isInvalid={
+                    carNoThird?.length > 0 &&
+                    (carNoThird?.length != 3 ||
+                      isNaN(Number(carNoThird)) ||
+                      Number(carNoThird) == 0)
+                  }
+                  maxLength={3}
+                  type="text"
+                  name="carNoThird"
+                  value={carNoThird}
+                  onChange={(e) => {
+                    setCarNoThird(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                />
+                <Select
+                  isInvalid={carNoFirst?.length > 0 && carNoAlphabet == ""}
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  placeholder="حرف پلاک"
+                  name="carNoAlpabet"
+                  value={carNoAlphabet}
+                  dir="ltr"
+                  width="150px"
+                  onChange={(e) => {
+                    setCarNoAlphabet(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                >
+                  {PersianAlphabet.map((p) => (
+                    <option key={p.key} value={p.key}>
+                      {p.value}
+                    </option>
+                  ))}
+                </Select>
+                <Input
+                  isInvalid={
+                    carNoFirst?.length > 0 &&
+                    (carNoFirst?.length != 2 ||
+                      isNaN(Number(carNoFirst)) ||
+                      Number(carNoFirst) == 0)
+                  }
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  width="100px"
+                  dir="ltr"
+                  type="text"
+                  maxLength={2}
+                  name="carNoFirst"
+                  value={carNoFirst}
+                  onChange={(e) => {
+                    setCarNoFirst(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                />
+                <Input
+                  hidden="true"
                   name="driverCarNumber"
                   value={formData?.driverCarNumber}
                   onChange={handleChangeFormData}

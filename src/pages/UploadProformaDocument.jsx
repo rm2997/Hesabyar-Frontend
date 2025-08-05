@@ -741,7 +741,10 @@ export const UploadProformaDocument = ({}) => {
                   isDisabled={!formData.isAcceptedByCustomer}
                   colorScheme="green"
                   leftIcon={<Download />}
-                  onClick={reactToPrintFn}
+                  onClick={() => {
+                    reactToPrintFn();
+                    navigate("/home");
+                  }}
                 >
                   دانلود پیش فاکتور
                 </Button>

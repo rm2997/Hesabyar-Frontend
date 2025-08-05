@@ -23,6 +23,7 @@ import {
   GalleryHorizontalEnd,
   House,
   Layers,
+  ListChecks,
   LucideLayers,
   Mails,
   MessageSquare,
@@ -194,42 +195,47 @@ export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
           onMenuItemClick={onMenuItemClick}
         /> */}
 
-        {user?.role == "admin" && (
-          <SidebarItem
-            id={5}
-            title="انبار"
-            color="orange.400"
-            justIcon={sidebarWidth === 300 ? false : true}
-            icon={<Warehouse />}
-            children={[
-              {
-                id: "newDepotEntery",
-                name: "ورود کالا",
-                type: "text",
-                icon: <DecimalsArrowLeft />,
-              },
-              {
-                id: "depotEntryList",
-                name: "سوابق ورود کالا ",
-                type: "text",
-                icon: <SquareStack />,
-              },
-              {
-                id: "newDepotExit",
-                name: "خروج کالا",
-                type: "text",
-                icon: <Combine />,
-              },
-              {
-                id: "depotExitList",
-                name: "سوابق خروج کالا ",
-                type: "text",
-                icon: <GalleryHorizontalEnd />,
-              },
-            ]}
-            onMenuItemClick={onMenuItemClick}
-          />
-        )}
+        <SidebarItem
+          id={5}
+          title="انبار"
+          color="orange.400"
+          justIcon={sidebarWidth === 300 ? false : true}
+          icon={<Warehouse />}
+          children={[
+            {
+              id: "newDepotEntery",
+              name: "ورود کالا",
+              type: "text",
+              icon: <DecimalsArrowLeft />,
+            },
+            {
+              id: "depotEntryList",
+              name: "سوابق ورود کالا ",
+              type: "text",
+              icon: <SquareStack />,
+            },
+            {
+              id: "newDepotExit",
+              name: "خروج کالا",
+              type: "text",
+              icon: <Combine />,
+            },
+            {
+              id: "depotExitList",
+              name: "سوابق خروج کالا ",
+              type: "text",
+              icon: <GalleryHorizontalEnd />,
+            },
+            {
+              id: "wareHouseRequests",
+              name: "درخواست های انبار",
+              type: "text",
+              icon: <ListChecks />,
+            },
+          ]}
+          onMenuItemClick={onMenuItemClick}
+        />
+
         {user?.role == "admin" && (
           <SidebarItem
             id={3}

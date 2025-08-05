@@ -676,8 +676,8 @@ export const UploadInvoiceDocument = ({}) => {
               <Divider />
               <SimpleGrid spacing={1} columns={{ base: 1, md: 2, lg: 3 }}>
                 <Text textAlign="justify">
-                  لطفا بنویسید اطلاعات را قبول دارم - امضا کرده - عکس بگیرید و
-                  اینجا قرار دهید.
+                  لطفا پس از واریز وجه به حساب شرکت، تصویر آن را اینجا قرار
+                  دهید.
                 </Text>
                 <InputGroup maxW="500px">
                   <InputLeftElement>
@@ -769,7 +769,10 @@ export const UploadInvoiceDocument = ({}) => {
                 <Button
                   hidden={!showDownload}
                   colorScheme="green"
-                  onClick={reactToPrintFn}
+                  onClick={() => {
+                    reactToPrintFn();
+                    navigate("/home");
+                  }}
                   leftIcon={<Download />}
                 >
                   دانلود فاکتور

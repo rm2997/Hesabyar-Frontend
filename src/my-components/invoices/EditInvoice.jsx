@@ -75,6 +75,7 @@ import {
   ShowMyAcceptedProformas,
   ShowUserAllProformas,
 } from "../../api/services/proformaService";
+import { PersianAlphabet } from "../../api/services/enums/persianAlphabets.enum";
 
 export const EditInvoice = ({
   isDesktop,
@@ -800,8 +801,39 @@ export const EditInvoice = ({
                 <Text>{formData?.driverMobile}</Text>
               </Flex>
               <Flex columnGap={2} p={2}>
-                <Text>شماره خودرو :</Text>
-                <Text>{formData?.driverCarNumber}</Text>
+                <Text p={1} fontFamily="iransans">
+                  شماره خودرو :
+                </Text>
+                <Flex
+                  borderWidth={1}
+                  borderColor="gray.200"
+                  columnGap={2}
+                  p={1}
+                >
+                  <Text
+                    bg="gray.100"
+                    fontFamily="iransans"
+                    borderLeftWidth={1}
+                    borderLeftColor="gray.200"
+                    px={1}
+                  >
+                    {formData?.driverCarNumber?.substring(7)}
+                  </Text>
+                  <Text fontFamily="iransans">
+                    {formData?.driverCarNumber?.substring(4, 7)}
+                  </Text>
+                  <Text fontFamily="iransans" bg="gray.100">
+                    {formData?.driverCarNumber
+                      ? PersianAlphabet?.find(
+                          (k) =>
+                            k.key == formData?.driverCarNumber?.substring(2, 4)
+                        )?.value
+                      : ""}
+                  </Text>
+                  <Text fontFamily="iransans">
+                    {formData?.driverCarNumber?.substring(0, 2)}
+                  </Text>
+                </Flex>
               </Flex>
             </Flex>
             <Input

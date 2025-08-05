@@ -28,10 +28,10 @@ import { CreateCustomer } from "../../api/services/customerService";
 
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../../my-components/MyLoading";
-import { CustomerTypes } from "../../api/services/enums/customerTypes";
-import { AddressTypes } from "../../api/services/enums/addressTypes";
-import { PhoneTypes } from "../../api/services/enums/phoneTypes";
-import { CustomerParties } from "../../api/services/enums/customerParties";
+import { CustomerTypes } from "../../api/services/enums/customerTypes.enum";
+import { AddressTypes } from "../../api/services/enums/addressTypes.enum";
+import { PhoneTypes } from "../../api/services/enums/phoneTypes.enum";
+import { CustomerParties } from "../../api/services/enums/customerParties.enum";
 
 export const NewCustomer = ({ isDesktop }) => {
   const [formData, setFormData] = useState({});

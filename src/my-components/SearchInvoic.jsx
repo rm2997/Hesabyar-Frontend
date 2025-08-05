@@ -106,12 +106,16 @@ export const SearchInvoices = ({ onSelect, isOpen, onClose, searchItems }) => {
                         setResults([]);
                       }}
                     >
-                      <Text>
-                        {item?.title}
-
-                        <Badge colorScheme="blue" mr="10px">
-                          ID: {item?.id}
+                      <Text fontFamily="iranSans">
+                        <Badge
+                          fontFamily="iranSans"
+                          fontSize="xs"
+                          colorScheme="blue"
+                          ml="10px"
+                        >
+                          فاکتور شماره: {item?.id}
                         </Badge>
+                        {item?.title ? item?.title : "بدون عنوان"}
                       </Text>
                     </ListItem>
                   ))}

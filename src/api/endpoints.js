@@ -117,12 +117,16 @@ const endpoints = {
       `/depot?page=${page}&limit=${limit}&type=${type}&search=${search}`,
     acceptList: (page, limit, type, search) =>
       `/depot/accept-request?page=${page}&limit=${limit}&type=${type}&search=${search}`,
+    warehouseList: (page, limit, type, search) =>
+      `/depot/warehouseList?page=${page}&limit=${limit}&type=${type}&search=${search}`,
     update: (id) => `/depot/${id}`,
     updateDepotImageFile: (id) => `/depot/image/${id}`,
     getDepotImageFile: (id) => `/depot/image/${id}`,
     listOne: (id) => `/depot/${id}`,
     detail: (id) => `/depot/${id}`,
     create: "/depot/",
+    uploadDriverSignImage: (id) => `/depot/driverSignImage/${id}`,
+    uploadExitGoodImage: (id) => `/depot/exitGoodImage/${id}`,
     delete: (id) => `/depot/${id}`,
     setDepotIsAccepted: (id) => `/depot/accept/${id}`,
     setDepotIsSent: (id) => `/depot/sent/${id}`,

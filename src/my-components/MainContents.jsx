@@ -30,6 +30,7 @@ import { NewDepotEntry } from "../pages/depot/NewDepotEntry";
 import { DepotEntryList } from "./depot/DepotEntryList";
 import { NewDepotExit } from "../pages/depot/NewDepotExit";
 import { DepotExitList } from "./depot/DepotExitList";
+import { WareHouseRequests } from "../pages/requests/WareHouseRequests";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -44,6 +45,7 @@ const validContents = [
   { name: "depotEntryList", value: "سوابق ثبت ورودی " },
   { name: "newDepotExit", value: "ثبت خروج کالا" },
   { name: "depotExitList", value: "سوابق ثبت خروج " },
+  { name: "wareHouseRequests", value: "درخواست های انبار " },
   { name: "depotStat", value: "لیست انبار" },
   { name: "user", value: "کاربران" },
   { name: "newCustomer", value: "ثبت مشتری جدید" },
@@ -104,6 +106,8 @@ export const MainContents = ({ activeContent, isDesktop }) => {
           return <NewDepotExit isDesktop={isDesktop} />;
         case "depotExitList":
           return <DepotExitList isDesktop={isDesktop} />;
+        case "wareHouseRequests":
+          return <WareHouseRequests isDesktop={isDesktop} />;
         case "saleStat":
           return <>Hi4</>;
         case "user":

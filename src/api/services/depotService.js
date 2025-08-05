@@ -9,6 +9,24 @@ export const CreateDepot = async (DepotData) => {
   });
 };
 
+export const UploadDriverSignImage = async (id, data) => {
+  return apiRequest({
+    method: "POST",
+    url: endpoints.depot.uploadDriverSignImage(id),
+    data: data,
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const UploadExitGoodImage = async (id, data) => {
+  return apiRequest({
+    method: "POST",
+    url: endpoints.depot.uploadExitGoodImage(id),
+    data: data,
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
 export const UpdateDepotImageFile = async (id, data) => {
   return apiRequest({
     method: "PATCH",
@@ -77,6 +95,18 @@ export const ShowDepotAcceptList = async (
   return apiRequest({
     method: "GET",
     url: endpoints.depot.acceptList(page, limit, type, search),
+  });
+};
+
+export const ShowDepotWareHouseList = async (
+  page = 1,
+  limit = 10,
+  type,
+  search = ""
+) => {
+  return apiRequest({
+    method: "GET",
+    url: endpoints.depot.warehouseList(page, limit, type, search),
   });
 };
 
