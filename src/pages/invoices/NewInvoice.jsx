@@ -265,6 +265,7 @@ export const NewInvoice = ({ isDesktop }) => {
   const handleChangeProformaData = (proforma) => {
     const newItems = [...proforma?.proformaGoods];
     setInvoiceItems([...newItems]);
+    if (proforma) setFormData({ ...formData, title: proforma?.title });
   };
 
   const handleRemoveItem = (item) => {

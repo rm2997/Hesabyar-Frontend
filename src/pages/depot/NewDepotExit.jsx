@@ -939,15 +939,15 @@ export const NewDepotExit = ({ isDesktop }) => {
                 <Text>نام و نام خانوادگی :</Text>
                 <Text>{formData?.driver}</Text>
               </Flex>
-              <Flex columnGap={2} p={2}>
+              <Flex hidden={!formData?.driverNatCode} columnGap={2} p={2}>
                 <Text>شماره ملی :</Text>
                 <Text>{formData?.driverNatCode}</Text>
               </Flex>
-              <Flex columnGap={2} p={2}>
+              <Flex hidden={!formData?.driverMobile} columnGap={2} p={2}>
                 <Text>شماره موبایل :</Text>
                 <Text>{formData?.driverMobile}</Text>
               </Flex>
-              <Flex columnGap={2} p={2}>
+              <Flex hidden={!formData?.driverCarNumber} columnGap={2} p={2}>
                 <Text p={1} fontFamily="iransans">
                   شماره خودرو :
                 </Text>
@@ -994,7 +994,6 @@ export const NewDepotExit = ({ isDesktop }) => {
             </Button>
           </VStack>
         </CardBody>
-        <CardFooter></CardFooter>
       </Card>
       <SearchInvoices
         searchItems={handleSearchInvoices}

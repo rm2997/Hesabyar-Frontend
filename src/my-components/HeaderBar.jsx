@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import {
   Bell,
+  MapPin,
   MapPinCheck,
   MenuIcon,
   PencilLine,
@@ -61,6 +62,10 @@ export const HeaderBar = ({
       status: location.googleMapLink == "Denied" ? "warning" : "success",
       duration: 3000,
       isClosable: true,
+      position: "bottom-left",
+      variant: "subtle",
+      colorScheme: "blue",
+      icon: <MapPin />,
     });
   };
   const handleSideBarWith = () => {

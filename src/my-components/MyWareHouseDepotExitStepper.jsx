@@ -23,6 +23,10 @@ const steps = [
       "مسئول انبار تصاویر امضا راننده و خودرو حامل کالاها را به سند الصاق میکند",
   },
   {
+    title: "تاییدیه مدیر",
+    description: "کاربر ارشد درخواست شما برای خروج کالا را تایید میکند",
+  },
+  {
     title: "خروج از انبار",
     description: "اقلام سند طبق فاکتور از انبار خارج می شوند",
   },
@@ -39,10 +43,11 @@ export const MyWareHouseDepotExitStepper = ({ data }) => {
   });
   const getCurrentStep = () => {
     if (!data?.driverSignImage && !data?.exitGoodImage) return setActiveStep(0);
-    if (!data?.depotInvoice?.finished) return setActiveStep(1);
-    if (!data?.warehouseAcceptedById) return setActiveStep(2);
+    if (!data?.isAccepted) return setActiveStep(1);
+    if (!data?.depotInvoice?.finished) return setActiveStep(2);
+    if (!data?.warehouseAcceptedById) return setActiveStep(3);
 
-    return setActiveStep(3);
+    return setActiveStep(4);
   };
 
   useEffect(() => {

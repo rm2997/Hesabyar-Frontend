@@ -287,7 +287,7 @@ export const NewProforma = ({ isDesktop }) => {
     <Box>
       <Card
         overflowY="auto"
-        minH={isDesktop ? "75vh" : "70vh"}
+        minH={isDesktop ? "65vh" : "65vh"}
         m={1}
         filter={loading ? "blur(10px)" : ""}
       >

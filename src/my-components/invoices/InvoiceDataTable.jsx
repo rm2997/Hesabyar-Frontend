@@ -262,7 +262,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
     setSelectedID(id);
     setLoading(true);
     const res = await RemoveInvoice(id);
-    if (!res.status) {
+    if (!res.success) {
       toast({
         title: "خطایی رخ داد",
         description: res?.error,

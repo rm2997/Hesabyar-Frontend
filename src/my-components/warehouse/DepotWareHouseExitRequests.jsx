@@ -54,6 +54,10 @@ import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { MyWareHouseDepotExitStepper } from "../MyWareHouseDepotExitStepper";
+import {
+  AcceptDepotExitByWareHouseMan,
+  EditDepotExitByWareHouseMan,
+} from "./AcceptDepotExitByWareHouseMan";
 
 export const DepotWareHouseExitRequests = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
@@ -407,15 +411,15 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
                           </Text>
                         </HStack>
 
-                        <Divider />
-                        <HStack>
+                        {/*<Divider />
+                         <HStack>
                           <Text fontFamily="IranSans"> تایید کننده :</Text>
                           <Text fontFamily="IranSans" fontSize="12px" mr="auto">
                             {row?.acceptedBy?.userfname +
                               " " +
                               row?.acceptedBy?.userlname}
                           </Text>
-                        </HStack>
+                        </HStack> */}
                       </VStack>
                     </Flex>
                   </CardBody>
@@ -514,14 +518,18 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
           onPageChange={(page) => setCurrentPage(page)}
         />
 
-        <MyModal modalHeader="جزییات" isOpen={isOpen} onClose={onClose}>
-          {/* <EditDepotExit
+        <MyModal
+          modalHeader="تاییدیه مسئول انبار"
+          isOpen={isOpen}
+          onClose={onClose}
+        >
+          <AcceptDepotExitByWareHouseMan
             isDesktop={isDesktop}
             id={selectedID}
             closeMe={onClose}
             onUpdate={updateDepotEntryInList}
             depot={findDepotEntryFromList(selectedID)}
-          /> */}
+          />
         </MyModal>
         <MyAlert
           AlertHeader={dialogGears.title}

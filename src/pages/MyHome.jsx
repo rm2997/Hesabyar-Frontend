@@ -18,6 +18,7 @@ import { useNotification } from "../contexts/NotificationContext";
 import { useLocation } from "../contexts/LocationContext";
 import { UpdateUserLocation } from "../api/services/userService";
 import { UserContext } from "../contexts/UserContext";
+import { MapPin } from "lucide-react";
 
 export const MyHome = () => {
   const [sidebarWidth, setSidebarWidth] = useState(300);
@@ -46,6 +47,10 @@ export const MyHome = () => {
           status: userLocation === "Denied" ? "warning" : "success",
           duration: 3000,
           isClosable: true,
+          position: "bottom-left",
+          variant: "subtle",
+          colorScheme: "blue",
+          icon: <MapPin />,
         });
       });
     });

@@ -18,12 +18,12 @@ import { useEffect } from "react";
 
 const steps = [
   {
-    title: "تاییدیه مدیر",
-    description: "کاربر ارشد درخواست شما برای خروج کالا را تایید میکند",
-  },
-  {
     title: "تاییدیه انباردار",
     description: "انباردار درخواست شما برای خروج کالا را تایید میکند",
+  },
+  {
+    title: "تاییدیه مدیر",
+    description: "کاربر ارشد درخواست شما برای خروج کالا را تایید میکند",
   },
   {
     title: "خروج از انبار",
@@ -36,8 +36,8 @@ export const MyDepotExitStepper = ({ data }) => {
     count: steps.length,
   });
   const getCurrentStep = () => {
-    if (!data?.isAccepted) return setActiveStep(0);
-    if (!data?.warehouseAcceptedBy) return setActiveStep(1);
+    if (!data?.warehouseAcceptedBy) return setActiveStep(0);
+    if (!data?.isAccepted) return setActiveStep(1);
     if (!data?.depotInvoice?.finished) return setActiveStep(2);
     return setActiveStep(3);
   };

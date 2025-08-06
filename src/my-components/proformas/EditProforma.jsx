@@ -346,6 +346,7 @@ export const EditProforma = ({
 
   const handleSearchGoods = async (query) => {
     const response = await ShowAllGoods(1, 10, query);
+    if (!response?.success) return null;
     return response?.data?.items;
   };
 

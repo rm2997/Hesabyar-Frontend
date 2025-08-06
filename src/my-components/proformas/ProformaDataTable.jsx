@@ -86,7 +86,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
           itemsPerPage,
           resetPage ? "" : search
         );
-    if (!res.success) {
+    if (!res?.success) {
       toast({
         title: "خطایی رخ داد",
         description: res.error,
@@ -285,7 +285,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
     setSelectedID(id);
     setLoading(true);
     const res = await GenerateNewToken(id);
-    if (!res.success) {
+    if (!res?.success) {
       toast({
         title: "خطایی رخ داد",
         description: res.error,
@@ -309,7 +309,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
         p.id == id
           ? {
               ...p,
-              customerLink: res.data,
+              customerLink: res?.data,
               isSent: false,
               approvedFile: "",
             }

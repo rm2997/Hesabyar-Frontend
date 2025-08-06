@@ -133,6 +133,8 @@ const endpoints = {
     generateNewToken: (id) => `/depot/generateNewToken/${id}`,
     listByToken: (token) => `/depot/token/${token}`,
     updateDriverInfo: (token) => `/depot/token/${token}`,
+    insertDriverSignImage: (id) => `/depot/driverSignImage/${id}`,
+    insertExitGoodImage: (id) => `/depot/exitGoodImage/${id}`,
   },
   sms: {
     likeToLike: "https://api.sms.ir/v1/send/likeToLike",

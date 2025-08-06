@@ -105,12 +105,16 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
                         setResults([]);
                       }}
                     >
-                      <Text>
-                        {item?.goodName}
-
-                        <Badge colorScheme="blue" mr="10px">
-                          ID: {item?.id}
+                      <Text fontFamily="iranSans">
+                        <Badge
+                          fontFamily="iransans"
+                          fontSize="sm"
+                          colorScheme="blue"
+                          ml="10px"
+                        >
+                          کد کالا: {item?.id}
                         </Badge>
+                        {item?.goodName}
                       </Text>
                     </ListItem>
                   ))}

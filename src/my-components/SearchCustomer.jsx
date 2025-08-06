@@ -101,15 +101,20 @@ export const SearchCustomer = ({ onSelect, isOpen, onClose, searchItems }) => {
                         setResults([]);
                       }}
                     >
-                      <Text>
+                      <Text fontFamily="iranSans">
+                        <Badge
+                          fontFamily="iranSans"
+                          fontSize="xs"
+                          colorScheme="blue"
+                          ml="10px"
+                        >
+                          کد: {item?.id}
+                        </Badge>
                         {item?.customerGender +
                           " " +
                           item?.customerFName +
                           " " +
                           item?.customerLName}
-                        <Badge colorScheme="blue" mr="10px">
-                          ID: {item?.id}
-                        </Badge>
                       </Text>
                     </ListItem>
                   ))}
