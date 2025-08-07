@@ -179,7 +179,6 @@ export const AcceptDepotExitByWareHouseMan = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(carImage, driverImage);
 
     const validate = await validateForm();
     if (validate == false) return;
@@ -268,12 +267,11 @@ export const AcceptDepotExitByWareHouseMan = ({
           isClosable: true,
         });
     } else {
-      const dImage = res?.data?.driverImage;
+      const dImage = res?.data?.driverSignImage;
       const cImage = res?.data?.carImage;
-      setCarImagePreview(URL.createObjectURL(cImage));
-      setDriverImagePreview(URL.createObjectURL(dImage));
-      setCarImage(cImage);
-      setDriverImage(dImage);
+
+      if (dImage) setCarImagePreview(cImage);
+      if (cImage) setDriverImagePreview(dImage);
     }
     setLoading(false);
   };
@@ -391,7 +389,7 @@ export const AcceptDepotExitByWareHouseMan = ({
                         objectFit="cover"
                         target="_blank"
                         rel="noopener noreferrer"
-                        alt={driverImage}
+                        alt={"تصویر امضای راننده"}
                       />
                     </Box>
                     <IconButton
@@ -456,7 +454,7 @@ export const AcceptDepotExitByWareHouseMan = ({
                       }}
                     />
                     <Box
-                      hidden={!carImage}
+                      hidden={!carImagePreview}
                       _hover={{
                         cursor: "pointer",
                         borderColor: "orange",
@@ -477,7 +475,7 @@ export const AcceptDepotExitByWareHouseMan = ({
                         objectFit="cover"
                         target="_blank"
                         rel="noopener noreferrer"
-                        alt={carImage}
+                        alt={"تصویر خودرو حامل اقلام"}
                       />
                     </Box>
 

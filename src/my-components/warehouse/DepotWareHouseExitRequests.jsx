@@ -95,7 +95,6 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
   };
 
   const updateDepotEntryInList = (updatedDepotEntry) => {
-    console.log("updatedDepotEntry:", updatedDepotEntry);
     setDepotEntry((prev) =>
       prev.map((g) => (g.id === updatedDepotEntry.id ? updatedDepotEntry : g))
     );
@@ -165,7 +164,7 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
       duration: 3000,
       isClosable: true,
     });
-    updateDepotEntryInList(res?.data);
+    deleteDepotEntryFromList(id);
     setLoading(false);
   };
   return (

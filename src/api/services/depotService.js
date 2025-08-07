@@ -178,3 +178,10 @@ export const ShowDepotWarehouseImages = async (id) => {
     url: endpoints.depot.getDepotWarehouseImages(id),
   });
 };
+
+export const ShowDepotWarehouseImagesByToken = async (token) => {
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.depot.getDepotWarehouseImagesByToken(token),
+  });
+};

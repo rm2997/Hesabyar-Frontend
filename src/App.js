@@ -26,6 +26,7 @@ import { MyHome } from "./pages/MyHome";
 import { UpdateDriverInfo } from "./pages/UpdateDriverInfo";
 import { UpdateInvoiceDriverInfo } from "./pages/UpdateInvoiceDriverInfo";
 import { Users } from "./pages/users/Users";
+import { ViewDepotExit } from "./pages/ViewDepotExit";
 function App() {
   return (
     <ChakraProvider theme={theme}>
@@ -48,7 +49,7 @@ function App() {
               path="/update-invoice-driverInfo"
               element={<UpdateInvoiceDriverInfo />}
             />
-            <Route path="/view-depot-exit" />
+            <Route path="/view-depot-exit" element={<ViewDepotExit />} />
             <Route
               path="/upload-proforma-document"
               element={<UploadProformaDocument />}

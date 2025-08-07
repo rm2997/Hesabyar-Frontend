@@ -18,7 +18,7 @@ import { useEffect } from "react";
 
 const steps = [
   {
-    title: "الصاق تصاویر",
+    title: "مستندات انبار",
     description:
       "مسئول انبار تصاویر امضا راننده و خودرو حامل کالاها را به سند الصاق میکند",
   },
@@ -26,8 +26,12 @@ const steps = [
     title: "تاییدیه انبار",
     description: "مسئول انبار درخواست را برای خروج کالا را تایید میکند",
   },
+  {
+    title: "تایید کاربر ارشد",
+    description: "کاربر ارشد درخواست را برای خروج کالا را تایید میکند",
+  },
 ];
-export const MyWareHouseDepotExitStepper = ({ data }) => {
+export const MyDepotExitRequestStepper = ({ data }) => {
   const { activeStep, setActiveStep } = useSteps({
     index: 1,
     count: steps.length,
@@ -35,8 +39,8 @@ export const MyWareHouseDepotExitStepper = ({ data }) => {
   const getCurrentStep = () => {
     if (!data?.driverSignImage && !data?.exitGoodImage) return setActiveStep(0);
     if (!data?.warehouseAcceptedBy) return setActiveStep(1);
-
-    return setActiveStep(2);
+    if (!data?.isAccepted) return setActiveStep(2);
+    return setActiveStep(3);
   };
 
   useEffect(() => {
@@ -56,7 +60,7 @@ export const MyWareHouseDepotExitStepper = ({ data }) => {
         dir="ltr"
         index={activeStep}
         orientation="vertical"
-        height="100px"
+        height="200px"
         gap="0"
         colorScheme="orange"
       >

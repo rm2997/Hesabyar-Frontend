@@ -64,6 +64,7 @@ const endpoints = {
     setInvoiceIsSent: (id) => `/invoice/sent/${id}`,
     setInvoiceIsAccepted: (id) => `/invoice/accept/${id}`,
     getApprovedFile: (id) => `/invoice/file/${id}`,
+    getApprovedFileByToken: (token) => `/invoice/file/token/${token}`,
     listByToken: (token) => `/invoice/token/${token}`,
     updateProformCustomerFile: (token) => `/invoice/token/${token}`,
     updateInvoiceDriverInfo: (token) => `/invoice/driver/token/${token}`,
@@ -116,7 +117,7 @@ const endpoints = {
     listAll: (page, limit, type, search) =>
       `/depot?page=${page}&limit=${limit}&type=${type}&search=${search}`,
     acceptList: (page, limit, type, search) =>
-      `/depot/accept-request?page=${page}&limit=${limit}&type=${type}&search=${search}`,
+      `/depot/acceptList?page=${page}&limit=${limit}&type=${type}&search=${search}`,
     warehouseList: (page, limit, type, search) =>
       `/depot/warehouseList?page=${page}&limit=${limit}&type=${type}&search=${search}`,
     update: (id) => `/depot/${id}`,
@@ -131,6 +132,8 @@ const endpoints = {
     setDepotIsAccepted: (id) => `/depot/accept/${id}`,
     setDepotIsWarehouseAccepted: (id) => `/depot/warehouseAccept/${id}`,
     getDepotWarehouseImages: (id) => `/depot/warehouseImages/${id}`,
+    getDepotWarehouseImagesByToken: (token) =>
+      `/depot/warehouseImages/token/${token}`,
     setDepotIsSent: (id) => `/depot/sent/${id}`,
     generateNewToken: (id) => `/depot/generateNewToken/${id}`,
     listByToken: (token) => `/depot/token/${token}`,
