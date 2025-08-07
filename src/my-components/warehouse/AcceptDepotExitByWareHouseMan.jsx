@@ -38,6 +38,7 @@ import {
   InsertDepotDriverSignImage,
   InsertDepotExitGoodImage,
   ShowDepotImageFile,
+  ShowDepotWarehouseImages,
 } from "../../api/services/depotService";
 import { MyModal } from "../../my-components/MyModal";
 import dayjs from "dayjs";
@@ -128,6 +129,7 @@ export const AcceptDepotExitByWareHouseMan = ({
         depotGoods: goodsWithImages,
       });
       await loadInvoiceImage(depot?.depotInvoice?.id);
+      await loadWarehouseImages(depot?.id);
     };
 
     fetchData();
@@ -249,6 +251,29 @@ export const AcceptDepotExitByWareHouseMan = ({
     } else {
       const url = URL.createObjectURL(res?.data);
       setApprovedFile(url);
+    }
+    setLoading(false);
+  };
+
+  const loadWarehouseImages = async (id) => {
+    setLoading(true);
+    const res = await ShowDepotWarehouseImages(id);
+    if (!res?.success) {
+      if (res.status != 404)
+        toast({
+          title: "خطا در دریافت تصاویر",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+    } else {
+      const dImage = res?.data?.driverImage;
+      const cImage = res?.data?.carImage;
+      setCarImagePreview(URL.createObjectURL(cImage));
+      setDriverImagePreview(URL.createObjectURL(dImage));
+      setCarImage(cImage);
+      setDriverImage(dImage);
     }
     setLoading(false);
   };

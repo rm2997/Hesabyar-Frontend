@@ -17,25 +17,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import {
-  ArrowBigRight,
-  ArrowBigRightDash,
-  ArrowRight,
-  CircleFadingArrowUp,
-  Combine,
-  DecimalsArrowLeft,
-  FilePenLine,
-  Handshake,
-  Link2,
-  MailCheck,
-  Send,
-  ShieldUser,
-  Trash2,
-  UserLock,
-  UserRoundCheck,
-  WalletCards,
-  Warehouse,
-} from "lucide-react";
+import { CircleCheckBig } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { MyModal } from "../MyModal";
@@ -44,20 +26,14 @@ import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
 import { MyLoading } from "../MyLoading";
 import {
-  GenerateNewToken,
-  RemoveDepot,
-  SetDepotIsSent,
-  ShowAllDepots,
+  SetDepotIsAcceptedByWarehouseMan,
   ShowDepotWareHouseList,
 } from "../../api/services/depotService";
 import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { MyWareHouseDepotExitStepper } from "../MyWareHouseDepotExitStepper";
-import {
-  AcceptDepotExitByWareHouseMan,
-  EditDepotExitByWareHouseMan,
-} from "./AcceptDepotExitByWareHouseMan";
+import { AcceptDepotExitByWareHouseMan } from "./AcceptDepotExitByWareHouseMan";
 
 export const DepotWareHouseExitRequests = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
@@ -139,13 +115,41 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
     return depotEntry.find((g) => (g.id === id ? g : null));
   };
 
-  const handleDeleteDepotEntry = async (id) => {
-    if (id === 0) return;
+  const validateDepotForAccept = async (depot) => {
+    if (!depot?.exitGoodImage) {
+      toast({
+        title: "تایید ناموفق",
+        description: "تصویر خودروی حامل کالا مشخص نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (!depot?.driverSignImage) {
+      toast({
+        title: "تایید ناموفق",
+        description: "تصویر امضای راننده و مدارک فاکتور مشخص نشده است",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      return false;
+    }
+    return true;
+  };
+
+  const handleAcceptDepotByWarehouseMan = async (id) => {
+    const depot = findDepotEntryFromList(id);
+    const validate = await validateDepotForAccept(depot);
+    if (!validate) return;
+
     setLoading(true);
-    const res = await RemoveDepot(id);
+    const res = await SetDepotIsAcceptedByWarehouseMan(id);
     if (!res?.success) {
       toast({
-        title: "خطایی رخ داد",
+        title: "تایید ناموفق",
         description: res.error,
         status: "error",
         duration: 3000,
@@ -154,119 +158,16 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-
-    deleteDepotEntryFromList(id);
     toast({
-      title: "توجه",
-      description: `اطلاعات حذف شد`,
+      title: "تایید موفق",
+      description: "سند خروجی با موفقیت تایید شد ",
       status: "success",
       duration: 3000,
       isClosable: true,
     });
+    updateDepotEntryInList(res?.data);
     setLoading(false);
   };
-
-  const handleSendCustomerLink = async (id) => {
-    const depot = depotEntry.find((i) => i.id == id);
-
-    if (!depot) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "اطلاعات مشتری در دسترس نیست",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    if (!depot?.depotInvoice?.customer?.customerMobile) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "شماره موبایل مشتری ثبت نشده است",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    if (!depot?.customerToken) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "لینک موقت مشتری ساخته نشده است",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    setLoading(true);
-    const res = await SetDepotIsSent(depot?.id);
-    if (!res.success) {
-      toast({
-        title: "خطا بعد از ارسال",
-        description: res.error,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      setLoading(false);
-      return;
-    }
-    updateFieldDepotEntryInList(id, "isSent", "true");
-    toast({
-      title: "توجه",
-      description:
-        "لینک تاییدیه به شماره موبایل" +
-        " " +
-        depot?.depotInvoice?.customer?.customerMobile +
-        " به نام " +
-        depot?.depotInvoice?.customer?.customerFName +
-        " " +
-        depot?.depotInvoice?.customer?.customerLName +
-        " ارسال شد. ",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-    setLoading(false);
-  };
-
-  const handleGenerateNewLink = async (id) => {
-    setSelectedID(id);
-    setLoading(true);
-    const res = await GenerateNewToken(id);
-    if (!res.success) {
-      toast({
-        title: "خطایی رخ داد",
-        description: res?.error,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      setLoading(false);
-      return;
-    }
-    toast({
-      title: "توجه",
-      description: ` لینک جدید ساخته شد می توانید آن را دوباره به مشتری ارسال کنید`,
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-    setDepotEntry((prev) =>
-      prev.map((p) =>
-        p.id == id
-          ? {
-              ...p,
-              customerToken: res?.data,
-              isSent: false,
-            }
-          : p
-      )
-    );
-    setLoading(false);
-  };
-
   return (
     <Box>
       <Flex
@@ -423,89 +324,35 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
                       </VStack>
                     </Flex>
                   </CardBody>
-                  {/* <CardFooter borderBottomRadius={5} bg="gray.200">
-                    {!row?.isAccepted && (
-                      <Stack
-                        direction={["row"]}
-                        spacing={2}
-                        align={"stretch"}
-                        mr="auto"
+                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
+                    <Stack
+                      direction={["row"]}
+                      spacing={2}
+                      align={"stretch"}
+                      mr="auto"
+                    >
+                      <Link
+                        _hover={{
+                          color: "orange",
+                        }}
+                        color="blue.600"
+                        onClick={(e) => {
+                          setSelectedID(row?.id);
+                          setDialogGears({
+                            title: "تایید سند",
+                            text: "شما در حال تایید سند خروج انبار می باشید، ادامه می دهید؟",
+                            callBack: () =>
+                              handleAcceptDepotByWarehouseMan(row?.id),
+                          });
+                          setIsDialogOpen(true);
+                        }}
                       >
-                        {!row?.isSent && (
-                          <Link
-                            _disabled={true}
-                            _hover={{ color: "#ffd54f" }}
-                            color="green.600"
-                            onClick={(e) => {
-                              setSelectedID(row.id);
-                              setDialogGears({
-                                title: "ارسال لینک به مشتری",
-                                text: `آیا می خواهید لینک به شماره ${row?.depotInvoice?.customer?.customerMobile} به نام ${row?.depotInvoice?.customer?.customerLName} ارسال گردد؟`,
-                                callBack: handleSendCustomerLink,
-                              });
-
-                              setIsDialogOpen(true);
-                            }}
-                          >
-                            <Tooltip label="ارسال درخواست ثبت مشخصات راننده به مشتری">
-                              <Icon w={6} h={6} as={Send} />
-                            </Tooltip>
-                          </Link>
-                        )}
-
-                        <Link
-                          _hover={{
-                            color: "orange",
-                          }}
-                          color="blue.600"
-                          onClick={(e) => handleGenerateNewLink(row.id)}
-                        >
-                          <Tooltip label="تولید لینک جدید">
-                            <Icon w={6} h={6} as={Link2} />
-                          </Tooltip>
-                        </Link>
-                        <Link
-                          _hover={{
-                            color: "orange",
-                          }}
-                          color="blue.600"
-                          onClick={(e) => {
-                            setSelectedID(row.id);
-                            setDialogGears({
-                              title: "ویرایش",
-                              text: "",
-                              callBack: null,
-                            });
-                            onOpen();
-                          }}
-                        >
-                          <Tooltip label="ویرایش">
-                            <Icon w={6} h={6} as={FilePenLine} />
-                          </Tooltip>
-                        </Link>
-
-                        <Link
-                          _hover={{ color: "#ffd54f" }}
-                          color="red.600"
-                          onClick={(e) => {
-                            setSelectedID(row.id);
-                            setDialogGears({
-                              title: "حذف",
-                              text: "آیا واقعا می خواهید این رکورد را حذف کنید؟",
-                              callBack: () => {
-                                handleDeleteDepotEntry(row.id);
-                              },
-                            });
-                            setIsDialogOpen(true);
-                          }}
-                        >
-                          <Tooltip label="حذف">
-                            <Icon w={6} h={6} as={Trash2} />
-                          </Tooltip>
-                        </Link>
-                      </Stack>
-                    )}
-                  </CardFooter> */}
+                        <Tooltip label="تایید سند">
+                          <Icon w={6} h={6} as={CircleCheckBig} />
+                        </Tooltip>
+                      </Link>
+                    </Stack>
+                  </CardFooter>
                 </Card>
               ))}
             </SimpleGrid>

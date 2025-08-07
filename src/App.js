@@ -25,6 +25,7 @@ import { ChangeUserPassword } from "./pages/password/ChangeUserPassword";
 import { MyHome } from "./pages/MyHome";
 import { UpdateDriverInfo } from "./pages/UpdateDriverInfo";
 import { UpdateInvoiceDriverInfo } from "./pages/UpdateInvoiceDriverInfo";
+import { Users } from "./pages/users/Users";
 function App() {
   return (
     <ChakraProvider theme={theme}>
@@ -62,6 +63,18 @@ function App() {
               element={
                 <PrivateRoute>
                   <>dashbord</>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <PrivateRoute>
+                  <NotificationProvider>
+                    <LocationProvider>
+                      <Users />
+                    </LocationProvider>
+                  </NotificationProvider>
                 </PrivateRoute>
               }
             />

@@ -6,12 +6,17 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { ChangePassword } from "../../my-components/users/ChangePassword";
 import { NewUser } from "../../my-components/users/NewUser";
 import { UsersDataTable } from "../../my-components/users/UsersDataTable";
+import { useContext } from "react";
+import { UserContext } from "../../contexts/UserContext";
 
-export const Users = ({ isDesktop, user }) => {
+export const Users = ({}) => {
+  const isDesktop = useBreakpointValue({ base: false, md: true });
+  const { user } = useContext(UserContext);
   return (
     <SimpleGrid>
       <Tabs

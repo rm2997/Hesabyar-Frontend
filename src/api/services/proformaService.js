@@ -1,4 +1,4 @@
-import  { apiRequest } from "../axiosClient";
+import { apiRequest } from "../axiosClient";
 import endpoints from "../endpoints";
 
 export const CreateProforma = async (proformaData) => {
@@ -39,7 +39,10 @@ export const SetProformaIsAccepted = async (id) => {
 };
 
 export const RemoveProforma = async (id) => {
-  return await apiRequest({ method: "DELETE", url: endpoints.proforma.delete(id) });
+  return await apiRequest({
+    method: "DELETE",
+    url: endpoints.proforma.delete(id),
+  });
 };
 
 export const ShowUserAllProformas = async (
@@ -75,7 +78,7 @@ export const ShowMyAcceptedProformas = async (
   });
 };
 
-export const ShowUserAcceptedProformasByCustomerId = (
+export const ShowUserAcceptedProformasByCustomerId = async (
   customerId,
   page,
   limit,

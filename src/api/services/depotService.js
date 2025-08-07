@@ -164,3 +164,17 @@ export const InsertDepotExitGoodImage = async (id, data) => {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
+
+export const SetDepotIsAcceptedByWarehouseMan = async (id) => {
+  return await apiRequest({
+    method: "PATCH",
+    url: endpoints.depot.setDepotIsWarehouseAccepted(id),
+  });
+};
+
+export const ShowDepotWarehouseImages = async (id) => {
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.depot.getDepotWarehouseImages(id),
+  });
+};
