@@ -167,6 +167,7 @@ export const LoginForm = () => {
         status: !res?.data?.twoFactorAuthntication ? "success" : "info",
         duration: 3000,
         isClosable: true,
+        position: "bottom-left",
       });
       if (
         !res?.data?.twoFactorAuthntication ||
@@ -383,7 +384,7 @@ export const LoginForm = () => {
               fontSize="2xs"
               color="whiteAlpha.600"
             >
-              نسخه 1.0.0.0 *** 16 مرداد 1404
+              نسخه 1.0.0.0 *** 17 مرداد 1404
             </Text>
           </Flex>
           <Flex

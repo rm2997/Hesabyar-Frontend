@@ -225,6 +225,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                   _hover={{ borderColor: "orange" }}
                 >
                   <CardHeader
+                    py={4}
                     bg="green.500"
                     borderTopRadius={5}
                     color="white"
@@ -254,7 +255,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                       <Text mr="auto">{row.title}</Text>
                     </HStack>
                   </CardHeader>
-                  <CardBody>
+                  <CardBody p={2}>
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
                         <Text>تاریخ :</Text>
@@ -284,7 +285,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                       </HStack>
                     </VStack>
                   </CardBody>
-                  <CardFooter borderBottomRadius={5} bg="gray.200">
+                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
                     <Stack
                       direction={["row"]}
                       spacing={2}

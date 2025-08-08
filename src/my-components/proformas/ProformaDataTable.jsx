@@ -367,7 +367,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
             loadData={loadData}
             userInfo="جستجوی پیش فاکتور"
           />
-          <Box flex="1" overflowY="auto" px={2}>
+          <Box flex="1" overflowY="auto" p={1}>
             <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
               {proformas.map((row) => (
                 <Card
@@ -380,6 +380,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                   borderColor="gray.300"
                 >
                   <CardHeader
+                    py={4}
                     borderTopRadius="md"
                     _hover={{ cursor: "pointer" }}
                     onClick={(e) => handleEditProforma(row.id)}

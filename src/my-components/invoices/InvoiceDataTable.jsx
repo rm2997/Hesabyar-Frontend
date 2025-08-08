@@ -347,7 +347,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
             loadData={loadData}
             userInfo="جستجوی فاکتور"
           />
-          <Box flex="1" overflowY="auto" px={2}>
+          <Box flex="1" overflowY="auto" p={1}>
             <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
               {invoices.map((row) => (
                 <Card
@@ -360,6 +360,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                   borderColor="gray.300"
                 >
                   <CardHeader
+                    py={4}
                     borderTopRadius="md"
                     bg={
                       row?.finished

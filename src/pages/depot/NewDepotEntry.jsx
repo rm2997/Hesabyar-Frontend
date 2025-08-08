@@ -17,6 +17,7 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  Select,
   Text,
   VStack,
   useDisclosure,
@@ -25,11 +26,14 @@ import {
 import {
   CircleX,
   Ellipsis,
+  Hash,
   Info,
+  Phone,
   Plus,
   PlusCircle,
   ScanSearch,
   SquareCheckBig,
+  User,
   UserRoundPlus,
   UserSearch,
 } from "lucide-react";
@@ -47,6 +51,7 @@ import { ShowAllCustomers } from "../../api/services/customerService";
 import { NewCustomer } from "../customers/NewCustomer";
 import { ShowAllGoods, ShowGoodByID } from "../../api/services/goodsService";
 import { SearchGoods } from "../../my-components/SearchGood";
+import { PersianAlphabet } from "../../api/services/enums/persianAlphabets.enum";
 
 export const NewDepotEntry = ({ isDesktop }) => {
   const [totalQuantity, setTotalQuantity] = useState(0);
@@ -62,6 +67,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
     driver: "",
     driverCarNumber: "",
     driverNatCode: "",
+    driverMobile: "",
   });
   const [depotGoods, setDepotGoods] = useState([
     // {
@@ -77,6 +83,11 @@ export const NewDepotEntry = ({ isDesktop }) => {
     //   imageFile: null,
     // },
   ]);
+
+  const [carNoFirst, setCarNoFirst] = useState("");
+  const [carNoAlphabet, setCarNoAlphabet] = useState("");
+  const [carNoThird, setCarNoThird] = useState("");
+  const [carNoForth, setCarNoForth] = useState("");
 
   const [showSearchGood, setShowSearchGood] = useState(false);
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
@@ -104,6 +115,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
       driver: "",
       driverCarNumber: "",
       driverNatCode: "",
+      driverMobile: "",
     });
     setDepotGoods([]);
     setTotalQuantity(0);
@@ -200,6 +212,12 @@ export const NewDepotEntry = ({ isDesktop }) => {
     return true;
   };
 
+  const handleChangeCarNo = async () => {
+    setFormData({
+      ...formData,
+      driverCarNumber: carNoFirst + carNoAlphabet + carNoThird + carNoForth,
+    });
+  };
   const handleCancelImage = (index) => {
     const tmpDepotGoods = [...depotGoods];
     tmpDepotGoods[index] = {
@@ -234,8 +252,68 @@ export const NewDepotEntry = ({ isDesktop }) => {
     }
   };
 
+  const validateCarNumber = async () => {
+    if (
+      carNoFirst?.length > 0 &&
+      (carNoFirst?.length != 2 ||
+        isNaN(Number(carNoFirst)) ||
+        Number(carNoFirst) == 0)
+    ) {
+      toast({
+        title: "توجه",
+        description: "قسمت اول پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (carNoAlphabet?.length > 0 && carNoAlphabet?.trim() == "") {
+      toast({
+        title: "توجه",
+        description: " حروف پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      carNoThird?.length > 0 &&
+      (carNoThird?.length != 3 ||
+        isNaN(Number(carNoThird)) ||
+        Number(carNoThird) == 0)
+    ) {
+      toast({
+        title: "توجه",
+        description: "قسمت سوم پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      carNoForth?.length > 0 &&
+      (carNoForth?.length != 2 ||
+        isNaN(Number(carNoForth)) ||
+        Number(carNoForth) == 0)
+    ) {
+      toast({
+        title: "توجه",
+        description: "قسمت آخر پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     let totalQuantity = 0;
     let totalAmount = 0;
     depotGoods.forEach((element) => {
@@ -243,6 +321,8 @@ export const NewDepotEntry = ({ isDesktop }) => {
       totalAmount += element.price * element.quantity;
     });
 
+    const carValidate = await validateCarNumber();
+    if (carValidate == false) return;
     const validate = await validateForm();
     if (validate == false) return;
 
@@ -257,6 +337,8 @@ export const NewDepotEntry = ({ isDesktop }) => {
     tmpformData.totalQuantity = totalQuantity;
     tmpformData.totalAmount = totalAmount;
     tmpformData.depotGoods = [...tmpDepotGoods];
+    tmpformData.driverCarNumber =
+      carNoFirst + carNoAlphabet + carNoThird + carNoForth;
     setLoading(true);
     const response = await CreateDepot(tmpformData);
 
@@ -392,9 +474,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
           >
             <FormControl isRequired>
               <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
-                  انتخاب کالا
-                </FormLabel>
+                <FormLabel width="170px">انتخاب کالا</FormLabel>
               </HStack>
             </FormControl>
 
@@ -697,7 +777,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   مشخصات راننده
                 </FormLabel>
                 <MyInputBox
-                  icon={Info}
+                  icon={User}
                   name="driver"
                   title="مشخصات راننده"
                   value={formData.driver}
@@ -712,27 +792,133 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   کد ملی راننده
                 </FormLabel>
                 <MyInputBox
-                  icon={Info}
+                  isInvalid={
+                    (formData?.driverNatCode !== undefined &&
+                      formData?.driverNatCode?.length > 0 &&
+                      formData?.driverNatCode?.length != 10) ||
+                    isNaN(Number(formData?.driverNatCode))
+                  }
+                  maxLength={10}
+                  icon={Hash}
                   name="driverNatCode"
                   title="کد ملی راننده"
-                  value={formData.driverNatCode}
+                  value={formData?.driverNatCode}
                   onChange={handleChangeFormData}
                 ></MyInputBox>
               </HStack>
             </FormControl>
-
             <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
-                  پلاک خوردو
+                  موبایل
                 </FormLabel>
                 <MyInputBox
-                  icon={Info}
-                  name="driverCarNumber"
-                  title="پلاک خوردو"
-                  value={formData.driverCarNumber}
+                  isInvalid={
+                    (formData?.driverMobile?.length > 0 &&
+                      formData?.driverMobile?.length != 11) ||
+                    isNaN(Number(formData?.driverMobile))
+                  }
+                  icon={Phone}
+                  title="کد ملی راننده"
+                  maxLength={11}
+                  type="text"
+                  name="driverMobile"
+                  value={formData?.driverMobile}
                   onChange={handleChangeFormData}
-                ></MyInputBox>
+                />
+              </HStack>
+            </FormControl>
+            <FormControl>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="170px">
+                  پلاک خودرو
+                </FormLabel>
+                <Input
+                  dir="ltr"
+                  isInvalid={
+                    carNoForth?.length > 0 &&
+                    (carNoForth?.length != 2 ||
+                      isNaN(Number(carNoForth)) ||
+                      Number(carNoForth) == 0)
+                  }
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  width="60px"
+                  type="text"
+                  maxLength={2}
+                  name="carNoForth"
+                  value={carNoForth}
+                  onChange={(e) => {
+                    setCarNoForth(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                />
+                <Input
+                  dir="ltr"
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  width="80px"
+                  isInvalid={
+                    carNoThird?.length > 0 &&
+                    (carNoThird?.length != 3 ||
+                      isNaN(Number(carNoThird)) ||
+                      Number(carNoThird) == 0)
+                  }
+                  maxLength={3}
+                  type="text"
+                  name="carNoThird"
+                  value={carNoThird}
+                  onChange={(e) => {
+                    setCarNoThird(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                />
+                <Select
+                  isInvalid={carNoFirst?.length > 0 && carNoAlphabet == ""}
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  placeholder="حرف پلاک"
+                  name="carNoAlpabet"
+                  value={carNoAlphabet}
+                  dir="ltr"
+                  width="130px"
+                  onChange={(e) => {
+                    setCarNoAlphabet(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                >
+                  {PersianAlphabet.map((p) => (
+                    <option key={p.key} value={p.key}>
+                      {p.value}
+                    </option>
+                  ))}
+                </Select>
+                <Input
+                  dir="ltr"
+                  isInvalid={
+                    carNoFirst?.length > 0 &&
+                    (carNoFirst?.length != 2 ||
+                      isNaN(Number(carNoFirst)) ||
+                      Number(carNoFirst) == 0)
+                  }
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  width="80px"
+                  type="text"
+                  maxLength={2}
+                  name="carNoFirst"
+                  value={carNoFirst}
+                  onChange={(e) => {
+                    setCarNoFirst(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                />
+                <Input
+                  hidden="true"
+                  name="driverCarNumber"
+                  value={formData?.driverCarNumber}
+                  onChange={handleChangeFormData}
+                />
               </HStack>
             </FormControl>
 
