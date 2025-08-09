@@ -25,17 +25,8 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  TableContainer,
   Flex,
   Stack,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Box,
   Divider,
   SimpleGrid,
@@ -45,7 +36,6 @@ import {
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import {
   CircleX,
-  Minus,
   PackageSearch,
   Plus,
   PlusCircle,
@@ -72,11 +62,12 @@ import { SearchCustomer } from "../SearchCustomer";
 import { MyModal } from "../MyModal";
 
 export const EditProforma = ({
-  isDesktop,
+  onUpdate,
   proforma,
   setProformas,
   proformas,
-  onClose,
+  closeMe,
+  isDesktop,
 }) => {
   const toast = useToast();
 
@@ -251,34 +242,31 @@ export const EditProforma = ({
     if ((await validateForm(data)) == false) return;
 
     setLoading(true);
-    await UpdateProforma(formData.id, data)
-      .then((res) => {
-        if (res.status !== 200) return;
-        const newProformas = proformas.filter((p) => p.id != formData.id);
-        newProformas.push(formData);
-        setProformas(newProformas);
-        initForm();
-
-        toast({
-          title: "ثبت شد",
-          description: `اطلاعات پیش فاکتور شما ذخیره شد`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        onClose();
-      })
-      .catch((err) => {
-        toast({
-          title: "خطایی رخ داد",
-          description: `${err}`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+    const res = await UpdateProforma(formData?.id, data);
+    if (!res.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
+      setLoading(false);
+      return;
+    }
+    onUpdate(res?.data);
+    initForm();
+
+    toast({
+      title: "ثبت شد",
+      description: `اطلاعات پیش فاکتور شما ذخیره شد`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+
     setLoading(false);
-    onClose();
+    closeMe();
   };
 
   const handleItemChange = (index, field, value) => {

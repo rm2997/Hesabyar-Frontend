@@ -33,6 +33,7 @@ import {
   ArrowRight,
   Warehouse,
   Truck,
+  Combine,
 } from "lucide-react";
 
 import { EditInvoice } from "./EditInvoice";
@@ -363,11 +364,11 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                     py={4}
                     borderTopRadius="md"
                     bg={
-                      row?.finished
-                        ? "green.500"
-                        : row?.isAccepted
-                        ? "green.400"
-                        : "blue.200"
+                      !row?.finished
+                        ? row?.isAccepted
+                          ? "green.400"
+                          : "blue.200"
+                        : "gray.400"
                     }
                     _hover={{ cursor: "pointer" }}
                     onClick={(e) => handleEditInvoice(row.id)}
@@ -376,52 +377,6 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                       <Text fontSize="sm" fontFamily="IranSans">
                         فاکتور شماره : {row.id}
                       </Text>
-                      {/* <Box mr="auto">
-                        <HStack>
-                          {row?.finished ? (
-                            <Tooltip label="از انبار خارج شده است">
-                              <Flex mt={-0.5}>
-                                <ArrowRight color="#e6746eff" />
-                                <Warehouse color="green" />
-                              </Flex>
-                            </Tooltip>
-                          ) : (
-                            <></>
-                          )}
-                          {row.isAccepted ? (
-                            <Tooltip label="تاییدیه کاربر ارشد">
-                              <ShieldUser color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر تاییدیه کاربر ارشد ">
-                              <UserLock
-                                color="yellow"
-                                _hover={{ color: "green" }}
-                              />
-                            </Tooltip>
-                          )}
-
-                          {row.approvedFile ? (
-                            <Tooltip label="تایید مشتری">
-                              <UserRoundCheck color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر تایید مشتری">
-                              <Handshake color="white" />
-                            </Tooltip>
-                          )}
-
-                          {row.isSent ? (
-                            <Tooltip label="لینک به مشتری ارسال شده است">
-                              <MailCheck color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر ارسال">
-                              <CircleFadingArrowUp color="orange" />
-                            </Tooltip>
-                          )}
-                        </HStack>
-                      </Box> */}
                     </HStack>
                   </CardHeader>
                   <CardBody p={2}>
@@ -500,6 +455,29 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                         align={"stretch"}
                         mr="auto"
                       >
+                        <Link
+                          hidden={
+                            !row?.approvedFile ||
+                            !row?.isAccepted ||
+                            (row?.driverTokenIsSent && row?.driver)
+                          }
+                          _hover={{ color: "#ffd54f" }}
+                          color="orange.600"
+                          onClick={(e) => {
+                            setSelectedID(row?.id);
+                            setDialogGears({
+                              title: "ثبت سند خروج",
+                              text: "",
+                              callBack: () => {},
+                            });
+
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="ثبت سند خروج">
+                            <Icon w={6} h={6} as={Combine} />
+                          </Tooltip>
+                        </Link>
                         <Link
                           hidden={
                             !row?.approvedFile ||

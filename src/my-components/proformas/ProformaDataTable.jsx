@@ -40,7 +40,6 @@ import {
   ConvertProformaToInvoice,
   GenerateNewToken,
   RemoveProforma,
-  SendUpdateProformaSms,
   SetProformaIsSent,
   ShowUserAllProformas,
   ShowUserMyProformas,
@@ -173,7 +172,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       setLoading(false);
       return;
     }
-    updateProformainList(id, "isSent", "true");
+    updateProformaInListWithKey(id, "isSent", "true");
     toast({
       title: "توجه",
       description:
@@ -190,52 +189,17 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       isClosable: true,
     });
     setLoading(false);
-    // const customer =
-    //   proforma?.customer?.customerGender +
-    //   " " +
-    //   proforma?.customer?.customerFName +
-    //   " " +
-    //   proforma?.customer?.customerLName;
-
-    // SendUpdateProformaSms(
-    //   customer,
-    //   proforma?.customer?.customerMobile,
-    //   "www.hesab-yaar.ir/upload-proforma-document?token=" +
-    //     proforma?.customerLink
-    // )
-    //   .then((res) => {
-    //     toast({
-    //       title: "توجه",
-    //       description:
-    //         "لینک تاییدیه به شماره موبایل" +
-    //         " " +
-    //         proforma.customer.customerMobile +
-    //         " به نام " +
-    //         proforma.customer.customerFName +
-    //         " " +
-    //         proforma.customer.customerLName +
-    //         " ارسال شد. " +
-    //         "www.hesab-yaar.ir/upload-proforma-document?token=" +
-    //         proforma?.customerLink,
-    //       status: "success",
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //   })
-    //   .catch((err) =>
-    //     toast({
-    //       title: "خطا بعد از ارسال",
-    //       description: err.message,
-    //       status: "error",
-    //       duration: 3000,
-    //       isClosable: true,
-    //     })
-    //   );
   };
 
-  const updateProformainList = (id, key, value) => {
+  const updateProformaInListWithKey = (id, key, value) => {
     setProformas((prev) =>
       prev.map((p) => (p.id == id ? { ...p, [key]: value } : p))
+    );
+  };
+
+  const updateProformaInList = (updatedPerforma) => {
+    setProformas((prev) =>
+      prev.map((p) => (p.id == updatedPerforma.id ? updatedPerforma : p))
     );
   };
 
@@ -270,7 +234,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       return;
     }
     await ConvertProformaToInvoice(proforma.id);
-    updateProformainList(proforma.id, "isConverted", "true");
+    updateProformaInListWithKey(proforma.id, "isConverted", "true");
     toast({
       title: "توجه",
       description: ` پیش فاکتور شما به فاکتور تبدیل شد`,
@@ -617,10 +581,11 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
               >
                 <EditProforma
                   isDesktop={isDesktop}
-                  onClose={onClose}
+                  closeMe={onClose}
                   onOpen={onOpen}
                   setProformas={setProformas}
                   proformas={proformas}
+                  onUpdate={updateProformaInList}
                   proforma={proformas.find(
                     (proforma) => proforma.id === selectedID
                   )}

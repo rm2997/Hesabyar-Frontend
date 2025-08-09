@@ -23,6 +23,7 @@ import {
   Locate,
   Map,
   MapPin,
+  MapPinCheck,
   ShieldUser,
   Trash2,
   User,
@@ -316,23 +317,6 @@ export const UsersDataTable = ({ isDesktop }) => {
                       mr="auto"
                     >
                       <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "ویرایش کاربر",
-                          });
-                          onOpen();
-                        }}
-                      >
-                        <Tooltip label="ویرایش">
-                          <Icon w={6} h={6} as={FilePenLine} />
-                        </Tooltip>
-                      </Link>
-                      <Link
                         _hover={{ color: "#ffd54f" }}
                         color="green.600"
                         onClick={(e) => {
@@ -346,7 +330,7 @@ export const UsersDataTable = ({ isDesktop }) => {
                         }}
                       >
                         <Tooltip label="درخواست موقعیت مکانی">
-                          <Icon w={6} h={6} as={Locate} />
+                          <Icon w={6} h={6} as={MapPinCheck} />
                         </Tooltip>
                       </Link>
                       <Link
@@ -364,6 +348,23 @@ export const UsersDataTable = ({ isDesktop }) => {
                       >
                         <Tooltip label="حذف">
                           <Icon w={6} h={6} as={Trash2} />
+                        </Tooltip>
+                      </Link>
+                      <Link
+                        _hover={{
+                          color: "orange",
+                        }}
+                        color="blue.600"
+                        onClick={(e) => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "ویرایش کاربر",
+                          });
+                          onOpen();
+                        }}
+                      >
+                        <Tooltip label="ویرایش">
+                          <Icon w={6} h={6} as={FilePenLine} />
                         </Tooltip>
                       </Link>
                     </Stack>

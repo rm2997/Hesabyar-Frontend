@@ -479,7 +479,8 @@ export const NewDepotEntry = ({ isDesktop }) => {
     const tmpDepotGoods = [...depotGoods];
     const newDepotGood = {
       quantity: 1,
-      price: 0,
+      price: goodDepot?.goodPrice,
+      total: goodDepot?.goodPrice,
       good: goodDepot,
       serial: "",
       description: formData?.description,
@@ -617,6 +618,43 @@ export const NewDepotEntry = ({ isDesktop }) => {
                     >
                       {depotItem?.good?.goodUnit?.unitName}
                     </Text>
+                  </Flex>
+                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      قیمت
+                    </Text>
+                    <Input
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="price"
+                      value={depotItem?.price}
+                      onChange={(e) =>
+                        handleChangeGoodsData(index, {
+                          target: { name: "price", value: e.target.value },
+                        })
+                      }
+                    />
+                  </Flex>
+                  <Flex justify="space-between" columnGap={8} mt={3} dir="rtl">
+                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
+                      جمع
+                    </Text>
+                    <Input
+                      readOnly
+                      size="sm"
+                      variant="flushed"
+                      textAlign="left"
+                      fontFamily="IranSans"
+                      name="total"
+                      value={Number(
+                        depotItem?.quantity * depotItem?.price
+                      ).toLocaleString()}
+                      onChange={(e) =>
+                        handleChangeGoodsData(index, "total", e.target.value)
+                      }
+                    />
                   </Flex>
                   <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
                     <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>

@@ -705,7 +705,7 @@ export const EditDepotEntry = ({
                   </Flex>
 
                   <Flex
-                    hidden={!isForAccept}
+                    hidden={isForAccept}
                     justify="space-between"
                     columnGap={3}
                     mt={3}
@@ -730,7 +730,7 @@ export const EditDepotEntry = ({
                     />
                   </Flex>
                   <Flex
-                    hidden={!isForAccept}
+                    hidden={isForAccept}
                     justify="space-between"
                     columnGap={8}
                     mt={3}

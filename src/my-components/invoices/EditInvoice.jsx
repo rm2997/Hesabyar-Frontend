@@ -736,8 +736,9 @@ export const EditInvoice = ({
 
             <Flex
               columnGap={2}
-              hidden={!formData?.driver}
+              hidden={!formData?.approvedFile}
               mt={3}
+              alignItems={isDesktop ? "" : "center"}
               dir="rtl"
               direction="column"
               borderWidth={1}
@@ -748,7 +749,7 @@ export const EditInvoice = ({
               fontFamily="iransans"
               fontSize="13px"
             >
-              <Text bg="gray.100" textAlign="center" fontSize="17px">
+              <Text bg="gray.100" textAlign="center" fontSize="17px" w="full">
                 مدارک واریز وجه
               </Text>
               <Flex columnGap={2} p={2}>
@@ -792,15 +793,15 @@ export const EditInvoice = ({
                 <Text>نام و نام خانوادگی :</Text>
                 <Text>{formData?.driver}</Text>
               </Flex>
-              <Flex columnGap={2} p={2}>
+              <Flex hidden={!formData?.driverNatCode} columnGap={2} p={2}>
                 <Text>شماره ملی :</Text>
                 <Text>{formData?.driverNatCode}</Text>
               </Flex>
-              <Flex columnGap={2} p={2}>
+              <Flex hidden={!formData?.driverMobile} columnGap={2} p={2}>
                 <Text>شماره موبایل :</Text>
                 <Text>{formData?.driverMobile}</Text>
               </Flex>
-              <Flex columnGap={2} p={2}>
+              <Flex hidden={!formData?.driverCarNumber} columnGap={2} p={2}>
                 <Text p={1} fontFamily="iransans">
                   شماره خودرو :
                 </Text>
