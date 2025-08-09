@@ -37,6 +37,7 @@ import jalali from "jalali-dayjs";
 import { MyWareHouseDepotExitStepper } from "../MyWareHouseDepotExitStepper";
 import { AcceptDepotExitByWareHouseMan } from "../warehouse/AcceptDepotExitByWareHouseMan";
 import { MyDepotExitRequestStepper } from "../MyDepotExitRequestStepper";
+import { EditDepotExit } from "../depot/EditDepotExit";
 
 export const DepotExitRequests = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
@@ -180,70 +181,20 @@ export const DepotExitRequests = ({ isDesktop }) => {
                     }}
                   >
                     <HStack>
-                      {/* <Flex
-                        borderWidth={1}
-                        p={1}
-                        borderRadius="md"
-                        borderColor="whiteAlpha.300"
-                      >
-                        <ArrowBigRight
-                          color="#e49b5bff"
-                          height={18}
-                          width={18}
-                        />
-                        <Warehouse color="#e49b5bff" height={18} width={18} />
-                      </Flex> */}
                       <Text fontFamily="IranSans" fontSize="md">
                         سند خروجی شماره : {row?.id}
                       </Text>
-                      {/* <Box mr="auto">
-                        <HStack>
-                          {row?.isAccepted ? (
-                            <Tooltip label="تاییدیه کاربر ارشد">
-                              <ShieldUser color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر تایید کاربر ارشد ">
-                              <UserLock
-                                color="yellow"
-                                _hover={{ color: "green" }}
-                              />
-                            </Tooltip>
-                          )}
-                          {row?.driverNatCode ||
-                          row?.driverCarNumber ||
-                          row?.driver ||
-                          row?.driverMobile ? (
-                            <Tooltip label="تایید مشتری">
-                              <UserRoundCheck color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر تایید مشتری">
-                              <Handshake color="white" />
-                            </Tooltip>
-                          )}
-
-                          {row?.isSent ? (
-                            <Tooltip label="لینک به مشتری ارسال شده است">
-                              <MailCheck color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر ارسال">
-                              <CircleFadingArrowUp color="orange" />
-                            </Tooltip>
-                          )}
-                        </HStack>
-                      </Box> */}
                     </HStack>
                   </CardHeader>
-                  <CardBody>
+                  <CardBody p={2}>
                     <Flex justify="space-between" direction="row" columnGap={1}>
                       <MyDepotExitRequestStepper data={row} />
                       <VStack
                         fontFamily="IranSans"
                         fontSize="10px"
-                        align={"stretch"}
+                        align="stretch"
                         spacing={2}
+                        mx={2}
                       >
                         <HStack>
                           <Text fontFamily="IranSans"> تاریخ ثبت :</Text>
@@ -349,7 +300,7 @@ export const DepotExitRequests = ({ isDesktop }) => {
           isOpen={isOpen}
           onClose={onClose}
         >
-          <AcceptDepotExitByWareHouseMan
+          <EditDepotExit
             isDesktop={isDesktop}
             id={selectedID}
             closeMe={onClose}

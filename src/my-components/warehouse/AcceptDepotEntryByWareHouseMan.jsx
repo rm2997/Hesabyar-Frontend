@@ -45,7 +45,7 @@ import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { ShowInvoiceApprovedFile } from "../../api/services/invoiceService";
 
-export const AcceptDepotExitByWareHouseMan = ({
+export const AcceptDepotEntryByWareHouseMan = ({
   isDesktop,
   closeMe,
   onUpdate,
@@ -128,8 +128,8 @@ export const AcceptDepotExitByWareHouseMan = ({
         issuedAt: depot?.depotGoods[0]?.issuedAt,
         depotGoods: goodsWithImages,
       });
-      await loadInvoiceImage(depot?.depotInvoice?.id);
-      await loadWarehouseImages(depot?.id);
+      //await loadInvoiceImage(depot?.depotInvoice?.id);
+      if (depot?.id) await loadWarehouseImages(depot?.id);
     };
 
     fetchData();
@@ -222,8 +222,6 @@ export const AcceptDepotExitByWareHouseMan = ({
       duration: 3000,
       isClosable: true,
     });
-    // await handleSubmitImages(response?.data?.depotGoods);
-
     await onUpdate({
       ...depot,
       exitGoodImage: carImageRes?.data?.exitGoodImage,
@@ -291,7 +289,7 @@ export const AcceptDepotExitByWareHouseMan = ({
             borderTopRadius={5}
             color="black"
           >
-            تایید خروج کالا توسط انباردار
+            تایید ورود کالا توسط انباردار
           </CardHeader>
         )}
         <CardBody borderTopWidth={2}>
@@ -605,7 +603,7 @@ export const AcceptDepotExitByWareHouseMan = ({
               <Flex columnGap={2} p={2}>
                 <FormControl isRequired>
                   <HStack>
-                    <Text fontFamily="iransans">تاریخ خروج : </Text>
+                    <Text fontFamily="iransans">تاریخ ورود : </Text>
                     <Text fontFamily="iransans">
                       {dayjs(formData?.issuedAt)
                         .locale("fa")
@@ -712,44 +710,6 @@ export const AcceptDepotExitByWareHouseMan = ({
                     </Flex>
                   </Box>
                 ))}
-              </Flex>
-            </Flex>
-
-            <Flex
-              columnGap={2}
-              hidden={!formData?.driver}
-              mt={1}
-              dir="rtl"
-              direction="column"
-              borderWidth={1}
-              borderColor="gray.300"
-              borderStyle="dashed"
-              borderRadius="md"
-              p={2}
-              fontFamily="iransans"
-              fontSize="13px"
-            >
-              <Text bg="gray.100" textAlign="center" fontSize="17px">
-                مدارک واریز وجه
-              </Text>
-              <Flex columnGap={2} p={2}>
-                <Box
-                  onClick={() => setShowInvoiceImageModal(true)}
-                  _hover={{ cursor: "pointer", borderColor: "orange" }}
-                  overflow="hidden"
-                  borderRadius="6px"
-                  borderWidth="1px"
-                  hidden={approvedFile == null || approvedFile == ""}
-                  boxSize={"150px"}
-                >
-                  <Image
-                    src={approvedFile ? approvedFile : ""}
-                    objectFit="cover"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    alt="تاییدیه"
-                  />
-                </Box>
               </Flex>
             </Flex>
 

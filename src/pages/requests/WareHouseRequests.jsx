@@ -9,8 +9,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { DepotWareHouseEntryRequests } from "../../my-components/warehouse/DepotWareHouseEntryRequests";
 import { DepotWareHouseExitRequests } from "../../my-components/warehouse/DepotWareHouseExitRequests";
+import { DepotWareHouseEntyRequests } from "../../my-components/warehouse/DepotWareHouseEntryRequests";
 
 export const WareHouseRequests = ({ isDesktop }) => {
   return (
@@ -36,7 +36,7 @@ export const WareHouseRequests = ({ isDesktop }) => {
         <TabIndicator mt="-1.5px" height="2px" bg="blue.500" />
         <TabPanels borderColor="gray.200" borderWidth="1px" borderRadius="5">
           <TabPanel>
-            <DepotWareHouseEntryRequests isDesktop={isDesktop} />
+            <DepotWareHouseEntyRequests isDesktop={isDesktop} />
           </TabPanel>
           <TabPanel>
             <DepotWareHouseExitRequests isDesktop={isDesktop} />

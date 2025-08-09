@@ -18,13 +18,14 @@ import { useEffect } from "react";
 
 const steps = [
   {
-    title: "تاییدیه مدیر",
-    description: "کاربر ارشد درخواست شما برای ورود کالا را تایید میکند",
-  },
-  {
     title: "تاییدیه انباردار",
     description: "انباردار درخواست شما برای ورود کالا را تایید میکند",
   },
+  {
+    title: "تاییدیه مدیر",
+    description: "کاربر ارشد درخواست شما برای ورود کالا را تایید میکند",
+  },
+
   {
     title: "ورود به انبار",
     description: "موجودی کالاها طبق سند کسر می شوند",
@@ -36,8 +37,9 @@ export const MyDepotEntryStepper = ({ data }) => {
     count: steps.length,
   });
   const getCurrentStep = () => {
-    if (!data?.isAccepted) return setActiveStep(0);
-    if (!data?.warehouseAcceptedBy) return setActiveStep(1);
+    if (!data?.warehouseAcceptedBy) return setActiveStep(0);
+    if (!data?.isAccepted) return setActiveStep(1);
+    if (!data?.finished) return setActiveStep(2);
     return setActiveStep(3);
   };
 
@@ -58,7 +60,7 @@ export const MyDepotEntryStepper = ({ data }) => {
         dir="ltr"
         index={activeStep}
         orientation="vertical"
-        height="200px"
+        height="150px"
         gap="0"
         colorScheme="orange"
       >

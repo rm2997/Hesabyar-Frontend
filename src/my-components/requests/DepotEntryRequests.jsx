@@ -17,14 +17,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import {
-  DecimalsArrowLeft,
-  FilePenLine,
-  ShieldCheck,
-  ShieldUser,
-  Trash2,
-  UserLock,
-} from "lucide-react";
+import { FilePenLine, ShieldCheck, Trash2 } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { MyModal } from "../MyModal";
@@ -35,13 +28,13 @@ import { MyLoading } from "../MyLoading";
 import {
   RemoveDepot,
   SetDepotIsAccepted,
-  ShowAllDepots,
   ShowDepotAcceptList,
 } from "../../api/services/depotService";
 import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { EditDepotEntry } from "../depot/EditDepotEntry";
+import { MyDepotExitRequestStepper } from "../MyDepotExitRequestStepper";
 
 export const DepotEntryRequest = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
@@ -82,9 +75,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-    // const tmpEntryReq = res?.data?.items?.filter(
-    //   (entry) => entry.isAccepted == null
-    // );
+
     const tmpEntryReq = res?.data?.items;
     setDepotEntry(tmpEntryReq);
     setTotalPages(Math.ceil(tmpEntryReq.length / itemsPerPage));
@@ -208,7 +199,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Flex direction="column" minH="72vh" filter={loading ? "blur(10px)" : ""}>
+      <Flex minH="60vh" filter={loading ? "blur(10px)" : ""} direction="column">
         <SearchBar
           search={search}
           setSearch={setSearch}
@@ -228,7 +219,8 @@ export const DepotEntryRequest = ({ isDesktop }) => {
                   _hover={{ cursor: "", borderColor: "green.500" }}
                 >
                   <CardHeader
-                    bg={depotEntry?.isAccepted ? "green.400" : "blue.200"}
+                    p={2}
+                    bg={row?.isAccepted ? "green.400" : "blue.200"}
                     borderTopRadius={5}
                     _hover={{ cursor: "pointer", borderColor: "green.500" }}
                     onClick={(e) => {
@@ -243,56 +235,56 @@ export const DepotEntryRequest = ({ isDesktop }) => {
                   >
                     <HStack>
                       <Text fontFamily="IranSans" fontSize="md">
-                        شماره : {row.id}
+                        سند ورودی شماره : {row?.id}
                       </Text>
-                      <Box mr="auto">
-                        <HStack>
-                          {depotEntry?.isAccepted ? (
-                            <Tooltip label="تایید کاربر ارشد">
-                              <ShieldUser color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر تایید کاربر ارشد ">
-                              <UserLock
-                                color="yellow"
-                                _hover={{ color: "green" }}
-                              />
-                            </Tooltip>
-                          )}
-                        </HStack>
-                      </Box>
                     </HStack>
                   </CardHeader>
-                  <CardBody>
-                    <VStack align={"stretch"} spacing={2}>
-                      <HStack>
-                        <Text> تاریخ ثبت :</Text>
-                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {dayjs(row.createdAt)
-                            .locale("fa")
-                            .format("YYYY/MM/DD")}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>تعداد کالا</Text>
-                        <Text fontFamily="iransans" fontSize="md" mr="auto">
-                          {row?.totalQuantity}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text> ثبت کننده :</Text>
-                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row?.createdBy?.userfname +
-                            " " +
-                            row?.createdBy?.userlname}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                    </VStack>
+                  <CardBody p={2}>
+                    <Flex justify="space-between" direction="row" columnGap={1}>
+                      <MyDepotExitRequestStepper data={row} />
+                      <VStack
+                        mx={2}
+                        fontFamily="IranSans"
+                        fontSize="10px"
+                        align={"stretch"}
+                      >
+                        <HStack>
+                          <Text fontFamily="IranSans"> تاریخ ثبت :</Text>
+                          <Text fontFamily="IranSans" fontSize="15px" mr="auto">
+                            {dayjs(row.createdAt)
+                              .locale("fa")
+                              .format("YYYY/MM/DD")}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="IranSans">تعداد کالا</Text>
+                          <Text fontFamily="iransans" fontSize="12px" mr="auto">
+                            {row?.totalQuantity}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="IranSans"> ثبت کننده :</Text>
+                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
+                            {row?.createdBy?.userfname +
+                              " " +
+                              row?.createdBy?.userlname}
+                          </Text>
+                        </HStack>
+                        <Divider hidden={!row?.warehouseAcceptedBy} />
+                        <HStack hidden={!row?.warehouseAcceptedBy}>
+                          <Text fontFamily="IranSans"> مسئول انبار :</Text>
+                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
+                            {row?.warehouseAcceptedBy?.userfname +
+                              " " +
+                              row?.warehouseAcceptedBy?.userlname}
+                          </Text>
+                        </HStack>
+                      </VStack>
+                    </Flex>
                   </CardBody>
-                  <CardFooter borderBottomRadius={5} bg="gray.200">
+                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
                     <Stack
                       direction={["row"]}
                       spacing={2}
@@ -306,7 +298,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
                           //setInvoiceSelectedID(row.id);
                           setDialogGears({
                             title: "تایید",
-                            text: "از تایید سند ورودی انبار اطمینان دارید؟",
+                            text: "شما در حال تایید سند ورودی می باشید، پس از تایید، موجودی اقلام به سرانه انبار اضافه خواهد شد. ادامه می دهید؟",
                             callBack: () => handleAcceptDepotEntry(row.id),
                           });
                           setIsDialogOpen(true);

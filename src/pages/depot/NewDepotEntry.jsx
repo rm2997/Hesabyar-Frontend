@@ -168,7 +168,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
       if (!good.serial) {
         toast({
           title: "توجه",
-          description: `شماره سریال  ${good?.good.goodName} را ثبت کنید`,
+          description: `شماره سریال  ${good?.good?.goodName} را ثبت کنید`,
           status: "warning",
           duration: 3000,
           isClosable: true,
@@ -179,12 +179,12 @@ export const NewDepotEntry = ({ isDesktop }) => {
     });
     if (!serialCheck) return false;
 
-    const imageCheck = depotGoods.every((good) => {
+    const priceCheck = depotGoods.every((good) => {
       let retval = true;
-      if (!good.imageFile) {
+      if (!good.price || good.price == 0) {
         toast({
           title: "توجه",
-          description: `تصویر  ${good?.good.goodName} را ثبت کنید`,
+          description: `قیمت  ${good?.good?.goodName} را ثبت کنید`,
           status: "warning",
           duration: 3000,
           isClosable: true,
@@ -193,7 +193,63 @@ export const NewDepotEntry = ({ isDesktop }) => {
       }
       return retval;
     });
-    if (!imageCheck) return false;
+    if (!priceCheck) return false;
+    if (formData?.driver?.length < 3 || !isNaN(Number(formData?.driver))) {
+      toast({
+        title: "توجه",
+        description: "نام یا نام خانوادگی صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.driverNatCode?.length > 0 &&
+      formData?.driverNatCode?.length != 10
+    ) {
+      toast({
+        title: "توجه",
+        description: "شماره ملی صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (isNaN(Number(formData?.driverNatCode))) {
+      toast({
+        title: "توجه",
+        description: "شماره ملی باید به شکل عددی باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.driverMobile?.length > 0 &&
+      formData?.driverMobile?.length != 11
+    ) {
+      toast({
+        title: "توجه",
+        description: "شماره موبایل  صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (isNaN(Number(formData?.driverMobile))) {
+      toast({
+        title: "توجه",
+        description: "شماره موبایل باید به شکل عددی باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
     if (
       formData?.driver?.length == 0 &&
       formData?.driverCarNumber?.length == 0 &&
@@ -339,6 +395,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
     tmpformData.depotGoods = [...tmpDepotGoods];
     tmpformData.driverCarNumber =
       carNoFirst + carNoAlphabet + carNoThird + carNoForth;
+    setFormData(tmpformData);
     setLoading(true);
     const response = await CreateDepot(tmpformData);
 
@@ -792,6 +849,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   کد ملی راننده
                 </FormLabel>
                 <MyInputBox
+                  fontFamily="iransans"
                   isInvalid={
                     (formData?.driverNatCode !== undefined &&
                       formData?.driverNatCode?.length > 0 &&
@@ -813,13 +871,14 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   موبایل
                 </FormLabel>
                 <MyInputBox
+                  fontFamily="iransans"
                   isInvalid={
                     (formData?.driverMobile?.length > 0 &&
                       formData?.driverMobile?.length != 11) ||
                     isNaN(Number(formData?.driverMobile))
                   }
                   icon={Phone}
-                  title="کد ملی راننده"
+                  title="موبایل راننده"
                   maxLength={11}
                   type="text"
                   name="driverMobile"

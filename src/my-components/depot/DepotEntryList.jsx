@@ -17,18 +17,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import {
-  ArrowBigLeft,
-  ArrowLeft,
-  Combine,
-  DecimalsArrowLeft,
-  FilePenLine,
-  ShieldUser,
-  Trash2,
-  UserLock,
-  WalletCards,
-  Warehouse,
-} from "lucide-react";
+import { FilePenLine, Trash2 } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { MyModal } from "../MyModal";
@@ -41,7 +30,6 @@ import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { EditDepotEntry } from "./EditDepotEntry";
-import { EditDepotExit } from "./EditDepotExit";
 import { MyDepotEntryStepper } from "../MyDepotEntryStepper";
 
 export const DepotEntryList = ({ isDesktop }) => {
@@ -264,21 +252,15 @@ export const DepotEntryList = ({ isDesktop }) => {
                               row?.createdBy?.userlname}
                           </Text>
                         </HStack>
-                        <Divider />
-                        {row?.isAccepted && (
-                          <HStack>
-                            <Text fontFamily="IranSans"> تایید کننده :</Text>
-                            <Text
-                              fontFamily="IranSans"
-                              fontSize="12px"
-                              mr="auto"
-                            >
-                              {row?.acceptedBy?.userfname +
-                                " " +
-                                row?.acceptedBy?.userlname}
-                            </Text>
-                          </HStack>
-                        )}
+                        <Divider hidden={!row?.warehouseAcceptedBy} />
+                        <HStack hidden={!row?.warehouseAcceptedBy}>
+                          <Text fontFamily="IranSans"> مسئول انبار :</Text>
+                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
+                            {row?.warehouseAcceptedBy?.userfname +
+                              " " +
+                              row?.warehouseAcceptedBy?.userlname}
+                          </Text>
+                        </HStack>
                       </VStack>
                     </Flex>
                   </CardBody>
@@ -320,7 +302,7 @@ export const DepotEntryList = ({ isDesktop }) => {
                             setSelectedID(row.id);
                             setDialogGears({
                               title: "حذف",
-                              text: "آیا واقعا می خواهید این رکورد را حذف کنید؟",
+                              text: "آیا از حذف این سند اطمینان دارید؟",
                               callBack: () => {
                                 handleDeleteDepotEntry(row.id);
                               },

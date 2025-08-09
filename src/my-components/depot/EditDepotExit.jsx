@@ -38,6 +38,7 @@ import { PersianAlphabet } from "../../api/services/enums/persianAlphabets.enum"
 import {
   CreateDepot,
   ShowDepotImageFile,
+  ShowDepotWarehouseImages,
   UpdateDepotImageFile,
 } from "../../api/services/depotService";
 import { MyModal } from "../../my-components/MyModal";
@@ -80,13 +81,20 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
     //   imageFile: null,
     // },
   ]);
+
+  const [showDriverImageModal, setShowDriverImageModal] = useState(false);
+  const [driverImagePreview, setDriverImagePreview] = useState(null);
+
+  const [showCarImageModal, setShowCarImageModal] = useState(false);
+  const [carImagePreview, setCarImagePreview] = useState(null);
+
   const [showSearchInvoice, setShowSearchInvoice] = useState(false);
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [approvedFile, setApprovedFile] = useState(null);
   const [showInvoiceImageModal, setShowInvoiceImageModal] = useState(false);
   const [selectedDepotGood, setSelectedDepotGood] = useState(0);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen } = useDisclosure();
 
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -115,7 +123,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
           }
         })
       );
-
+      if (depot?.warehouseAcceptedBy) await loadWarehouseImages(depot?.id);
       setDepotGoods(goodsWithImages);
 
       setFormData({
@@ -290,6 +298,28 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
         isClosable: true,
       });
     }
+  };
+
+  const loadWarehouseImages = async (id) => {
+    setLoading(true);
+    const res = await ShowDepotWarehouseImages(id);
+    if (!res?.success) {
+      if (res.status != 404)
+        toast({
+          title: "خطا در دریافت تصاویر",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+    } else {
+      const dImage = res?.data?.driverSignImage;
+      const cImage = res?.data?.carImage;
+
+      if (dImage) setCarImagePreview(cImage);
+      if (cImage) setDriverImagePreview(dImage);
+    }
+    setLoading(false);
   };
 
   const handleSubmit = async (e) => {
@@ -639,6 +669,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   bg="gray.100"
                   textAlign="center"
                   fontSize="17px"
+                  w="full"
                 >
                   لیست اقلام فاکتور
                 </Text>
@@ -832,7 +863,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
 
             <Flex
               columnGap={2}
-              hidden={!formData?.driver}
+              hidden={!approvedFile}
               mt={1}
               dir="rtl"
               direction="column"
@@ -840,11 +871,12 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
               borderColor="gray.300"
               borderStyle="dashed"
               borderRadius="md"
+              alignItems={isDesktop ? "" : "center"}
               p={2}
               fontFamily="iransans"
               fontSize="13px"
             >
-              <Text bg="gray.100" textAlign="center" fontSize="17px">
+              <Text bg="gray.100" textAlign="center" fontSize="17px" w="full">
                 مدارک واریز وجه
               </Text>
               <Flex columnGap={2} p={2}>
@@ -933,6 +965,78 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                 </Flex>
               </Flex>
             </Flex>
+
+            <Flex
+              columnGap={2}
+              hidden={!formData?.warehouseAcceptedBy}
+              mt={1}
+              alignItems={isDesktop ? "" : "center"}
+              dir="rtl"
+              direction="column"
+              borderWidth={1}
+              borderColor="gray.300"
+              borderStyle="dashed"
+              borderRadius="md"
+              p={2}
+              fontFamily="iransans"
+              fontSize="13px"
+            >
+              <Text
+                w="full"
+                fontFamily="iransans"
+                bg="gray.100"
+                textAlign="center"
+                fontSize="17px"
+              >
+                تصاویر ورودی انبار
+              </Text>
+              <Flex fontFamily="iransans" columnGap={2} p={2}>
+                <Text hidden={!isDesktop} fontFamily="iransans">
+                  تصویر خودروی حامل کالا
+                </Text>
+                <Box
+                  onClick={() => setShowCarImageModal(true)}
+                  _hover={{ cursor: "pointer", borderColor: "orange" }}
+                  overflow="hidden"
+                  borderRadius="6px"
+                  borderWidth="1px"
+                  hidden={carImagePreview == null || carImagePreview == ""}
+                  boxSize={"150px"}
+                >
+                  <Image
+                    src={carImagePreview ? carImagePreview : ""}
+                    objectFit="cover"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    alt="انبار"
+                  />
+                </Box>
+              </Flex>
+              <Flex fontFamily="iransans" columnGap={9} p={2}>
+                <Text hidden={!isDesktop} fontFamily="iransans">
+                  تصویر امضای راننده
+                </Text>
+                <Box
+                  onClick={() => setShowDriverImageModal(true)}
+                  _hover={{ cursor: "pointer", borderColor: "orange" }}
+                  overflow="hidden"
+                  borderRadius="6px"
+                  borderWidth="1px"
+                  hidden={
+                    driverImagePreview == null || driverImagePreview == ""
+                  }
+                  boxSize={"150px"}
+                >
+                  <Image
+                    src={driverImagePreview ? driverImagePreview : ""}
+                    objectFit="cover"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    alt="انبار"
+                  />
+                </Box>
+              </Flex>
+            </Flex>
             {/* <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
@@ -1002,9 +1106,9 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
               colorScheme="blue"
               type="submit"
               isLoading={loading}
-              isDisabled={formData?.isAccepted}
+              isDisabled={formData?.isAccepted || formData?.warehouseAcceptedBy}
               title={
-                formData?.isAccepted
+                formData?.isAccepted || formData?.warehouseAcceptedBy
                   ? "این سند خروج کالا قبلا تایید شده است و قابل ویرایش نیست"
                   : ""
               }
@@ -1063,6 +1167,72 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
             target="_blank"
             rel="noopener noreferrer"
             alt="تصویر کالا"
+          />
+        </Box>
+      </MyModal>
+      <MyModal
+        modalHeader="تصویر خودروی حامل کالا"
+        onClose={() => setShowCarImageModal(false)}
+        isOpen={showCarImageModal}
+        size={isDesktop ? "xl" : "xs"}
+      >
+        <Box
+          overflow="auto"
+          borderRadius="6px"
+          borderColor="orange"
+          borderWidth="1px"
+          boxSize={isDesktop ? "lg" : "2xs"}
+        >
+          <Image
+            src={carImagePreview}
+            objectFit="cover"
+            target="_blank"
+            rel="noopener noreferrer"
+            alt="تصویر خودرو"
+          />
+        </Box>
+      </MyModal>
+      <MyModal
+        modalHeader="تصویر امضای راننده"
+        onClose={() => setShowDriverImageModal(false)}
+        isOpen={showDriverImageModal}
+        size={isDesktop ? "xl" : "xs"}
+      >
+        <Box
+          overflow="auto"
+          borderRadius="6px"
+          borderColor="orange"
+          borderWidth="1px"
+          boxSize={isDesktop ? "lg" : "2xs"}
+        >
+          <Image
+            src={driverImagePreview}
+            objectFit="cover"
+            target="_blank"
+            rel="noopener noreferrer"
+            alt="تصویر امضا"
+          />
+        </Box>
+      </MyModal>
+      <MyModal
+        modalHeader="تصویر مدارک"
+        onClose={() => setShowInvoiceImageModal(false)}
+        isOpen={showInvoiceImageModal}
+        size={isDesktop ? "xl" : "xs"}
+      >
+        <Box
+          overflow="auto"
+          borderRadius="6px"
+          borderColor="orange"
+          borderWidth="1px"
+          boxSize={isDesktop ? "lg" : "2xs"}
+        >
+          <Image
+            src={approvedFile}
+            objectFit="cover"
+            target="_blank"
+            rel="noopener noreferrer"
+            alt="تصویر مدارک"
           />
         </Box>
       </MyModal>

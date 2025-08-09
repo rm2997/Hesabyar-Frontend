@@ -17,6 +17,7 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  Select,
   Text,
   VStack,
   useDisclosure,
@@ -25,7 +26,9 @@ import {
 import {
   CircleX,
   Ellipsis,
+  Hash,
   Info,
+  Phone,
   Plus,
   PlusCircle,
   ScanSearch,
@@ -39,6 +42,7 @@ import { MyLoading } from "../../my-components/MyLoading";
 import {
   CreateDepot,
   ShowDepotImageFile,
+  ShowDepotWarehouseImages,
   UpdateDepot,
   UpdateDepotImageFile,
 } from "../../api/services/depotService";
@@ -49,6 +53,7 @@ import { ShowAllCustomers } from "../../api/services/customerService";
 import { ShowAllGoods } from "../../api/services/goodsService";
 import { SearchGoods } from "../../my-components/SearchGood";
 import { NewCustomer } from "../../pages/customers/NewCustomer";
+import { PersianAlphabet } from "../../api/services/enums/persianAlphabets.enum";
 export const EditDepotEntry = ({
   isDesktop,
   closeMe,
@@ -68,6 +73,7 @@ export const EditDepotEntry = ({
     driver: "",
     driverCarNumber: "",
     driverNatCode: "",
+    driverMobile: "",
     isAccepted: null,
     acceptedBy: null,
   });
@@ -85,6 +91,17 @@ export const EditDepotEntry = ({
     //   imageFile: null,
     // },
   ]);
+
+  const [carNoFirst, setCarNoFirst] = useState("");
+  const [carNoAlphabet, setCarNoAlphabet] = useState("");
+  const [carNoThird, setCarNoThird] = useState("");
+  const [carNoForth, setCarNoForth] = useState("");
+
+  const [showDriverImageModal, setShowDriverImageModal] = useState(false);
+  const [driverImagePreview, setDriverImagePreview] = useState(null);
+
+  const [showCarImageModal, setShowCarImageModal] = useState(false);
+  const [carImagePreview, setCarImagePreview] = useState(null);
 
   const [showSearchGood, setShowSearchGood] = useState(false);
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
@@ -120,7 +137,8 @@ export const EditDepotEntry = ({
       );
 
       setDepotGoods(goodsWithImages);
-
+      if (depot?.warehouseAcceptedBy) await loadWarehouseImages(depot?.id);
+      if (depot?.driverCarNumber) await loadCarNumber(depot?.driverCarNumber);
       setFormData({
         ...depot,
         issuedBy: depot?.depotGoods[0]?.issuedBy,
@@ -145,6 +163,7 @@ export const EditDepotEntry = ({
       driver: "",
       driverCarNumber: "",
       driverNatCode: "",
+      driverMobile: "",
     });
     setDepotGoods([]);
   };
@@ -222,6 +241,62 @@ export const EditDepotEntry = ({
       return retval;
     });
     if (!priceCheck) return false;
+    if (formData?.driver?.length < 3 || !isNaN(Number(formData?.driver))) {
+      toast({
+        title: "توجه",
+        description: "نام یا نام خانوادگی صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.driverNatCode?.length > 0 &&
+      formData?.driverNatCode?.length != 10
+    ) {
+      toast({
+        title: "توجه",
+        description: "شماره ملی صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (isNaN(Number(formData?.driverNatCode))) {
+      toast({
+        title: "توجه",
+        description: "شماره ملی باید به شکل عددی باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      formData?.driverMobile?.length > 0 &&
+      formData?.driverMobile?.length != 11
+    ) {
+      toast({
+        title: "توجه",
+        description: "شماره موبایل  صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (isNaN(Number(formData?.driverMobile))) {
+      toast({
+        title: "توجه",
+        description: "شماره موبایل باید به شکل عددی باشد",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
     if (
       formData?.driver?.length == 0 &&
       formData?.driverCarNumber?.length == 0 &&
@@ -238,6 +313,40 @@ export const EditDepotEntry = ({
     }
 
     return true;
+  };
+
+  const loadWarehouseImages = async (id) => {
+    setLoading(true);
+    const res = await ShowDepotWarehouseImages(id);
+    if (!res?.success) {
+      if (res.status != 404)
+        toast({
+          title: "خطا در دریافت تصاویر",
+          description: res.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+    } else {
+      const dImage = res?.data?.driverSignImage;
+      const cImage = res?.data?.carImage;
+
+      if (dImage) setCarImagePreview(cImage);
+      if (cImage) setDriverImagePreview(dImage);
+    }
+    setLoading(false);
+  };
+
+  const loadCarNumber = async (carNumber) => {
+    const tmpFirst = carNumber.substring(0, 2);
+    const tmpLetter = carNumber.substring(2, 4);
+    const tmpThird = carNumber.substring(4, 7);
+    const tmpForth = carNumber.substring(7);
+    console.log(carNumber, tmpFirst, tmpLetter, tmpThird, tmpForth);
+    setCarNoFirst(tmpFirst);
+    setCarNoAlphabet(tmpLetter);
+    setCarNoThird(tmpThird);
+    setCarNoForth(tmpFirst);
   };
 
   const handleCancelImage = (index) => {
@@ -274,6 +383,72 @@ export const EditDepotEntry = ({
     }
   };
 
+  const handleChangeCarNo = async () => {
+    setFormData({
+      ...formData,
+      driverCarNumber: carNoFirst + carNoAlphabet + carNoThird + carNoForth,
+    });
+  };
+
+  const validateCarNumber = async () => {
+    if (
+      carNoFirst?.length > 0 &&
+      (carNoFirst?.length != 2 ||
+        isNaN(Number(carNoFirst)) ||
+        Number(carNoFirst) == 0)
+    ) {
+      toast({
+        title: "توجه",
+        description: "قسمت اول پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (carNoAlphabet?.length > 0 && carNoAlphabet?.trim() == "") {
+      toast({
+        title: "توجه",
+        description: " حروف پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      carNoThird?.length > 0 &&
+      (carNoThird?.length != 3 ||
+        isNaN(Number(carNoThird)) ||
+        Number(carNoThird) == 0)
+    ) {
+      toast({
+        title: "توجه",
+        description: "قسمت سوم پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      carNoForth?.length > 0 &&
+      (carNoForth?.length != 2 ||
+        isNaN(Number(carNoForth)) ||
+        Number(carNoForth) == 0)
+    ) {
+      toast({
+        title: "توجه",
+        description: "قسمت آخر پلاک خودرو صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let totalQuantity = 0;
@@ -282,6 +457,9 @@ export const EditDepotEntry = ({
       totalQuantity += element.quantity;
       totalAmount += element.price * element.quantity;
     });
+
+    const validateCar = await validateCarNumber();
+    if (validateCar == false) return;
 
     const validate = await validateForm();
     if (validate == false) return;
@@ -296,6 +474,9 @@ export const EditDepotEntry = ({
     tmpformData.totalQuantity = totalQuantity;
     tmpformData.totalAmount = totalAmount;
     tmpformData.depotGoods = [...tmpDepotGoods];
+    tmpformData.driverCarNumber =
+      carNoFirst + carNoAlphabet + carNoThird + carNoForth;
+    setFormData(tmpformData);
     // if (isForAccept) {
     //   tmpformData.isAccepted = true;
     // } else tmpformData.isAccepted = null;
@@ -434,7 +615,7 @@ export const EditDepotEntry = ({
               borderRadius="md"
               borderWidth={1}
             >
-              {depotGoods.map((depotItem, index) => (
+              {depotGoods?.map((depotItem, index) => (
                 <Box
                   borderWidth="1px"
                   borderRadius="lg"
@@ -773,27 +954,135 @@ export const EditDepotEntry = ({
                   کد ملی راننده
                 </FormLabel>
                 <MyInputBox
-                  icon={Info}
+                  fontFamily="iransans"
+                  isInvalid={
+                    (formData?.driverNatCode !== undefined &&
+                      formData?.driverNatCode?.length > 0 &&
+                      formData?.driverNatCode?.length != 10) ||
+                    isNaN(Number(formData?.driverNatCode))
+                  }
+                  maxLength={10}
+                  icon={Hash}
                   name="driverNatCode"
                   title="کد ملی راننده"
-                  value={formData.driverNatCode}
+                  value={formData?.driverNatCode}
                   onChange={handleChangeFormData}
-                ></MyInputBox>
+                />
               </HStack>
             </FormControl>
-
             <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
-                  پلاک خوردو
+                  موبایل
                 </FormLabel>
                 <MyInputBox
-                  icon={Info}
-                  name="driverCarNumber"
-                  title="پلاک خوردو"
-                  value={formData.driverCarNumber}
+                  isInvalid={
+                    (formData?.driverMobile?.length > 0 &&
+                      formData?.driverMobile?.length != 11) ||
+                    isNaN(Number(formData?.driverMobile))
+                  }
+                  fontFamily="iransans"
+                  icon={Phone}
+                  title="موبایل راننده"
+                  maxLength={11}
+                  type="text"
+                  name="driverMobile"
+                  value={formData?.driverMobile}
                   onChange={handleChangeFormData}
-                ></MyInputBox>
+                />
+              </HStack>
+            </FormControl>
+            <FormControl>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="155px">
+                  پلاک خودرو
+                </FormLabel>
+                <Input
+                  dir="ltr"
+                  isInvalid={
+                    carNoForth?.length > 0 &&
+                    (carNoForth?.length != 2 ||
+                      isNaN(Number(carNoForth)) ||
+                      Number(carNoForth) == 0)
+                  }
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  width="60px"
+                  type="text"
+                  maxLength={2}
+                  name="carNoForth"
+                  value={carNoForth}
+                  onChange={(e) => {
+                    setCarNoForth(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                />
+                <Input
+                  dir="ltr"
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  width="80px"
+                  isInvalid={
+                    carNoThird?.length > 0 &&
+                    (carNoThird?.length != 3 ||
+                      isNaN(Number(carNoThird)) ||
+                      Number(carNoThird) == 0)
+                  }
+                  maxLength={3}
+                  type="text"
+                  name="carNoThird"
+                  value={carNoThird}
+                  onChange={(e) => {
+                    setCarNoThird(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                />
+                <Select
+                  isInvalid={carNoFirst?.length > 0 && carNoAlphabet == ""}
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  placeholder="حرف پلاک"
+                  name="carNoAlpabet"
+                  value={carNoAlphabet}
+                  dir="ltr"
+                  width="130px"
+                  onChange={(e) => {
+                    setCarNoAlphabet(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                >
+                  {PersianAlphabet.map((p) => (
+                    <option key={p.key} value={p.key}>
+                      {p.value}
+                    </option>
+                  ))}
+                </Select>
+                <Input
+                  dir="ltr"
+                  isInvalid={
+                    carNoFirst?.length > 0 &&
+                    (carNoFirst?.length != 2 ||
+                      isNaN(Number(carNoFirst)) ||
+                      Number(carNoFirst) == 0)
+                  }
+                  fontFamily="iransans"
+                  fontSize="sm"
+                  width="80px"
+                  type="text"
+                  maxLength={2}
+                  name="carNoFirst"
+                  value={carNoFirst}
+                  onChange={(e) => {
+                    setCarNoFirst(e.target.value);
+                    handleChangeCarNo();
+                  }}
+                />
+                <Input
+                  hidden="true"
+                  name="driverCarNumber"
+                  value={formData?.driverCarNumber}
+                  onChange={handleChangeFormData}
+                />
               </HStack>
             </FormControl>
 
@@ -811,15 +1100,85 @@ export const EditDepotEntry = ({
                 ></MyInputBox>
               </HStack>
             </FormControl>
-
+            <Flex
+              columnGap={2}
+              hidden={!formData?.warehouseAcceptedBy}
+              mt={1}
+              alignItems={isDesktop ? "" : "center"}
+              dir="rtl"
+              direction="column"
+              borderWidth={1}
+              borderColor="gray.300"
+              borderStyle="dashed"
+              borderRadius="md"
+              p={2}
+              fontFamily="iransans"
+              fontSize="13px"
+            >
+              <Text
+                w="full"
+                fontFamily="iransans"
+                bg="gray.100"
+                textAlign="center"
+                fontSize="17px"
+              >
+                تصاویر ورودی انبار
+              </Text>
+              <Flex fontFamily="iransans" columnGap={2} p={2}>
+                <Text hidden={!isDesktop} fontFamily="iransans">
+                  تصویر خودروی حامل کالا
+                </Text>
+                <Box
+                  onClick={() => setShowCarImageModal(true)}
+                  _hover={{ cursor: "pointer", borderColor: "orange" }}
+                  overflow="hidden"
+                  borderRadius="6px"
+                  borderWidth="1px"
+                  hidden={carImagePreview == null || carImagePreview == ""}
+                  boxSize={"150px"}
+                >
+                  <Image
+                    src={carImagePreview ? carImagePreview : ""}
+                    objectFit="cover"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    alt="انبار"
+                  />
+                </Box>
+              </Flex>
+              <Flex fontFamily="iransans" columnGap={9} p={2}>
+                <Text hidden={!isDesktop} fontFamily="iransans">
+                  تصویر امضای راننده
+                </Text>
+                <Box
+                  onClick={() => setShowDriverImageModal(true)}
+                  _hover={{ cursor: "pointer", borderColor: "orange" }}
+                  overflow="hidden"
+                  borderRadius="6px"
+                  borderWidth="1px"
+                  hidden={
+                    driverImagePreview == null || driverImagePreview == ""
+                  }
+                  boxSize={"150px"}
+                >
+                  <Image
+                    src={driverImagePreview ? driverImagePreview : ""}
+                    objectFit="cover"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    alt="انبار"
+                  />
+                </Box>
+              </Flex>
+            </Flex>
             <Button
               leftIcon={<SquareCheckBig />}
               colorScheme="blue"
               type="submit"
               isLoading={loading}
-              isDisabled={formData?.isAccepted}
+              isDisabled={formData?.isAccepted || formData?.warehouseAcceptedBy}
               title={
-                formData?.isAccepted
+                formData?.isAccepted || formData?.warehouseAcceptedBy
                   ? "این سند ورود کالا قبلا تایید شده است و قایل ویرایش نیست"
                   : ""
               }
@@ -872,6 +1231,50 @@ export const EditDepotEntry = ({
             target="_blank"
             rel="noopener noreferrer"
             alt="تصویر کالا"
+          />
+        </Box>
+      </MyModal>
+      <MyModal
+        modalHeader="تصویر خودروی حامل کالا"
+        onClose={() => setShowCarImageModal(false)}
+        isOpen={showCarImageModal}
+        size={isDesktop ? "xl" : "xs"}
+      >
+        <Box
+          overflow="auto"
+          borderRadius="6px"
+          borderColor="orange"
+          borderWidth="1px"
+          boxSize={isDesktop ? "lg" : "2xs"}
+        >
+          <Image
+            src={carImagePreview}
+            objectFit="cover"
+            target="_blank"
+            rel="noopener noreferrer"
+            alt="تصویر خودرو"
+          />
+        </Box>
+      </MyModal>
+      <MyModal
+        modalHeader="تصویر امضای راننده"
+        onClose={() => setShowDriverImageModal(false)}
+        isOpen={showDriverImageModal}
+        size={isDesktop ? "xl" : "xs"}
+      >
+        <Box
+          overflow="auto"
+          borderRadius="6px"
+          borderColor="orange"
+          borderWidth="1px"
+          boxSize={isDesktop ? "lg" : "2xs"}
+        >
+          <Image
+            src={driverImagePreview}
+            objectFit="cover"
+            target="_blank"
+            rel="noopener noreferrer"
+            alt="تصویر امضا"
           />
         </Box>
       </MyModal>
