@@ -9,6 +9,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  GridItem,
   HStack,
   Select,
   SimpleGrid,
@@ -305,7 +306,6 @@ export const NewUser = ({ isDesktop }) => {
                   />
                 </HStack>
               </FormControl>
-
               <FormControl isRequired>
                 <HStack>
                   <FormLabel hidden={!isDesktop} width="170px">
@@ -321,7 +321,6 @@ export const NewUser = ({ isDesktop }) => {
                   />
                 </HStack>
               </FormControl>
-
               <FormControl isRequired>
                 <HStack>
                   <FormLabel hidden={!isDesktop} width="170px">
@@ -338,7 +337,6 @@ export const NewUser = ({ isDesktop }) => {
                   />
                 </HStack>
               </FormControl>
-
               <FormControl isRequired>
                 <HStack>
                   <FormLabel hidden={!isDesktop} width="170px">
@@ -356,19 +354,47 @@ export const NewUser = ({ isDesktop }) => {
                 </HStack>
               </FormControl>
 
-              <FormControl>
-                <HStack>
-                  <FormLabel htmlFor="twoFactorAuthntication" width="140px">
-                    ورود دو مرحله ای
-                  </FormLabel>
-                  <Switch
-                    ml="auto"
-                    id="twoFactorAuthntication"
-                    value={formData.twoFactorAuthntication}
-                    onChange={handleChangeFormData}
-                  />
-                </HStack>
-              </FormControl>
+              <Flex direction="column">
+                <FormControl>
+                  <HStack>
+                    <FormLabel htmlFor="twoFactorAuthntication" width="140px">
+                      ورود دو مرحله ای
+                    </FormLabel>
+                    <Switch
+                      ml="auto"
+                      id="twoFactorAuthntication"
+                      value={formData.twoFactorAuthntication}
+                      onChange={handleChangeFormData}
+                    />
+                  </HStack>
+                </FormControl>
+                <FormControl>
+                  <HStack>
+                    <FormLabel htmlFor="isActive" width="140px">
+                      کاربر فعال
+                    </FormLabel>
+                    <Switch
+                      ml="auto"
+                      id="isActive"
+                      value={formData.isUserActive}
+                      onChange={handleChangeFormData}
+                    />
+                  </HStack>
+                </FormControl>
+                <FormControl>
+                  <HStack>
+                    <FormLabel htmlFor="changePass" width="140px">
+                      تغییر رمز در ورود بعدی
+                    </FormLabel>
+                    <Switch
+                      ml="auto"
+                      id="changePass"
+                      value={formData.mustChangePassword}
+                      onChange={handleChangeFormData}
+                    />
+                  </HStack>
+                </FormControl>
+              </Flex>
             </SimpleGrid>
             <Button
               leftIcon={<UserPlus />}
