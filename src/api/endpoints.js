@@ -20,6 +20,8 @@ const endpoints = {
     setLocation: "/users/location/",
     listAll: (page, limit, search) =>
       `/users?page=${page}&limit=${limit}&search=${search}`,
+    listAllProfiles: (page, limit, search) =>
+      `/users/profiles?page=${page}&limit=${limit}&search=${search}`,
     findByMobile: (mobile) => `/users/forgetpassword/${mobile}`,
     findByToken: (token) => `/users/token/${token}`,
     findById: (id) => `/users/profile/${id}`,

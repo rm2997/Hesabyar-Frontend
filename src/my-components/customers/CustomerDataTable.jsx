@@ -99,7 +99,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
   };
 
   const findCustomerFromList = (id) => {
-    customersData.find((c) => (c.id == id ? c : null));
+    return customersData.find((c) => c.id == id);
   };
 
   const handleEditCustomer = (id) => {
@@ -171,7 +171,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
                       setDialogGears({
                         title: "ویرایش مشتری",
                         text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
-                        callBack: () => handleEditCustomer(row.id),
+                        callBack: () => {},
                       });
                       onOpen();
                     }}
@@ -186,9 +186,9 @@ export const CustomerDataTable = ({ isDesktop }) => {
                   <CardBody p={2}>
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
-                        <Text fontFamily="iransans">نقش :</Text>
+                        <Text fontFamily="iransans">نوع :</Text>
                         <Text fontFamily="iransans" mr="auto">
-                          {}
+                          {row?.customerType}
                         </Text>
                       </HStack>
                       <Divider />
@@ -294,7 +294,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
               AlertMessage={dialogGears.text}
             />
             <MyModal
-              size="2xl"
+              size="full"
               modalHeader={dialogGears.title}
               onClose={onClose}
               isOpen={isOpen}
@@ -302,6 +302,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
               <EditCustomer
                 id={selectedID}
                 isDesktop={isDesktop}
+                customer={findCustomerFromList(selectedID)}
                 onClose={onClose}
                 onUpdate={updateCustomerInList}
               />

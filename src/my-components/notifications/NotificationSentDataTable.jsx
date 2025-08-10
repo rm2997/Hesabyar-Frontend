@@ -149,7 +149,7 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
       <Flex
         filter={loading ? "blur(10px)" : ""}
         direction="column"
-        height="100vh"
+        height="80vh"
       >
         <SearchBar
           search={search}
@@ -158,7 +158,7 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
           loadData={loadData}
           userInfo="جستجوی اعلان ارسالی"
         />
-        <Box flex="1" overflowY="auto" p={5}>
+        <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
               {userData.map((row) => (
@@ -271,7 +271,10 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
               isOpen={isOpen}
               onClose={onClose}
             >
-              <ShowUserNotification id={selectedID} notifications={userData} />
+              <ShowUserNotification
+                id={selectedID}
+                notification={userData.find((n) => n.id == selectedID)}
+              />
             </MyModal>
             <MyAlert
               AlertHeader={dialogGears.title}

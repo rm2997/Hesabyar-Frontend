@@ -11,30 +11,30 @@ import { useEffect, useState } from "react";
 import { MyInputBox } from "../MyInputBox";
 import { GetAllUsers } from "../../api/services/userService";
 
-export const ShowUserNotification = ({ id, notifications, onClose }) => {
+export const ShowUserNotification = ({ id, notification }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const [usersData, setUsersData] = useState([]);
 
-  useEffect(() => {
-    const fetchUsersData = async () => {
-      setLoading(true);
-      const users = await GetAllUsers();
-      if (!users.success) {
-        console.log(users.error);
-        setLoading(false);
-        return;
-      }
-      setUsersData(users.data);
-      setLoading(false);
-    };
+  // useEffect(() => {
+  //   const fetchUsersData = async () => {
+  //     setLoading(true);
+  //     const users = await GetAllUsers();
+  //     if (!users.success) {
+  //       console.log(users.error);
+  //       setLoading(false);
+  //       return;
+  //     }
+  //     setUsersData(users.data);
+  //     setLoading(false);
+  //   };
 
-    fetchUsersData();
-  }, [id]);
+  //   fetchUsersData();
+  // }, [id]);
 
   useEffect(() => {
     const loadData = async () => {
-      const notification = notifications.find((n) => n.id == id);
+      // const notification = notifications.find((n) => n.id == id);
 
       setFormData(notification);
     };

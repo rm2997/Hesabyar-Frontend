@@ -206,7 +206,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
       <Flex
         filter={loading ? "blur(10px)" : ""}
         direction="column"
-        height="100vh"
+        height="80vh"
       >
         <SearchBar
           search={search}
@@ -301,7 +301,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                           onClick={() => handleMarkAsUnreadNotification(row.id)}
                         >
                           <Tooltip label="به عنوان خوانده نشده مارک کن">
-                            <Icon w={6} h={6} as={EyeClosed} />
+                            <Icon w={6} h={6} as={Mail} />
                           </Tooltip>
                         </Link>
                       ) : (
@@ -313,7 +313,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                           onClick={() => handleMarkAsReadNotification(row.id)}
                         >
                           <Tooltip label="به عنوان خوانده شده مارک کن">
-                            <Icon w={6} h={6} as={Eye} />
+                            <Icon w={6} h={6} as={MailOpen} />
                           </Tooltip>
                         </Link>
                       )}
@@ -358,43 +358,30 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                 </Card>
               ))}
             </SimpleGrid>
-
-            <MyModal
-              size="md"
-              modalHeader={dialogGears.title}
-              isOpen={isOpen}
-              onClose={onClose}
-            >
-              <ShowUserNotification
-                id={selectedID}
-                notifications={userMessages}
-              />
-            </MyModal>
-            <MyAlert
-              AlertHeader={dialogGears.title}
-              AlertMessage={dialogGears.text}
-              isOpen={isDialogOpen}
-              onClose={handleDialogClose}
-            />
           </Flex>
         </Box>
-
+        <MyModal
+          size="md"
+          modalHeader={dialogGears.title}
+          isOpen={isOpen}
+          onClose={onClose}
+        >
+          <ShowUserNotification
+            id={selectedID}
+            notification={userMessages.find((n) => n.id == selectedID)}
+          />
+        </MyModal>
+        <MyAlert
+          AlertHeader={dialogGears.title}
+          AlertMessage={dialogGears.text}
+          isOpen={isDialogOpen}
+          onClose={handleDialogClose}
+        />
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={(page) => setCurrentPage(page)}
         />
-
-        {loading && (
-          <AbsoluteCenter>
-            <Spinner
-              size="xl"
-              color="red.500"
-              emptyColor="gray.300"
-              thickness="4px"
-            />
-          </AbsoluteCenter>
-        )}
       </Flex>
       {loading && <MyLoading />}
     </Box>

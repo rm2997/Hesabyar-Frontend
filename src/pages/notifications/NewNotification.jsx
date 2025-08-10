@@ -22,7 +22,7 @@ import { CreateNotification } from "../../api/services/notificationService";
 import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../../my-components/MyLoading";
-import { GetAllUsers } from "../../api/services/userService";
+import { GetAllProfiles, GetAllUsers } from "../../api/services/userService";
 import { useNotification } from "../../contexts/NotificationContext";
 
 export const NewNotification = ({ isDesktop, user }) => {
@@ -42,13 +42,13 @@ export const NewNotification = ({ isDesktop, user }) => {
   useEffect(() => {
     const fetchUsersData = async () => {
       setLoading(true);
-      const res = await GetAllUsers();
+      const res = await GetAllProfiles();
       if (!res.success) {
         console.log(res.error);
         setLoading(false);
         return;
       }
-      const tmpUsers = res?.data?.items?.filter((u) => u.id != user.sub);
+      const tmpUsers = res?.data?.items?.filter((u) => u.id != user?.sub);
 
       setUsersData(tmpUsers);
       setLoading(false);
@@ -237,7 +237,6 @@ export const NewNotification = ({ isDesktop, user }) => {
             </Button>
           </Flex>
         </CardBody>
-        <CardFooter></CardFooter>
       </Card>
       {loading && <MyLoading />}
     </Box>

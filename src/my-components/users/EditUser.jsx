@@ -121,14 +121,14 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
                 <Select
                   placeholder="یک نقش انتخاب کنید"
                   dir="ltr"
-                  value={formData.role}
+                  value={formData?.role}
                   name="role"
                   maxW="900px"
                   onChange={handleChangeFormData}
                 >
                   {UserRoles.map((r) => (
-                    <option key={r.key} value={r.value}>
-                      {r.value}
+                    <option key={r?.key} value={r?.value}>
+                      {r?.value}
                     </option>
                   ))}
                 </Select>
@@ -144,7 +144,7 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
                   name="userfname"
                   title="نام"
                   size={30}
-                  value={formData.userfname}
+                  value={formData?.userfname}
                   onChange={handleChangeFormData}
                 />
               </HStack>

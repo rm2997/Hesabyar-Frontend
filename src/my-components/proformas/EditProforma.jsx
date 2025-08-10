@@ -683,8 +683,45 @@ export const EditProforma = ({
               value={formData.description}
               onChange={handleChangeFormData}
             />
-
-            <Flex alignItems="center" mt={3} dir="rtl">
+            <Flex
+              columnGap={2}
+              hidden={!formData?.approvedFile}
+              mt={3}
+              alignItems={isDesktop ? "" : "center"}
+              dir="rtl"
+              direction="column"
+              borderWidth={1}
+              borderColor="gray.100"
+              borderStyle="dashed"
+              borderRadius="md"
+              p={2}
+              fontFamily="iransans"
+              fontSize="13px"
+            >
+              <Text bg="gray.100" textAlign="center" fontSize="17px" w="full">
+                مدارک تایید پیش فاکتور
+              </Text>
+              <Flex columnGap={2} p={2}>
+                <Box
+                  onClick={() => setShowModal(true)}
+                  _hover={{ cursor: "pointer", borderColor: "orange" }}
+                  overflow="hidden"
+                  borderRadius="6px"
+                  borderWidth="1px"
+                  hidden={approvedFile == null || approvedFile == ""}
+                  boxSize={"150px"}
+                >
+                  <Image
+                    src={approvedFile ? approvedFile : ""}
+                    objectFit="cover"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    alt="تاییدیه"
+                  />
+                </Box>
+              </Flex>
+            </Flex>
+            {/* <Flex alignItems="center" mt={3} dir="rtl">
               <FormLabel> تصویر</FormLabel>
               {formData.approvedFile && (
                 <Box
@@ -705,7 +742,7 @@ export const EditProforma = ({
                   />
                 </Box>
               )}
-            </Flex>
+            </Flex> */}
 
             <Button
               colorScheme="blue"
@@ -722,18 +759,6 @@ export const EditProforma = ({
             </Button>
           </Flex>
         </CardBody>
-        <CardFooter></CardFooter>
-        <SearchCustomer
-          searchItems={handleSearchCustomers}
-          isOpen={showSearchCustomer}
-          onClose={() => setShowSearchCustomer(false)}
-          onSelect={(g) => {
-            handleChangeFormData({
-              target: { name: "customer", value: g },
-            });
-            setShowSearchCustomer(false);
-          }}
-        />
       </Card>
       <MyModal
         modalHeader=" فایل تاییدیه مشتری"

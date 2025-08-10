@@ -29,6 +29,13 @@ export const GetAllUsers = async (page = 1, limit = 10, search = "") => {
   });
 };
 
+export const GetAllProfiles = async (page = 1, limit = 10, search = "") => {
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.user.listAllProfiles(page, limit, search),
+  });
+};
+
 export const GetUserByUserid = async (id) => {
   return await apiRequest({
     method: "GET",

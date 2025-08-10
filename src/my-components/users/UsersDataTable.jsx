@@ -207,9 +207,8 @@ export const UsersDataTable = ({ isDesktop }) => {
       <Flex
         direction="column"
         filter={loading ? "blur(10px)" : ""}
-        minH={isDesktop ? "76vh" : "73vh"}
+        minH={isDesktop ? "73vh" : "73vh"}
         overflowY="auto"
-        m={1}
       >
         <SearchBar
           isDesktop={isDesktop}
@@ -229,6 +228,7 @@ export const UsersDataTable = ({ isDesktop }) => {
                   _hover={{ borderColor: "orange" }}
                 >
                   <CardHeader
+                    p={2}
                     bg="green.500"
                     borderTopRadius={5}
                     color="white"
@@ -246,7 +246,7 @@ export const UsersDataTable = ({ isDesktop }) => {
                       <Text mr="auto">{row.username}</Text>
                     </HStack>
                   </CardHeader>
-                  <CardBody>
+                  <CardBody p={2}>
                     <VStack align={"stretch"} spacing={1}>
                       <HStack>
                         <Text>نام :</Text>
@@ -309,7 +309,7 @@ export const UsersDataTable = ({ isDesktop }) => {
                       </HStack>
                     </VStack>
                   </CardBody>
-                  <CardFooter borderBottomRadius={5} bg="gray.200">
+                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
                     <Stack
                       direction={["row"]}
                       spacing={2}
