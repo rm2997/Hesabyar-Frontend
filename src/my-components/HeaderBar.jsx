@@ -13,11 +13,10 @@ import {
   Divider,
   Image,
   Button,
-  useToast,
 } from "@chakra-ui/react";
 import {
   Bell,
-  MapPin,
+  Flashlight,
   MapPinCheck,
   MenuIcon,
   PencilLine,
@@ -27,10 +26,9 @@ import {
   SquareEqual,
   User2,
   Users,
+  Zap,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useLocation } from "../contexts/LocationContext";
-import { UpdateUserLocation } from "../api/services/userService";
 
 export const HeaderBar = ({
   isDesktop,
@@ -42,32 +40,7 @@ export const HeaderBar = ({
   user,
 }) => {
   const navigate = useNavigate();
-  const toast = useToast();
-  const { location, loadLocation } = useLocation();
 
-  const saveLocation = async () => {
-    await loadLocation();
-    const response = await UpdateUserLocation({
-      location: location.googleMapLink,
-    });
-    if (!response.success) {
-      return;
-    }
-    toast({
-      title: "توجه",
-      description:
-        location.googleMapLink == "Denied"
-          ? "دسترسی به موقعیت مکانی داده نشد"
-          : "آخرین موقعیت مکانی ثبت شد",
-      status: location.googleMapLink == "Denied" ? "warning" : "success",
-      duration: 3000,
-      isClosable: true,
-      position: "bottom-left",
-      variant: "subtle",
-      colorScheme: "blue",
-      icon: <MapPin />,
-    });
-  };
   const handleSideBarWith = () => {
     if (sidebarWidth === 300) setSidebarWidth(100);
     else setSidebarWidth(300);
@@ -143,6 +116,15 @@ export const HeaderBar = ({
       )}
 
       <Flex gap={2} align="center">
+        <Box hidden={!isDesktop}>
+          <IconButton
+            variant=""
+            icon={<Zap />}
+            title="دسترسی سریع"
+            onClick={() => OnItemClick("easyAccessPage")}
+            _hover={{ color: "orange" }}
+          />
+        </Box>
         <Box position="relative">
           <IconButton
             _hover={{ color: "orange" }}
@@ -220,7 +202,10 @@ export const HeaderBar = ({
               </HStack>
             </MenuItem>
 
-            <MenuItem color="green.400" onClick={() => saveLocation()}>
+            <MenuItem
+              color="green.400"
+              onClick={() => OnItemClick("saveLocation")}
+            >
               <HStack spacing={3}>
                 <MapPinCheck color="indigo" />
                 <Text color="black">ثبت لوکیشن</Text>

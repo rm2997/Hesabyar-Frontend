@@ -41,8 +41,8 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       borderTopColor="gray.400"
       borderTopWidth="1px"
     >
-      <Flex justify="center" align="center">
-        <Wrap hidden={totalPages < 2} spacing={1} justify="center" mt={4}>
+      <Flex hidden={totalPages < 2} justify="center" align="center">
+        <Wrap spacing={1} justify="center" mt={4}>
           <WrapItem>
             <Button
               size={buttonSize}

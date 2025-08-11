@@ -133,7 +133,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
         m={1}
         filter={loading ? "blur(10px)" : ""}
         overflowY="auto"
-        minH={isDesktop ? "84vh" : "75vh"}
+        minH={isDesktop ? "74vh" : "75vh"}
       >
         <SearchBar
           search={search}

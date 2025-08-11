@@ -19,6 +19,7 @@ import { useLocation } from "../contexts/LocationContext";
 import { UpdateUserLocation } from "../api/services/userService";
 import { UserContext } from "../contexts/UserContext";
 import { MapPin } from "lucide-react";
+import { EasyAccessBar } from "../my-components/EasyAccess/EasyAccessBar";
 
 export const MyHome = () => {
   const [sidebarWidth, setSidebarWidth] = useState(300);
@@ -108,8 +109,13 @@ export const MyHome = () => {
           </Drawer>
         )}
 
-        <MainContents isDesktop={isDesktop} activeContent={activeContent} />
+        <MainContents
+          isDesktop={isDesktop}
+          onItemClick={setActiveContent}
+          activeContent={activeContent}
+        />
       </Flex>
+      <EasyAccessBar hidden={isDesktop} onItemClick={setActiveContent} />
     </Flex>
   );
 };

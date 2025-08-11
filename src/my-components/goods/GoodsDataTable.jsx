@@ -264,13 +264,12 @@ export const GoodsDataTable = ({ isDesktop }) => {
             </SimpleGrid>
           </Flex>
         </Box>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </Flex>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={(page) => setCurrentPage(page)}
-      />
 
       <MyModal
         size="md"

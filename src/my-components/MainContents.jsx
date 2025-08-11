@@ -1,5 +1,5 @@
 // components/MainContent.jsx
-import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 
 import { NewProforma } from "../pages/proformas/NewProforma";
 import { useContext, useEffect, useState } from "react";
@@ -31,6 +31,11 @@ import { DepotEntryList } from "./depot/DepotEntryList";
 import { NewDepotExit } from "../pages/depot/NewDepotExit";
 import { DepotExitList } from "./depot/DepotExitList";
 import { WareHouseRequests } from "../pages/requests/WareHouseRequests";
+import { EasyAccessBar } from "./EasyAccess/EasyAccessBar";
+import { EasyAccessPage } from "./EasyAccess/EasyAccessPage";
+import { useLocation } from "../contexts/LocationContext";
+import { MapPin } from "lucide-react";
+import { UpdateUserLocation } from "../api/services/userService";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -65,14 +70,19 @@ const validContents = [
   { name: "acceptRequest", value: "درخواست های تایید" },
   { name: "logout", value: "خروج" },
   { name: "َchangePassword", value: "تغییر رمز عبور" },
+  { name: "easyAccessPage", value: "دسترسی سریع" },
+  { name: "saveLocation", value: "" },
 ];
 
-export const MainContents = ({ activeContent, isDesktop }) => {
+export const MainContents = ({ onItemClick, activeContent, isDesktop }) => {
   const [pageTitle, setPageTitle] = useState("");
   const [shouldRender, setShouldRender] = useState(null);
   const [sessionExpired, setSessionExpired] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
+  const toast = useToast();
+
+  const { location, loadLocation } = useLocation();
 
   useEffect(() => {
     const findActiveContent = (item) => {
@@ -84,6 +94,29 @@ export const MainContents = ({ activeContent, isDesktop }) => {
       setShouldRender(element);
     };
 
+    const saveLocation = async () => {
+      await loadLocation();
+      const response = await UpdateUserLocation({
+        location: location.googleMapLink,
+      });
+      if (!response.success) {
+        return;
+      }
+      toast({
+        title: "توجه",
+        description:
+          location.googleMapLink == "Denied"
+            ? "دسترسی به موقعیت مکانی داده نشد"
+            : "آخرین موقعیت مکانی ثبت شد",
+        status: location.googleMapLink == "Denied" ? "warning" : "success",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-left",
+        variant: "subtle",
+        colorScheme: "blue",
+        icon: <MapPin />,
+      });
+    };
     const SetActiveElement = (index) => {
       switch (index) {
         case "newProforma":
@@ -141,6 +174,13 @@ export const MainContents = ({ activeContent, isDesktop }) => {
           return <ChangePasswordByUser isDesktop={isDesktop} />;
         case "acceptRequest":
           return <Requests isDesktop={isDesktop} />;
+        case "easyAccessPage":
+          return (
+            <EasyAccessPage isDesktop={isDesktop} onItemClick={onItemClick} />
+          );
+        case "saveLocation":
+          saveLocation();
+          return;
         case "logout":
           return <Logout />;
         default:
@@ -190,14 +230,7 @@ export const MainContents = ({ activeContent, isDesktop }) => {
     );
   }
   return (
-    <Flex w="98%" mx={1} bg="#efefef" direction="column" minHh="100%">
-      {/* <Card w="98%" m={1} bg="#efefef"> */}
-      {/* <CardHeader
-        bg="#0A9DBB"
-        borderBottomColor="gray.100"
-        borderBottomWidth="1px"
-        color="white"
-      > */}
+    <Flex w="98%" mx={1} bg="#efefef" direction="column">
       <Box
         borderColor="gray.500"
         borderTopWidth={1}
@@ -207,19 +240,16 @@ export const MainContents = ({ activeContent, isDesktop }) => {
         alignContent="center"
         bg="#373c50"
         color="white"
-        p={1}
+        px={1}
       >
         <Text h="38px" fontFamily="Yekan" mx={3} fontSize={"lg"}>
           {pageTitle}
         </Text>
       </Box>
-      {/* </CardHeader> */}
-      {/* <CardBody overflow="scroll" color="gray.200"> */}
-      <Box display="flex" flexDirection="column" overflowY="auto" p={1}>
+
+      <Box display="flex" flexDirection="column" overflowY="auto">
         <Box overflowY="auto">{shouldRender}</Box>
       </Box>
-
-      {/* <CardFooter bg="#dedcdd"></CardFooter> */}
     </Flex>
   );
 };
