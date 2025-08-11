@@ -555,6 +555,10 @@ export const EditCustomer = ({
                         نام مشتری
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerFName?.trim().length < 2 ||
+                          !isNaN(Number(formData?.customerFName))
+                        }
                         icon={IdCard}
                         name="customerFName"
                         title="نام"
@@ -573,6 +577,10 @@ export const EditCustomer = ({
                         نام خانوادگی
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerLName?.trim().length < 2 ||
+                          !isNaN(Number(formData?.customerLName))
+                        }
                         icon={IdCard}
                         name="customerLName"
                         title="نام خانوادگی"
@@ -589,6 +597,17 @@ export const EditCustomer = ({
                           : "کد ملی"}
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerType == "حقوقی"
+                            ? formData?.customerNationalCode?.trim().length <
+                                4 ||
+                              isNaN(Number(formData?.customerNationalCode))
+                            : formData?.customerNationalCode?.trim().length >
+                                0 &&
+                              (formData?.customerNationalCode?.trim().length !=
+                                10 ||
+                                isNaN(Number(formData?.customerNationalCode)))
+                        }
                         maxLength="10"
                         icon={IdCard}
                         name="customerNationalCode"
@@ -608,6 +627,11 @@ export const EditCustomer = ({
                         شماره اقتصادی
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerEconomicCode?.trim().length > 0 &&
+                          (formData?.customerEconomicCode?.trim().length < 5 ||
+                            isNaN(Number(formData?.customerEconomicCode)))
+                        }
                         maxLength="10"
                         icon={IdCard}
                         name="customerEconomicCode"
@@ -759,6 +783,11 @@ export const EditCustomer = ({
                         شماره تلفن
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerBase == "ارتباط با تلفن" &&
+                          (formData?.customerPhone?.trim().length < 5 ||
+                            isNaN(Number(formData?.customerPhone)))
+                        }
                         icon={Phone}
                         name="customerPhone"
                         title="شماره تلفن"
@@ -774,6 +803,10 @@ export const EditCustomer = ({
                         شماره موبایل
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerMobile?.trim().length != 11 ||
+                          isNaN(Number(formData?.customerMobile))
+                        }
                         icon={Smartphone}
                         name="customerMobile"
                         title="شماره موبایل"
@@ -809,6 +842,11 @@ export const EditCustomer = ({
                         کد پستی
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerPostalCode?.trim().length > 0 &&
+                          (formData?.customerPostalCode?.trim().length != 10 ||
+                            isNaN(Number(formData?.customerPostalCode)))
+                        }
                         icon={Mailbox}
                         name="customerPostalCode"
                         title="کد پستی"
@@ -852,6 +890,11 @@ export const EditCustomer = ({
                         آدرس
                       </FormLabel>
                       <Textarea
+                        isInvalid={
+                          formData?.customerBase == "ارتباط با آدرس"
+                            ? formData?.customerAddress?.trim().length < 5
+                            : ""
+                        }
                         placeholder="آدرس"
                         name="customerAddress"
                         resize="horizontal"

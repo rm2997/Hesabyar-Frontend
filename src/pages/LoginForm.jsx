@@ -384,7 +384,7 @@ export const LoginForm = () => {
               fontSize="2xs"
               color="whiteAlpha.600"
             >
-              نسخه 1.0.0.0 *** 19 مرداد 1404
+              نسخه 1.0.0.0 *** 20 مرداد 1404
             </Text>
           </Flex>
           <Flex

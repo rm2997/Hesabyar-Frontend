@@ -146,7 +146,7 @@ export const DepotExitRequests = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Flex minH="60vh" filter={loading ? "blur(10px)" : ""} direction="column">
+      <Flex minH="77vh" filter={loading ? "blur(10px)" : ""} direction="column">
         <SearchBar
           search={search}
           setSearch={setSearch}
@@ -288,33 +288,32 @@ export const DepotExitRequests = ({ isDesktop }) => {
             </SimpleGrid>
           </Flex>
         </Box>
-
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
-
-        <MyModal
-          modalHeader="تاییدیه مسئول انبار"
-          isOpen={isOpen}
-          onClose={onClose}
-        >
-          <EditDepotExit
-            isDesktop={isDesktop}
-            id={selectedID}
-            closeMe={onClose}
-            onUpdate={updateDepotEntryInList}
-            depot={findDepotEntryFromList(selectedID)}
-          />
-        </MyModal>
-        <MyAlert
-          AlertHeader={dialogGears.title}
-          AlertMessage={dialogGears.text}
-          isOpen={isDialogOpen}
-          onClose={handleDialogClose}
-        />
       </Flex>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
+
+      <MyModal
+        modalHeader="تاییدیه مسئول انبار"
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <EditDepotExit
+          isDesktop={isDesktop}
+          id={selectedID}
+          closeMe={onClose}
+          onUpdate={updateDepotEntryInList}
+          depot={findDepotEntryFromList(selectedID)}
+        />
+      </MyModal>
+      <MyAlert
+        AlertHeader={dialogGears.title}
+        AlertMessage={dialogGears.text}
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+      />
       {loading && <MyLoading />}
     </Box>
   );

@@ -187,7 +187,7 @@ export const InvoiceRequests = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Flex direction="column" minH="72vh" filter={loading ? "blur(10px)" : ""}>
+      <Flex direction="column" minH="77vh" filter={loading ? "blur(10px)" : ""}>
         <SearchBar
           zIndex="2"
           yTop="0px"
@@ -375,13 +375,12 @@ export const InvoiceRequests = ({ isDesktop }) => {
             ))}
           </SimpleGrid>
         </Box>
-
-        <Pagination
-          currentPage={currentInvoicePage}
-          totalPages={totalInvoicePages}
-          onPageChange={(page) => setCurrentInvoicePage(page)}
-        />
       </Flex>
+      <Pagination
+        currentPage={currentInvoicePage}
+        totalPages={totalInvoicePages}
+        onPageChange={(page) => setCurrentInvoicePage(page)}
+      />
       <MyAlert
         onClose={handleDialogClose}
         isOpen={isDialogOpen}

@@ -269,7 +269,7 @@ export const NewCustomer = ({ isDesktop }) => {
                         dir="ltr"
                         name="customerBase"
                         placeholder="نوع ارتباط را انتخاب کنید"
-                        value={formData.customerBase}
+                        value={formData?.customerBase}
                         onChange={handleChangeFormData}
                       >
                         {CustomerParties.map((p) => (
@@ -339,6 +339,10 @@ export const NewCustomer = ({ isDesktop }) => {
                         نام مشتری
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerFName?.trim().length < 2 ||
+                          !isNaN(Number(formData?.customerFName))
+                        }
                         icon={IdCard}
                         name="customerFName"
                         title="نام"
@@ -357,6 +361,10 @@ export const NewCustomer = ({ isDesktop }) => {
                         نام خانوادگی
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerLName?.trim().length < 2 ||
+                          !isNaN(Number(formData?.customerLName))
+                        }
                         icon={IdCard}
                         name="customerLName"
                         title="نام خانوادگی"
@@ -373,8 +381,18 @@ export const NewCustomer = ({ isDesktop }) => {
                           : "کد ملی"}
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerType == "حقوقی"
+                            ? formData?.customerNationalCode?.trim().length <
+                                4 ||
+                              isNaN(Number(formData?.customerNationalCode))
+                            : formData?.customerNationalCode?.trim().length >
+                                0 &&
+                              (formData?.customerNationalCode?.trim().length !=
+                                10 ||
+                                isNaN(Number(formData?.customerNationalCode)))
+                        }
                         maxLength="10"
-                        type="number"
                         icon={IdCard}
                         name="customerNationalCode"
                         title={
@@ -393,8 +411,12 @@ export const NewCustomer = ({ isDesktop }) => {
                         شماره اقتصادی
                       </FormLabel>
                       <MyInputBox
+                        isInvalid={
+                          formData?.customerEconomicCode?.trim().length > 0 &&
+                          (formData?.customerEconomicCode?.trim().length < 5 ||
+                            isNaN(Number(formData?.customerEconomicCode)))
+                        }
                         maxLength="10"
-                        type="number"
                         icon={IdCard}
                         name="customerEconomicCode"
                         title="شماره اقتصادی"
@@ -431,32 +453,63 @@ export const NewCustomer = ({ isDesktop }) => {
                     <FormLabel htmlFor="customer">مشتری</FormLabel>
                     <Switch
                       defaultChecked
-                      isChecked={formData.isCustomer}
+                      isChecked={formData?.isCustomer}
                       id="customer"
                       title="مشتری"
                       name="isCustomer"
-                      value={formData.isCustomer}
+                      onChange={(e) =>
+                        handleChangeFormData({
+                          target: {
+                            name: "isCustomer",
+                            value: e.target.checked,
+                          },
+                        })
+                      }
                     />
                     <FormLabel htmlFor="provider">تامین کننده</FormLabel>
                     <Switch
                       id="provider"
                       title="تامین کننده"
-                      value={formData.isProvider}
+                      isChecked={formData.isProvider}
                       name="isProvider"
+                      onChange={(e) =>
+                        handleChangeFormData({
+                          target: {
+                            name: "isProvider",
+                            value: e.target.checked,
+                          },
+                        })
+                      }
                     />
                     <FormLabel htmlFor="broker">واسطه</FormLabel>
                     <Switch
                       id="broker"
                       title="واسطه"
-                      value={formData.isBroker}
+                      isChecked={formData.isBroker}
                       name="isBroker"
+                      onChange={(e) =>
+                        handleChangeFormData({
+                          target: {
+                            name: "isBroker",
+                            value: e.target.checked,
+                          },
+                        })
+                      }
                     />
                     <FormLabel htmlFor="buyer"> مامور خرید</FormLabel>
                     <Switch
                       id="buyer"
                       title="مامور خرید"
-                      value={formData.isBuyerAgent}
+                      isChecked={formData.isBuyerAgent}
                       name="isBuyerAgent"
+                      onChange={(e) =>
+                        handleChangeFormData({
+                          target: {
+                            name: "isBuyerAgent",
+                            value: e.target.checked,
+                          },
+                        })
+                      }
                     />
                   </Flex>
                 </Flex>
@@ -514,7 +567,11 @@ export const NewCustomer = ({ isDesktop }) => {
                         شماره تلفن
                       </FormLabel>
                       <MyInputBox
-                        type="number"
+                        isInvalid={
+                          formData?.customerBase == "ارتباط با تلفن" &&
+                          (formData?.customerPhone?.trim().length < 5 ||
+                            isNaN(Number(formData?.customerPhone)))
+                        }
                         icon={Phone}
                         name="customerPhone"
                         title="شماره تلفن"
@@ -530,7 +587,10 @@ export const NewCustomer = ({ isDesktop }) => {
                         شماره موبایل
                       </FormLabel>
                       <MyInputBox
-                        type="number"
+                        isInvalid={
+                          formData?.customerMobile?.trim().length != 11 ||
+                          isNaN(Number(formData?.customerMobile))
+                        }
                         icon={Smartphone}
                         name="customerMobile"
                         title="شماره موبایل"
@@ -566,7 +626,11 @@ export const NewCustomer = ({ isDesktop }) => {
                         کد پستی
                       </FormLabel>
                       <MyInputBox
-                        type="number"
+                        isInvalid={
+                          formData?.customerPostalCode?.trim().length > 0 &&
+                          (formData?.customerPostalCode?.trim().length != 10 ||
+                            isNaN(Number(formData?.customerPostalCode)))
+                        }
                         icon={Mailbox}
                         name="customerPostalCode"
                         title="کد پستی"
@@ -610,6 +674,11 @@ export const NewCustomer = ({ isDesktop }) => {
                         آدرس
                       </FormLabel>
                       <Textarea
+                        isInvalid={
+                          formData?.customerBase == "ارتباط با آدرس"
+                            ? formData?.customerAddress?.trim().length < 5
+                            : ""
+                        }
                         placeholder="آدرس"
                         name="customerAddress"
                         resize="horizontal"

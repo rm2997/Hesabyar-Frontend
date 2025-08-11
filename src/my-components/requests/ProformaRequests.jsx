@@ -46,6 +46,8 @@ import { MyAlert } from "../MyAlert";
 import { MyModal } from "../MyModal";
 import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
+import { MyProformaStepper } from "../MyProformaSteper";
+import { MyLoading } from "../MyLoading";
 
 export const ProformaRequests = ({ isDesktop }) => {
   const [currentProformaPage, setCurrentProformaPage] = useState(1);
@@ -183,7 +185,7 @@ export const ProformaRequests = ({ isDesktop }) => {
 
   return (
     <Box>
-      <Flex direction="column" minH="72vh" filter={loading ? "blur(10px)" : ""}>
+      <Flex direction="column" minH="77vh" filter={loading ? "blur(10px)" : ""}>
         <SearchBar
           yTop="0px"
           search={proformaSearch}
@@ -193,9 +195,10 @@ export const ProformaRequests = ({ isDesktop }) => {
           userInfo="جستجوی پیش فاکتور"
         />
         <Box flex="1" overflowY="auto" p={1}>
-          <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 4 }} spacing={3}>
-            {proformas.map((row) => (
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={3}>
+            {proformas?.map((row) => (
               <Card
+                maxW="270px"
                 _hover={{
                   cursor: "",
                   borderColor: "green.500",
@@ -204,6 +207,7 @@ export const ProformaRequests = ({ isDesktop }) => {
                 borderColor="gray.300"
               >
                 <CardHeader
+                  p={2}
                   borderTopRadius={5}
                   bg={
                     !row.isConverted
@@ -218,11 +222,8 @@ export const ProformaRequests = ({ isDesktop }) => {
                     handleShowProformaPicture(row.id);
                   }}
                 >
-                  <HStack>
-                    <Text fontFamily="IranSans" fontSize="md">
-                      شماره :{row.id}
-                    </Text>
-                    <Box mr="auto">
+                  <Text fontFamily="IranSans">پیش فاکتور شماره :{row?.id}</Text>
+                  {/* <Box mr="auto">
                       <HStack>
                         {row.isConverted ? (
                           <Tooltip label="فاکتور شده">
@@ -264,28 +265,34 @@ export const ProformaRequests = ({ isDesktop }) => {
                           </Tooltip>
                         )}
                       </HStack>
-                    </Box>
-                  </HStack>
+                    </Box> */}
                 </CardHeader>
-                <CardBody>
-                  <VStack spacing={2} align="stretch">
+                <CardBody p={2}>
+                  <MyProformaStepper data={row} />
+                  <VStack
+                    fontFamily="IranSans"
+                    fontSize="10px"
+                    p={1}
+                    spacing={2}
+                    align="stretch"
+                  >
                     <HStack>
                       <Text>عنوان : </Text>
-                      <Text fontFamily="IranSans" fontSize="md">
+                      <Text fontFamily="IranSans" fontSize="12px">
                         {row.title}
                       </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text>تاریخ : </Text>
-                      <Text fontFamily="IranSans" fontSize="md">
+                      <Text fontFamily="IranSans" fontSize="15px">
                         {dayjs(row.createdAt).locale("fa").format("YYYY/MM/DD")}
                       </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text>نام مشتری : </Text>
-                      <Text fontFamily="IranSans" fontSize="md">
+                      <Text fontFamily="IranSans" fontSize="12px">
                         {row.customer?.customerFName +
                           " " +
                           row.customer?.customerLName}
@@ -294,67 +301,64 @@ export const ProformaRequests = ({ isDesktop }) => {
                     <Divider />
                     <HStack>
                       <Text>نوع پرداخت : </Text>
-                      <Text fontFamily="IranSans" fontSize="md">
+                      <Text fontFamily="IranSans" fontSize="12px">
                         {row.paymentStatus}
                       </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text> تایید مشتری : </Text>
-                      <Text fontFamily="IranSans" fontSize="md">
+                      <Text fontFamily="IranSans" fontSize="12px">
                         {row.approvedFile ? "دارد" : "ندارد"}
                       </Text>
                     </HStack>
                     <Divider />
                     <HStack>
                       <Text> جمع کل : </Text>
-                      <Text fontFamily="IranSans" fontSize="xl">
+                      <Text fontFamily="IranSans" fontSize="15px">
                         {Number(row.totalAmount).toLocaleString()}
                       </Text>
                     </HStack>
                   </VStack>
                 </CardBody>
-                <CardFooter borderBottomRadius={5} bg="gray.100">
+                <CardFooter p={2} borderBottomRadius={5} bg="gray.100">
                   <Stack
+                    hidden={!row.approvedFile}
                     direction={["row"]}
                     spacing={2}
                     align={"stretch"}
                     mr="auto"
                   >
-                    {row.approvedFile && (
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="orange.300"
-                        onClick={(e) => {
-                          setProformaSelectedID(row.id);
-                          setDialogGears({
-                            title: "تایید پیش فاکتور",
-                            text: "آیا واقعا این پیش فاکتور را تایید میکنید؟",
-                            callBack: () => handleAcceptProforma(row.id),
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="تایید">
-                          <Icon w={6} h={6} as={ShieldCheck} />
-                        </Tooltip>
-                      </Link>
-                    )}
+                    <Link
+                      _hover={{ color: "#ffd54f" }}
+                      color="orange.300"
+                      onClick={(e) => {
+                        setProformaSelectedID(row.id);
+                        setDialogGears({
+                          title: "تایید پیش فاکتور",
+                          text: "آیا واقعا این پیش فاکتور را تایید میکنید؟",
+                          callBack: () => handleAcceptProforma(row.id),
+                        });
+                        setIsDialogOpen(true);
+                      }}
+                    >
+                      <Tooltip label="تایید">
+                        <Icon w={6} h={6} as={ShieldCheck} />
+                      </Tooltip>
+                    </Link>
 
-                    {row.approvedFile && (
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="green.600"
-                        onClick={(e) => {
-                          setProformaSelectedID(row.id);
-                          handleShowProformaPicture(row.id);
-                        }}
-                      >
-                        <Tooltip label="مشاهده مدارک مشتری">
-                          <Icon w={6} h={6} as={ScanEye} />
-                        </Tooltip>
-                      </Link>
-                    )}
+                    <Link
+                      _hover={{ color: "#ffd54f" }}
+                      color="green.600"
+                      onClick={(e) => {
+                        setProformaSelectedID(row.id);
+                        handleShowProformaPicture(row.id);
+                      }}
+                    >
+                      <Tooltip label="مشاهده مدارک مشتری">
+                        <Icon w={6} h={6} as={ScanEye} />
+                      </Tooltip>
+                    </Link>
 
                     <Link
                       _hover={{ color: "#ffd54f" }}
@@ -379,13 +383,12 @@ export const ProformaRequests = ({ isDesktop }) => {
             ))}
           </SimpleGrid>
         </Box>
-
-        <Pagination
-          currentPage={currentProformaPage}
-          totalPages={totalProformaPages}
-          onPageChange={(page) => setCurrentProformaPage(page)}
-        />
       </Flex>
+      <Pagination
+        currentPage={currentProformaPage}
+        totalPages={totalProformaPages}
+        onPageChange={(page) => setCurrentProformaPage(page)}
+      />
       <MyAlert
         onClose={handleDialogClose}
         isOpen={isDialogOpen}
@@ -415,17 +418,7 @@ export const ProformaRequests = ({ isDesktop }) => {
           />
         </Box>
       </MyModal>
-      {loading && (
-        <AbsoluteCenter>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="red.500"
-            size="xl"
-          />
-        </AbsoluteCenter>
-      )}
+      {loading && <MyLoading />}
     </Box>
   );
 };

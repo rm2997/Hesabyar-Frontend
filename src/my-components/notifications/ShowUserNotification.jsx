@@ -1,13 +1,17 @@
 import {
+  Divider,
+  Flex,
   FormControl,
   FormLabel,
   HStack,
+  Text,
   Textarea,
   VStack,
 } from "@chakra-ui/react";
 import { Captions, ScrollText, User } from "lucide-react";
 import { useEffect, useState } from "react";
-
+import dayjs from "dayjs";
+import jalali from "jalali-dayjs";
 import { MyInputBox } from "../MyInputBox";
 import { GetAllUsers } from "../../api/services/userService";
 
@@ -15,7 +19,7 @@ export const ShowUserNotification = ({ id, notification }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const [usersData, setUsersData] = useState([]);
-
+  dayjs.extend(jalali);
   // useEffect(() => {
   //   const fetchUsersData = async () => {
   //     setLoading(true);
@@ -42,55 +46,25 @@ export const ShowUserNotification = ({ id, notification }) => {
   }, [id]);
 
   return (
-    <VStack
-      as="form"
-      rowGap={3}
-      columnGap={5}
-      dir="rtl"
-      filter={loading ? "blur(10px)" : ""}
-    >
-      <FormControl>
-        <HStack>
-          <FormLabel width={110}>عنوان</FormLabel>
-          <MyInputBox
-            readonly
-            size={19}
-            icon={Captions}
-            name="title"
-            title="عنوان"
-            value={formData?.title}
-          />
-        </HStack>
-      </FormControl>
-
-      <FormControl>
-        <HStack>
-          <FormLabel width={110}>گیرنده</FormLabel>
-          <MyInputBox
-            readonly
-            size={19}
-            icon={User}
-            title="گیرنده"
-            name="toUser"
-            value={formData?.toUser?.userfname}
-          />
-        </HStack>
-      </FormControl>
-      <FormControl>
-        <HStack>
-          <FormLabel width={110}>محتوا</FormLabel>
-          <Textarea
-            overflowWrap="normal"
-            overflow="auto"
-            readonly
-            size={19}
-            icon={ScrollText}
-            title="محتوا"
-            name="message"
-            value={formData?.message}
-          />
-        </HStack>
-      </FormControl>
-    </VStack>
+    <Flex direction="column" rowGap={5} filter={loading ? "blur(10px)" : ""}>
+      <Flex p={2} justify="space-between" columnGap={2}>
+        <Text fontFamily="iransans">عنوان :</Text>
+        <Text fontFamily="iransans">{formData?.title}</Text>
+      </Flex>
+      <Divider />
+      <Flex p={2} justify="space-between" columnGap={2}>
+        <Text fontFamily="IranSans">تاریخ :</Text>
+        <Text fontFamily="IranSans">
+          {dayjs(formData?.createdAt).locale("fa").format("YYYY/MM/DD")}
+        </Text>
+      </Flex>
+      <Divider />
+      <Flex p={2} justify="space-between" columnGap={2}>
+        <Text fontFamily="IranSans"> محتوا :</Text>
+        <Text maxW="200px" fontFamily="IranSans">
+          {formData?.message}
+        </Text>
+      </Flex>
+    </Flex>
   );
 };

@@ -187,13 +187,15 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
                       <Tooltip>
                         <Mail color="orange" />
                       </Tooltip>
-                      <Text mr="auto">{row.title}</Text>
+                      <Text fontFamily="IranSans" mr="auto">
+                        {row.title}
+                      </Text>
                     </HStack>
                   </CardHeader>
                   <CardBody p={2}>
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
-                        <Text>تاریخ :</Text>
+                        <Text fontFamily="IranSans">تاریخ :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
                           {dayjs(row.createdAt)
                             .locale("fa")

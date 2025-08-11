@@ -215,7 +215,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
           loadData={loadData}
           userInfo="جستجوی اعلان"
         />
-        <Box flex="1" overflowY="auto" p={5}>
+        <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
               {userMessages.map((row) => (
@@ -241,7 +241,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                       onOpen();
                     }}
                   >
-                    <HStack>
+                    <HStack fontFamily="iransans">
                       {row.receiverRead ? (
                         <Tooltip label="خوانده شده">
                           <MailOpen color="yellow" />
@@ -252,7 +252,9 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                         </Tooltip>
                       )}
 
-                      <Text mr="auto">{row.title}</Text>
+                      <Text fontFamily="iransans" mr="auto">
+                        {row.title}
+                      </Text>
                     </HStack>
                   </CardHeader>
                   <CardBody p={2}>
@@ -268,7 +270,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                       <Divider />
                       <HStack>
                         <Text>فرستنده :</Text>
-                        <Text mr="auto">
+                        <Text fontFamily="IranSans" mr="auto">
                           {row.fromUser?.userfname +
                             " " +
                             row.fromUser?.userlname}
@@ -277,7 +279,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                       <Divider />
                       <HStack>
                         <Text>محتوا :</Text>
-                        <Text mr="auto">
+                        <Text fontFamily="IranSans" mr="auto">
                           {row.message.length > 15
                             ? row.message.substring(0, 12) + "..."
                             : row.message}
@@ -300,7 +302,10 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                           color="blue.600"
                           onClick={() => handleMarkAsUnreadNotification(row.id)}
                         >
-                          <Tooltip label="به عنوان خوانده نشده مارک کن">
+                          <Tooltip
+                            fontFamily="IranSans"
+                            label="به عنوان خوانده نشده مارک کن"
+                          >
                             <Icon w={6} h={6} as={Mail} />
                           </Tooltip>
                         </Link>
@@ -312,7 +317,10 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                           color="blue.600"
                           onClick={() => handleMarkAsReadNotification(row.id)}
                         >
-                          <Tooltip label="به عنوان خوانده شده مارک کن">
+                          <Tooltip
+                            fontFamily="IranSans"
+                            label="به عنوان خوانده شده مارک کن"
+                          >
                             <Icon w={6} h={6} as={MailOpen} />
                           </Tooltip>
                         </Link>
@@ -361,7 +369,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
           </Flex>
         </Box>
         <MyModal
-          size="md"
+          size="lg"
           modalHeader={dialogGears.title}
           isOpen={isOpen}
           onClose={onClose}
