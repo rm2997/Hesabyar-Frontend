@@ -187,7 +187,6 @@ export const ProformaRequests = ({ isDesktop }) => {
     <Box>
       <Flex direction="column" minH="77vh" filter={loading ? "blur(10px)" : ""}>
         <SearchBar
-          yTop="0px"
           search={proformaSearch}
           setSearch={setProformaSearch}
           handleResetSearch={handleResetProformaSearch}
@@ -198,7 +197,7 @@ export const ProformaRequests = ({ isDesktop }) => {
           <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={3}>
             {proformas?.map((row) => (
               <Card
-                maxW="270px"
+                maxW="300px"
                 _hover={{
                   cursor: "",
                   borderColor: "green.500",
@@ -268,58 +267,62 @@ export const ProformaRequests = ({ isDesktop }) => {
                     </Box> */}
                 </CardHeader>
                 <CardBody p={2}>
-                  <MyProformaStepper data={row} />
-                  <VStack
-                    fontFamily="IranSans"
-                    fontSize="10px"
-                    p={1}
-                    spacing={2}
-                    align="stretch"
-                  >
-                    <HStack>
-                      <Text>عنوان : </Text>
-                      <Text fontFamily="IranSans" fontSize="12px">
-                        {row.title}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>تاریخ : </Text>
-                      <Text fontFamily="IranSans" fontSize="15px">
-                        {dayjs(row.createdAt).locale("fa").format("YYYY/MM/DD")}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>نام مشتری : </Text>
-                      <Text fontFamily="IranSans" fontSize="12px">
-                        {row.customer?.customerFName +
-                          " " +
-                          row.customer?.customerLName}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>نوع پرداخت : </Text>
-                      <Text fontFamily="IranSans" fontSize="12px">
-                        {row.paymentStatus}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text> تایید مشتری : </Text>
-                      <Text fontFamily="IranSans" fontSize="12px">
-                        {row.approvedFile ? "دارد" : "ندارد"}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text> جمع کل : </Text>
-                      <Text fontFamily="IranSans" fontSize="15px">
-                        {Number(row.totalAmount).toLocaleString()}
-                      </Text>
-                    </HStack>
-                  </VStack>
+                  <Flex justify="center" direction="row" columnGap={1}>
+                    <MyProformaStepper data={row} />
+                    <VStack
+                      fontFamily="IranSans"
+                      fontSize="10px"
+                      p={1}
+                      spacing={2}
+                      align="stretch"
+                    >
+                      <HStack>
+                        <Text>عنوان : </Text>
+                        <Text fontFamily="IranSans" fontSize="12px">
+                          {row.title}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>تاریخ : </Text>
+                        <Text fontFamily="IranSans" fontSize="15px">
+                          {dayjs(row.createdAt)
+                            .locale("fa")
+                            .format("YYYY/MM/DD")}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>نام مشتری : </Text>
+                        <Text fontFamily="IranSans" fontSize="12px">
+                          {row.customer?.customerFName +
+                            " " +
+                            row.customer?.customerLName}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>نوع پرداخت : </Text>
+                        <Text fontFamily="IranSans" fontSize="12px">
+                          {row.paymentStatus}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> تایید مشتری : </Text>
+                        <Text fontFamily="IranSans" fontSize="12px">
+                          {row.approvedFile ? "دارد" : "ندارد"}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> جمع کل : </Text>
+                        <Text fontFamily="IranSans" fontSize="15px">
+                          {Number(row.totalAmount).toLocaleString()}
+                        </Text>
+                      </HStack>
+                    </VStack>
+                  </Flex>
                 </CardBody>
                 <CardFooter p={2} borderBottomRadius={5} bg="gray.100">
                   <Stack

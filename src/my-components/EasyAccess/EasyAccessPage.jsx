@@ -15,6 +15,8 @@ import {
   Newspaper,
   PackagePlus,
   Plus,
+  Shield,
+  ShieldUser,
   SquareLibrary,
   SquareStack,
   Users,
@@ -30,8 +32,37 @@ export const EasyAccessPage = ({ onItemClick }) => {
       direction="column"
       bg="gray.100"
       rowGap={5}
-      h="86vh"
+      minH="86vh"
     >
+      <Flex
+        rowGap={1}
+        direction="column"
+        borderColor="gray.100"
+        borderWidth={1}
+        borderRadius="md"
+        p={1}
+        bg="white"
+      >
+        <Text fontSize="12px">درخواست های تایید</Text>
+        <Flex columnGap={3}>
+          <Flex alignItems="center" direction="column" p={1}>
+            <IconButton
+              variant="outline"
+              icon={<ShieldUser />}
+              onClick={() => onItemClick("acceptRequest")}
+            />
+            <Text fontFamily="iransans"> کاربر ارشد</Text>
+          </Flex>
+          <Flex alignItems="center" direction="column" p={1}>
+            <IconButton
+              variant="outline"
+              icon={<ListChecks />}
+              onClick={() => onItemClick("wareHouseRequests")}
+            />
+            <Text fontFamily="iransans"> انبار</Text>
+          </Flex>
+        </Flex>
+      </Flex>
       <Flex
         rowGap={1}
         direction="column"
@@ -149,14 +180,6 @@ export const EasyAccessPage = ({ onItemClick }) => {
             />
             <Text fontFamily="iransans"> سوابق خروج</Text>
           </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<ListChecks />}
-              onClick={() => onItemClick("wareHouseRequests")}
-            />
-            <Text fontFamily="iransans"> درخواست ها</Text>
-          </Flex>
         </Flex>
       </Flex>
       <Flex
@@ -262,7 +285,6 @@ export const EasyAccessPage = ({ onItemClick }) => {
           </Flex>
         </Flex>
       </Flex>
-      <Flex h="50px"></Flex>
     </Flex>
   );
 };

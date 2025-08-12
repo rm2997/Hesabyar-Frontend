@@ -2,7 +2,7 @@
 import { Box, Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 
 import { NewProforma } from "../pages/proformas/NewProforma";
-import { useContext, useEffect, useState } from "react";
+import { act, useContext, useEffect, useState } from "react";
 
 import { NewInvoice } from "../pages/invoices/NewInvoice";
 import { NewNotification } from "../pages/notifications/NewNotification";
@@ -24,16 +24,15 @@ import { ChangePasswordByUser } from "./users/ChangePasswordByUser";
 import { UserContext } from "../contexts/UserContext";
 import { MyModal } from "./MyModal";
 import { clearTokens } from "../api/tokenUtils";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Requests } from "../pages/requests/Requests";
 import { NewDepotEntry } from "../pages/depot/NewDepotEntry";
 import { DepotEntryList } from "./depot/DepotEntryList";
 import { NewDepotExit } from "../pages/depot/NewDepotExit";
 import { DepotExitList } from "./depot/DepotExitList";
 import { WareHouseRequests } from "../pages/requests/WareHouseRequests";
-import { EasyAccessBar } from "./EasyAccess/EasyAccessBar";
 import { EasyAccessPage } from "./EasyAccess/EasyAccessPage";
-import { useLocation } from "../contexts/LocationContext";
+import { useUserLocation } from "../contexts/LocationContext";
 import { MapPin } from "lucide-react";
 import { UpdateUserLocation } from "../api/services/userService";
 
@@ -77,12 +76,23 @@ const validContents = [
 export const MainContents = ({ onItemClick, activeContent, isDesktop }) => {
   const [pageTitle, setPageTitle] = useState("");
   const [shouldRender, setShouldRender] = useState(null);
+
   const [sessionExpired, setSessionExpired] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const toast = useToast();
+  const pageLocation = useLocation();
+  const { location, loadLocation } = useUserLocation();
 
-  const { location, loadLocation } = useLocation();
+  // useEffect(() => {
+  //   // const path = pageLocation.pathname.replace("/", "") || "home";
+  //   // setCurrentPageLocation(path);
+  //   console.log(pageLocation);
+  // }, [pageLocation]);
+
+  useEffect(() => {
+    navigate("/myhome/" + activeContent);
+  }, [activeContent]);
 
   useEffect(() => {
     const findActiveContent = (item) => {
@@ -117,6 +127,7 @@ export const MainContents = ({ onItemClick, activeContent, isDesktop }) => {
         icon: <MapPin />,
       });
     };
+
     const SetActiveElement = (index) => {
       switch (index) {
         case "newProforma":
@@ -180,7 +191,9 @@ export const MainContents = ({ onItemClick, activeContent, isDesktop }) => {
           );
         case "saveLocation":
           saveLocation();
-          return;
+          return (
+            <EasyAccessPage isDesktop={isDesktop} onItemClick={onItemClick} />
+          );
         case "logout":
           return <Logout />;
         default:
@@ -194,9 +207,11 @@ export const MainContents = ({ onItemClick, activeContent, isDesktop }) => {
       if (user.exp < currentTimestamp) setSessionExpired(true);
     };
 
+    const path = pageLocation.pathname.split("/")[2];
+    if (path != activeContent) onItemClick(path);
     checkUserExp();
     findActiveContent(activeContent);
-  }, [activeContent]);
+  }, [pageLocation]);
 
   if (sessionExpired) {
     return (
@@ -229,6 +244,7 @@ export const MainContents = ({ onItemClick, activeContent, isDesktop }) => {
       </MyModal>
     );
   }
+
   return (
     <Flex w="98%" mx={1} bg="#efefef" direction="column">
       <Box

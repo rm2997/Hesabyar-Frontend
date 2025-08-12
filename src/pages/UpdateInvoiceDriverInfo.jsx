@@ -922,7 +922,7 @@ export const UpdateInvoiceDriverInfo = ({}) => {
                 <Input
                   fontFamily="iransans"
                   fontSize="sm"
-                  width="180px"
+                  width="120px"
                   isInvalid={
                     carNoThird?.length > 0 &&
                     (carNoThird?.length != 3 ||
@@ -946,7 +946,7 @@ export const UpdateInvoiceDriverInfo = ({}) => {
                   name="carNoAlpabet"
                   value={carNoAlphabet}
                   dir="ltr"
-                  width="150px"
+                  width="220px"
                   onChange={(e) => {
                     setCarNoAlphabet(e.target.value);
                     handleChangeCarNo();

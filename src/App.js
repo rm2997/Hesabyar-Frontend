@@ -67,20 +67,9 @@ function App() {
                 </PrivateRoute>
               }
             />
+
             <Route
-              path="/users"
-              element={
-                <PrivateRoute>
-                  <NotificationProvider>
-                    <LocationProvider>
-                      <Users />
-                    </LocationProvider>
-                  </NotificationProvider>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/myhome"
+              path="/myhome/*"
               element={
                 <PrivateRoute>
                   <NotificationProvider>

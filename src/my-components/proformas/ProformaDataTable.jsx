@@ -344,7 +344,8 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                   borderColor="gray.300"
                 >
                   <CardHeader
-                    py={4}
+                    px={4}
+                    py={2}
                     borderTopRadius="md"
                     _hover={{ cursor: "pointer" }}
                     onClick={(e) => handleEditProforma(row.id)}
@@ -356,54 +357,9 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                         : "gray.400"
                     }
                   >
-                    <HStack>
-                      <Text fontFamily="IranSans" fontSize="md">
-                        پیش فاکتور شماره : {row.id}
-                      </Text>
-                      {/* <Box mr="auto">
-                        <HStack>
-                          {row.isConverted ? (
-                            <Tooltip label="فاکتور شده">
-                              <Replace color="purple" />
-                            </Tooltip>
-                          ) : (
-                            <></>
-                          )}
-                          {row.isAccepted ? (
-                            <Tooltip label="تایید کاربر ارشد">
-                              <ShieldUser color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر تایید کاربر ارشد ">
-                              <UserLock
-                                color="yellow"
-                                _hover={{ color: "green" }}
-                              />
-                            </Tooltip>
-                          )}
-
-                          {row.approvedFile ? (
-                            <Tooltip label="تایید مشتری">
-                              <UserRoundCheck color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر تایید مشتری">
-                              <Handshake color="white" />
-                            </Tooltip>
-                          )}
-
-                          {row.isSent ? (
-                            <Tooltip label="لینک به مشتری ارسال شده است">
-                              <MailCheck color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر ارسال">
-                              <CircleFadingArrowUp color="orange" />
-                            </Tooltip>
-                          )}
-                        </HStack>
-                      </Box> */}
-                    </HStack>
+                    <Text fontFamily="IranSans" fontSize="md">
+                      پیش فاکتور شماره : {row.id}
+                    </Text>
                   </CardHeader>
                   <CardBody p={2}>
                     <Flex justify="space-between" direction="row" columnGap={1}>

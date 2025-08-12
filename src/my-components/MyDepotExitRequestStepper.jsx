@@ -52,7 +52,7 @@ export const MyDepotExitRequestStepper = ({ data }) => {
       borderLeftColor="gray.300"
       borderLeftWidth={1}
       borderLeftStyle="dashed"
-      p={1}
+      float="right"
     >
       <Stepper
         ml={2}

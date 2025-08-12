@@ -145,7 +145,7 @@ export const DepotExitRequests = ({ isDesktop }) => {
   };
 
   return (
-    <Box>
+    <Box alignContent="center">
       <Flex minH="77vh" filter={loading ? "blur(10px)" : ""} direction="column">
         <SearchBar
           search={search}
@@ -160,6 +160,7 @@ export const DepotExitRequests = ({ isDesktop }) => {
             <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
               {depotEntry.map((row) => (
                 <Card
+                  maxW="300px"
                   borderTopRadius={5}
                   borderWidth="1px"
                   borderColor="gray.300"
@@ -180,14 +181,12 @@ export const DepotExitRequests = ({ isDesktop }) => {
                       onOpen();
                     }}
                   >
-                    <HStack>
-                      <Text fontFamily="IranSans" fontSize="md">
-                        سند خروجی شماره : {row?.id}
-                      </Text>
-                    </HStack>
+                    <Text fontFamily="IranSans" fontSize="md">
+                      سند خروجی شماره : {row?.id}
+                    </Text>
                   </CardHeader>
                   <CardBody p={2}>
-                    <Flex justify="space-between" direction="row" columnGap={1}>
+                    <Flex justify="center" direction="row" columnGap={1}>
                       <MyDepotExitRequestStepper data={row} />
                       <VStack
                         fontFamily="IranSans"

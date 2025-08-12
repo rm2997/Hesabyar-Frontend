@@ -52,6 +52,7 @@ import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
 import { MyLoading } from "../MyLoading";
 import { MyInvoiceStepper } from "../MyInvoiceStepper";
+import { useNavigate } from "react-router-dom";
 
 export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,6 +70,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
     text: "",
     callBack: null,
   });
+  const navigate = useNavigate();
 
   const loadData = async (resetPage = false) => {
     setLoading(true);
@@ -361,7 +363,8 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                   borderColor="gray.300"
                 >
                   <CardHeader
-                    py={4}
+                    px={4}
+                    py={2}
                     borderTopRadius="md"
                     bg={
                       !row?.finished
@@ -373,11 +376,9 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                     _hover={{ cursor: "pointer" }}
                     onClick={(e) => handleEditInvoice(row.id)}
                   >
-                    <HStack>
-                      <Text fontSize="sm" fontFamily="IranSans">
-                        فاکتور شماره : {row.id}
-                      </Text>
-                    </HStack>
+                    <Text fontSize="sm" fontFamily="IranSans">
+                      فاکتور شماره : {row.id}
+                    </Text>
                   </CardHeader>
                   <CardBody p={2}>
                     <Flex justify="space-between" direction="row" columnGap={1}>
@@ -459,7 +460,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                           hidden={
                             !row?.approvedFile ||
                             !row?.isAccepted ||
-                            (row?.driverTokenIsSent && row?.driver)
+                            !(row?.driverTokenIsSent && row?.driver)
                           }
                           _hover={{ color: "#ffd54f" }}
                           color="orange.600"
@@ -467,8 +468,10 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                             setSelectedID(row?.id);
                             setDialogGears({
                               title: "ثبت سند خروج",
-                              text: "",
-                              callBack: () => {},
+                              text: "خروج اقلام این فاکتور از انبار را ثبت می کنید؟",
+                              callBack: () => {
+                                navigate("/myhome/newDepotExit");
+                              },
                             });
 
                             setIsDialogOpen(true);
@@ -535,6 +538,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                         </Link> */}
 
                         <Link
+                          hidden={row?.isAccepted}
                           _hover={{ color: "#ffd54f" }}
                           color="red.600"
                           onClick={(e) => {
@@ -553,6 +557,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                         </Link>
 
                         <Link
+                          hidden={row?.isAccepted}
                           _hover={{
                             color: "orange",
                           }}

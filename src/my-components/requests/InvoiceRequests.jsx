@@ -44,6 +44,7 @@ import {
   ShowUserAllInvoices,
 } from "../../api/services/invoiceService";
 import { MyLoading } from "../MyLoading";
+import { MyInvoiceStepper } from "../MyInvoiceStepper";
 export const InvoiceRequests = ({ isDesktop }) => {
   const [currentInvoicePage, setCurrentInvoicePage] = useState(1);
   const [invoiceSearch, setInvoiceSearch] = useState("");
@@ -199,7 +200,7 @@ export const InvoiceRequests = ({ isDesktop }) => {
         />
         <Box flex="1" overflowY="auto" p={1}>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }}>
-            {invoices.map((row) => (
+            {invoices?.map((row) => (
               <Card
                 _hover={{
                   cursor: "",
@@ -209,6 +210,8 @@ export const InvoiceRequests = ({ isDesktop }) => {
                 borderColor="gray.300"
               >
                 <CardHeader
+                  py={2}
+                  px={4}
                   borderTopRadius={5}
                   bg={
                     !row.isConverted
@@ -223,135 +226,106 @@ export const InvoiceRequests = ({ isDesktop }) => {
                     handleShowInvoicePicture(row.id);
                   }}
                 >
-                  <HStack>
-                    <Text fontFamily="IranSans" fontSize="md">
-                      شماره :{row.id}
-                    </Text>
-                    <Box mr="auto">
-                      <HStack>
-                        {row.isAccepted ? (
-                          <Tooltip label="تایید کاربر ارشد">
-                            <ShieldUser color="green" />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip label="منتظر تایید کاربر ارشد ">
-                            <UserLock
-                              color="yellow"
-                              _hover={{ color: "green" }}
-                            />
-                          </Tooltip>
-                        )}
-
-                        {row.approvedFile ? (
-                          <Tooltip label="تایید مشتری">
-                            <UserRoundCheck color="green" />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip label="منتظر تایید مشتری">
-                            <Handshake color="white" />
-                          </Tooltip>
-                        )}
-
-                        {row.isSent ? (
-                          <Tooltip label="لینک به مشتری ارسال شده است">
-                            <MailCheck color="green" />
-                          </Tooltip>
-                        ) : (
-                          <Tooltip label="منتظر ارسال">
-                            <CircleFadingArrowUp color="orange" />
-                          </Tooltip>
-                        )}
-                      </HStack>
-                    </Box>
-                  </HStack>
+                  <Text fontFamily="IranSans" fontSize="md">
+                    فاکتور شماره :{row.id}
+                  </Text>
                 </CardHeader>
-                <CardBody>
-                  <VStack spacing={2} align="stretch">
-                    <HStack>
-                      <Text>عنوان : </Text>
-                      <Text fontFamily="IranSans" fontSize="md">
-                        {row.title}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>تاریخ : </Text>
-                      <Text fontFamily="IranSans" fontSize="md">
-                        {dayjs(row.createdAt).locale("fa").format("YYYY/MM/DD")}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>نام مشتری : </Text>
-                      <Text fontFamily="IranSans" fontSize="md">
-                        {row.customer?.customerFName +
-                          " " +
-                          row.customer?.customerLName}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text>نوع پرداخت : </Text>
-                      <Text fontFamily="IranSans" fontSize="md">
-                        {row.paymentStatus}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text> تایید مشتری : </Text>
-                      <Text fontFamily="IranSans" fontSize="md">
-                        {row.approvedFile ? "دارد" : "ندارد"}
-                      </Text>
-                    </HStack>
-                    <Divider />
-                    <HStack>
-                      <Text> جمع کل : </Text>
-                      <Text fontFamily="IranSans" fontSize={"xl"}>
-                        {Number(row.totalAmount).toLocaleString()}
-                      </Text>
-                    </HStack>
-                  </VStack>
+                <CardBody p={2}>
+                  <Flex justify="center" direction="row" columnGap={1}>
+                    <MyInvoiceStepper data={row} />
+                    <VStack
+                      fontFamily="IranSans"
+                      fontSize="10px"
+                      p={1}
+                      spacing={2}
+                      align="stretch"
+                    >
+                      <HStack>
+                        <Text>عنوان : </Text>
+                        <Text fontFamily="IranSans" fontSize="12px">
+                          {row.title}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>تاریخ : </Text>
+                        <Text fontFamily="IranSans" fontSize="15px">
+                          {dayjs(row?.createdAt)
+                            .locale("fa")
+                            .format("YYYY/MM/DD")}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>نام مشتری : </Text>
+                        <Text fontFamily="IranSans" fontSize="12px">
+                          {row.customer?.customerFName +
+                            " " +
+                            row.customer?.customerLName}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>نوع پرداخت : </Text>
+                        <Text fontFamily="IranSans" fontSize="12px">
+                          {row.paymentStatus}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> تایید مشتری : </Text>
+                        <Text fontFamily="IranSans" fontSize="12px">
+                          {row.approvedFile ? "دارد" : "ندارد"}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> جمع کل : </Text>
+                        <Text fontFamily="IranSans" fontSize="15px">
+                          {Number(row.totalAmount).toLocaleString()}
+                        </Text>
+                      </HStack>
+                    </VStack>
+                  </Flex>
                 </CardBody>
-                <CardFooter borderBottomRadius={5} bg="gray.100">
+                <CardFooter p={2} borderBottomRadius={5} bg="gray.100">
                   <Stack
                     direction={["row"]}
                     spacing={2}
                     align={"stretch"}
                     mr="auto"
                   >
-                    {row.approvedFile && (
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="orange.300"
-                        onClick={(e) => {
-                          setInvoiceSelectedID(row.id);
-                          setDialogGears({
-                            title: "تایید  فاکتور",
-                            text: "از تایید این فاکتور اطمینان دارید؟",
-                            callBack: () => handleAcceptInvoice(row.id),
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="تایید">
-                          <Icon w={6} h={6} as={ShieldCheck} />
-                        </Tooltip>
-                      </Link>
-                    )}
-                    {row.approvedFile && (
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="green.600"
-                        onClick={(e) => {
-                          setInvoiceSelectedID(row.id);
-                          handleShowInvoicePicture(row.id);
-                        }}
-                      >
-                        <Tooltip label="مشاهده مدارک مشتری">
-                          <Icon w={6} h={6} as={ScanEye} />
-                        </Tooltip>
-                      </Link>
-                    )}
+                    <Link
+                      _hover={{ color: "#ffd54f" }}
+                      color="orange.300"
+                      onClick={(e) => {
+                        setInvoiceSelectedID(row.id);
+                        setDialogGears({
+                          title: "تایید  فاکتور",
+                          text: "از تایید این فاکتور اطمینان دارید؟",
+                          callBack: () => handleAcceptInvoice(row.id),
+                        });
+                        setIsDialogOpen(true);
+                      }}
+                    >
+                      <Tooltip label="تایید">
+                        <Icon w={6} h={6} as={ShieldCheck} />
+                      </Tooltip>
+                    </Link>
+
+                    <Link
+                      _hover={{ color: "#ffd54f" }}
+                      color="green.600"
+                      onClick={(e) => {
+                        setInvoiceSelectedID(row.id);
+                        handleShowInvoicePicture(row.id);
+                      }}
+                    >
+                      <Tooltip label="مشاهده مدارک مشتری">
+                        <Icon w={6} h={6} as={ScanEye} />
+                      </Tooltip>
+                    </Link>
+
                     <Link
                       _hover={{ color: "#ffd54f" }}
                       color="red.600"

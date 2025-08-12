@@ -29,6 +29,7 @@ export const EasyAccessBar = ({ hidden, onItemClick }) => {
       py={2}
       fontSize="10px"
       columnGap={7}
+      justify="center"
     >
       <Flex alignItems="center" direction="column" rowGap={1}>
         <IconButton

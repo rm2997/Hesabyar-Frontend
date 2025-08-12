@@ -1,6 +1,5 @@
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import {
-  Box,
   Button,
   Flex,
   HStack,
@@ -29,30 +28,44 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   };
 
   const pages = getPageNumbers();
-  const buttonSize = useBreakpointValue({ base: "sm", md: "md" }); // تغییر سایز تو موبایل
+  const buttonSize = useBreakpointValue({ base: "xs", md: "sm" }); // تغییر سایز تو موبایل
   return (
-    <Box
+    <Flex
       hidden={totalPages < 2}
+      direction="row"
       position="sticky"
-      bottom="0px"
-      bg="#efefef"
-      p={1}
-      zIndex="1"
-      borderTopColor="gray.400"
-      borderTopWidth="1px"
+      zIndex={100}
+      bottom={0}
+      bgColor="#fbfbfb"
+      borderTopColor="gray.100"
+      borderTopWidth={1}
+      borderTopRadius="md"
+      w="full"
+      mx="auto"
+      textColor="black"
+      px={4}
+      py={2}
+      fontSize="10px"
+      columnGap={7}
+      justify="left"
     >
-      <Flex hidden={totalPages < 2} justify="center" align="center">
-        <Wrap spacing={1} justify="center" mt={4}>
+      <Flex
+        hidden={totalPages < 2}
+        alignItems="center"
+        direction="column"
+        rowGap={1}
+      >
+        <Wrap spacing={1} justify="center">
           <WrapItem>
             <Button
+              fontFamily="iransans"
+              fontStyle="normal"
               size={buttonSize}
               onClick={() => onPageChange(totalPages)}
               isDisabled={currentPage === totalPages}
               variant="outline"
               leftIcon={<ArrowForwardIcon />}
-            >
-              آخر
-            </Button>
+            ></Button>
           </WrapItem>
 
           <HStack dir="ltr">
@@ -64,6 +77,8 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                   onClick={() => onPageChange(page)}
                   colorScheme={page === currentPage ? "blue" : "gray"}
                   variant={page === currentPage ? "solid" : "outline"}
+                  fontFamily="iransans"
+                  fontStyle="normal"
                 >
                   {page}
                 </Button>
@@ -77,12 +92,12 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
               isDisabled={currentPage === 1}
               variant="outline"
               leftIcon={<ArrowBackIcon />}
-            >
-              اول
-            </Button>
+              fontFamily="iransans"
+              fontStyle="normal"
+            ></Button>
           </WrapItem>
         </Wrap>
       </Flex>
-    </Box>
+    </Flex>
   );
 };

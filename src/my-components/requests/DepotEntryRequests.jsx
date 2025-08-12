@@ -210,9 +210,10 @@ export const DepotEntryRequest = ({ isDesktop }) => {
 
         <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
               {depotEntry.map((row) => (
                 <Card
+                  maxW="300px"
                   borderTopRadius={5}
                   borderWidth="1px"
                   borderColor="gray.300"
@@ -240,7 +241,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
                     </HStack>
                   </CardHeader>
                   <CardBody p={2}>
-                    <Flex justify="space-between" direction="row" columnGap={1}>
+                    <Flex justify="center" direction="row" columnGap={1}>
                       <MyDepotExitRequestStepper data={row} />
                       <VStack
                         mx={2}

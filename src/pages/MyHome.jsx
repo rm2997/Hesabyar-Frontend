@@ -15,7 +15,7 @@ import { HeaderBar } from "../my-components/HeaderBar";
 import { Sidebar } from "../my-components/SideBar";
 import { MainContents } from "../my-components/MainContents";
 import { useNotification } from "../contexts/NotificationContext";
-import { useLocation } from "../contexts/LocationContext";
+import { useUserLocation } from "../contexts/LocationContext";
 import { UpdateUserLocation } from "../api/services/userService";
 import { UserContext } from "../contexts/UserContext";
 import { MapPin } from "lucide-react";
@@ -24,9 +24,9 @@ import { EasyAccessBar } from "../my-components/EasyAccess/EasyAccessBar";
 export const MyHome = () => {
   const [sidebarWidth, setSidebarWidth] = useState(300);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeContent, setActiveContent] = useState("");
+  const [activeContent, setActiveContent] = useState("easyAccessPage");
   const { notificationCount, loadUnreadeNotif } = useNotification();
-  const { location, loadLocation } = useLocation();
+  const { location, loadLocation } = useUserLocation();
   const isDesktop = useBreakpointValue({ base: false, md: true });
   const toast = useToast();
 
