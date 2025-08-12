@@ -35,21 +35,31 @@ export const PaperMoneyInput = ({
 
   if (display)
     return (
-      <Card h={230} w={isDesktop ? 240 : 220}>
-        <CardHeader bg="blue.500" color={"white"} borderTopRadius={5}>
+      <Card
+        borderWidth={1}
+        borderStyle="dashed"
+        minH="230px"
+        w={isDesktop ? 240 : 220}
+      >
+        <CardHeader p={2} bg="blue.500" color={"white"} borderTopRadius={5}>
           <HStack>
             <StickyNote />
             <Text>{title}</Text>
           </HStack>
         </CardHeader>
-        <CardBody>
+        <CardBody p={2}>
           <Box flex={1} borderRadius="md">
             <FormControl mb={2}>
               <HStack>
-                <FormLabel hidden={!isDesktop} w="50px">
+                <FormLabel
+                  fontFamily="IranSans"
+                  fontSize={isDesktop ? "md" : "md"}
+                >
                   مبلغ
                 </FormLabel>
                 <NumberInput
+                  isInvalid={formData?.paperMoneyAmount < 1000}
+                  size="sm"
                   fontSize="md"
                   fontFamily="IranSans"
                   defaultValue={0}
@@ -63,7 +73,7 @@ export const PaperMoneyInput = ({
                       target: { value: value, name: "paperMoneyAmount" },
                     });
                   }}
-                  placeholder="مبلغ سفته"
+                  placeholder="مبلغ تهاتر"
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -76,16 +86,25 @@ export const PaperMoneyInput = ({
 
             <FormControl mb={2}>
               <HStack>
-                <FormLabel hidden={!isDesktop} w="50px">
+                <FormLabel
+                  fontFamily="IranSans"
+                  fontSize={isDesktop ? "md" : "xs"}
+                >
                   سریال
                 </FormLabel>
                 <Input
+                  isInvalid={
+                    formData?.paperMoneySerial?.length < 3 ||
+                    isNaN(Number(formData?.paperMoneySerial)) ||
+                    Number(formData?.paperMoneySerial) == 0
+                  }
+                  size="sm"
                   fontSize="md"
                   fontFamily="IranSans"
                   w={250}
                   dir="ltr"
                   name="paperMoneySerial"
-                  placeholder="سریال سفته"
+                  placeholder="سریال تهاتر"
                   value={formData.paperMoneySerial}
                   onChange={handleChangeFormData}
                 />
@@ -97,26 +116,26 @@ export const PaperMoneyInput = ({
                   تاریخ
                 </FormLabel>
                 <Box
-                  fontSize="md"
-                  fontFamily="IranSans"
-                  alignItems="end"
+                  maxW="205px"
                   borderWidth={1}
-                  borderColor="gray.200"
-                  bg="gray.100"
+                  borderColor="gray.300"
+                  borderRadius="md"
+                  p={2}
                 >
                   <Datepicker
+                    width="150px"
                     fontSize="md"
                     fontFamily="IranSans"
-                    closeWhenSelectADay={true}
-                    format={"YYYY/MM/DD"}
-                    adjustPosition={"auto"}
                     input={
                       <input
-                        style={{ fontSize: "10px", fontFamily: "IranSans" }}
-                        placeholder="انتخاب تاریخ"
-                        width={isDesktop ? "240px" : "200px"}
+                        style={{ borderColor: "gray", borderWidth: "1px" }}
+                        placeholder="تاریخ را انتخاب کنید..."
                       />
                     }
+                    id="chequeDate"
+                    closeWhenSelectADay={true}
+                    format={"YYYY/MM/DD"}
+                    adjustPosition="auto"
                     theme="green"
                     allowClear={true}
                     name="paperMoneyDate"

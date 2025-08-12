@@ -51,6 +51,8 @@ export const NewProforma = ({ isDesktop }) => {
     chequeAmount: 0,
     chequeSerial: 0,
     chequeDate: "",
+    chequeSayad: "",
+    chequeIssuerName: "",
     paperMoneyDate: "",
     paperMoneyAmount: 0,
     paperMoneySerial: 0,
@@ -99,6 +101,8 @@ export const NewProforma = ({ isDesktop }) => {
       chequeAmount: 0,
       chequeSerial: 0,
       chequeDate: "",
+      chequeSayad: "",
+      chequeIssuerName: "",
       paperMoneyDate: "",
       paperMoneyAmount: 0,
       paperMoneySerial: 0,
@@ -109,6 +113,119 @@ export const NewProforma = ({ isDesktop }) => {
     setProformaItems([]);
     setTotalQuantity(0);
     setTotalPrice(0);
+  };
+
+  const validateDate = async (inputDate) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const date = new Date(inputDate);
+    date.setHours(0, 0, 0, 0);
+
+    return date >= today;
+  };
+
+  const validateCheque = async (data) => {
+    if (!data?.chequeDate) {
+      toast({
+        title: "توجه",
+        description: "تاریخ چک را مشخص کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if ((await validateDate(data?.chequeDate)) == false) {
+      toast({
+        title: "توجه",
+        description: "تاریخ چک صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    if (!data?.chequeIssuerName || data?.chequeIssuerName == "") {
+      toast({
+        title: "توجه",
+        description: "بانک عامل چک رامشخص کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      data?.chequeAmount?.length < 3 ||
+      isNaN(Number(data?.chequeAmount)) ||
+      Number(data?.chequeAmount) == 0
+    ) {
+      toast({
+        title: "توجه",
+        description: "مبلغ چک صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      data?.chequeSerial?.length < 3 ||
+      isNaN(Number(data?.chequeSerial)) ||
+      Number(data?.chequeSerial) == 0
+    ) {
+      toast({
+        title: "توجه",
+        description: "سریال چک صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      data?.chequeSayad?.length < 3 ||
+      isNaN(Number(data?.chequeSayad)) ||
+      Number(data?.chequeSayad) == 0
+    ) {
+      toast({
+        title: "توجه",
+        description: "شناسه چک صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    return true;
+  };
+  const validateTahator = async (data) => {
+    return true;
+  };
+  const validateAmani = async (data) => {
+    if (!data?.trustIssueDate) {
+      toast({
+        title: "توجه",
+        description: "تاریخ امانت را مشخص کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if ((await validateDate(data?.trustIssueDate)) == false) {
+      toast({
+        title: "توجه",
+        description: "تاریخ امانت صحیح نیست",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    return true;
   };
 
   const validateForm = async (data) => {
@@ -133,6 +250,16 @@ export const NewProforma = ({ isDesktop }) => {
       return false;
     }
 
+    if (data.paymentStatus == "چک" || data.paymentStatus == "اعتباری") {
+      if ((await validateCheque(formData)) == false) return false;
+    }
+    if (data.paymentStatus == "تهاتر" || data.paymentStatus == "اعتباری") {
+      if ((await validateTahator(formData)) == false) return false;
+    }
+    if (data.paymentStatus == "امانی" || data.paymentStatus == "اعتباری") {
+      if ((await validateAmani(formData)) == false) return false;
+    }
+
     const goodQCheck = data.proformaGoods.every((good) => {
       let retVal = true;
       if (!good.quantity || good.quantity == 0) {
@@ -152,8 +279,6 @@ export const NewProforma = ({ isDesktop }) => {
     const goodACheck = data.proformaGoods.every((good) => {
       let retval = true;
       if (!good.total || good.total == 0) {
-        console.log(good);
-
         toast({
           title: "توجه",
           description: `قیمت کل ${good?.good?.goodName} را ثبت کنید`,
@@ -187,7 +312,17 @@ export const NewProforma = ({ isDesktop }) => {
     setLoading(true);
     try {
       const response = await CreateProforma(data);
-      if (!response.data) return;
+      if (!response.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: response.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
       initForm();
       toast({
         title: "ثبت شد",
@@ -395,9 +530,9 @@ export const NewProforma = ({ isDesktop }) => {
               <Box flex={1} p={1} borderRadius="md">
                 <Flex direction={{ base: "column", md: "row" }} gap={4}>
                   <PaperMoneyInput
-                    title={"اطلاعات سفته"}
+                    title={"اطلاعات تهاتر"}
                     display={
-                      formData.paymentStatus === "سفته" ||
+                      formData.paymentStatus === "تهاتر" ||
                       formData.paymentStatus === "اعتباری"
                     }
                     formData={formData}
@@ -523,15 +658,21 @@ export const NewProforma = ({ isDesktop }) => {
                       قیمت
                     </Text>
                     <Input
+                      isInvalid={
+                        !item?.price ||
+                        isNaN(Number(item?.price)) ||
+                        !item?.price == 0
+                      }
                       size="sm"
                       variant="flushed"
                       textAlign="left"
                       fontFamily="IranSans"
                       name="price"
                       value={item?.price}
-                      onChange={(e) =>
-                        handleItemChange(index, "price", e.target.value)
-                      }
+                      onChange={(e) => {
+                        if (isNaN(Number(e.target.value))) e.target.value = 0;
+                        handleItemChange(index, "price", e.target.value);
+                      }}
                     />
                   </Flex>
                   <Flex justify="space-between" columnGap={8} mt={3} dir="rtl">

@@ -36,14 +36,19 @@ export const TrustInput = ({
 
   if (display)
     return (
-      <Card h={230} w={isDesktop ? 240 : 220}>
-        <CardHeader bg="blue.500" color={"white"} borderTopRadius={5}>
+      <Card
+        borderWidth={1}
+        borderStyle="dashed"
+        minH="230px"
+        w={isDesktop ? 240 : 220}
+      >
+        <CardHeader p={2} bg="blue.500" color={"white"} borderTopRadius={5}>
           <HStack>
             <HandCoins />
             <Text>{title}</Text>
           </HStack>
         </CardHeader>
-        <CardBody>
+        <CardBody p={2}>
           <Box flex={1} borderRadius="md">
             <FormControl mb={2}>
               <HStack>
@@ -51,27 +56,26 @@ export const TrustInput = ({
                   تاریخ
                 </FormLabel>
                 <Box
-                  alignItems="end"
+                  maxW="205px"
                   borderWidth={1}
-                  borderColor="gray.200"
-                  bg="gray.100"
+                  borderColor="gray.300"
+                  borderRadius="md"
+                  p={2}
                 >
                   <Datepicker
+                    width="150px"
                     fontSize="md"
-                    textAlign="center"
                     fontFamily="IranSans"
-                    closeWhenSelectADay={true}
-                    format={"YYYY/MM/DD"}
-                    adjustPosition={"auto"}
                     input={
                       <input
-                        fontSize="md"
-                        textAlign="center"
-                        fontFamily="IranSans"
-                        placeholder="انتخاب تاریخ"
-                        width={isDesktop ? "240px" : "200px"}
+                        style={{ borderColor: "gray", borderWidth: "1px" }}
+                        placeholder="تاریخ را انتخاب کنید..."
                       />
                     }
+                    id="chequeDate"
+                    closeWhenSelectADay={true}
+                    format={"YYYY/MM/DD"}
+                    adjustPosition="auto"
                     theme="green"
                     allowClear={true}
                     name="trustIssueDate"

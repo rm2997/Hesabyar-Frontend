@@ -93,14 +93,7 @@ export const NewGood = ({ isDesktop }) => {
       formData?.goodPrice?.trim().length == 0 ||
       isNaN(Number(formData?.goodPrice))
     ) {
-      toast({
-        title: "توجه",
-        description: "قیمت کالا صحیح نیست",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return false;
+      formData.goodPrice = 0;
     }
 
     return true;
@@ -225,7 +218,7 @@ export const NewGood = ({ isDesktop }) => {
                 />
               </HStack>
             </FormControl>
-            <FormControl isRequired>
+            <FormControl>
               <HStack>
                 <FormLabel hidden={!isDesktop} width="170px">
                   قیمت
@@ -236,7 +229,7 @@ export const NewGood = ({ isDesktop }) => {
                   icon={DollarSign}
                   name="goodPrice"
                   title="قیمت"
-                  value={formData?.goodPrice}
+                  value={formData?.goodPrice ? formData?.goodPrice : "0"}
                   onChange={handleChangeFormData}
                 ></MyInputBox>
               </HStack>

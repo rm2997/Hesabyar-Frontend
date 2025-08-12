@@ -715,10 +715,10 @@ export const AcceptDepotExitByWareHouseMan = ({
               </Flex>
             </Flex>
 
-            <Flex
+            {/* <Flex            
               columnGap={2}
-              hidden={!formData?.driver}
-              mt={1}
+              hidden={!formData?.driver || user}
+              
               dir="rtl"
               direction="column"
               borderWidth={1}
@@ -751,7 +751,7 @@ export const AcceptDepotExitByWareHouseMan = ({
                   />
                 </Box>
               </Flex>
-            </Flex>
+            </Flex> */}
 
             <Button
               leftIcon={<SquareCheckBig />}
