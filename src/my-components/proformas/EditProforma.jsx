@@ -482,13 +482,7 @@ export const EditProforma = ({
           </CardHeader>
         )}
         <CardBody>
-          <Flex
-            direction="column"
-            rowGap={4}
-            columnGap={4}
-            as="form"
-            onSubmit={handleSubmit}
-          >
+          <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
             <Flex direction={{ base: "column", md: "row" }}>
               <Box>
                 <Stack spacing={4} direction="column">
@@ -499,7 +493,7 @@ export const EditProforma = ({
                       </FormLabel>
                       <Input
                         name="title"
-                        value={formData.title}
+                        value={formData?.title}
                         placeholder="عنوان"
                         onChange={handleChangeFormData}
                       />
@@ -515,7 +509,7 @@ export const EditProforma = ({
                         maxW="300px"
                         onClick={() => setShowSearchCustomer(true)}
                         value={
-                          formData.customer !== null
+                          formData?.customer !== null
                             ? formData?.customer?.customerGender +
                               " " +
                               formData?.customer?.customerFName +
@@ -526,7 +520,7 @@ export const EditProforma = ({
                         name="customer"
                         readOnly
                       />
-                      {formData.customer && (
+                      {formData?.customer && (
                         <IconButton
                           mr="-10px"
                           size="md"
@@ -558,7 +552,7 @@ export const EditProforma = ({
                         dir="ltr"
                         name="paymentStatus"
                         placeholder="نوع پرداخت را انتخاب کنید"
-                        value={formData.paymentStatus}
+                        value={formData?.paymentStatus}
                         onChange={handleChangeFormData}
                       >
                         {PaymentTypes.map((p) => (
@@ -581,8 +575,8 @@ export const EditProforma = ({
                     isDesktop={isDesktop}
                     title={"اطلاعات تهاتر"}
                     display={
-                      formData.paymentStatus === "تهاتر" ||
-                      formData.paymentStatus === "اعتباری"
+                      formData?.paymentStatus === "تهاتر" ||
+                      formData?.paymentStatus === "اعتباری"
                     }
                     formData={formData}
                     handleChangeFormData={handleChangeFormData}
@@ -591,8 +585,8 @@ export const EditProforma = ({
                     isDesktop={isDesktop}
                     title={"اطلاعات چک"}
                     display={
-                      formData.paymentStatus === "چک" ||
-                      formData.paymentStatus === "اعتباری"
+                      formData?.paymentStatus === "چک" ||
+                      formData?.paymentStatus === "اعتباری"
                     }
                     formData={formData}
                     handleChangeFormData={handleChangeFormData}
@@ -602,8 +596,8 @@ export const EditProforma = ({
                     isDesktop={isDesktop}
                     title={"اطلاعات امانی"}
                     display={
-                      formData.paymentStatus === "امانی" ||
-                      formData.paymentStatus === "اعتباری"
+                      formData?.paymentStatus === "امانی" ||
+                      formData?.paymentStatus === "اعتباری"
                     }
                     formData={formData}
                     handleChangeFormData={handleChangeFormData}
@@ -712,7 +706,7 @@ export const EditProforma = ({
                       isInvalid={
                         !item?.price ||
                         isNaN(Number(item?.price)) ||
-                        !item?.price == 0
+                        item?.price == 0
                       }
                       size="sm"
                       variant="flushed"
@@ -805,7 +799,7 @@ export const EditProforma = ({
             <Input
               placeholder=" توضیحات فاکتور"
               name="description"
-              value={formData.description}
+              value={formData?.description}
               onChange={handleChangeFormData}
             />
             <Flex
@@ -873,9 +867,9 @@ export const EditProforma = ({
               colorScheme="blue"
               type="submit"
               isLoading={loading}
-              disabled={formData.isConverted}
+              disabled={formData?.isConverted}
               title={
-                formData.isConverted
+                formData?.isConverted
                   ? "این پیش فاکتور به فاکتور تبدیل شده است"
                   : ""
               }

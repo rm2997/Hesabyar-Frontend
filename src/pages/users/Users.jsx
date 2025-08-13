@@ -30,20 +30,20 @@ export const Users = ({}) => {
         borderColor="gray.200"
       >
         <TabList>
+          <Tab>کاربران</Tab>
           <Tab>کاربر جدید</Tab>
           <Tab>تغییر کلمه عبور</Tab>
-          <Tab>کاربران</Tab>
         </TabList>
         <TabIndicator mt="-1.5px" height="2px" bg="blue.500" />
         <TabPanels borderColor="gray.200" borderWidth="1px" borderRadius="5">
+          <TabPanel>
+            <UsersDataTable isDesktop={isDesktop} />
+          </TabPanel>
           <TabPanel>
             <NewUser isDesktop={isDesktop} />
           </TabPanel>
           <TabPanel>
             <ChangePassword isDesktop={isDesktop} user={user} />
-          </TabPanel>
-          <TabPanel>
-            <UsersDataTable isDesktop={isDesktop} />
           </TabPanel>
         </TabPanels>
       </Tabs>

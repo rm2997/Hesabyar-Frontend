@@ -429,7 +429,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
       form.append("image", depotGoods[index].imageFile);
       console.log(element.id, form);
       const imageRes = await UpdateDepotImageFile(element.id, form);
-      if (!imageRes.success)
+      if (!imageRes.success) {
         toast({
           title: "خطایی در ارسال تصویر رخ داد",
           description: imageRes.error,
@@ -437,7 +437,8 @@ export const NewDepotEntry = ({ isDesktop }) => {
           duration: 3000,
           isClosable: true,
         });
-      setLoading(false);
+        setLoading(false);
+      }
     });
   };
 
@@ -624,17 +625,22 @@ export const NewDepotEntry = ({ isDesktop }) => {
                       قیمت
                     </Text>
                     <Input
+                      isInvalid={
+                        isNaN(Number(formData?.price)) ||
+                        Number(formData?.price) == 0
+                      }
                       size="sm"
                       variant="flushed"
                       textAlign="left"
                       fontFamily="IranSans"
                       name="price"
                       value={depotItem?.price}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        if (isNaN(Number(e.target.value))) e.target.value = "0";
                         handleChangeGoodsData(index, {
                           target: { name: "price", value: e.target.value },
-                        })
-                      }
+                        });
+                      }}
                     />
                   </Flex>
                   <Flex justify="space-between" columnGap={8} mt={3} dir="rtl">

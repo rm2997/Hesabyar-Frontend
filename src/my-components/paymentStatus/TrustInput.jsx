@@ -40,7 +40,7 @@ export const TrustInput = ({
         borderWidth={1}
         borderStyle="dashed"
         minH="230px"
-        w={isDesktop ? 240 : 220}
+        w={isDesktop ? "290px" : "220px"}
       >
         <CardHeader p={2} bg="blue.500" color={"white"} borderTopRadius={5}>
           <HStack>
@@ -52,14 +52,12 @@ export const TrustInput = ({
           <Box flex={1} borderRadius="md">
             <FormControl mb={2}>
               <HStack>
-                <FormLabel hidden={!isDesktop} w="50px">
-                  تاریخ
-                </FormLabel>
+                <FormLabel hidden={!isDesktop}>تاریخ</FormLabel>
                 <Box
-                  maxW="205px"
+                  maxW={isDesktop ? "270px" : "205px"}
                   borderWidth={1}
                   borderColor="gray.300"
-                  borderRadius="md"
+                  borderRadius="sm"
                   p={2}
                 >
                   <Datepicker
@@ -79,7 +77,7 @@ export const TrustInput = ({
                     theme="green"
                     allowClear={true}
                     name="trustIssueDate"
-                    value={formData.trustIssueDate}
+                    value={formData?.trustIssueDate}
                     onChange={(e) =>
                       handleChangeFormData({
                         target: { value: e, name: "trustIssueDate" },

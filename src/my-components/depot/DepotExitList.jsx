@@ -433,11 +433,11 @@ export const DepotExitList = ({ isDesktop }) => {
                     </Flex>
                   </CardBody>
                   <CardFooter
-                    p={row?.warehouseAcceptedBy ? 0 : 2}
+                    p={row?.isAccepted ? 0 : 2}
                     borderBottomRadius={5}
                     bg="gray.200"
                   >
-                    <Flex hidden={row?.warehouseAcceptedBy} mr="auto">
+                    <Flex hidden={row?.isAccepted} mr="auto">
                       <Stack
                         direction={["row"]}
                         spacing={2}
@@ -450,7 +450,7 @@ export const DepotExitList = ({ isDesktop }) => {
                           }}
                           color="blue.600"
                           onClick={(e) => {
-                            setSelectedID(row.id);
+                            setSelectedID(row?.id);
                             setDialogGears({
                               title: "ویرایش",
                               text: "",

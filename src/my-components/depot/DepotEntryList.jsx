@@ -31,6 +31,7 @@ import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { EditDepotEntry } from "./EditDepotEntry";
 import { MyDepotEntryStepper } from "../MyDepotEntryStepper";
+import { MyDepotEntryRequestStepper } from "../MyDepotEntryRequestStepper";
 
 export const DepotEntryList = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
@@ -212,7 +213,7 @@ export const DepotEntryList = ({ isDesktop }) => {
                   </CardHeader>
                   <CardBody p={2}>
                     <Flex justify="space-between" direction="row" columnGap={1}>
-                      <MyDepotEntryStepper data={row} />
+                      <MyDepotEntryRequestStepper data={row} />
                       <VStack
                         w="60%"
                         spacing={2}
@@ -265,11 +266,11 @@ export const DepotEntryList = ({ isDesktop }) => {
                     </Flex>
                   </CardBody>
                   <CardFooter
-                    p={row?.warehouseAcceptedBy ? 0 : 2}
+                    p={row?.isAccepted ? 0 : 2}
                     borderBottomRadius={5}
                     bg="gray.200"
                   >
-                    <Flex hidden={row?.warehouseAcceptedBy} mr="auto">
+                    <Flex hidden={row?.isAccepted} mr="auto">
                       <Stack
                         direction={["row"]}
                         spacing={2}

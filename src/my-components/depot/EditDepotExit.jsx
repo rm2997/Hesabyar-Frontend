@@ -39,6 +39,7 @@ import {
   CreateDepot,
   ShowDepotImageFile,
   ShowDepotWarehouseImages,
+  UpdateDepot,
   UpdateDepotImageFile,
 } from "../../api/services/depotService";
 import { MyModal } from "../../my-components/MyModal";
@@ -346,7 +347,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
     tmpformData.depotGoods = [...tmpDepotGoods];
 
     setLoading(true);
-    const response = await CreateDepot(tmpformData);
+    const response = await UpdateDepot(tmpformData.id, tmpformData);
     if (!response.success) {
       toast({
         title: "خطایی رخ داد",
@@ -576,7 +577,11 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                     icon={<CircleX />}
                     colorScheme="red"
                     onClick={() => {
-                      setFormData({ ...formData, depotInvoice: null });
+                      setFormData({
+                        ...formData,
+                        depotInvoice: null,
+                        driver: "",
+                      });
                       setDepotGoods([]);
                       setSelectedDepotGood(null);
                       setApprovedFile(null);

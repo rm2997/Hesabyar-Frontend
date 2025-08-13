@@ -56,8 +56,6 @@ export const UsersDataTable = ({ isDesktop }) => {
   const [loading, setLoading] = useState(false);
   const [usersData, setUsersData] = useState([]);
   const [selectedID, setSelectedID] = useState(0);
-  const [modalContetnt, setModalContetnt] = useState(null);
-  const [modalHeader, setModalHeader] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -356,7 +354,7 @@ export const UsersDataTable = ({ isDesktop }) => {
                         }}
                         color="blue.600"
                         onClick={(e) => {
-                          setSelectedID(row.id);
+                          setSelectedID(row?.id);
                           setDialogGears({
                             title: "ویرایش کاربر",
                           });
@@ -378,9 +376,11 @@ export const UsersDataTable = ({ isDesktop }) => {
               onClose={onClose}
             >
               <EditUser
+                selectedId={selectedID}
                 onClose={onClose}
                 onUpdate={updateUserInList}
                 user={findUserFromList(selectedID)}
+                isDesktop={isDesktop}
               />
             </MyModal>
             <MyAlert

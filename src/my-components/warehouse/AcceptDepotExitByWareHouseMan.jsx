@@ -758,10 +758,10 @@ export const AcceptDepotExitByWareHouseMan = ({
               colorScheme="blue"
               type="submit"
               isLoading={loading}
-              isDisabled={formData?.isAccepted}
+              isDisabled={formData?.warehouseAcceptedAt}
               title={
-                formData?.isAccepted
-                  ? "این سند خروج کالا قبلا تایید شده است و قابل ویرایش نیست"
+                formData?.warehouseAcceptedAt
+                  ? "این سند خروج کالا توسط انباردار تایید شده است و قابل ویرایش نیست"
                   : ""
               }
             >

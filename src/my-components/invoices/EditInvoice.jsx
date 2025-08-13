@@ -10,49 +10,22 @@ import {
   IconButton,
   Input,
   Select,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
   useToast,
   Text,
-  Spinner,
-  Tfoot,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  TableContainer,
   Flex,
   Stack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Box,
-  Divider,
   SimpleGrid,
   Image,
-  AbsoluteCenter,
 } from "@chakra-ui/react";
 import { MyLoading } from "../MyLoading";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
-import {
-  CircleX,
-  Minus,
-  PackageSearch,
-  Plus,
-  PlusCircle,
-  ScanSearch,
-  Trash2,
-  UserSearch,
-} from "lucide-react";
+import { CircleX, PlusCircle, ScanSearch, UserSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -71,19 +44,10 @@ import { SearchGoods } from "../SearchGood";
 import { SearchCustomer } from "../SearchCustomer";
 import { MyModal } from "../MyModal";
 import { SearchProforma } from "../SearchProforma";
-import {
-  ShowMyAcceptedProformas,
-  ShowUserAllProformas,
-} from "../../api/services/proformaService";
+import { ShowMyAcceptedProformas } from "../../api/services/proformaService";
 import { PersianAlphabet } from "../../api/services/enums/persianAlphabets.enum";
 
-export const EditInvoice = ({
-  isDesktop,
-  invoice,
-  onUpdate,
-  isOpen,
-  onClose,
-}) => {
+export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
   const toast = useToast();
 
   dayjs.extend(jalali);
@@ -93,11 +57,12 @@ export const EditInvoice = ({
     totalAmount: 0,
     paymentStatus: 0,
     chequeAmount: 0,
-    chequeSerial: 0,
+    chequeSerial: "",
+    chequeSayad: "",
     chequeDate: "",
     paperMoneyDate: "",
     paperMoneyAmount: 0,
-    paperMoneySerial: 0,
+    paperMoneySerial: "",
     trustIssueDate: "",
     invoiceGoods: null,
     description: "",
@@ -291,7 +256,7 @@ export const EditInvoice = ({
   };
 
   const validateForm = async (data) => {
-    if (!data.customer) {
+    if (!data?.customer) {
       toast({
         title: "توجه",
         description: "باید مشتری را مشخص کنید",
@@ -301,7 +266,7 @@ export const EditInvoice = ({
       });
       return false;
     }
-    if (!data.invoiceGoods || data.invoiceGoods?.length < 1) {
+    if (!data?.invoiceGoods || data?.invoiceGoods?.length < 1) {
       toast({
         title: "توجه",
         description: "باید حداقل یک کالا انتخاب کنید",
@@ -311,18 +276,18 @@ export const EditInvoice = ({
       });
       return false;
     }
-    if (data.paymentStatus == "چک" || data.paymentStatus == "اعتباری") {
+    if (data?.paymentStatus == "چک" || data?.paymentStatus == "اعتباری") {
       if ((await validateCheque(formData)) == false) return false;
     }
-    if (data.paymentStatus == "تهاتر" || data.paymentStatus == "اعتباری") {
+    if (data?.paymentStatus == "تهاتر" || data?.paymentStatus == "اعتباری") {
       if ((await validateTahator(formData)) == false) return false;
     }
-    if (data.paymentStatus == "امانی" || data.paymentStatus == "اعتباری") {
+    if (data?.paymentStatus == "امانی" || data?.paymentStatus == "اعتباری") {
       if ((await validateAmani(formData)) == false) return false;
     }
     const goodQCheck = data.invoiceGoods.every((good) => {
       let retVal = true;
-      if (!good.quantity || good.quantity == 0) {
+      if (!good?.quantity || good?.quantity == 0) {
         toast({
           title: "توجه",
           description: ` تعداد  ${good?.good?.goodName} را ثبت کنید`,
@@ -336,9 +301,9 @@ export const EditInvoice = ({
     });
     if (!goodQCheck) return false;
 
-    const goodACheck = data.invoiceGoods.every((good) => {
+    const goodACheck = data?.invoiceGoods?.every((good) => {
       let retval = true;
-      if (!good.total || good.total == 0) {
+      if (!good?.total || good?.total == 0) {
         console.log(good);
 
         toast({
@@ -360,7 +325,7 @@ export const EditInvoice = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     const items = [...invoiceItems];
-    items.forEach((i) => (i.total = i.price * i.quantity));
+    items?.forEach((i) => (i.total = i.price * i.quantity));
 
     const data = { ...formData };
     data.invoiceGoods = [...items];
@@ -370,7 +335,7 @@ export const EditInvoice = ({
     if ((await validateForm(data)) == false) return;
 
     setLoading(true);
-    const res = await UpdateInvoice(formData.id, data);
+    const res = await UpdateInvoice(formData?.id, data);
     if (!res.success) {
       toast({
         title: "خطایی رخ داد",
@@ -502,7 +467,7 @@ export const EditInvoice = ({
         <CardBody borderTopWidth={2}>
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
             <Flex direction={{ base: "column", md: "row" }} gap={5}>
-              <Box flex={1} p={1} borderRadius="md">
+              <Box>
                 <Stack spacing={5} direction="column">
                   <FormControl>
                     <HStack>
@@ -512,7 +477,7 @@ export const EditInvoice = ({
                       <Input
                         w={250}
                         name="title"
-                        value={formData.title}
+                        value={formData?.title}
                         placeholder="عنوان"
                         onChange={handleChangeFormData}
                       />
@@ -529,7 +494,7 @@ export const EditInvoice = ({
                         maxW="300px"
                         onClick={() => setShowSearchCustomer(true)}
                         value={
-                          formData.customer !== null
+                          formData?.customer !== null
                             ? formData?.customer?.customerGender +
                               " " +
                               formData?.customer?.customerFName +
@@ -540,7 +505,7 @@ export const EditInvoice = ({
                         name="customer"
                         readOnly
                       />
-                      {formData.customer && (
+                      {formData?.customer && (
                         <IconButton
                           mr="-10px"
                           size="md"
@@ -619,12 +584,12 @@ export const EditInvoice = ({
                         dir="ltr"
                         name="paymentStatus"
                         placeholder="نوع پرداخت را انتخاب کنید"
-                        value={formData.paymentStatus}
+                        value={formData?.paymentStatus}
                         onChange={handleChangeFormData}
                       >
-                        {PaymentTypes.map((p) => (
-                          <option key={p.key} value={p.value}>
-                            {p.value}
+                        {PaymentTypes?.map((p) => (
+                          <option key={p?.key} value={p?.value}>
+                            {p?.value}
                           </option>
                         ))}
                       </Select>
@@ -642,8 +607,8 @@ export const EditInvoice = ({
                     isDesktop={isDesktop}
                     title={"اطلاعات تهاتر"}
                     display={
-                      formData.paymentStatus === "تهاتر" ||
-                      formData.paymentStatus === "اعتباری"
+                      formData?.paymentStatus === "تهاتر" ||
+                      formData?.paymentStatus === "اعتباری"
                     }
                     formData={formData}
                     handleChangeFormData={handleChangeFormData}
@@ -652,8 +617,8 @@ export const EditInvoice = ({
                     isDesktop={isDesktop}
                     title={"اطلاعات چک"}
                     display={
-                      formData.paymentStatus === "چک" ||
-                      formData.paymentStatus === "اعتباری"
+                      formData?.paymentStatus === "چک" ||
+                      formData?.paymentStatus === "اعتباری"
                     }
                     formData={formData}
                     handleChangeFormData={handleChangeFormData}
@@ -663,8 +628,8 @@ export const EditInvoice = ({
                     isDesktop={isDesktop}
                     title={"اطلاعات امانی"}
                     display={
-                      formData.paymentStatus === "امانی" ||
-                      formData.paymentStatus === "اعتباری"
+                      formData?.paymentStatus === "امانی" ||
+                      formData?.paymentStatus === "اعتباری"
                     }
                     formData={formData}
                     handleChangeFormData={handleChangeFormData}
@@ -773,7 +738,7 @@ export const EditInvoice = ({
                       isInvalid={
                         !item?.price ||
                         isNaN(Number(item?.price)) ||
-                        !item?.price == 0
+                        item?.price == 0
                       }
                       size="sm"
                       variant="flushed"
@@ -967,7 +932,7 @@ export const EditInvoice = ({
             <Input
               placeholder="توضیحات فاکتور"
               name="description"
-              value={formData.description}
+              value={formData?.description}
               onChange={handleChangeFormData}
             />
             <Button

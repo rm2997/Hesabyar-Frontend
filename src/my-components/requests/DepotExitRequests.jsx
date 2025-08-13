@@ -270,7 +270,7 @@ export const DepotExitRequests = ({ isDesktop }) => {
                           setSelectedID(row?.id);
                           setDialogGears({
                             title: "تایید سند",
-                            text: "شما در حال تایید سند خروج  می باشید، پس از تایید، موجودی اقلام از سرانه انبار، کسر خواهد شد. ادامه می دهید؟",
+                            text: "شما در حال تایید سند خروج  می باشید، پس از تایید شما و انبار دار، موجودی اقلام از سرانه انبار، کسر خواهد شد. ادامه می دهید؟",
                             callBack: () => handleAcceptDepotExit(row?.id),
                           });
                           setIsDialogOpen(true);

@@ -202,6 +202,7 @@ export const InvoiceRequests = ({ isDesktop }) => {
           <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }}>
             {invoices?.map((row) => (
               <Card
+                maxW="300px"
                 _hover={{
                   cursor: "",
                   borderColor: "green.500",

@@ -197,16 +197,23 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
             </Select>
           </HStack>
         </FormControl>
-        <FormControl isRequired>
+        <FormControl>
           <HStack>
             <FormLabel width="100px">قیمت</FormLabel>
             <MyInputBox
+              isInvalid={
+                formData?.goodPrice?.length > 0 &&
+                (isNaN(Number(formData?.goodPrice)) || formData?.goodPrice == 0)
+              }
               icon={DollarSign}
               name="goodPrice"
               title="قیمت"
               size={19}
               value={formData?.goodPrice}
-              onChange={handleChangeFormData}
+              onChange={(e) => {
+                if (isNaN(Number(e.target.value))) e.target.value = 0;
+                handleChangeFormData(e);
+              }}
             ></MyInputBox>
           </HStack>
         </FormControl>

@@ -193,14 +193,18 @@ export const GoodsDataTable = ({ isDesktop }) => {
                       <HStack>
                         <Text> قیمت کالا :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row?.goodPrice}
+                          {row?.goodPrice
+                            ? Number(row?.goodPrice).toLocaleString()
+                            : "0"}
                         </Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text> موجودی :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row?.goodCount}
+                          {row?.goodCount
+                            ? Number(row?.goodCount).toLocaleString()
+                            : "0"}
                         </Text>
                       </HStack>
                       <Divider />

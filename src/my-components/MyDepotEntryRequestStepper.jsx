@@ -18,28 +18,35 @@ import { useEffect } from "react";
 
 const steps = [
   {
-    title: "تاییدیه مدیر",
-    description: "کاربر ارشد درخواست شما برای خروج کالا را تایید میکند",
+    title: "تایید کاربر ارشد",
+    description: "کاربر ارشد درخواست  ورود کالا را تایید میکند",
   },
   {
-    title: "تاییدیه انباردار",
-    description: "انباردار درخواست شما برای خروج کالا را تایید میکند",
+    title: "مستندات انبار",
+    description:
+      "مسئول انبار تصاویر امضا راننده و خودرو حامل کالاها را به سند الصاق میکند",
   },
   {
-    title: "خروج از انبار",
-    description: "موجودی کالاها طبق سند کسر می شوند",
+    title: "تاییدیه انبار",
+    description: "مسئول انبار  ورود کالا را تایید میکند",
+  },
+  {
+    title: "ورود کالا",
+    description: "تعداد اقلام به موجودی انبار اضافه می شود",
   },
 ];
-export const MyDepotExitStepper = ({ data }) => {
+export const MyDepotEntryRequestStepper = ({ data }) => {
   const { activeStep, setActiveStep } = useSteps({
     index: 1,
     count: steps.length,
   });
   const getCurrentStep = () => {
     if (!data?.isAccepted) return setActiveStep(0);
-    if (!data?.warehouseAcceptedBy) return setActiveStep(1);
-    if (!data?.depotInvoice?.finished) return setActiveStep(2);
-    return setActiveStep(3);
+    if (!data?.driverSignImage && !data?.exitGoodImage) return setActiveStep(1);
+    if (!data?.warehouseAcceptedBy) return setActiveStep(2);
+    if (!data?.finishd) return setActiveStep(3);
+
+    return setActiveStep(4);
   };
 
   useEffect(() => {

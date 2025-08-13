@@ -661,7 +661,7 @@ export const NewProforma = ({ isDesktop }) => {
                       isInvalid={
                         !item?.price ||
                         isNaN(Number(item?.price)) ||
-                        !item?.price == 0
+                        item?.price == 0
                       }
                       size="sm"
                       variant="flushed"

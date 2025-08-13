@@ -42,6 +42,7 @@ export const MyInputBox = ({ icon, size, title, onChange, type, ...props }) => {
         </InputRightElement>
       )}
       <Input
+        fontFamily="iransans"
         type={inputType}
         pr={icon ? "2.9rem" : 0}
         pl={type == "password" ? "2.9rem" : 0}

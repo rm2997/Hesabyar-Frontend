@@ -6,7 +6,6 @@ import {
   DecimalsArrowLeft,
   FileSpreadsheet,
   GalleryHorizontalEnd,
-  Home,
   Layers,
   Layers2,
   ListChecks,
@@ -15,15 +14,18 @@ import {
   Newspaper,
   PackagePlus,
   Plus,
-  Shield,
   ShieldUser,
   SquareLibrary,
   SquareStack,
   Users,
   UsersRound,
 } from "lucide-react";
+import { PieChart } from "../PieChart";
+import { UserContext } from "../../contexts/UserContext";
+import { useContext } from "react";
 
 export const EasyAccessPage = ({ onItemClick }) => {
+  const { user, setUser } = useContext(UserContext);
   return (
     <Flex
       fontSize="10px"
@@ -34,6 +36,20 @@ export const EasyAccessPage = ({ onItemClick }) => {
       rowGap={5}
       minH="86vh"
     >
+      {/* <Flex
+        rowGap={1}
+        direction="column"
+        borderColor="gray.100"
+        borderWidth={1}
+        borderRadius="md"
+        p={1}
+        bg="white"
+      >
+        <Text fontSize="12px">وضعیت کلی</Text>
+        <Flex overflow="auto" h={200} columnGap={3}>
+          <PieChart isIndependent={true} sidebarWidth={500} User={user} />
+        </Flex>
+      </Flex> */}
       <Flex
         rowGap={1}
         direction="column"

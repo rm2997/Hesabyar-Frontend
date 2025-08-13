@@ -324,7 +324,6 @@ export const NewDepotExit = ({ isDesktop }) => {
         duration: 3000,
         isClosable: true,
       });
-      initFormData();
       setLoading(false);
       return;
     }
@@ -532,9 +531,11 @@ export const NewDepotExit = ({ isDesktop }) => {
                         ...formData,
                         issuedBy: null,
                         depotInvoice: null,
+                        driver: "",
                       });
                       setDepotGoods([]);
                       setSelectedDepotGood(null);
+                      setApprovedFile(null);
                     }}
                   />
                 )}

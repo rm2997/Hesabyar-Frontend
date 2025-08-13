@@ -34,8 +34,9 @@ export const ChequeInput = ({
   useEffect(() => {
     if (!display) {
       handleChangeFormData({ target: { value: 0, name: "chequeAmount" } });
-      handleChangeFormData({ target: { value: 0, name: "chequeSerial" } });
+      handleChangeFormData({ target: { value: "", name: "chequeSerial" } });
       handleChangeFormData({ target: { value: "", name: "chequeDate" } });
+      handleChangeFormData({ target: { value: "", name: "chequeSayad" } });
     }
   }, [display]);
   if (display)
@@ -44,7 +45,7 @@ export const ChequeInput = ({
         borderWidth={1}
         borderStyle="dashed"
         minH="230px"
-        w={isDesktop ? 240 : 220}
+        w={isDesktop ? "290px" : "220px"}
       >
         <CardHeader p={2} bg="blue.500" color={"white"} borderTopRadius={5}>
           <HStack>
@@ -54,50 +55,34 @@ export const ChequeInput = ({
         </CardHeader>
         <CardBody p={2}>
           <Box flex={1} borderRadius="md">
-            <FormControl mb={2}>
-              <HStack>
-                <FormLabel
-                  fontFamily="IranSans"
-                  fontSize={isDesktop ? "md" : "md"}
-                >
-                  مبلغ
-                </FormLabel>
-                <NumberInput
+            <FormControl isRequired={formData?.paymentStatus == "چک"} mb={2}>
+              <HStack gap={4}>
+                <FormLabel fontFamily="IranSans">مبلغ</FormLabel>
+                <Input
                   isInvalid={formData?.chequeAmount < 1000}
                   size="sm"
                   title="مبلغ چک"
                   fontSize="md"
                   fontFamily="IranSans"
                   defaultValue={0}
-                  w={250}
                   dir="ltr"
                   min={0}
                   name="chequeAmount"
                   value={formData?.chequeAmount}
-                  onChange={(value) => {
+                  onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) e.target.value = 0;
                     handleChangeFormData({
-                      target: { value: value, name: "chequeAmount" },
+                      target: { value: e.target.value, name: "chequeAmount" },
                     });
                   }}
                   placeholder="مبلغ چک"
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
+                />
               </HStack>
             </FormControl>
 
-            <FormControl mb={2}>
-              <HStack>
-                <FormLabel
-                  fontFamily="IranSans"
-                  fontSize={isDesktop ? "md" : "xs"}
-                >
-                  سریال
-                </FormLabel>
+            <FormControl isRequired={formData?.paymentStatus == "چک"} mb={2}>
+              <HStack gap={1}>
+                <FormLabel fontFamily="IranSans">سریال</FormLabel>
                 <Input
                   isInvalid={
                     formData?.chequeSerial?.length < 3 ||
@@ -107,23 +92,25 @@ export const ChequeInput = ({
                   size="sm"
                   title="سریال چک"
                   fontFamily="IranSans"
-                  w={250}
                   dir="ltr"
                   name="chequeSerial"
                   placeholder="سریال چک"
                   value={formData?.chequeSerial}
-                  onChange={handleChangeFormData}
+                  onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) e.target.value = 0;
+                    handleChangeFormData({
+                      target: {
+                        value: e.target.value,
+                        name: "chequeSerial",
+                      },
+                    });
+                  }}
                 />
               </HStack>
             </FormControl>
-            <FormControl mb={2}>
-              <HStack>
-                <FormLabel
-                  fontFamily="IranSans"
-                  fontSize={isDesktop ? "md" : "xs"}
-                >
-                  شناسه
-                </FormLabel>
+            <FormControl isRequired={formData?.paymentStatus == "چک"} mb={2}>
+              <HStack gap={1}>
+                <FormLabel fontFamily="IranSans">شناسه</FormLabel>
                 <Input
                   isInvalid={
                     formData?.chequeSayad?.length < 3 ||
@@ -137,26 +124,32 @@ export const ChequeInput = ({
                   dir="ltr"
                   name="chequeSayad"
                   value={formData?.chequeSayad}
-                  onChange={handleChangeFormData}
+                  onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) e.target.value = 0;
+                    handleChangeFormData({
+                      target: {
+                        value: e.target.value,
+                        name: "chequeSayad",
+                      },
+                    });
+                  }}
                 />
               </HStack>
             </FormControl>
             <FormControl isRequired={formData?.paymentStatus == "چک"} mb={2}>
-              <HStack>
+              <HStack gpa={5}>
                 <FormLabel hidden={!isDesktop} w="50px">
                   تاریخ
                 </FormLabel>
-
                 <Box
-                  maxW="205px"
+                  maxW={isDesktop ? "250px" : "205px"}
                   borderWidth={1}
                   borderColor="gray.300"
-                  borderRadius="md"
+                  borderRadius="sm"
                   p={2}
                   vali
                 >
                   <Datepicker
-                    width="150px"
                     fontFamily="IranSans"
                     input={
                       <input
@@ -171,23 +164,23 @@ export const ChequeInput = ({
                     theme="green"
                     allowClear={true}
                     name="chequeDate"
-                    value={formData.chequeDate}
-                    onChange={(e) =>
+                    value={formData?.chequeDate}
+                    onChange={(e) => {
                       handleChangeFormData({
                         target: { value: e, name: "chequeDate" },
-                      })
-                    }
+                      });
+                    }}
                   />
                 </Box>
               </HStack>
             </FormControl>
-            <FormControl mb={2}>
-              <HStack>
+            <FormControl isRequired={formData?.paymentStatus == "چک"} mb={2}>
+              <HStack gap={3}>
                 <FormLabel hidden={!isDesktop} w="50px">
                   بانک عامل
                 </FormLabel>
                 <Select
-                  isInvalid={!formData.chequeIssuerName}
+                  isInvalid={!formData?.chequeIssuerName}
                   placeholder="بانک عامل"
                   size="sm"
                   dir="ltr"

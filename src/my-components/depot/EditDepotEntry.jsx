@@ -715,6 +715,7 @@ export const EditDepotEntry = ({
                       قیمت
                     </Text>
                     <Input
+                      isInvalid={depotItem?.price == 0}
                       size="sm"
                       variant="flushed"
                       textAlign="left"
@@ -722,11 +723,12 @@ export const EditDepotEntry = ({
                       name="price"
                       value={depotItem?.price}
                       placeholder="قیمت"
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        if (isNaN(Number(e.target.value))) e.target.value = 0;
                         handleChangeGoodsData(index, {
                           target: { name: "price", value: e.target.value },
-                        })
-                      }
+                        });
+                      }}
                     />
                   </Flex>
                   <Flex

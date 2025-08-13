@@ -363,34 +363,61 @@ export const NewUser = ({ isDesktop }) => {
                     <Switch
                       ml="auto"
                       id="twoFactorAuthntication"
+                      name="twoFactorAuthntication"
                       value={formData.twoFactorAuthntication}
-                      onChange={handleChangeFormData}
+                      isChecked={formData?.twoFactorAuthntication}
+                      onChange={(e) =>
+                        handleChangeFormData({
+                          target: {
+                            name: "twoFactorAuthntication",
+                            value: e.target.checked,
+                          },
+                        })
+                      }
                     />
                   </HStack>
                 </FormControl>
                 <FormControl>
                   <HStack>
                     <FormLabel htmlFor="isActive" width="140px">
-                      کاربر فعال
+                      کاربر فعال است
                     </FormLabel>
                     <Switch
                       ml="auto"
                       id="isActive"
+                      name="isUserActive"
                       value={formData.isUserActive}
-                      onChange={handleChangeFormData}
+                      isChecked={formData.isUserActive}
+                      onChange={(e) =>
+                        handleChangeFormData({
+                          target: {
+                            name: "isUserActive",
+                            value: e.target.checked,
+                          },
+                        })
+                      }
                     />
                   </HStack>
                 </FormControl>
                 <FormControl>
                   <HStack>
                     <FormLabel htmlFor="changePass" width="140px">
-                      تغییر رمز در ورود بعدی
+                      تغییر رمز اجباری
                     </FormLabel>
                     <Switch
                       ml="auto"
                       id="changePass"
+                      name="mustChangePassword"
                       value={formData.mustChangePassword}
-                      onChange={handleChangeFormData}
+                      isChecked={formData.mustChangePassword}
+                      onChange={(e) =>
+                        handleChangeFormData({
+                          target: {
+                            name: "mustChangePassword",
+                            value: e.target.checked,
+                          },
+                        })
+                      }
                     />
                   </HStack>
                 </FormControl>

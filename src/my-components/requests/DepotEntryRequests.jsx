@@ -35,6 +35,7 @@ import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { EditDepotEntry } from "../depot/EditDepotEntry";
 import { MyDepotExitRequestStepper } from "../MyDepotExitRequestStepper";
+import { MyDepotEntryRequestStepper } from "../MyDepotEntryRequestStepper";
 
 export const DepotEntryRequest = ({ isDesktop }) => {
   const [depotEntry, setDepotEntry] = useState([]);
@@ -242,7 +243,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
                   </CardHeader>
                   <CardBody p={2}>
                     <Flex justify="center" direction="row" columnGap={1}>
-                      <MyDepotExitRequestStepper data={row} />
+                      <MyDepotEntryRequestStepper data={row} />
                       <VStack
                         mx={2}
                         fontFamily="IranSans"

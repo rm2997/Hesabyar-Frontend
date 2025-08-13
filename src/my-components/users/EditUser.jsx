@@ -13,13 +13,18 @@ import {
 import { IdCard, Phone, SquareCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../MyLoading";
 import { UpdateUser } from "../../api/services/userService";
 import { UserRoles } from "../../api/services/enums/roles.enum";
 
-export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
+export const EditUser = ({
+  selectedId,
+  isDesktop,
+  user,
+  onUpdate,
+  onClose,
+}) => {
   const [formData, setFormData] = useState({
     id: 0,
     role: "",
@@ -27,13 +32,13 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
     userfname: "",
     userlname: "",
     twoFactorAuthntication: false,
+    isUserActive: true,
+    mustChangePassword: false,
     usermobilenumber: "",
   });
   //const [users, setUsers] = useState([]);
-  const [roles, setRoles] = useState([]);
-  const [formError, setFormError] = useState(null);
+
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const toast = useToast();
 
   useEffect(() => {
@@ -43,7 +48,8 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const res = await UpdateUser(formData.id, formData);
+
+    const res = await UpdateUser(selectedId, formData);
     if (!res.success) {
       setLoading(false);
       toast({
@@ -63,6 +69,8 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
       userfname: "",
       userlname: "",
       twoFactorAuthntication: false,
+      isUserActive: false,
+      mustChangePassword: false,
       usermobilenumber: "",
     });
     toast({
@@ -77,17 +85,10 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
   };
 
   const handleChangeFormData = (e) => {
-    console.log(e.target.checked);
-    if (e.target.name == "twoFactorAuthntication")
-      setFormData({
-        ...formData,
-        twoFactorAuthntication: e.target.checked,
-      });
-    else
-      setFormData({
-        ...formData,
-        [e.target.name]: e.target.value,
-      });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   return (
@@ -180,8 +181,75 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
                 />
               </HStack>
             </FormControl>
-
-            <FormControl>
+            <Flex direction="column">
+              <FormControl>
+                <HStack>
+                  <FormLabel htmlFor="twoFactorAuthntication" width="140px">
+                    ورود دو مرحله ای
+                  </FormLabel>
+                  <Switch
+                    ml="auto"
+                    id="twoFactorAuthntication"
+                    name="twoFactorAuthntication"
+                    value={formData.twoFactorAuthntication}
+                    isChecked={formData?.twoFactorAuthntication}
+                    onChange={(e) =>
+                      handleChangeFormData({
+                        target: {
+                          name: "twoFactorAuthntication",
+                          value: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                </HStack>
+              </FormControl>
+              <FormControl>
+                <HStack>
+                  <FormLabel htmlFor="isActive" width="140px">
+                    کاربر فعال است
+                  </FormLabel>
+                  <Switch
+                    ml="auto"
+                    id="isActive"
+                    name="isUserActive"
+                    value={formData.isUserActive}
+                    isChecked={formData.isUserActive}
+                    onChange={(e) =>
+                      handleChangeFormData({
+                        target: {
+                          name: "isUserActive",
+                          value: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                </HStack>
+              </FormControl>
+              <FormControl>
+                <HStack>
+                  <FormLabel htmlFor="changePass" width="140px">
+                    تغییر رمز اجباری
+                  </FormLabel>
+                  <Switch
+                    ml="auto"
+                    id="changePass"
+                    name="mustChangePassword"
+                    value={formData.mustChangePassword}
+                    isChecked={formData.mustChangePassword}
+                    onChange={(e) =>
+                      handleChangeFormData({
+                        target: {
+                          name: "mustChangePassword",
+                          value: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                </HStack>
+              </FormControl>
+            </Flex>
+            {/* <FormControl>
               <HStack>
                 <FormLabel htmlFor="twoFactorAuthntication" width="140px">
                   ورود دو مرحله ای
@@ -195,7 +263,7 @@ export const EditUser = ({ isDesktop, user, onUpdate, onClose }) => {
                   onChange={handleChangeFormData}
                 />
               </HStack>
-            </FormControl>
+            </FormControl> */}
           </SimpleGrid>
           <Button
             leftIcon={<SquareCheckBig />}

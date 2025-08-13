@@ -73,51 +73,55 @@ export const PieChart = ({ sidebarWidth, User }) => {
   }, []);
 
   useEffect(() => {
-    if (sidebarWidth === 300) setShowPie(false);
-    else setShowPie(true);
+    if (sidebarWidth === 300) setShowPie(true);
+    else setShowPie(false);
   }, [sidebarWidth]);
 
-  if (pieData)
-    return (
-      <Box
-        mt={3}
-        h="300px"
-        w="100%"
-        bg="gray.700"
-        p={4}
-        borderRadius="md"
-        hidden={showPie}
+  return (
+    <Flex
+      //  bg="black"
+      hidden={!showPie}
+      mt={3}
+      bg={sidebarWidth === 300 ? "gray.700" : "black"}
+      p={4}
+      borderRadius="md"
+      ml="auto"
+    >
+      <Text
+        hidden={sidebarWidth !== 300}
+        fontFamily="iransans"
+        fontSize="md"
+        mb={1}
       >
-        <Text fontFamily="iransans" fontSize="md" mb={1}>
-          میزان فعالیت
-        </Text>
-        {pieData.length == 0 && (
-          <Flex mx="auto" my="auto">
-            <Text fontFamily="iransans" fontSize="sm">
-              شما هیچ فعالیتی نداشتید.
-            </Text>
-          </Flex>
-        )}
-        <ResponsiveContainer width="100%" height="70%">
-          <RechartPieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              innerRadius={50}
-              outerRadius={80}
-              paddingAngle={6}
-              fill="#8884d8"
-            >
-              {pieData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip />
-          </RechartPieChart>
-        </ResponsiveContainer>
-      </Box>
-    );
+        میزان فعالیت
+      </Text>
+      {pieData?.length == 0 && (
+        <Flex mx="auto" my="auto">
+          <Text fontFamily="iransans" fontSize="sm">
+            شما هیچ فعالیتی نداشتید.
+          </Text>
+        </Flex>
+      )}
+      <ResponsiveContainer>
+        <RechartPieChart margin={2}>
+          <Pie
+            data={pieData}
+            dataKey="value"
+            innerRadius={40}
+            outerRadius={70}
+            paddingAngle={6}
+            fill="#8884d8"
+          >
+            {pieData.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+          <Tooltip />
+        </RechartPieChart>
+      </ResponsiveContainer>
+    </Flex>
+  );
 };
