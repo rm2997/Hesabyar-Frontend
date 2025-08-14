@@ -189,12 +189,14 @@ export const DepotWareHouseEntyRequests = ({ isDesktop }) => {
             <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
               {depotEntry.map((row) => (
                 <Card
+                  maxW="350px"
                   borderTopRadius={5}
                   borderWidth="1px"
                   borderColor="gray.300"
                   _hover={{ cursor: "", borderColor: "green.500" }}
                 >
                   <CardHeader
+                    py={4}
                     bg={row?.isAccepted ? "green.400" : "blue.200"}
                     borderTopRadius={5}
                     _hover={{ cursor: "pointer", borderColor: "green.500" }}
@@ -214,7 +216,7 @@ export const DepotWareHouseEntyRequests = ({ isDesktop }) => {
                       </Text>
                     </HStack>
                   </CardHeader>
-                  <CardBody>
+                  <CardBody p={2}>
                     <Flex justify="space-between" direction="row" columnGap={1}>
                       <MyWareHouseDepotExitStepper data={row} />
                       <VStack
@@ -255,6 +257,15 @@ export const DepotWareHouseEntyRequests = ({ isDesktop }) => {
                               row?.createdBy?.userlname}
                           </Text>
                         </HStack>
+                        <Divider hidden={!row?.acceptedBy} />
+                        <HStack hidden={!row?.acceptedBy}>
+                          <Text fontFamily="IranSans"> تایید کننده :</Text>
+                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
+                            {row?.acceptedBy?.userfname +
+                              " " +
+                              row?.acceptedBy?.userlname}
+                          </Text>
+                        </HStack>
                       </VStack>
                     </Flex>
                   </CardBody>
@@ -274,7 +285,7 @@ export const DepotWareHouseEntyRequests = ({ isDesktop }) => {
                           setSelectedID(row?.id);
                           setDialogGears({
                             title: "تایید سند",
-                            text: "شما در حال تایید سند ورود انبار می باشید، ادامه می دهید؟",
+                            text: "شما در حال تایید سند ورود انبار می باشید، پس از تایید، موجودی کالا در انبار به میزان اقلام ثبت شده افزایش خواهد یافت، ادامه می دهید؟",
                             callBack: () =>
                               handleAcceptDepotByWarehouseMan(row?.id),
                           });

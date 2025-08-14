@@ -412,23 +412,25 @@ export const DepotExitList = ({ isDesktop }) => {
                           </Text>
                         </HStack>
 
-                        {row?.isAccepted && (
-                          <>
-                            <Divider />
-                            <HStack>
-                              <Text fontFamily="IranSans"> تایید کننده :</Text>
-                              <Text
-                                fontFamily="IranSans"
-                                fontSize="12px"
-                                mr="auto"
-                              >
-                                {row?.acceptedBy?.userfname +
-                                  " " +
-                                  row?.acceptedBy?.userlname}
-                              </Text>
-                            </HStack>
-                          </>
-                        )}
+                        <Divider hidden={!row?.acceptedBy} />
+                        <HStack hidden={!row?.acceptedBy}>
+                          <Text fontFamily="IranSans"> تایید کننده :</Text>
+                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
+                            {row?.acceptedBy?.userfname +
+                              " " +
+                              row?.acceptedBy?.userlname}
+                          </Text>
+                        </HStack>
+
+                        <Divider hidden={!row?.warehouseAcceptedBy} />
+                        <HStack hidden={!row?.warehouseAcceptedBy}>
+                          <Text fontFamily="IranSans"> مسئول انبار :</Text>
+                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
+                            {row?.warehouseAcceptedBy?.userfname +
+                              " " +
+                              row?.warehouseAcceptedBy?.userlname}
+                          </Text>
+                        </HStack>
                       </VStack>
                     </Flex>
                   </CardBody>

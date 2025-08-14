@@ -300,7 +300,7 @@ export const DepotEntryRequest = ({ isDesktop }) => {
                           //setInvoiceSelectedID(row.id);
                           setDialogGears({
                             title: "تایید",
-                            text: "شما در حال تایید سند ورودی می باشید، پس از تایید، موجودی اقلام به سرانه انبار اضافه خواهد شد. ادامه می دهید؟",
+                            text: "شما در حال تایید سند ورودی می باشید، پس از تایید شما و مسئول انبار، موجودی اقلام به سرانه انبار اضافه خواهد شد. ادامه می دهید؟",
                             callBack: () => handleAcceptDepotEntry(row.id),
                           });
                           setIsDialogOpen(true);

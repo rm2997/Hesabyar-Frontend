@@ -193,6 +193,7 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
                   _hover={{ cursor: "", borderColor: "green.500" }}
                 >
                   <CardHeader
+                    py={4}
                     bg={row?.isAccepted ? "green.400" : "blue.200"}
                     borderTopRadius={5}
                     _hover={{ cursor: "pointer", borderColor: "green.500" }}
@@ -206,64 +207,11 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
                       onOpen();
                     }}
                   >
-                    <HStack>
-                      {/* <Flex
-                        borderWidth={1}
-                        p={1}
-                        borderRadius="md"
-                        borderColor="whiteAlpha.300"
-                      >
-                        <ArrowBigRight
-                          color="#e49b5bff"
-                          height={18}
-                          width={18}
-                        />
-                        <Warehouse color="#e49b5bff" height={18} width={18} />
-                      </Flex> */}
-                      <Text fontFamily="IranSans" fontSize="md">
-                        سند خروجی شماره : {row?.id}
-                      </Text>
-                      {/* <Box mr="auto">
-                        <HStack>
-                          {row?.isAccepted ? (
-                            <Tooltip label="تاییدیه کاربر ارشد">
-                              <ShieldUser color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر تایید کاربر ارشد ">
-                              <UserLock
-                                color="yellow"
-                                _hover={{ color: "green" }}
-                              />
-                            </Tooltip>
-                          )}
-                          {row?.driverNatCode ||
-                          row?.driverCarNumber ||
-                          row?.driver ||
-                          row?.driverMobile ? (
-                            <Tooltip label="تایید مشتری">
-                              <UserRoundCheck color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر تایید مشتری">
-                              <Handshake color="white" />
-                            </Tooltip>
-                          )}
-
-                          {row?.isSent ? (
-                            <Tooltip label="لینک به مشتری ارسال شده است">
-                              <MailCheck color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر ارسال">
-                              <CircleFadingArrowUp color="orange" />
-                            </Tooltip>
-                          )}
-                        </HStack>
-                      </Box> */}
-                    </HStack>
+                    <Text fontFamily="IranSans" fontSize="md">
+                      سند خروجی شماره : {row?.id}
+                    </Text>
                   </CardHeader>
-                  <CardBody>
+                  <CardBody p={2}>
                     <Flex justify="space-between" direction="row" columnGap={1}>
                       <MyWareHouseDepotExitStepper data={row} />
                       <VStack
@@ -311,15 +259,15 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
                           </Text>
                         </HStack>
 
-                        {/*<Divider />
-                         <HStack>
+                        <Divider hidden={!row?.acceptedBy} />
+                        <HStack hidden={!row?.acceptedBy}>
                           <Text fontFamily="IranSans"> تایید کننده :</Text>
                           <Text fontFamily="IranSans" fontSize="12px" mr="auto">
                             {row?.acceptedBy?.userfname +
                               " " +
                               row?.acceptedBy?.userlname}
                           </Text>
-                        </HStack> */}
+                        </HStack>
                       </VStack>
                     </Flex>
                   </CardBody>
@@ -339,7 +287,7 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
                           setSelectedID(row?.id);
                           setDialogGears({
                             title: "تایید سند",
-                            text: "شما در حال تایید سند خروج انبار می باشید، ادامه می دهید؟",
+                            text: "شما در حال تایید سند خروج انبار می باشید و پس از تایید شما موجودی انبار طبق اقلام سند کسر خواهد شد، ادامه می دهید؟",
                             callBack: () =>
                               handleAcceptDepotByWarehouseMan(row?.id),
                           });

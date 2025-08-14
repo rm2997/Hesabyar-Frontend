@@ -155,6 +155,7 @@ export const DepotEntryList = ({ isDesktop }) => {
             <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
               {depotEntry.map((row) => (
                 <Card
+                  maxW="350px"
                   borderTopRadius={5}
                   borderWidth="1px"
                   borderColor="gray.300"
@@ -175,41 +176,9 @@ export const DepotEntryList = ({ isDesktop }) => {
                       onOpen();
                     }}
                   >
-                    <HStack>
-                      {/* <Flex
-                        borderWidth={1}
-                        p={1}
-                        borderRadius="md"
-                        borderColor="whiteAlpha.300"
-                      >
-                        <ArrowBigLeft
-                          color="#bddb75ff"
-                          height={18}
-                          width={18}
-                        />
-                        <Warehouse color="#bddb75ff" height={18} width={18} />
-                      </Flex> */}
-                      <Text fontFamily="IranSans" fontSize="md">
-                        سند ورودی شماره : {row?.id}
-                      </Text>
-
-                      {/* <Box mr="auto">
-                        <HStack>
-                          {row?.isAccepted ? (
-                            <Tooltip label="تاییدیه کاربر ارشد">
-                              <ShieldUser color="green" />
-                            </Tooltip>
-                          ) : (
-                            <Tooltip label="منتظر تایید کاربر ارشد ">
-                              <UserLock
-                                color="yellow"
-                                _hover={{ color: "green" }}
-                              />
-                            </Tooltip>
-                          )}
-                        </HStack>
-                      </Box> */}
-                    </HStack>
+                    <Text fontFamily="IranSans" fontSize="md">
+                      سند ورودی شماره : {row?.id}
+                    </Text>
                   </CardHeader>
                   <CardBody p={2}>
                     <Flex justify="space-between" direction="row" columnGap={1}>
@@ -251,6 +220,15 @@ export const DepotEntryList = ({ isDesktop }) => {
                             {row?.createdBy?.userfname +
                               " " +
                               row?.createdBy?.userlname}
+                          </Text>
+                        </HStack>
+                        <Divider hidden={!row?.acceptedBy} />
+                        <HStack hidden={!row?.acceptedBy}>
+                          <Text fontFamily="IranSans"> تایید کننده :</Text>
+                          <Text fontFamily="IranSans" fontSize="12px" mr="auto">
+                            {row?.acceptedBy?.userfname +
+                              " " +
+                              row?.acceptedBy?.userlname}
                           </Text>
                         </HStack>
                         <Divider hidden={!row?.warehouseAcceptedBy} />

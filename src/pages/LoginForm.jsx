@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 
 import { MyInputBox } from "../my-components/MyInputBox";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveTokens, loadTokens } from "../api/tokenUtils";
 import { UserContext } from "../contexts/UserContext";
@@ -25,6 +25,7 @@ import { GetNewCaptcha, login } from "../api/services/authService";
 import endpoints from "../api/endpoints";
 
 export const LoginForm = () => {
+  const userNameBoxRef = useRef();
   const isDesktop = useBreakpointValue({ base: false, md: true });
   const [showCaptcha, setShowCaptcha] = useState(false);
   //const [captcha, setCaptcha] = useState("");
@@ -47,6 +48,7 @@ export const LoginForm = () => {
 
   useEffect(() => {
     if (accessToken) navigate("/myhome");
+    userNameBoxRef.current.focus();
   }, []);
 
   useEffect(() => {
@@ -115,24 +117,52 @@ export const LoginForm = () => {
     navigate("/Home");
   };
 
+  const validateForm = async () => {
+    if (
+      !form?.username ||
+      form?.username?.length < 3 ||
+      !isNaN(Number(form?.username))
+    ) {
+      toast({
+        title: "توجه",
+        description: "نام کاربری صحیح را وارد کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (!form?.password) {
+      toast({
+        title: "توجه",
+        description: "کلمه عبور صحیح را وارد کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+    if (
+      inputCaptha.length > 0 &&
+      (!isNaN(Number(inputCaptha)) || inputCaptha?.length != 5)
+    ) {
+      toast({
+        title: "توجه",
+        description: "رمز تصادفی صحیح را وارد کنید",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // if (showCaptcha && inputCaptha != captcha) {
-    //   toast({
-    //     title: "خطا",
-    //     description: "کد تصادفی صحیح نیست",
-    //     status: "error",
-    //     duration: 3000,
-    //     isClosable: false,
-    //   });
-    //   const { svg, token } = await getNewCaptchaFromServer();
-
-    //   handleGeneratCaptcha();
-    //   setInputCaptha("");
-    //   setForm({ username: "", password: "", userLocation: "" });
-    //   return;
-    // }
+    const validate = await validateForm();
+    if (validate == false) return;
     setIsFormDisabled(true);
     try {
       const formData = {
@@ -270,6 +300,8 @@ export const LoginForm = () => {
             <Divider mb="10px" />
             <FormControl textColor="white" isRequired>
               <Input
+                ref={userNameBoxRef}
+                isInvalid={!form?.username || form?.username?.length < 3}
                 autoComplete="off"
                 _placeholder={{ color: "whiteAlpha.700" }}
                 _focus={{
@@ -280,7 +312,7 @@ export const LoginForm = () => {
                 name="username"
                 type="text"
                 variant="outline"
-                value={form.username}
+                value={form?.username}
                 onChange={handleChange}
                 placeholder="نام کاربری"
               />
@@ -288,6 +320,7 @@ export const LoginForm = () => {
 
             <FormControl textColor="white" isRequired>
               <MyInputBox
+                isInvalid={!form?.password || form?.password?.length < 3}
                 autoComplete="off"
                 _placeholder={{ color: "whiteAlpha.700" }}
                 _focus={{
@@ -310,6 +343,7 @@ export const LoginForm = () => {
                 <FormLabel hidden={!isDesktop}>رمز تصادفی</FormLabel>
                 <Flex justify="space-between">
                   <Input
+                    isInvalid={!inputCaptha || inputCaptha?.length != 5}
                     autoComplete="off"
                     colorScheme="teal"
                     _placeholder={{ color: "whiteAlpha.700" }}
@@ -384,7 +418,7 @@ export const LoginForm = () => {
               fontSize="2xs"
               color="whiteAlpha.600"
             >
-              نسخه 1.0.0.0 *** 21 مرداد 1404
+              نسخه 1.0.0.0 *** 23 مرداد 1404
             </Text>
           </Flex>
           <Flex

@@ -718,9 +718,9 @@ export const AcceptDepotEntryByWareHouseMan = ({
               colorScheme="blue"
               type="submit"
               isLoading={loading}
-              isDisabled={formData?.isAccepted}
+              isDisabled={formData?.warehouseAcceptedBy}
               title={
-                formData?.isAccepted
+                formData?.warehouseAcceptedById
                   ? "این سند خروج کالا قبلا تایید شده است و قابل ویرایش نیست"
                   : ""
               }

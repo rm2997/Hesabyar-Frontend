@@ -19,7 +19,7 @@ import { useEffect } from "react";
 const steps = [
   {
     title: "تایید کاربر ارشد",
-    description: "کاربر ارشد درخواست  ورود کالا را تایید میکند",
+    description: "کاربر ارشد درخواست ورود کالا را تایید میکند",
   },
   {
     title: "مستندات انبار",
@@ -28,7 +28,7 @@ const steps = [
   },
   {
     title: "تاییدیه انبار",
-    description: "مسئول انبار  ورود کالا را تایید میکند",
+    description: "مسئول انبار ورود کالا را تایید میکند",
   },
   {
     title: "ورود کالا",
@@ -44,7 +44,7 @@ export const MyDepotEntryRequestStepper = ({ data }) => {
     if (!data?.isAccepted) return setActiveStep(0);
     if (!data?.driverSignImage && !data?.exitGoodImage) return setActiveStep(1);
     if (!data?.warehouseAcceptedBy) return setActiveStep(2);
-    if (!data?.finishd) return setActiveStep(3);
+    if (!data?.finished) return setActiveStep(3);
 
     return setActiveStep(4);
   };
@@ -66,7 +66,7 @@ export const MyDepotEntryRequestStepper = ({ data }) => {
         dir="ltr"
         index={activeStep}
         orientation="vertical"
-        height="200px"
+        height="150px"
         gap="0"
         colorScheme="orange"
       >

@@ -179,6 +179,22 @@ export const NewDepotEntry = ({ isDesktop }) => {
     });
     if (!serialCheck) return false;
 
+    const imageCheck = depotGoods?.every((good) => {
+      let retVal = true;
+      if (!good.imageFile) {
+        toast({
+          title: "توجه",
+          description: `تصویر  ${good?.good?.goodName} را ثبت کنید`,
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        retVal = false;
+      }
+      return retVal;
+    });
+    if (!imageCheck) return false;
+
     const priceCheck = depotGoods.every((good) => {
       let retval = true;
       if (!good.price || good.price == 0) {
@@ -197,7 +213,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
     if (formData?.driver?.length < 3 || !isNaN(Number(formData?.driver))) {
       toast({
         title: "توجه",
-        description: "نام یا نام خانوادگی صحیح نیست",
+        description: "نام یا نام خانوادگی راننده صحیح نیست",
         status: "warning",
         duration: 3000,
         isClosable: true,
@@ -210,7 +226,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
     ) {
       toast({
         title: "توجه",
-        description: "شماره ملی صحیح نیست",
+        description: "شماره ملی راننده صحیح نیست",
         status: "warning",
         duration: 3000,
         isClosable: true,
@@ -220,7 +236,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
     if (isNaN(Number(formData?.driverNatCode))) {
       toast({
         title: "توجه",
-        description: "شماره ملی باید به شکل عددی باشد",
+        description: "شماره ملی راننده باید به شکل عددی باشد",
         status: "warning",
         duration: 3000,
         isClosable: true,
@@ -233,7 +249,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
     ) {
       toast({
         title: "توجه",
-        description: "شماره موبایل  صحیح نیست",
+        description: "شماره موبایل  راننده صحیح نیست",
         status: "warning",
         duration: 3000,
         isClosable: true,
@@ -243,7 +259,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
     if (isNaN(Number(formData?.driverMobile))) {
       toast({
         title: "توجه",
-        description: "شماره موبایل باید به شکل عددی باشد",
+        description: "شماره موبایل راننده باید به شکل عددی باشد",
         status: "warning",
         duration: 3000,
         isClosable: true,
@@ -626,8 +642,8 @@ export const NewDepotEntry = ({ isDesktop }) => {
                     </Text>
                     <Input
                       isInvalid={
-                        isNaN(Number(formData?.price)) ||
-                        Number(formData?.price) == 0
+                        isNaN(Number(depotItem?.price)) ||
+                        Number(depotItem?.price) == 0
                       }
                       size="sm"
                       variant="flushed"

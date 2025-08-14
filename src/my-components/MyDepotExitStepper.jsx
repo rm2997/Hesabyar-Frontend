@@ -59,7 +59,7 @@ export const MyDepotExitStepper = ({ data }) => {
         dir="ltr"
         index={activeStep}
         orientation="vertical"
-        height="200px"
+        height="150px"
         gap="0"
         colorScheme="orange"
       >
