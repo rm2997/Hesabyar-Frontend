@@ -49,15 +49,19 @@ import {
 import { useEffect, useState } from "react";
 import { GetUserByUserid } from "../api/services/userService";
 
+import { MyModal } from "./MyModal";
+import { ChangePasswordByUser } from "./users/ChangePasswordByUser";
+
 export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
   const [userName, setUserName] = useState("");
+
   useEffect(() => {
     const loadData = async () => {
       if (!user) return;
       const res = await GetUserByUserid(user?.sub);
-      if (res?.success)
+      if (res?.success) {
         setUserName(res?.data?.userfname + " " + res?.data?.userlname);
-      else setUserName("نا مشخص");
+      } else setUserName("نا مشخص");
     };
     loadData();
   }, []);

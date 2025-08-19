@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 export const MyInputBox = ({ icon, size, title, onChange, type, ...props }) => {
   const [passIcon, setPassIcon] = useState(Eye);
   const [inputType, setInputType] = useState({ type });
-
+  const [focused, setFocused] = useState(false);
   useEffect(() => {
     setInputType(type);
   }, []);
@@ -38,10 +38,17 @@ export const MyInputBox = ({ icon, size, title, onChange, type, ...props }) => {
           borderLeftColor="gray.200"
           borderLeftWidth={1}
         >
-          <Icon as={icon} pointerEvents="none" color="gray.500" />
+          <Icon
+            as={icon}
+            textColor={focused ? "orange" : ""}
+            pointerEvents="none"
+            color="gray.500"
+          />
         </InputRightElement>
       )}
       <Input
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         fontFamily="iransans"
         type={inputType}
         pr={icon ? "2.9rem" : 0}

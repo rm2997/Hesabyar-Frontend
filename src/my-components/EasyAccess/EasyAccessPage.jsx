@@ -1,4 +1,4 @@
-import { Flex, IconButton, Text } from "@chakra-ui/react";
+import { Flex, IconButton, Text, useBreakpointValue } from "@chakra-ui/react";
 import {
   ArrowUpFromLine,
   Boxes,
@@ -20,12 +20,28 @@ import {
   Users,
   UsersRound,
 } from "lucide-react";
-import { PieChart } from "../PieChart";
+
 import { UserContext } from "../../contexts/UserContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+import { GetUserByUserid } from "../../api/services/userService";
+import { MyModal } from "../MyModal";
+import { ChangePasswordByUser } from "../users/ChangePasswordByUser";
 
 export const EasyAccessPage = ({ onItemClick }) => {
   const { user, setUser } = useContext(UserContext);
+  const [showChangePass, setShowChangePass] = useState(false);
+  const isDesktop = useBreakpointValue({ base: false, md: true });
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (!user) return;
+      const res = await GetUserByUserid(user?.sub);
+      if (res?.success) {
+        if (res?.data?.mustChangePassword) setShowChangePass(true);
+      }
+    };
+    loadData();
+  }, []);
   return (
     <Flex
       fontSize="10px"
@@ -36,20 +52,6 @@ export const EasyAccessPage = ({ onItemClick }) => {
       rowGap={5}
       minH="86vh"
     >
-      {/* <Flex
-        rowGap={1}
-        direction="column"
-        borderColor="gray.100"
-        borderWidth={1}
-        borderRadius="md"
-        p={1}
-        bg="white"
-      >
-        <Text fontSize="12px">وضعیت کلی</Text>
-        <Flex overflow="auto" h={200} columnGap={3}>
-          <PieChart isIndependent={true} sidebarWidth={500} User={user} />
-        </Flex>
-      </Flex> */}
       <Flex
         rowGap={1}
         direction="column"
@@ -301,6 +303,14 @@ export const EasyAccessPage = ({ onItemClick }) => {
           </Flex>
         </Flex>
       </Flex>
+      <MyModal
+        isOpen={showChangePass}
+        size={isDesktop ? "xl" : "sm"}
+        modalHeader={"شما باید کلمه عبور جدیدی انتخاب کنید"}
+        onClose={() => setShowChangePass(false)}
+      >
+        <ChangePasswordByUser />
+      </MyModal>
     </Flex>
   );
 };

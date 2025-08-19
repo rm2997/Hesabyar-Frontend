@@ -25,6 +25,9 @@ import { MyLoading } from "../MyLoading";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { UserContext } from "../../contexts/UserContext";
 
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>/?]).{6,}$/;
+
 export const ChangePasswordByUser = ({ isDesktop }) => {
   const [formData, setFormData] = useState({
     current: "",
@@ -95,8 +98,6 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
       });
       return false;
     }
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_\-+=\[\]{};':"\\|,.<>/?]).{6,}$/;
 
     const isValidPassword = (password) => {
       return passwordRegex.test(password);
@@ -215,10 +216,12 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
       <Card
         m={1}
         filter={loading ? "blur(10px)" : ""}
-        minH={isDesktop ? "83vh" : "73vh"}
+        h={isDesktop ? "65vh" : "75vh"}
         overflowY="auto"
       >
         <CardHeader
+          hidden={!isDesktop}
+          p={2}
           bg="#68C15A"
           borderBottomColor="gray.400"
           borderBottomWidth="1px"
@@ -227,77 +230,111 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
         >
           تغییر کلمه عبور
         </CardHeader>
-        <CardBody borderTopWidth={2}>
+        <CardBody
+          borderTopRadius={isDesktop ? "" : "md"}
+          p={isDesktop ? 20 : 2}
+          borderTopWidth={2}
+        >
           <VStack
             align={"stretch"}
-            direction={["column", "row"]}
             as="form"
-            spacing={8}
             onSubmit={handleSubmit}
+            rowGap={isDesktop ? 10 : 5}
           >
             <FormControl isRequired>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="137px">
+              <Flex
+                gap="5px"
+                alignItems="center"
+                direction={{ base: "column", sm: "row" }}
+              >
+                <FormLabel
+                  fontSize={isDesktop ? "15px" : "13px"}
+                  w={isDesktop ? "10%" : "35%"}
+                >
                   نام کاربری
                 </FormLabel>
                 <MyInputBox
+                  isInvalid={formData?.username?.length == 0}
                   icon={User}
                   isReadOnly
                   type="text"
                   name="username"
-                  width="400px"
                   placeholder="نام کاربری"
                   value={userData.username}
                 />
-              </HStack>
+              </Flex>
             </FormControl>
-            <FormControl isRequired as={Flex}>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
+            <FormControl isRequired>
+              <Flex
+                gap="5px"
+                alignItems="center"
+                direction={{ base: "column", sm: "row" }}
+              >
+                <FormLabel
+                  fontSize={isDesktop ? "15px" : "13px"}
+                  w={isDesktop ? "10%" : "35%"}
+                >
                   کلمه عبور فعلی
                 </FormLabel>
                 <MyInputBox
+                  isInvalid={formData?.current?.length == 0}
                   type="password"
                   icon={Key}
                   name="current"
                   title="کلمه عبور فعلی"
-                  size={30}
                   value={formData.current}
                   onChange={handleChangeFormData}
                 />
-              </HStack>
+              </Flex>
             </FormControl>
-            <FormControl isRequired as={Flex}>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
+            <FormControl isRequired>
+              <Flex
+                gap="5px"
+                alignItems="center"
+                direction={{ base: "column", sm: "row" }}
+              >
+                <FormLabel
+                  fontSize={isDesktop ? "15px" : "13px"}
+                  w={isDesktop ? "10%" : "35%"}
+                >
                   کلمه عبور جدید
                 </FormLabel>
                 <MyInputBox
+                  isInvalid={
+                    formData?.new?.length < 6 ||
+                    !passwordRegex.test(formData?.new)
+                  }
                   type="password"
                   icon={KeyRound}
                   name="new"
                   title="کلمه عبور جدید"
-                  size={30}
                   value={formData.new}
                   onChange={handleChangeFormData}
                 ></MyInputBox>
-              </HStack>
+              </Flex>
             </FormControl>
-            <FormControl isRequired as={Flex}>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
+            <FormControl isRequired>
+              <Flex
+                gap="5px"
+                alignItems="center"
+                direction={{ base: "column", sm: "row" }}
+              >
+                <FormLabel
+                  fontSize={isDesktop ? "15px" : "13px"}
+                  w={isDesktop ? "10%" : "35%"}
+                >
                   تکرار کلمه عبور
                 </FormLabel>
                 <MyInputBox
+                  isInvalid={formData?.confirm !== formData?.new}
                   icon={KeyRound}
                   type="password"
                   name="confirm"
                   title="تکرار کلمه عبور"
-                  size={30}
                   value={formData.confirm}
                   onChange={handleChangeFormData}
                 />
-              </HStack>
+              </Flex>
             </FormControl>
 
             <Button
@@ -310,7 +347,6 @@ export const ChangePasswordByUser = ({ isDesktop }) => {
             </Button>
           </VStack>
         </CardBody>
-        <CardFooter></CardFooter>
       </Card>
       {loading && <MyLoading />}
     </Box>

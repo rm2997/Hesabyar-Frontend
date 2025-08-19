@@ -650,11 +650,18 @@ export const NewDepotEntry = ({ isDesktop }) => {
                       textAlign="left"
                       fontFamily="IranSans"
                       name="price"
-                      value={depotItem?.price}
+                      value={Number(depotItem?.price).toLocaleString()}
                       onChange={(e) => {
-                        if (isNaN(Number(e.target.value))) e.target.value = "0";
+                        const rawVal = e.target.value.replaceAll(",", "");
+                        if (isNaN(Number(rawVal))) {
+                          handleChangeGoodsData(index, {
+                            target: { name: "price", value: 0 },
+                          });
+                          return;
+                        }
+                        const numVal = Number(rawVal);
                         handleChangeGoodsData(index, {
-                          target: { name: "price", value: e.target.value },
+                          target: { name: "price", value: numVal },
                         });
                       }}
                     />

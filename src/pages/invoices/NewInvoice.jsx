@@ -726,10 +726,15 @@ export const NewInvoice = ({ isDesktop }) => {
                       textAlign="left"
                       fontFamily="IranSans"
                       name="price"
-                      value={item?.price}
+                      value={Number(item?.price).toLocaleString()}
                       onChange={(e) => {
-                        if (isNaN(Number(e.target.value))) e.target.value = 0;
-                        handleItemChange(index, "price", e.target.value);
+                        const rawVal = e.target.value.replaceAll(",", "");
+                        if (isNaN(Number(rawVal))) {
+                          handleItemChange(index, "price", 0);
+                          return;
+                        }
+                        const numVal = Number(rawVal);
+                        handleItemChange(index, "price", numVal);
                       }}
                     />
                   </Flex>
