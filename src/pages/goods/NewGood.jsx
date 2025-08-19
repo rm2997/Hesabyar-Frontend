@@ -229,22 +229,18 @@ export const NewGood = ({ isDesktop }) => {
                   icon={DollarSign}
                   name="goodPrice"
                   title="قیمت"
-                  value={
-                    formData?.goodPrice
-                      ? Number(formData?.goodPrice).toString()
-                      : "0"
-                  }
+                  value={Number(formData?.goodPrice).toString()}
                   onChange={(e) => {
                     const rawVal = e.target.value.replaceAll(",", "");
                     if (isNaN(Number(rawVal))) {
                       handleChangeFormData({
-                        target: { name: "price", value: 0 },
+                        target: { name: "goodPrice", value: 0 },
                       });
                       return;
                     }
                     const numVal = Number(rawVal);
                     handleChangeFormData({
-                      target: { name: "price", value: numVal },
+                      target: { name: "goodPrice", value: numVal },
                     });
                   }}
                 ></MyInputBox>
