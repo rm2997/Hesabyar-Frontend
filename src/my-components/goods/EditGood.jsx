@@ -209,10 +209,19 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
               name="goodPrice"
               title="قیمت"
               size={19}
-              value={formData?.goodPrice}
+              value={Number(formData?.goodPrice).toLocaleString()}
               onChange={(e) => {
-                if (isNaN(Number(e.target.value))) e.target.value = 0;
-                handleChangeFormData(e);
+                const rawVal = e.target.value.replaceAll(",", "");
+                if (isNaN(Number(rawVal))) {
+                  handleChangeFormData({
+                    target: { name: "goodPrice", value: 0 },
+                  });
+                  return;
+                }
+                const numVal = Number(rawVal);
+                handleChangeFormData({
+                  target: { name: "goodPrice", value: numVal },
+                });
               }}
             ></MyInputBox>
           </HStack>

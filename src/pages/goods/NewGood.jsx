@@ -229,7 +229,7 @@ export const NewGood = ({ isDesktop }) => {
                   icon={DollarSign}
                   name="goodPrice"
                   title="قیمت"
-                  value={Number(formData?.goodPrice).toString()}
+                  value={Number(formData?.goodPrice).toLocaleString()}
                   onChange={(e) => {
                     const rawVal = e.target.value.replaceAll(",", "");
                     if (isNaN(Number(rawVal))) {
