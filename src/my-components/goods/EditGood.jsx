@@ -205,6 +205,8 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
                 formData?.goodPrice?.length > 0 &&
                 (isNaN(Number(formData?.goodPrice)) || formData?.goodPrice == 0)
               }
+              px={2}
+              dir="ltr"
               icon={DollarSign}
               name="goodPrice"
               title="قیمت"

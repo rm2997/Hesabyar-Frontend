@@ -17,6 +17,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import {
+  Captions,
+  Contact,
+  Contact2,
+  Hash,
   IdCard,
   Mailbox,
   Phone,
@@ -325,7 +329,7 @@ export const NewCustomer = ({ isDesktop }) => {
                         عنوان
                       </FormLabel>
                       <MyInputBox
-                        icon={IdCard}
+                        icon={Captions}
                         name="customerTitle"
                         title="عنوان"
                         value={formData.customerTitle}
@@ -343,7 +347,7 @@ export const NewCustomer = ({ isDesktop }) => {
                           formData?.customerFName?.trim().length < 2 ||
                           !isNaN(Number(formData?.customerFName))
                         }
-                        icon={IdCard}
+                        icon={Contact}
                         name="customerFName"
                         title="نام"
                         value={formData.customerFName}
@@ -365,7 +369,7 @@ export const NewCustomer = ({ isDesktop }) => {
                           formData?.customerLName?.trim().length < 2 ||
                           !isNaN(Number(formData?.customerLName))
                         }
-                        icon={IdCard}
+                        icon={Contact2}
                         name="customerLName"
                         title="نام خانوادگی"
                         value={formData.customerLName}
@@ -417,7 +421,7 @@ export const NewCustomer = ({ isDesktop }) => {
                             isNaN(Number(formData?.customerEconomicCode)))
                         }
                         maxLength="10"
-                        icon={IdCard}
+                        icon={Hash}
                         name="customerEconomicCode"
                         title="شماره اقتصادی"
                         value={formData.customerEconomicCode}

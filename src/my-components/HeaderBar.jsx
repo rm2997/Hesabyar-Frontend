@@ -13,6 +13,7 @@ import {
   Divider,
   Image,
   Button,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import {
   Bell,
@@ -31,7 +32,6 @@ import {
 import { useNavigate } from "react-router-dom";
 
 export const HeaderBar = ({
-  isDesktop,
   setIsSidebarOpen,
   setSidebarWidth,
   sidebarWidth,
@@ -40,7 +40,7 @@ export const HeaderBar = ({
   user,
 }) => {
   const navigate = useNavigate();
-
+  const isDesktop = useBreakpointValue({ base: false, md: true });
   const handleSideBarWith = () => {
     if (sidebarWidth === 300) setSidebarWidth(100);
     else setSidebarWidth(300);

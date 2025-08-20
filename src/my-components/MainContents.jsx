@@ -1,5 +1,13 @@
 // components/MainContent.jsx
-import { Box, Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Text,
+  useBreakpointValue,
+  useToast,
+} from "@chakra-ui/react";
 
 import { NewProforma } from "../pages/proformas/NewProforma";
 import { act, useContext, useEffect, useState } from "react";
@@ -73,10 +81,10 @@ const validContents = [
   { name: "saveLocation", value: "" },
 ];
 
-export const MainContents = ({ onItemClick, activeContent, isDesktop }) => {
+export const MainContents = ({ onItemClick, activeContent }) => {
   const [pageTitle, setPageTitle] = useState("");
   const [shouldRender, setShouldRender] = useState(null);
-
+  const isDesktop = useBreakpointValue({ base: false, md: true, lg: true });
   const [sessionExpired, setSessionExpired] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();

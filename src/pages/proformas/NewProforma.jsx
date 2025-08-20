@@ -21,6 +21,7 @@ import {
   Stack,
   useDisclosure,
   Box,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import { CircleX, PlusCircle, UserRoundPlus, UserSearch } from "lucide-react";
@@ -441,9 +442,13 @@ export const NewProforma = ({ isDesktop }) => {
         )}
         <CardBody borderTopWidth={2}>
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
-            <Flex direction={{ base: "column", md: "row" }} gap={5}>
+            <Flex
+              direction={{ base: "column", md: "row" }}
+              columnGap={5}
+              rowGap={3}
+            >
               <Box flex={1} p={1} borderRadius="md">
-                <Stack columnGap={5} rowGap={3} direction="column">
+                <Stack direction="column">
                   <FormControl>
                     <HStack>
                       <FormLabel hidden={!isDesktop} width="120px">
@@ -529,8 +534,19 @@ export const NewProforma = ({ isDesktop }) => {
                   </FormControl>
                 </Stack>
               </Box>
-              <Box flex={1} p={1} borderRadius="md">
-                <Flex direction={{ base: "column", md: "row" }} gap={4}>
+              <Box
+                flex={1}
+                p={1}
+                borderRadius="md"
+                mx={isDesktop ? "" : "auto"}
+              >
+                <Flex
+                  columnGap={5}
+                  rowGap={3}
+                  wrap={"wrap"}
+                  direction={isDesktop ? "" : "column"}
+                  alignItems={isDesktop ? "" : "center"}
+                >
                   <PaperMoneyInput
                     title={"اطلاعات تهاتر"}
                     display={
@@ -571,6 +587,7 @@ export const NewProforma = ({ isDesktop }) => {
 
             <Flex
               direction={isDesktop ? "" : "column"}
+              alignItems={isDesktop ? "" : "center"}
               flexWrap={isDesktop ? "wrap" : ""}
               minH="100px"
               rowGap={3}

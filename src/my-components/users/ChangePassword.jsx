@@ -107,7 +107,7 @@ export const ChangePassword = ({ isDesktop, user }) => {
     <Box>
       <Card
         filter={loading ? "blur(10px)" : ""}
-        minH={isDesktop ? "75vh" : "73vh"}
+        minH={isDesktop ? "72vh" : "66vh"}
         overflowY="auto"
         m={1}
       >
@@ -130,14 +130,13 @@ export const ChangePassword = ({ isDesktop, user }) => {
           >
             <FormControl isRequired>
               <HStack>
-                <FormLabel hidden={!isDesktop} width="125px">
+                <FormLabel hidden={!isDesktop} w="20%">
                   کاربر
                 </FormLabel>
                 <Select
                   disabled={!user?.role == "admin"}
                   dir="ltr"
                   placeholder="یک کاربر انتخاب کنید"
-                  maxW="397px"
                   name="id"
                   value={formData.id}
                   onChange={(e) => handleChangeUser(e.target.value)}
@@ -152,8 +151,8 @@ export const ChangePassword = ({ isDesktop, user }) => {
             </FormControl>
 
             <FormControl isRequired as={Flex}>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
+              <HStack w="full">
+                <FormLabel hidden={!isDesktop} w="20%">
                   رمز جدید
                 </FormLabel>
                 <MyInputBox
@@ -161,15 +160,14 @@ export const ChangePassword = ({ isDesktop, user }) => {
                   icon={KeyRound}
                   name="new"
                   title="رمز جدید"
-                  size={30}
                   value={formData.new}
                   onChange={handleChangeFormData}
-                ></MyInputBox>
+                />
               </HStack>
             </FormControl>
             <FormControl isRequired as={Flex}>
-              <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
+              <HStack w="full">
+                <FormLabel hidden={!isDesktop} w="20%">
                   تکرار رمز
                 </FormLabel>
                 <MyInputBox
@@ -177,7 +175,6 @@ export const ChangePassword = ({ isDesktop, user }) => {
                   type="password"
                   name="confirm"
                   title="تکرار رمز"
-                  size={30}
                   value={formData.confirm}
                   onChange={handleChangeFormData}
                 />

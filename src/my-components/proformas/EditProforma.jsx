@@ -2,7 +2,6 @@ import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   FormControl,
   FormLabel,
@@ -10,16 +9,8 @@ import {
   IconButton,
   Input,
   Select,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
   useToast,
   Text,
-  Spinner,
-  Tfoot,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -28,20 +19,12 @@ import {
   Flex,
   Stack,
   Box,
-  Divider,
   SimpleGrid,
   Image,
-  AbsoluteCenter,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
-import {
-  CircleX,
-  PackageSearch,
-  Plus,
-  PlusCircle,
-  Trash2,
-  UserSearch,
-} from "lucide-react";
+import { Captions, CircleX, PlusCircle, User, UserSearch } from "lucide-react";
 import { MyLoading } from "../MyLoading";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
@@ -56,21 +39,14 @@ import { ShowAllGoods } from "../../api/services/goodsService";
 import { ChequeInput } from "../../my-components/paymentStatus/ChequeInput";
 import { PaperMoneyInput } from "../../my-components/paymentStatus/PaperMoneyInput";
 import { TrustInput } from "../../my-components/paymentStatus/TrustInput";
-import { NewCustomer } from "../../pages/customers/NewCustomer";
 import { SearchGoods } from "../SearchGood";
 import { SearchCustomer } from "../SearchCustomer";
 import { MyModal } from "../MyModal";
+import { MyInputBox } from "../MyInputBox";
 
-export const EditProforma = ({
-  onUpdate,
-  proforma,
-  setProformas,
-  proformas,
-  closeMe,
-  isDesktop,
-}) => {
+export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
   const toast = useToast();
-
+  const isDesktop = useBreakpointValue({ base: false, md: true, lg: true });
   dayjs.extend(jalali);
   const [formData, setFormData] = useState({
     title: "",
@@ -89,6 +65,9 @@ export const EditProforma = ({
     isConverted: 0,
   });
 
+  useEffect(() => {
+    console.log(isDesktop);
+  }, [isDesktop]);
   const [proformaItems, setProformaItems] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [approvedFile, setApprovedFile] = useState(null);
@@ -488,25 +467,26 @@ export const EditProforma = ({
                 <Stack spacing={4} direction="column">
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} w="40%">
                         عنوان
                       </FormLabel>
-                      <Input
+                      <MyInputBox
+                        icon={Captions}
                         name="title"
                         value={formData?.title}
-                        placeholder="عنوان"
+                        title="عنوان"
                         onChange={handleChangeFormData}
                       />
                     </HStack>
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="300px">
+                      <FormLabel hidden={!isDesktop} w="57%">
                         نام مشتری
                       </FormLabel>
-                      <Input
+                      <MyInputBox
+                        icon={User}
                         placeholder="لطفا یک مشتری انتخاب کنید"
-                        maxW="300px"
                         onClick={() => setShowSearchCustomer(true)}
                         value={
                           formData?.customer !== null
@@ -545,7 +525,7 @@ export const EditProforma = ({
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} w="40%">
                         نوع پرداخت
                       </FormLabel>
                       <Select
@@ -565,9 +545,15 @@ export const EditProforma = ({
                   </FormControl>
                 </Stack>
               </Box>
-              <Box flex={3} p={4} borderRadius="md">
+              <Box
+                flex={3}
+                p={4}
+                borderRadius="md"
+                mx={isDesktop ? "" : "auto"}
+              >
                 <SimpleGrid
-                  columns={{ base: 1, md: 3, lg: 3 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
+                  alignItems="center"
+                  columns={{ base: 1, md: 1, lg: 3 }}
                   spacing={4}
                   minChildWidth="260px"
                 >

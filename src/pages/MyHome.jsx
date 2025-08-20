@@ -64,7 +64,6 @@ export const MyHome = () => {
   return (
     <Flex h="100vh" direction="column" bg="gray.900" color="white" dir="rtl">
       <HeaderBar
-        isDesktop={isDesktop}
         setIsSidebarOpen={setIsSidebarOpen}
         setSidebarWidth={(e) => setSidebarWidth(e)}
         sidebarWidth={sidebarWidth}
@@ -76,7 +75,6 @@ export const MyHome = () => {
       <Flex flex={1} position="relative" overflow="hidden">
         {isDesktop ? (
           <Sidebar
-            isDesktop={isDesktop}
             user={user}
             sidebarWidth={sidebarWidth}
             onMenuItemClick={(e) => setActiveContent(e)}
@@ -96,7 +94,6 @@ export const MyHome = () => {
               </DrawerHeader>
               <DrawerBody bg="gray.800">
                 <Sidebar
-                  isDesktop={isDesktop}
                   user={user}
                   sidebarWidth={sidebarWidth}
                   onMenuItemClick={(e) => {
@@ -110,7 +107,6 @@ export const MyHome = () => {
         )}
 
         <MainContents
-          isDesktop={isDesktop}
           onItemClick={setActiveContent}
           activeContent={activeContent}
         />

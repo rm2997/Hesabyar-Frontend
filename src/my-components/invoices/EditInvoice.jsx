@@ -471,11 +471,10 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
                 <Stack spacing={5} direction="column">
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} w="32%">
                         عنوان
                       </FormLabel>
                       <Input
-                        w={250}
                         name="title"
                         value={formData?.title}
                         placeholder="عنوان"
@@ -486,12 +485,11 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="300px">
+                      <FormLabel hidden={!isDesktop} w="50%">
                         نام مشتری
                       </FormLabel>
                       <Input
                         placeholder="لطفا یک مشتری انتخاب کنید"
-                        maxW="300px"
                         onClick={() => setShowSearchCustomer(true)}
                         value={
                           formData?.customer !== null
@@ -530,12 +528,11 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
 
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="170px">
+                      <FormLabel hidden={!isDesktop} w="40%">
                         پیش‌ فاکتور
                       </FormLabel>
                       <Input
                         placeholder="لطفا یک پیش فاکتور انتخاب کنید"
-                        maxW="560px"
                         onClick={() => setShowSearchProforma(true)}
                         value={
                           formData?.proforma
@@ -576,11 +573,10 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} w="30%">
                         نوع پرداخت
                       </FormLabel>
                       <Select
-                        w={250}
                         dir="ltr"
                         name="paymentStatus"
                         placeholder="نوع پرداخت را انتخاب کنید"

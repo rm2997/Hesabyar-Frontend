@@ -22,12 +22,17 @@ import {
   Stack,
   SimpleGrid,
   useDisclosure,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
 import {
+  Captions,
   CircleX,
+  FileText,
+  Info,
   PlusCircle,
   ScanSearch,
+  User,
   UserRoundPlus,
   UserSearch,
 } from "lucide-react";
@@ -51,8 +56,10 @@ import { NewCustomer } from "../customers/NewCustomer";
 import { MyModal } from "../../my-components/MyModal";
 import { SearchCustomer } from "../../my-components/SearchCustomer";
 import { SearchProforma } from "../../my-components/SearchProforma";
+import { MyInputBox } from "../../my-components/MyInputBox";
 
-export const NewInvoice = ({ isDesktop }) => {
+export const NewInvoice = ({}) => {
+  const isDesktop = useBreakpointValue({ base: false, md: true });
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [formData, setFormData] = useState({
@@ -441,27 +448,29 @@ export const NewInvoice = ({ isDesktop }) => {
               rowGap={3}
             >
               <Box flex={1} p={1} borderRadius="md">
-                <Stack columnGap={5} rowGap={3} direction="column">
+                <Stack direction="column">
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="135px">
+                      <FormLabel hidden={!isDesktop} w="23%">
                         عنوان
                       </FormLabel>
-                      <Input
+                      <MyInputBox
+                        icon={Captions}
                         name="title"
                         value={formData.title}
-                        placeholder="عنوان"
+                        title="عنوان"
                         onChange={handleChangeFormData}
                       />
                     </HStack>
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="160px">
+                      <FormLabel hidden={!isDesktop} w="28%">
                         نام مشتری
                       </FormLabel>
-                      <Input
-                        placeholder="لطفا یک مشتری انتخاب کنید"
+                      <MyInputBox
+                        icon={User}
+                        title="لطفا یک مشتری انتخاب کنید"
                         maxW="560px"
                         onClick={() => setShowSearchCustomer(true)}
                         value={
@@ -513,11 +522,12 @@ export const NewInvoice = ({ isDesktop }) => {
 
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="145px">
+                      <FormLabel hidden={!isDesktop} w="25%">
                         پیش‌ فاکتور
                       </FormLabel>
-                      <Input
-                        placeholder="لطفا یک پیش فاکتور انتخاب کنید"
+                      <MyInputBox
+                        icon={FileText}
+                        title="لطفا یک پیش فاکتور انتخاب کنید"
                         onClick={() => setShowSearchProforma(true)}
                         value={
                           formData?.proforma
@@ -558,7 +568,7 @@ export const NewInvoice = ({ isDesktop }) => {
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="135px">
+                      <FormLabel hidden={!isDesktop} w="23%">
                         نوع پرداخت
                       </FormLabel>
                       <Select
@@ -578,11 +588,18 @@ export const NewInvoice = ({ isDesktop }) => {
                   </FormControl>
                 </Stack>
               </Box>
-              <Box flex={1} p={1} borderRadius="md">
+              <Box
+                flex={1}
+                p={1}
+                borderRadius="md"
+                mx={isDesktop ? "" : "auto"}
+              >
                 <Flex
-                  direction={{ base: "column", md: "row" }}
                   columnGap={5}
                   rowGap={3}
+                  wrap={"wrap"}
+                  direction={isDesktop ? "" : "column"}
+                  alignItems={isDesktop ? "" : "center"}
                 >
                   <PaperMoneyInput
                     isDesktop={isDesktop}
@@ -812,8 +829,9 @@ export const NewInvoice = ({ isDesktop }) => {
               </Flex>
             </Flex>
 
-            <Input
-              placeholder=" توضیحات فاکتور"
+            <MyInputBox
+              icon={Info}
+              title=" توضیحات فاکتور"
               name="description"
               value={formData?.description}
               onChange={handleChangeFormData}

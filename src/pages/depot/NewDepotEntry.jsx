@@ -928,7 +928,10 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   name="driverNatCode"
                   title="کد ملی راننده"
                   value={formData?.driverNatCode}
-                  onChange={handleChangeFormData}
+                  onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
+                    handleChangeFormData(e);
+                  }}
                 ></MyInputBox>
               </HStack>
             </FormControl>
@@ -950,7 +953,10 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   type="text"
                   name="driverMobile"
                   value={formData?.driverMobile}
-                  onChange={handleChangeFormData}
+                  onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
+                    handleChangeFormData(e);
+                  }}
                 />
               </HStack>
             </FormControl>
@@ -975,6 +981,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   name="carNoForth"
                   value={carNoForth}
                   onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
                     setCarNoForth(e.target.value);
                     handleChangeCarNo();
                   }}
@@ -995,6 +1002,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   name="carNoThird"
                   value={carNoThird}
                   onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
                     setCarNoThird(e.target.value);
                     handleChangeCarNo();
                   }}
@@ -1003,7 +1011,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   isInvalid={carNoFirst?.length > 0 && carNoAlphabet == ""}
                   fontFamily="iransans"
                   fontSize="sm"
-                  placeholder="حرف پلاک"
+                  placeholder="حروف پلاک"
                   name="carNoAlpabet"
                   value={carNoAlphabet}
                   dir="ltr"
@@ -1035,6 +1043,7 @@ export const NewDepotEntry = ({ isDesktop }) => {
                   name="carNoFirst"
                   value={carNoFirst}
                   onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
                     setCarNoFirst(e.target.value);
                     handleChangeCarNo();
                   }}

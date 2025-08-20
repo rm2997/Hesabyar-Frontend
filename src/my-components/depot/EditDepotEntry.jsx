@@ -693,9 +693,9 @@ export const EditDepotEntry = ({
                       سریال
                     </Text>
                     <Input
+                      variant="flushed"
                       size="sm"
                       dir="ltr"
-                      maxW="120px"
                       autoComplete={false}
                       name="serial"
                       placeholder="شماره سریال"
@@ -975,7 +975,10 @@ export const EditDepotEntry = ({
                   name="driverNatCode"
                   title="کد ملی راننده"
                   value={formData?.driverNatCode}
-                  onChange={handleChangeFormData}
+                  onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
+                    handleChangeFormData(e);
+                  }}
                 />
               </HStack>
             </FormControl>
@@ -997,7 +1000,10 @@ export const EditDepotEntry = ({
                   type="text"
                   name="driverMobile"
                   value={formData?.driverMobile}
-                  onChange={handleChangeFormData}
+                  onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
+                    handleChangeFormData(e);
+                  }}
                 />
               </HStack>
             </FormControl>
@@ -1022,6 +1028,7 @@ export const EditDepotEntry = ({
                   name="carNoForth"
                   value={carNoForth}
                   onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
                     setCarNoForth(e.target.value);
                     handleChangeCarNo();
                   }}
@@ -1042,6 +1049,7 @@ export const EditDepotEntry = ({
                   name="carNoThird"
                   value={carNoThird}
                   onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
                     setCarNoThird(e.target.value);
                     handleChangeCarNo();
                   }}
@@ -1050,7 +1058,7 @@ export const EditDepotEntry = ({
                   isInvalid={carNoFirst?.length > 0 && carNoAlphabet == ""}
                   fontFamily="iransans"
                   fontSize="sm"
-                  placeholder="حرف پلاک"
+                  placeholder="حروف پلاک"
                   name="carNoAlpabet"
                   value={carNoAlphabet}
                   dir="ltr"
@@ -1082,6 +1090,7 @@ export const EditDepotEntry = ({
                   name="carNoFirst"
                   value={carNoFirst}
                   onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) return;
                     setCarNoFirst(e.target.value);
                     handleChangeCarNo();
                   }}

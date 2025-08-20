@@ -8,6 +8,7 @@ import {
   Link,
   Text,
   Tooltip,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { SidebarItem } from "./SIdebarItem";
 import { PieChart } from "./PieChart";
@@ -51,10 +52,11 @@ import { GetUserByUserid } from "../api/services/userService";
 
 import { MyModal } from "./MyModal";
 import { ChangePasswordByUser } from "./users/ChangePasswordByUser";
+import { base } from "framer-motion/client";
 
-export const Sidebar = ({ isDesktop, user, sidebarWidth, onMenuItemClick }) => {
+export const Sidebar = ({ user, sidebarWidth, onMenuItemClick }) => {
   const [userName, setUserName] = useState("");
-
+  const isDesktop = useBreakpointValue({ base: false, md: true });
   useEffect(() => {
     const loadData = async () => {
       if (!user) return;

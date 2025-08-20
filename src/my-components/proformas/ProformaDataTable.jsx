@@ -536,7 +536,6 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                 isOpen={isOpen}
               >
                 <EditProforma
-                  isDesktop={isDesktop}
                   closeMe={onClose}
                   onOpen={onOpen}
                   setProformas={setProformas}
