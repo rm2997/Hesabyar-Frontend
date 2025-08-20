@@ -28,11 +28,7 @@ import {
   SquareCheckBig,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import {
-  CreateCustomer,
-  ShowCustomerByID,
-  UpdateCustomer,
-} from "../../api/services/customerService";
+import { UpdateCustomer } from "../../api/services/customerService";
 
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../../my-components/MyLoading";
@@ -74,21 +70,7 @@ export const EditCustomer = ({
 
   useEffect(() => {
     const loadFormData = async () => {
-      //setLoading(true);
-      // const res = await ShowCustomerByID(id);
-      // if (!res.success) {
-      //   toast({
-      //     title: "خطا",
-      //     description: res.error,
-      //     status: "warning",
-      //     duration: 3000,
-      //     isClosable: true,
-      //   });
-      //   setLoading(false);
-      //   return;
-      // }
       setFormData(customer);
-      //setLoading(false);
     };
     loadFormData();
   }, [id]);

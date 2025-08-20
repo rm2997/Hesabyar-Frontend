@@ -246,6 +246,10 @@ export const NewUser = ({ isDesktop }) => {
                     نام کاربری
                   </FormLabel>
                   <MyInputBox
+                    isInvalid={
+                      formData?.username.length < 3 ||
+                      !isNaN(Number(formData?.username))
+                    }
                     icon={User}
                     name="username"
                     title="نام کاربری"
