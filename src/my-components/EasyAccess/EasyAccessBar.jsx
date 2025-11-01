@@ -1,4 +1,4 @@
-import { Flex, IconButton, Text } from "@chakra-ui/react";
+import { Box, Flex, IconButton, Text } from "@chakra-ui/react";
 import {
   Home,
   MapPinCheck,
@@ -18,11 +18,12 @@ export const EasyAccessBar = ({ hidden, onItemClick }) => {
       bottom={0}
       height="55px"
       bgColor="white"
-      borderTopColor="gray.100"
+      borderTopColor="gray.200"
       borderTopWidth={1}
-      borderTopRadius="md"
-      w="full"
+      borderBottomWidth={1}
+      borderBottomRadius="md"
       mx="auto"
+      w="full"
       textColor="black"
       dir="ltr"
       px={4}

@@ -83,13 +83,24 @@ export const UploadGoods = ({ isDesktop }) => {
         goodPrice: 0,
         goodInfo: "ورودی سپیدار",
       };
+      const response = await CreateGood(goodData);
+      if (!response.success) {
+        toast({
+          title: "خطایی رخ داد",
+          description: response.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        continue;
+      }
 
-      await CreateGood(goodData)
-        .then((res) => {
-          const count = Math.round(((i + 1) / fileRecords.length) * 100);
-          setProgress(count);
-        })
-        .catch((err) => {});
+      // await CreateGood(goodData)
+      //   .then((res) => {
+      //     const count = Math.round(((i + 1) / fileRecords.length) * 100);
+      //     setProgress(count);
+      //   })
+      //   .catch((err) => {});
     }
     toast({
       title: "ثبت شد",
@@ -167,7 +178,12 @@ export const UploadGoods = ({ isDesktop }) => {
         >
           <FormControl isRequired>
             <HStack>
-              <FormLabel hidden={!isDesktop} width="250px">
+              <FormLabel
+                fontSize="md"
+                fontFamily="iransans"
+                hidden={!isDesktop}
+                width="250px"
+              >
                 فایل مورد نظر را انتخاب کنید
               </FormLabel>
               <Input
@@ -201,7 +217,9 @@ export const UploadGoods = ({ isDesktop }) => {
                 >
                   {loading && <Spinner />}
                   <FolderOpen style={{ margin: "2px", marginLeft: "10px" }} />
-                  <Text>انتخاب فایل</Text>
+                  <Text fontSize="md" fontFamily="iransans">
+                    انتخاب فایل
+                  </Text>
                 </Box>
               </label>
               <HStack
@@ -238,12 +256,18 @@ export const UploadGoods = ({ isDesktop }) => {
                 disabled={!selectedFileName || loading}
                 onClick={handlePreviewFile}
                 isLoading={loading}
+                fontSize="md"
+                fontFamily="iransans"
               >
                 بررسی فایل
               </Button>
-              <Text>تعداد رکورد : </Text>
+              <Text fontSize="md" fontFamily="iransans">
+                تعداد رکورد :{" "}
+              </Text>
 
-              <Text>{recordCount}</Text>
+              <Text fontSize="md" fontFamily="iransans">
+                {recordCount}
+              </Text>
             </HStack>
           </FormControl>
           <Flex direction="column">
@@ -267,12 +291,13 @@ export const UploadGoods = ({ isDesktop }) => {
             type="submit"
             isLoading={loading}
             disabled={fileRecords <= 0 || loading}
+            fontSize="md"
+            fontFamily="iransans"
           >
             شروع ارسال اطلاعات کالاها
           </Button>
         </VStack>
       </CardBody>
-      <CardFooter></CardFooter>
     </Card>
   );
 };

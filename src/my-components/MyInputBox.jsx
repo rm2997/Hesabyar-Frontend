@@ -51,8 +51,8 @@ export const MyInputBox = ({ icon, size, title, onChange, type, ...props }) => {
         onBlur={() => setFocused(false)}
         fontFamily="iransans"
         type={inputType}
-        pr={icon ? "2.9rem" : 0}
-        pl={type == "password" ? "2.9rem" : 0}
+        pr={icon ? "2.9rem" : 1}
+        pl={type == "password" ? "2.9rem" : 1}
         placeholder={title}
         htmlSize={type == "password" ? size - 3 : size}
         onChange={handleChange}

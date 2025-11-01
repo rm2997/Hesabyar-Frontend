@@ -72,7 +72,7 @@ export const MyHome = () => {
         user={user}
       />
 
-      <Flex flex={1} position="relative" overflow="hidden">
+      <Flex position="relative" overflow="hidden">
         {isDesktop ? (
           <Sidebar
             user={user}

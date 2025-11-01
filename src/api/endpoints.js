@@ -150,6 +150,11 @@ const endpoints = {
     url: (username, password, line, mobile, smsText) =>
       `https://api.sms.ir/v1/send?username=${username}&password=${password}&line=${line}&mobile=${mobile}&text=${smsText}`,
   },
+  sepidar: {
+    test: "/sepidar/test",
+    connectionData: "/sepidar/connectionData",
+    syncGoods: "/sepidar/syncGoods",
+  },
 };
 
 export default endpoints;

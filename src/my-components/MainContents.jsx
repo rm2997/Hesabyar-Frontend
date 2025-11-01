@@ -43,6 +43,7 @@ import { EasyAccessPage } from "./EasyAccess/EasyAccessPage";
 import { useUserLocation } from "../contexts/LocationContext";
 import { MapPin } from "lucide-react";
 import { UpdateUserLocation } from "../api/services/userService";
+import UserSettings from "../pages/users/UserSettings";
 
 const validContents = [
   { name: "newProforma", value: "پیش فاکتور جدید" },
@@ -164,6 +165,9 @@ export const MainContents = ({ onItemClick, activeContent }) => {
           return <>Hi4</>;
         case "user":
           return <>User</>;
+        case "userSettings":
+          return <UserSettings isDesktop={isDesktop} />;
+
         case "incomeNotifications":
         case "userUnreadMessages":
           return <NotificationReceivedDataTable isDesktop={isDesktop} />;
@@ -271,7 +275,12 @@ export const MainContents = ({ onItemClick, activeContent }) => {
         </Text>
       </Box>
 
-      <Box display="flex" flexDirection="column" overflowY="auto">
+      <Box
+        h={isDesktop ? "98vh" : "80vh"}
+        display="flex"
+        flexDirection="column"
+        overflowY="auto"
+      >
         <Box overflowY="auto">{shouldRender}</Box>
       </Box>
     </Flex>
