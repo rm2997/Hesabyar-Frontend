@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import {
+  syncSepidarCustomer,
   syncSepidarGoods,
   syncSepidarUnits,
 } from "../../api/services/sepidarService";
@@ -66,11 +67,45 @@ export default function SepidarSyncronization() {
     setLoading(false);
   };
 
+  const syncCustomers = async () => {
+    setLoading(true);
+    const res = await syncSepidarCustomer();
+    if (!res.success) {
+      toast({
+        title: "توجه",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    if (res?.data?.result == "ok") {
+      toast({
+        title: "موفق",
+        description: "اطلاعات مشتریان بروزسانی شد",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "خطا",
+        description: res.data.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    setLoading(false);
+  };
+
   return (
     <Box mt={5} flex="1" overflowY="auto">
       <Flex direction="column" px={2}>
         <Box borderTopRadius="md" p={3} w="full" bg="#68C15A">
-          <Text>بررسی اتصال به سپیدار</Text>
+          <Text>بروزرسانی اطلاعات سپیدار</Text>
         </Box>
         <SimpleGrid
           textColor="black"
@@ -98,6 +133,15 @@ export default function SepidarSyncronization() {
             isLoading={loading}
           >
             بروز رسانی کالاها
+          </Button>
+          <Button
+            w="full"
+            variant={"solid"}
+            colorScheme="blue"
+            onClick={syncCustomers}
+            isLoading={loading}
+          >
+            بروز رسانی مشتریان
           </Button>
         </SimpleGrid>
       </Flex>

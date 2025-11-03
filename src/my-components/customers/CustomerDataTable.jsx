@@ -154,7 +154,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
 
         <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
               {customersData.map((row) => (
                 <Card
                   borderTopRadius={5}
@@ -162,6 +162,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
                   _hover={{ borderColor: "orange" }}
                 >
                   <CardHeader
+                    maxH={"60px"}
                     bg="green.500"
                     borderTopRadius={5}
                     color="white"
@@ -176,12 +177,29 @@ export const CustomerDataTable = ({ isDesktop }) => {
                       onOpen();
                     }}
                   >
-                    <HStack>
+                    <Flex justify="space-between" columnGap={3}>
                       <UsersRound color="purple" />
-                      <Text fontFamily="iransans" mr="auto">
-                        {row?.customerFName + " " + row?.customerLName}
-                      </Text>
-                    </HStack>
+                      <Flex flex={3} direction={"row"} gap={3}>
+                        <Box>
+                          <Tooltip label={row.goodName}>
+                            <Text
+                              fontSize={["16px", "16px", "15px", "12px"]}
+                              fontFamily="iransans"
+                            >
+                              {row?.customerFName?.length +
+                                row?.customerLName.length >
+                              25
+                                ? (
+                                    row?.customerFName +
+                                    " " +
+                                    row?.customerLName
+                                  ).substring(0, 25) + "..."
+                                : row?.customerFName + " " + row?.customerLName}
+                            </Text>
+                          </Tooltip>
+                        </Box>
+                      </Flex>
+                    </Flex>
                   </CardHeader>
                   <CardBody p={2}>
                     <VStack align={"stretch"} spacing={2}>

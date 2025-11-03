@@ -147,7 +147,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
 
         <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
               {goodsData.map((row) => (
                 <Card
                   borderTopRadius={5}
@@ -155,6 +155,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
                   _hover={{ borderColor: "orange" }}
                 >
                   <CardHeader
+                    maxH="60px"
                     bg="green.500"
                     borderTopRadius={5}
                     color="white"
@@ -171,15 +172,19 @@ export const GoodsDataTable = ({ isDesktop }) => {
                   >
                     <Flex justify="space-between" columnGap={3}>
                       <WalletCards color="purple" />
-                      <Flex columnGap={3}>
-                        <Text fontFamily="iransans">نام کالا :</Text>
-                        <Tooltip label={row.goodName}>
-                          <Text fontFamily="iransans">
-                            {row?.goodName?.length > 25
-                              ? row?.goodName?.substring(0, 25) + "..."
-                              : row?.goodName}
-                          </Text>
-                        </Tooltip>
+                      <Flex flex={3} direction={"row"} gap={3}>
+                        <Box>
+                          <Tooltip label={row.goodName}>
+                            <Text
+                              fontSize={["16px", "16px", "15px", "12px"]}
+                              fontFamily="iransans"
+                            >
+                              {row?.goodName?.length > 25
+                                ? row?.goodName?.substring(0, 25) + "..."
+                                : row?.goodName}
+                            </Text>
+                          </Tooltip>
+                        </Box>
                       </Flex>
                     </Flex>
                   </CardHeader>

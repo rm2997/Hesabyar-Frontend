@@ -376,8 +376,11 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                     _hover={{ cursor: "pointer" }}
                     onClick={(e) => handleEditInvoice(row.id)}
                   >
-                    <Text fontSize="sm" fontFamily="IranSans">
-                      فاکتور شماره : {row.id}
+                    <Text
+                      fontSize={["16px", "16px", "15px", "14px"]}
+                      fontFamily="iransans"
+                    >
+                      فاکتور شماره : {row?.id}
                     </Text>
                   </CardHeader>
                   <CardBody p={2}>

@@ -145,7 +145,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
 
         <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
               {unitsData.map((row) => (
                 <Card
                   borderTopRadius={5}
@@ -153,6 +153,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
                   _hover={{ borderColor: "orange" }}
                 >
                   <CardHeader
+                    maxH="60px"
                     bg="green.500"
                     borderTopRadius={5}
                     color="white"
@@ -167,9 +168,11 @@ export const UnitsDataTable = ({ isDesktop }) => {
                   >
                     <Flex justify="space-between" columnGap={3}>
                       <Ruler color="purple" />
-                      <Flex columnGap={3}>
-                        <Text fontFamily="iransans">نام واحد :</Text>
-                        <Text fontSize="md" fontFamily="iransans">
+                      <Flex flex={3} direction={"row"} gap={3}>
+                        <Text
+                          fontSize={["16px", "16px", "15px", "15px"]}
+                          fontFamily="iransans"
+                        >
                           {row.unitName}
                         </Text>
                       </Flex>

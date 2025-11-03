@@ -28,3 +28,10 @@ export const syncSepidarUnits = async () => {
     url: endpoints.sepidar.syncUnits,
   });
 };
+
+export const syncSepidarCustomer = async () => {
+  return await apiRequest({
+    method: "POST",
+    url: endpoints.sepidar.syncCustomers,
+  });
+};

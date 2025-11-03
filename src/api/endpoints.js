@@ -155,6 +155,7 @@ const endpoints = {
     connectionData: "/sepidar/connectionData",
     syncGoods: "/sepidar/syncGoods",
     syncUnits: "/sepidar/syncUnits",
+    syncCustomers: "/sepidar/syncCustomers",
   },
 };
 
