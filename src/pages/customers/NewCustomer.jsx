@@ -24,10 +24,9 @@ import {
   Contact2,
   Hash,
   IdCard,
-  Mailbox,
+  MapPin,
   Phone,
   PlusCircle,
-  Smartphone,
   SquareCheckBig,
 } from "lucide-react";
 import { useState } from "react";
@@ -41,13 +40,33 @@ import { PhoneTypes } from "../../api/services/enums/phoneTypes.enum";
 import { CustomerParties } from "../../api/services/enums/customerParties.enum";
 
 export const NewCustomer = ({ isDesktop }) => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    customerTitle: "",
+    customerFName: "",
+    customerLName: "",
+    customerNationalCode: "",
+    customerGender: "",
+    locations: [],
+    phoneNumbers: [],
+  });
   const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [locations, setLocations] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
   const toast = useToast();
+
+  const initFormData = async () => {
+    setFormData({
+      customerTitle: "",
+      customerFName: "",
+      customerLName: "",
+      customerNationalCode: "",
+      customerGender: "",
+      locations: [],
+      phoneNumbers: [],
+    });
+  };
 
   const validateForm = async () => {
     if (!formData) {
@@ -115,57 +134,82 @@ export const NewCustomer = ({ isDesktop }) => {
       });
       return false;
     }
-    if (
-      formData?.customerMobile?.trim().length != 11 ||
-      isNaN(Number(formData?.customerMobile))
-    ) {
-      toast({
-        title: "توجه",
-        description: "موبایل صحیح نیست",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return false;
-    }
-    if (
-      formData?.customerPhone?.trim().length > 0 &&
-      (formData?.customerPhone?.trim().length < 5 ||
-        isNaN(Number(formData?.customerPhone)))
-    ) {
-      toast({
-        title: "توجه",
-        description: "شماره تلفن صحیح نیست",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return false;
-    }
-    if (
-      formData?.customerPostalCode?.trim().length > 0 &&
-      (formData?.customerPostalCode?.trim().length != 10 ||
-        isNaN(Number(formData?.customerPostalCode)))
-    ) {
-      toast({
-        title: "توجه",
-        description: "کد پستی صحیح نیست",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
-      return false;
-    }
 
+    return true;
+  };
+
+  const validatePhoneNumbers = async () => {
+    for (const phone of phoneNumbers) {
+      console.log(phone);
+      if (
+        (phone.phoneType == PhoneTypes[1].value &&
+          phone?.phoneNumber?.trim().length != 11) ||
+        isNaN(Number(phone?.phoneNumber?.trim()))
+      ) {
+        toast({
+          title: "توجه",
+          description: "شماره ثبت شده صحیح نیست",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        return false;
+      }
+
+      if (
+        phone?.phoneNumber?.trim().length > 0 &&
+        (phone?.phoneNumber?.trim().length < 5 ||
+          isNaN(Number(phone?.phoneNumber)))
+      ) {
+        toast({
+          title: "توجه",
+          description: "شماره تلفن صحیح نیست",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        return false;
+      }
+    }
+    setFormData({ ...formData, phoneNumbers: [...phoneNumbers] });
+    return true;
+  };
+
+  const validateLocations = async () => {
+    for (const location of locations) {
+      if (
+        location?.postalCode?.trim().length > 0 &&
+        (location?.postalCode?.trim().length != 10 ||
+          isNaN(Number(location?.postalCode)))
+      ) {
+        toast({
+          title: "توجه",
+          description: "کد پستی صحیح نیست",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        return false;
+      }
+    }
+    setFormData({ ...formData, locations: locations });
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if ((await validateForm()) == false) return;
+    if ((await validatePhoneNumbers()) == false) return;
+    if ((await validateLocations()) == false) return;
+    console.log({ ...formData, locations, phoneNumbers });
+
     setLoading(true);
-    console.log(formData);
-    const response = await CreateCustomer(formData);
+
+    const response = await CreateCustomer({
+      ...formData,
+      locations,
+      phoneNumbers,
+    });
     if (!response.success) {
       toast({
         title: "خطایی رخ داد",
@@ -177,16 +221,7 @@ export const NewCustomer = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
-    setFormData({
-      customerFName: "",
-      customerLName: "",
-      customerNationalCode: "",
-      customerPhone: "",
-      customerAddress: "",
-      customerMobile: "",
-      customerPostalCode: "",
-      customerGender: "",
-    });
+    await initFormData();
     toast({
       title: "ثبت شد",
       description: `اطلاعات مشتری ذخیره شد`,
@@ -200,19 +235,39 @@ export const NewCustomer = ({ isDesktop }) => {
   const handleAddNewPhone = () => {
     const customerPhoneNumbers = [...phoneNumbers];
     const newPhone = {
-      phoneType: PhoneTypes[2],
+      phoneType: PhoneTypes[1].value,
       phoneNumber: "",
+      unique: new Date().getTime(),
       isPrimary: false,
     };
     customerPhoneNumbers.push(newPhone);
     setPhoneNumbers(customerPhoneNumbers);
-    console.log(phoneNumbers);
   };
+
+  const handleAddNewAddress = () => {
+    const customerLocations = [...locations];
+    const newLocation = {
+      locationType: AddressTypes[4].value,
+      location: "",
+      unique: new Date().getTime(),
+      postalCode: "",
+    };
+    customerLocations.push(newLocation);
+    setLocations(customerLocations);
+  };
+
   const handleRemovePhone = (phone) => {
     const customerPhoneNumbers = phoneNumbers.filter(
-      (p) => p.phoneNumber != phone.phoneNumber
+      (p) => p.unique != phone.unique
     );
     setPhoneNumbers(customerPhoneNumbers);
+  };
+
+  const handleRemoveLocation = (location) => {
+    const customerLocations = locations.filter(
+      (l) => l.unique != location.unique
+    );
+    setLocations(customerLocations);
   };
 
   const handleChangeFormData = (e) => {
@@ -220,6 +275,22 @@ export const NewCustomer = ({ isDesktop }) => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleChangePhoneFormData = (phone, updatedFields) => {
+    setPhoneNumbers((old) =>
+      old.map((p) =>
+        p.unique == phone.unique ? { ...p, ...updatedFields } : p
+      )
+    );
+  };
+
+  const handleChangeLocationsFormData = (location, updatedFields) => {
+    setLocations((old) =>
+      old.map((l) =>
+        l.unique == location.unique ? { ...l, ...updatedFields } : l
+      )
+    );
   };
 
   return (
@@ -584,16 +655,7 @@ export const NewCustomer = ({ isDesktop }) => {
                   >
                     اطلاعات تماس
                   </Text>
-                  <IconButton
-                    ml={3}
-                    icon={<PlusCircle size="lg" strokeWidth={1.2} />}
-                    size="lg"
-                    my="auto"
-                    mx={isDesktop ? "" : "auto"}
-                    colorScheme="green"
-                    variant="ghost"
-                    onClick={() => handleAddNewPhone()}
-                  />
+
                   {phoneNumbers?.map((phone, index) => (
                     <Box
                       borderWidth="1px"
@@ -602,7 +664,7 @@ export const NewCustomer = ({ isDesktop }) => {
                       w="250px"
                       boxShadow="md"
                       position="relative"
-                      key={index}
+                      key={phone.unique}
                       mx={isDesktop ? "" : "auto"}
                     >
                       <Flex justify="space-between" align="center">
@@ -650,7 +712,11 @@ export const NewCustomer = ({ isDesktop }) => {
                               name="phoneType"
                               placeholder="نوع تلفن را انتخاب کنید"
                               value={phone?.phoneType}
-                              onChange={handleChangeFormData}
+                              onChange={(e) =>
+                                handleChangePhoneFormData(phone, {
+                                  phoneType: e.target.value,
+                                })
+                              }
                             >
                               {PhoneTypes.map((p) => (
                                 <option key={p.key} value={p.value}>
@@ -682,26 +748,27 @@ export const NewCustomer = ({ isDesktop }) => {
                               title="شماره"
                               size={19}
                               value={phone?.phoneNumber}
-                              onChange={handleChangeFormData}
+                              onChange={(e) =>
+                                handleChangePhoneFormData(phone, {
+                                  phoneNumber: e.target.value,
+                                })
+                              }
                             ></MyInputBox>
                           </HStack>
                         </FormControl>
                         <FormControl>
                           <HStack>
-                            <FormLabel htmlFor="isPrimary">
+                            <FormLabel htmlFor={phone.unique}>
                               شماره اصلی
                             </FormLabel>
                             <Switch
-                              id="isPrimary"
+                              id={phone.unique}
                               title="شماره اصلی"
                               isChecked={phone?.isPrimary}
                               name="isPrimary"
                               onChange={(e) =>
-                                handleChangeFormData({
-                                  target: {
-                                    name: "isPrimary",
-                                    value: e.target.checked,
-                                  },
+                                handleChangePhoneFormData(phone, {
+                                  isPrimary: e.target.checked,
                                 })
                               }
                             />
@@ -710,6 +777,16 @@ export const NewCustomer = ({ isDesktop }) => {
                       </Flex>
                     </Box>
                   ))}
+                  <IconButton
+                    ml={3}
+                    icon={<PlusCircle size="lg" strokeWidth={1.2} />}
+                    size="lg"
+                    my="auto"
+                    mx={isDesktop ? "" : "auto"}
+                    colorScheme="green"
+                    variant="ghost"
+                    onClick={() => handleAddNewPhone()}
+                  />
                 </Flex>
               </GridItem>
               <GridItem colSpan={isDesktop ? 2 : 1}>
@@ -736,6 +813,146 @@ export const NewCustomer = ({ isDesktop }) => {
                   >
                     اطلاعات نشانی
                   </Text>
+                  {locations?.map((location, index) => (
+                    <Box
+                      borderWidth="1px"
+                      borderRadius="lg"
+                      p={3}
+                      w="250px"
+                      boxShadow="md"
+                      position="relative"
+                      key={location.unique}
+                      mx={isDesktop ? "" : "auto"}
+                    >
+                      <Flex justify="space-between" align="center">
+                        <IconButton
+                          colorScheme="red"
+                          variant="ghost"
+                          size="xs"
+                          icon={<CircleX />}
+                          onClick={() => {
+                            handleRemoveLocation(location);
+                          }}
+                        />
+
+                        <Text
+                          mx={1}
+                          dir="rtl"
+                          fontFamily="IranSans"
+                          fontWeight="bold"
+                          fontSize="md"
+                        >
+                          {"نشانی" + " " + (index + 1)}
+                        </Text>
+                      </Flex>
+
+                      <Flex
+                        direction={"column"}
+                        justify="space-between"
+                        gap={3}
+                        mt={3}
+                        dir="rtl"
+                      >
+                        <FormControl
+                          isRequired={
+                            formData?.customerBase == "ارتباط با تلفن"
+                              ? true
+                              : false
+                          }
+                        >
+                          <HStack>
+                            <FormLabel hidden={!isDesktop} width="150px">
+                              نوع نشانی
+                            </FormLabel>
+                            <Select
+                              dir="ltr"
+                              name="locationType"
+                              placeholder="نوع نشانی را انتخاب کنید"
+                              value={location?.locationType}
+                              onChange={(e) =>
+                                handleChangePhoneFormData(location, {
+                                  locationType: e.target.value,
+                                })
+                              }
+                            >
+                              {AddressTypes.map((p) => (
+                                <option key={p.key} value={p.value}>
+                                  {p.value}
+                                </option>
+                              ))}
+                            </Select>
+                          </HStack>
+                        </FormControl>
+                        <FormControl
+                          isRequired={
+                            formData?.customerBase == "ارتباط با تلفن"
+                              ? true
+                              : false
+                          }
+                        >
+                          <HStack>
+                            <FormLabel hidden={!isDesktop} width="150px">
+                              نشانی
+                            </FormLabel>
+                            <Textarea
+                              isInvalid={
+                                formData?.customerBase == "ارتباط با آدرس" &&
+                                (location?.location?.trim().length < 5 ||
+                                  isNaN(Number(location?.location)))
+                              }
+                              resize="vertical"
+                              size="lg"
+                              name="location"
+                              placeholder="نشانی"
+                              value={location?.location}
+                              onChange={(e) =>
+                                handleChangeLocationsFormData(location, {
+                                  location: e.target.value,
+                                })
+                              }
+                            />
+                          </HStack>
+                        </FormControl>
+                        <FormControl>
+                          <HStack>
+                            <FormLabel hidden={!isDesktop} width="150px">
+                              کد پستی
+                            </FormLabel>
+                            <MyInputBox
+                              icon={MapPin}
+                              name="postalCode"
+                              title="کد پستی"
+                              size={19}
+                              value={location?.postalCode}
+                              onChange={(e) =>
+                                handleChangeLocationsFormData(location, {
+                                  postalCode: e.target.value,
+                                })
+                              }
+                            />
+                          </HStack>
+                        </FormControl>
+                        <FormControl>
+                          <HStack>
+                            <FormLabel htmlFor={location.unique}>
+                              آدرس پیش فرض
+                            </FormLabel>
+                            <Switch
+                              id={location.unique}
+                              title="آدرس پیش فرض"
+                              isChecked={location?.isPrimary}
+                              name="isPrimary"
+                              onChange={(e) =>
+                                handleChangeLocationsFormData(location, {
+                                  isPrimary: e.target.checked,
+                                })
+                              }
+                            />
+                          </HStack>
+                        </FormControl>
+                      </Flex>
+                    </Box>
+                  ))}
                   <IconButton
                     ml={3}
                     icon={<PlusCircle size="lg" strokeWidth={1.2} />}
@@ -744,76 +961,8 @@ export const NewCustomer = ({ isDesktop }) => {
                     mx={isDesktop ? "" : "auto"}
                     colorScheme="green"
                     variant="ghost"
-                    //onClick={() => setShowSearchGood(true)}
+                    onClick={() => handleAddNewAddress()}
                   />
-                  <FormControl>
-                    <HStack>
-                      <FormLabel hidden={!isDesktop} width="150px">
-                        کد پستی
-                      </FormLabel>
-                      <MyInputBox
-                        isInvalid={
-                          formData?.customerPostalCode?.trim().length > 0 &&
-                          (formData?.customerPostalCode?.trim().length != 10 ||
-                            isNaN(Number(formData?.customerPostalCode)))
-                        }
-                        icon={Mailbox}
-                        name="customerPostalCode"
-                        title="کد پستی"
-                        value={formData.customerPostalCode}
-                        onChange={handleChangeFormData}
-                      />
-                    </HStack>
-                  </FormControl>
-                  <FormControl
-                    isRequired={
-                      formData?.customerBase == "ارتباط با آدرس" ? true : false
-                    }
-                  >
-                    <HStack>
-                      <FormLabel hidden={!isDesktop} width="150px">
-                        نوع آدرس
-                      </FormLabel>
-                      <Select
-                        dir="ltr"
-                        name="customerAddressType"
-                        placeholder="نوع آدرس را انتخاب کنید"
-                        value={formData.customerAddressType}
-                        onChange={handleChangeFormData}
-                      >
-                        {AddressTypes.map((p) => (
-                          <option key={p.key} value={p.value}>
-                            {p.value}
-                          </option>
-                        ))}
-                      </Select>
-                    </HStack>
-                  </FormControl>
-
-                  <FormControl
-                    isRequired={
-                      formData?.customerBase == "ارتباط با آدرس" ? true : false
-                    }
-                  >
-                    <HStack>
-                      <FormLabel hidden={!isDesktop} width="135px">
-                        آدرس
-                      </FormLabel>
-                      <Textarea
-                        isInvalid={
-                          formData?.customerBase == "ارتباط با آدرس"
-                            ? formData?.customerAddress?.trim().length < 5
-                            : ""
-                        }
-                        placeholder="آدرس"
-                        name="customerAddress"
-                        resize="horizontal"
-                        size="lg"
-                        value={formData.customerAddress}
-                        onChange={handleChangeFormData}
-                      />
-                    </HStack>
-                  </FormControl>
                 </Flex>
               </GridItem>
             </SimpleGrid>

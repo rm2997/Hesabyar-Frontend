@@ -46,6 +46,7 @@ export const EasyAccessBar = ({ hidden, onItemClick }) => {
         <IconButton
           variant="ghost"
           icon={<Settings />}
+          onClick={() => onItemClick("userSettings")}
           _hover={{ color: "orange" }}
         />
         <Text fontFamily="iransans">تنظیمات</Text>
