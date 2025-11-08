@@ -127,6 +127,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
+
     setCustomersData(res?.data?.items);
     setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
     setLoading(false);
@@ -169,11 +170,6 @@ export const CustomerDataTable = ({ isDesktop }) => {
                     _hover={{ cursor: "pointer" }}
                     onClick={(e) => {
                       setSelectedID(row?.id);
-                      setDialogGears({
-                        title: "ویرایش مشتری",
-                        text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
-                        callBack: () => {},
-                      });
                       onOpen();
                     }}
                   >
@@ -181,20 +177,35 @@ export const CustomerDataTable = ({ isDesktop }) => {
                       <UsersRound color="purple" />
                       <Flex flex={3} direction={"row"} gap={3}>
                         <Box>
-                          <Tooltip label={row.goodName}>
+                          <Tooltip
+                            label={
+                              row?.customerGender +
+                              " " +
+                              row?.customerFName +
+                              " " +
+                              row?.customerLName
+                            }
+                          >
                             <Text
-                              fontSize={["16px", "16px", "15px", "12px"]}
+                              fontSize={["16px", "16px", "15px", "15px"]}
                               fontFamily="iransans"
                             >
-                              {row?.customerFName?.length +
+                              {row?.customerGender?.length +
+                                row?.customerFName?.length +
                                 row?.customerLName.length >
                               25
                                 ? (
+                                    row?.customerGender +
+                                    " " +
                                     row?.customerFName +
                                     " " +
                                     row?.customerLName
                                   ).substring(0, 25) + "..."
-                                : row?.customerFName + " " + row?.customerLName}
+                                : row?.customerGender +
+                                  " " +
+                                  row?.customerFName +
+                                  " " +
+                                  row?.customerLName}
                             </Text>
                           </Tooltip>
                         </Box>
@@ -203,6 +214,13 @@ export const CustomerDataTable = ({ isDesktop }) => {
                   </CardHeader>
                   <CardBody p={2}>
                     <VStack align={"stretch"} spacing={2}>
+                      <HStack>
+                        <Text fontFamily="iransans">عنوان :</Text>
+                        <Text fontFamily="iransans" mr="auto">
+                          {row?.customerTitle}
+                        </Text>
+                      </HStack>
+                      <Divider />
                       <HStack>
                         <Text fontFamily="iransans">نوع :</Text>
                         <Text fontFamily="iransans" mr="auto">
@@ -213,14 +231,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
                       <HStack>
                         <Text fontFamily="iransans"> شماره موبایل :</Text>
                         <Text fontFamily="iransans" mr="auto">
-                          {row?.customerMobile}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text fontFamily="iransans"> شماره تلفن :</Text>
-                        <Text fontFamily="iransans" mr="auto">
-                          {row?.customerPhone}
+                          {row?.phoneNumbers[0]?.phoneNumber}
                         </Text>
                       </HStack>
                       <Divider />
@@ -228,22 +239,6 @@ export const CustomerDataTable = ({ isDesktop }) => {
                         <Text fontFamily="iransans"> شماره ملی :</Text>
                         <Text fontFamily="iransans" mr="auto">
                           {row?.customerNationalCode}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text fontFamily="iransans"> کد پستی :</Text>
-                        <Text fontFamily="iransans" mr="auto">
-                          {row?.customerPostalCode}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text fontFamily="iransans">آدرس :</Text>
-                        <Text fontFamily="iransans" mr="auto">
-                          {row?.customerAddress?.length > 15
-                            ? row?.customerAddress?.substring(0, 12) + "..."
-                            : row?.customerAddress}
                         </Text>
                       </HStack>
                     </VStack>

@@ -58,6 +58,8 @@ export const NewCustomer = ({ isDesktop }) => {
 
   const initFormData = async () => {
     setFormData({
+      customerType: "",
+      customerBase: "",
       customerTitle: "",
       customerFName: "",
       customerLName: "",
@@ -66,6 +68,8 @@ export const NewCustomer = ({ isDesktop }) => {
       locations: [],
       phoneNumbers: [],
     });
+    setLocations([]);
+    setPhoneNumbers([]);
   };
 
   const validateForm = async () => {
@@ -79,7 +83,10 @@ export const NewCustomer = ({ isDesktop }) => {
       });
       return false;
     }
-    if (formData?.customerFName?.trim().length < 2) {
+    if (
+      formData?.customerFName?.trim().length > 0 &&
+      formData?.customerFName?.trim().length < 2
+    ) {
       toast({
         title: "توجه",
         description: "لطفا نام صحیح را وارد کنید",
@@ -89,7 +96,10 @@ export const NewCustomer = ({ isDesktop }) => {
       });
       return false;
     }
-    if (!isNaN(Number(formData?.customerFName))) {
+    if (
+      formData?.customerFName?.trim().length > 0 &&
+      !isNaN(Number(formData?.customerFName))
+    ) {
       toast({
         title: "توجه",
         description: "درج عدد برای نام مجاز نمی باشد",
@@ -148,7 +158,7 @@ export const NewCustomer = ({ isDesktop }) => {
       ) {
         toast({
           title: "توجه",
-          description: "شماره ثبت شده صحیح نیست",
+          description: `شماره ثبت شده صحیح نیست  ${phone.index} `,
           status: "warning",
           duration: 3000,
           isClosable: true,
@@ -443,14 +453,16 @@ export const NewCustomer = ({ isDesktop }) => {
                       />
                     </HStack>
                   </FormControl>
-                  <FormControl isRequired>
+                  <FormControl
+                    isRequired={formData?.customerLName?.trim().length < 2}
+                  >
                     <HStack>
                       <FormLabel hidden={!isDesktop} width="150px">
                         نام مشتری
                       </FormLabel>
                       <MyInputBox
                         isInvalid={
-                          formData?.customerFName?.trim().length < 2 ||
+                          formData?.customerFName?.trim().length > 0 &&
                           !isNaN(Number(formData?.customerFName))
                         }
                         icon={Contact}
@@ -463,7 +475,9 @@ export const NewCustomer = ({ isDesktop }) => {
                   </FormControl>
                   <FormControl
                     isRequired={
-                      formData?.customerType == "حقوقی" ? false : true
+                      formData?.customerType == "حقوقی"
+                        ? false
+                        : true || formData?.customerFName?.trim().length < 2
                     }
                   >
                     <HStack>
