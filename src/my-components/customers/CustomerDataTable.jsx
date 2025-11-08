@@ -300,35 +300,34 @@ export const CustomerDataTable = ({ isDesktop }) => {
                 </Card>
               ))}
             </SimpleGrid>
-            <MyAlert
-              onClose={handleDialogClose}
-              isOpen={isDialogOpen}
-              AlertHeader={dialogGears.title}
-              AlertMessage={dialogGears.text}
-            />
-            <MyModal
-              size="full"
-              modalHeader={dialogGears.title}
-              onClose={onClose}
-              isOpen={isOpen}
-            >
-              <EditCustomer
-                id={selectedID}
-                isDesktop={isDesktop}
-                customer={findCustomerFromList(selectedID)}
-                onClose={onClose}
-                onUpdate={updateCustomerInList}
-              />
-            </MyModal>
           </Flex>
         </Box>
-
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={(page) => setCurrentPage(page)}
         />
       </Flex>
+      <MyAlert
+        onClose={handleDialogClose}
+        isOpen={isDialogOpen}
+        AlertHeader={dialogGears.title}
+        AlertMessage={dialogGears.text}
+      />
+      <MyModal
+        size="full"
+        modalHeader={dialogGears.title}
+        onClose={onClose}
+        isOpen={isOpen}
+      >
+        <EditCustomer
+          id={selectedID}
+          isDesktop={isDesktop}
+          customer={findCustomerFromList(selectedID)}
+          onClose={onClose}
+          onUpdate={updateCustomerInList}
+        />
+      </MyModal>
       {loading && <MyLoading />}
     </Box>
   );

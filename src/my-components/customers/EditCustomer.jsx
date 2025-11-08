@@ -1028,7 +1028,7 @@ export const EditCustomer = ({
                     mx={isDesktop ? "" : "auto"}
                     colorScheme="green"
                     variant="ghost"
-                    onClick={() => handleAddNewAddress()}
+                    onClick={() => handleAddNewPhone()}
                   />
                 </Flex>
               </GridItem>
