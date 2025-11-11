@@ -11,6 +11,7 @@ import {
   syncSepidarCustomer,
   syncSepidarGoods,
   syncSepidarUnits,
+  getFiscalYear,
 } from "../../api/services/sepidarService";
 
 export default function SepidarSyncronization() {
@@ -101,6 +102,40 @@ export default function SepidarSyncronization() {
     setLoading(false);
   };
 
+  const getFiscalYearAndID = async () => {
+    setLoading(true);
+    const res = await getFiscalYear();
+    if (!res.success) {
+      toast({
+        title: "توجه",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    if (res?.data?.result == "ok") {
+      toast({
+        title: "موفق",
+        description: "اطلاعات مشتریان بروزسانی شد",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "خطا",
+        description: res.data.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    setLoading(false);
+  };
+
   return (
     <Box mt={5} flex="1" overflowY="auto">
       <Flex direction="column" px={2}>
@@ -142,6 +177,15 @@ export default function SepidarSyncronization() {
             isLoading={loading}
           >
             بروز رسانی مشتریان
+          </Button>
+          <Button
+            w="full"
+            variant={"solid"}
+            colorScheme="blue"
+            onClick={getFiscalYear}
+            isLoading={loading}
+          >
+            دریافت سال مالی
           </Button>
         </SimpleGrid>
       </Flex>
