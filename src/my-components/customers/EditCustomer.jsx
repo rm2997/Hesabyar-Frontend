@@ -846,8 +846,7 @@ export const EditCustomer = ({
                   ))}
                   <IconButton
                     ml={3}
-                    icon={<PlusCircle size="lg" strokeWidth={1.2} />}
-                    size="lg"
+                    icon={<PlusCircle strokeWidth={1.2} />}
                     my="auto"
                     mx={isDesktop ? "" : "auto"}
                     colorScheme="green"
@@ -1022,13 +1021,13 @@ export const EditCustomer = ({
                   ))}
                   <IconButton
                     ml={3}
-                    icon={<PlusCircle size="lg" strokeWidth={1.2} />}
+                    icon={<PlusCircle strokeWidth={1.2} />}
                     size="lg"
                     my="auto"
                     mx={isDesktop ? "" : "auto"}
                     colorScheme="green"
                     variant="ghost"
-                    onClick={() => handleAddNewPhone()}
+                    onClick={() => handleAddNewAddress()}
                   />
                 </Flex>
               </GridItem>
