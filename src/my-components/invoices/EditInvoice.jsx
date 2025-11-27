@@ -25,7 +25,14 @@ import {
 } from "@chakra-ui/react";
 import { MyLoading } from "../MyLoading";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
-import { CircleX, PlusCircle, ScanSearch, UserSearch } from "lucide-react";
+import {
+  Captions,
+  CircleX,
+  PlusCircle,
+  ScanSearch,
+  User,
+  UserSearch,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
@@ -46,6 +53,8 @@ import { MyModal } from "../MyModal";
 import { SearchProforma } from "../SearchProforma";
 import { ShowMyAcceptedProformas } from "../../api/services/proformaService";
 import { PersianAlphabet } from "../../api/services/enums/persianAlphabets.enum";
+import { showAllStocks } from "../../api/services/sepidarService";
+import { MyInputBox } from "../MyInputBox";
 
 export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
   const toast = useToast();
@@ -85,6 +94,7 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
 
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [allStocks, setAllStocks] = useState([]);
 
   const items = invoice.invoiceGoods;
 
@@ -109,6 +119,10 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
       setInvoiceItems([...invoice.invoiceGoods]);
       setLoading(false);
     };
+    const initStocks = async () => {
+      await handleShowStocks();
+    };
+    initStocks();
     loadData();
   }, []);
 
@@ -142,6 +156,23 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
     setInvoiceItems([]);
   };
 
+  const handleShowStocks = async () => {
+    setLoading(true);
+    const response = await showAllStocks();
+    if (!response.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: response.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    setAllStocks(response.data);
+    setLoading(false);
+  };
   const validateDate = async (inputDate) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -471,13 +502,14 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
                 <Stack spacing={5} direction="column">
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="32%">
+                      <FormLabel hidden={!isDesktop} w="23%">
                         عنوان
                       </FormLabel>
-                      <Input
+                      <MyInputBox
+                        icon={Captions}
                         name="title"
-                        value={formData?.title}
-                        placeholder="عنوان"
+                        value={formData.title}
+                        title="عنوان"
                         onChange={handleChangeFormData}
                       />
                     </HStack>
@@ -485,14 +517,16 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="50%">
+                      <FormLabel hidden={!isDesktop} w="28%">
                         نام مشتری
                       </FormLabel>
-                      <Input
-                        placeholder="لطفا یک مشتری انتخاب کنید"
+                      <MyInputBox
+                        icon={User}
+                        title="لطفا یک مشتری انتخاب کنید"
+                        maxW="560px"
                         onClick={() => setShowSearchCustomer(true)}
                         value={
-                          formData?.customer !== null
+                          formData.customer !== null
                             ? formData?.customer?.customerGender +
                               " " +
                               formData?.customer?.customerFName +
@@ -586,6 +620,26 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
                         {PaymentTypes?.map((p) => (
                           <option key={p?.key} value={p?.value}>
                             {p?.value}
+                          </option>
+                        ))}
+                      </Select>
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} w="40%">
+                        انبار
+                      </FormLabel>
+                      <Select
+                        dir="ltr"
+                        name="stockRef"
+                        placeholder="انبار را انتخاب کنید"
+                        value={formData.stockRef}
+                        onChange={handleChangeFormData}
+                      >
+                        {allStocks.map((p) => (
+                          <option key={p.StockID} value={p.StockID}>
+                            {p.Title}
                           </option>
                         ))}
                       </Select>

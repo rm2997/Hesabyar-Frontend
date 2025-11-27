@@ -21,10 +21,16 @@ import {
   Stack,
   useDisclosure,
   Box,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import { PaymentTypes } from "../../api/services/enums/payments.enum";
-import { CircleX, PlusCircle, UserRoundPlus, UserSearch } from "lucide-react";
+import {
+  Captions,
+  CircleX,
+  PlusCircle,
+  User,
+  UserRoundPlus,
+  UserSearch,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateProforma } from "../../api/services/proformaService";
 import { ShowAllCustomers } from "../../api/services/customerService";
@@ -37,18 +43,26 @@ import { NewCustomer } from "../customers/NewCustomer";
 import { SearchCustomer } from "../../my-components/SearchCustomer";
 import { SearchGoods } from "../../my-components/SearchGood";
 import { MyModal } from "../../my-components/MyModal";
+import {
+  getFiscalYear,
+  showAllStocks,
+} from "../../api/services/sepidarService";
+import { MyInputBox } from "../../my-components/MyInputBox";
 
 export const NewProforma = ({ isDesktop }) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [customers, setCustomers] = useState([]);
   const [allGoods, setAllGoods] = useState([]);
+  const [allStocks, setAllStocks] = useState([]);
+  const [fiscalYear, setFiscalYear] = useState({});
 
   const [formData, setFormData] = useState({
     title: "",
     customer: null,
     totalAmount: 0,
     paymentStatus: 0,
+    stockRef: 0,
     chequeAmount: 0,
     chequeSerial: 0,
     chequeDate: "",
@@ -60,6 +74,7 @@ export const NewProforma = ({ isDesktop }) => {
     trustIssueDate: "",
     proformaGoods: null,
     description: "",
+    fiscalYear: 0,
   });
   const [proformaItems, setProformaItems] = useState([
     // {
@@ -83,9 +98,56 @@ export const NewProforma = ({ isDesktop }) => {
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const initStocks = async () => {
+      await handleShowStocks();
+    };
+    const initFiscalYear = async () => {
+      await handleShowFiscalYear();
+    };
+    initStocks();
+    initFiscalYear();
+  }, []);
+
   const handleSearchCustomers = async (query) => {
     const response = await ShowAllCustomers(1, 10, query);
     return response.data.items;
+  };
+
+  const handleShowStocks = async () => {
+    setLoading(true);
+    const response = await showAllStocks();
+    if (!response.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: response.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    setAllStocks(response.data);
+    setLoading(false);
+  };
+
+  const handleShowFiscalYear = async () => {
+    setLoading(true);
+    const response = await getFiscalYear();
+    if (!response.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: response.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    setFiscalYear(response?.data);
+    setLoading(false);
   };
 
   const handleSearchGoods = async (query) => {
@@ -99,6 +161,7 @@ export const NewProforma = ({ isDesktop }) => {
       customer: null,
       totalAmount: 0,
       paymentStatus: 0,
+      stockRef: 0,
       chequeAmount: 0,
       chequeSerial: 0,
       chequeDate: "",
@@ -110,6 +173,7 @@ export const NewProforma = ({ isDesktop }) => {
       trustIssueDate: "",
       proformaGoods: null,
       description: "",
+      fiscalYear: 0,
     });
     setProformaItems([]);
     setTotalQuantity(0);
@@ -307,6 +371,7 @@ export const NewProforma = ({ isDesktop }) => {
     data.proformaGoods = [...items];
     data.totalAmount = totalPrice;
     data.totalQuantity = totalQuantity;
+    data.fiscalYear = fiscalYear.FiscalYearId;
 
     setFormData(data);
 
@@ -437,7 +502,33 @@ export const NewProforma = ({ isDesktop }) => {
             borderTopRadius={5}
             color="black"
           >
-            ثبت پیش فاکتور جدید
+            <Flex direction="row" gap={4} justify={"space-between"}>
+              <Box>
+                <Text fontFamily="IranSans">ثبت پیش فاکتور جدید</Text>
+              </Box>
+              <Flex
+                borderWidth={1}
+                borderColor={"gray.300"}
+                borderStyle={"dashed"}
+                borderRadius={"md"}
+                padding={1}
+                direction="row"
+                gap={4}
+                color={"gray.200"}
+                fontSize={"12px"}
+              >
+                <Text
+                  fontFamily="IranSans"
+                  borderLeftWidth={1}
+                  borderLeftColor={"gray.300"}
+                  borderLeftStyle={"dashed"}
+                  paddingLeft={2}
+                >
+                  سال مالی
+                </Text>
+                <Text fontFamily="IranSans">{fiscalYear.FiscalYear}</Text>
+              </Flex>
+            </Flex>
           </CardHeader>
         )}
         <CardBody borderTopWidth={2}>
@@ -451,24 +542,26 @@ export const NewProforma = ({ isDesktop }) => {
                 <Stack direction="column">
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} w="23%">
                         عنوان
                       </FormLabel>
-                      <Input
+                      <MyInputBox
+                        icon={Captions}
                         name="title"
                         value={formData.title}
-                        placeholder="عنوان"
+                        title="عنوان"
                         onChange={handleChangeFormData}
                       />
                     </HStack>
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="140px">
+                      <FormLabel hidden={!isDesktop} w="28%">
                         نام مشتری
                       </FormLabel>
-                      <Input
-                        placeholder="لطفا یک مشتری انتخاب کنید"
+                      <MyInputBox
+                        icon={User}
+                        title="لطفا یک مشتری انتخاب کنید"
                         maxW="560px"
                         onClick={() => setShowSearchCustomer(true)}
                         value={
@@ -514,7 +607,7 @@ export const NewProforma = ({ isDesktop }) => {
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="120px">
+                      <FormLabel hidden={!isDesktop} w="23%">
                         نوع پرداخت
                       </FormLabel>
                       <Select
@@ -527,6 +620,26 @@ export const NewProforma = ({ isDesktop }) => {
                         {PaymentTypes.map((p) => (
                           <option key={p.key} value={p.value}>
                             {p.value}
+                          </option>
+                        ))}
+                      </Select>
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} w="23%">
+                        انبار
+                      </FormLabel>
+                      <Select
+                        dir="ltr"
+                        name="stockRef"
+                        placeholder="انبار را انتخاب کنید"
+                        value={formData.stockRef}
+                        onChange={handleChangeFormData}
+                      >
+                        {allStocks.map((p) => (
+                          <option key={p.StockID} value={p.StockID}>
+                            {p.Title}
                           </option>
                         ))}
                       </Select>

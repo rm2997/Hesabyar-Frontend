@@ -57,6 +57,7 @@ import { MyModal } from "../../my-components/MyModal";
 import { SearchCustomer } from "../../my-components/SearchCustomer";
 import { SearchProforma } from "../../my-components/SearchProforma";
 import { MyInputBox } from "../../my-components/MyInputBox";
+import { showAllStocks } from "../../api/services/sepidarService";
 
 export const NewInvoice = ({}) => {
   const isDesktop = useBreakpointValue({ base: false, md: true });
@@ -84,6 +85,7 @@ export const NewInvoice = ({}) => {
   const [selectedItem, setSelectedItem] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [allStocks, setAllStocks] = useState([]);
   const [selectedProforma, setSelectedProforma] = useState(0);
   const [showSearchCustomer, setShowSearchCustomer] = useState(false);
   const [showSearchProforma, setShowSearchProforma] = useState(false);
@@ -91,6 +93,13 @@ export const NewInvoice = ({}) => {
   const [loading, setLoading] = useState(false);
   const [invoiceGoodsStatus, setInvoiceGoodsStatus] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const initStocks = async () => {
+      await handleShowStocks();
+    };
+    initStocks();
+  }, []);
 
   useEffect(() => {
     recalculateTotal();
@@ -104,6 +113,7 @@ export const NewInvoice = ({}) => {
       customer: null,
       totalAmount: 0,
       paymentStatus: 0,
+      stockRef: 0,
       chequeDate: "",
       chequeAmount: 0,
       chequeSerial: 0,
@@ -293,6 +303,24 @@ export const NewInvoice = ({}) => {
     if (!goodACheck) return false;
 
     return true;
+  };
+
+  const handleShowStocks = async () => {
+    setLoading(true);
+    const response = await showAllStocks();
+    if (!response.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: response.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    setAllStocks(response.data);
+    setLoading(false);
   };
 
   const handleSubmit = async (e) => {
@@ -581,6 +609,26 @@ export const NewInvoice = ({}) => {
                         {PaymentTypes.map((p) => (
                           <option key={p.key} value={p.value}>
                             {p.value}
+                          </option>
+                        ))}
+                      </Select>
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="170px">
+                        انبار
+                      </FormLabel>
+                      <Select
+                        dir="ltr"
+                        name="stockRef"
+                        placeholder="انبار را انتخاب کنید"
+                        value={formData.stockRef}
+                        onChange={handleChangeFormData}
+                      >
+                        {allStocks.map((p) => (
+                          <option key={p.StockID} value={p.StockID}>
+                            {p.Title}
                           </option>
                         ))}
                       </Select>

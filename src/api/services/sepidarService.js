@@ -42,3 +42,10 @@ export const getFiscalYear = async () => {
     url: endpoints.sepidar.getFiscalYear,
   });
 };
+
+export const showAllStocks = async () => {
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.sepidar.getAllStocks,
+  });
+};
