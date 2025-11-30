@@ -173,7 +173,6 @@ export const NewProforma = ({ isDesktop }) => {
       trustIssueDate: "",
       proformaGoods: null,
       description: "",
-      fiscalYear: 0,
     });
     setProformaItems([]);
     setTotalQuantity(0);

@@ -156,7 +156,7 @@ const endpoints = {
     syncGoods: "/sepidar/syncGoods",
     syncUnits: "/sepidar/syncUnits",
     syncCustomers: "/sepidar/syncCustomers",
-    getFiscalYear: "/sepidar/getFiscalYear",
+    getFiscalYear: (fiscalYearId) => `/sepidar/getFiscalYear/${fiscalYearId}`,
     getAllStocks: "/sepidar/getAllStocks",
   },
 };

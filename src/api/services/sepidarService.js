@@ -36,10 +36,10 @@ export const syncSepidarCustomer = async () => {
   });
 };
 
-export const getFiscalYear = async () => {
+export const getFiscalYear = async (fiscalYearId = 0) => {
   return await apiRequest({
     method: "Get",
-    url: endpoints.sepidar.getFiscalYear,
+    url: endpoints.sepidar.getFiscalYear(fiscalYearId),
   });
 };
 

@@ -53,13 +53,17 @@ import { MyModal } from "../MyModal";
 import { SearchProforma } from "../SearchProforma";
 import { ShowMyAcceptedProformas } from "../../api/services/proformaService";
 import { PersianAlphabet } from "../../api/services/enums/persianAlphabets.enum";
-import { showAllStocks } from "../../api/services/sepidarService";
+import {
+  getFiscalYear,
+  showAllStocks,
+} from "../../api/services/sepidarService";
 import { MyInputBox } from "../MyInputBox";
 
 export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
   const toast = useToast();
 
   dayjs.extend(jalali);
+  const [fiscalYear, setFiscalYear] = useState({});
   const [formData, setFormData] = useState({
     title: "",
     customer: null,
@@ -122,13 +126,36 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
     const initStocks = async () => {
       await handleShowStocks();
     };
+    const initFiscalYear = async () => {
+      await handleShowFiscalYear();
+    };
+
     initStocks();
     loadData();
+    initFiscalYear();
   }, []);
 
   useEffect(() => {
     recalculateTotal();
   }, [formData]);
+
+  const handleShowFiscalYear = async () => {
+    setLoading(true);
+    const response = await getFiscalYear(invoice?.fiscalYear);
+    if (!response.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: response.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    setFiscalYear(response?.data);
+    setLoading(false);
+  };
 
   const initForm = () => {
     setFormData({
@@ -492,7 +519,35 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
             borderTopRadius={5}
             color="black"
           >
-            ویرایش فاکتور
+            <Flex direction="row" gap={4} justify={"space-between"}>
+              <Box>
+                <Text fontFamily="IranSans">
+                  ویرایش فاکتور : {invoice?.invoiceNumber}
+                </Text>
+              </Box>
+              <Flex
+                borderWidth={1}
+                borderColor={"gray.300"}
+                borderStyle={"dashed"}
+                borderRadius={"md"}
+                padding={1}
+                direction="row"
+                gap={4}
+                color={"gray.200"}
+                fontSize={"12px"}
+              >
+                <Text
+                  fontFamily="IranSans"
+                  borderLeftWidth={1}
+                  borderLeftColor={"gray.300"}
+                  borderLeftStyle={"dashed"}
+                  paddingLeft={2}
+                >
+                  سال مالی
+                </Text>
+                <Text fontFamily="IranSans">{fiscalYear?.FiscalYear}</Text>
+              </Flex>
+            </Flex>
           </CardHeader>
         )}
         <CardBody borderTopWidth={2}>

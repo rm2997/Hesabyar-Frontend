@@ -108,25 +108,31 @@ export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
       setFormData({
         ...proforma,
         proformaGoods: [...proforma.proformaGoods],
-        fiscalYear: proforma.fiscalYear,
       });
       setProformaItems(proforma.proformaGoods);
+
       setLoading(false);
     };
 
     const initStocks = async () => {
       await handleShowStocks();
     };
+
     const initFiscalYear = async () => {
       await handleShowFiscalYear();
     };
     initStocks();
-    //initFiscalYear();
+    initFiscalYear();
     loadData();
   }, []);
+
+  useEffect(() => {
+    recalculateTotal();
+  }, [formData]);
+
   const handleShowFiscalYear = async () => {
     setLoading(true);
-    const response = await getFiscalYear();
+    const response = await getFiscalYear(proforma?.fiscalYear);
     if (!response.success) {
       toast({
         title: "خطایی رخ داد",
@@ -141,9 +147,6 @@ export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
     setFiscalYear(response?.data);
     setLoading(false);
   };
-  useEffect(() => {
-    recalculateTotal();
-  }, [formData]);
 
   const initForm = () => {
     setFormData({
@@ -509,7 +512,9 @@ export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
           >
             <Flex direction="row" gap={4} justify={"space-between"}>
               <Box>
-                <Text fontFamily="IranSans">ویرایش پیش فاکتور جدید</Text>
+                <Text fontFamily="IranSans">
+                  ویرایش پیش فاکتور : {proforma?.proformaNumber}
+                </Text>
               </Box>
               <Flex
                 borderWidth={1}
@@ -543,7 +548,7 @@ export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
                 <Stack spacing={4} direction="column">
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="23%">
+                      <FormLabel hidden={!isDesktop} w="29%">
                         عنوان
                       </FormLabel>
                       <MyInputBox
@@ -557,7 +562,7 @@ export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="28%">
+                      <FormLabel hidden={!isDesktop} w="40%">
                         نام مشتری
                       </FormLabel>
                       <MyInputBox
@@ -602,7 +607,7 @@ export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="40%">
+                      <FormLabel hidden={!isDesktop} w="29%">
                         نوع پرداخت
                       </FormLabel>
                       <Select
@@ -622,7 +627,7 @@ export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="40%">
+                      <FormLabel hidden={!isDesktop} w="29%">
                         انبار
                       </FormLabel>
                       <Select

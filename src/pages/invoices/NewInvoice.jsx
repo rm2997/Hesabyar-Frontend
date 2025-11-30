@@ -57,7 +57,10 @@ import { MyModal } from "../../my-components/MyModal";
 import { SearchCustomer } from "../../my-components/SearchCustomer";
 import { SearchProforma } from "../../my-components/SearchProforma";
 import { MyInputBox } from "../../my-components/MyInputBox";
-import { showAllStocks } from "../../api/services/sepidarService";
+import {
+  getFiscalYear,
+  showAllStocks,
+} from "../../api/services/sepidarService";
 
 export const NewInvoice = ({}) => {
   const isDesktop = useBreakpointValue({ base: false, md: true });
@@ -80,7 +83,9 @@ export const NewInvoice = ({}) => {
     trustIssueDate: "",
     invoiceGoods: null,
     description: "",
+    fiscalYear: 0,
   });
+  const [fiscalYear, setFiscalYear] = useState({});
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
@@ -98,6 +103,10 @@ export const NewInvoice = ({}) => {
     const initStocks = async () => {
       await handleShowStocks();
     };
+    const initFiscalYear = async () => {
+      await handleShowFiscalYear();
+    };
+    initFiscalYear();
     initStocks();
   }, []);
 
@@ -105,6 +114,23 @@ export const NewInvoice = ({}) => {
     recalculateTotal();
   }, [formData]);
 
+  const handleShowFiscalYear = async () => {
+    setLoading(true);
+    const response = await getFiscalYear();
+    if (!response.success) {
+      toast({
+        title: "خطایی رخ داد",
+        description: response.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    setFiscalYear(response?.data);
+    setLoading(false);
+  };
   const initForm = () => {
     setFormData({
       id: 0,
@@ -332,7 +358,7 @@ export const NewInvoice = ({}) => {
     data.invoiceGoods = [...items];
     data.totalAmount = totalPrice;
     data.totalQuantity = totalQuantity;
-
+    data.fiscalYear = fiscalYear.FiscalYearId;
     setFormData(data);
 
     if ((await validateForm(data)) == false) return;
@@ -465,7 +491,33 @@ export const NewInvoice = ({}) => {
             borderTopRadius={5}
             color="black"
           >
-            ثبت فاکتور جدید
+            <Flex direction="row" gap={4} justify={"space-between"}>
+              <Box>
+                <Text fontFamily="IranSans">ثبت فاکتور جدید</Text>
+              </Box>
+              <Flex
+                borderWidth={1}
+                borderColor={"gray.300"}
+                borderStyle={"dashed"}
+                borderRadius={"md"}
+                padding={1}
+                direction="row"
+                gap={4}
+                color={"gray.200"}
+                fontSize={"12px"}
+              >
+                <Text
+                  fontFamily="IranSans"
+                  borderLeftWidth={1}
+                  borderLeftColor={"gray.300"}
+                  borderLeftStyle={"dashed"}
+                  paddingLeft={2}
+                >
+                  سال مالی
+                </Text>
+                <Text fontFamily="IranSans">{fiscalYear.FiscalYear}</Text>
+              </Flex>
+            </Flex>
           </CardHeader>
         )}
         <CardBody borderTopWidth={2}>

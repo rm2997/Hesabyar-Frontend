@@ -358,7 +358,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                     }
                   >
                     <Text fontFamily="IranSans" fontSize="md">
-                      پیش فاکتور شماره : {row.id}
+                      پیش فاکتور شماره : {row.proformaNumber}
                     </Text>
                   </CardHeader>
                   <CardBody p={2}>

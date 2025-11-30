@@ -380,7 +380,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                       fontSize={["16px", "16px", "15px", "14px"]}
                       fontFamily="iransans"
                     >
-                      فاکتور شماره : {row?.id}
+                      فاکتور شماره : {row?.invoiceNumber}
                     </Text>
                   </CardHeader>
                   <CardBody p={2}>
