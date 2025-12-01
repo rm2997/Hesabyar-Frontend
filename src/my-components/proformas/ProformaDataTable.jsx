@@ -218,6 +218,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       customer: { ...proforma.customer },
       invoiceGoods: [...proforma.proformaGoods],
       proforma: { ...proforma },
+      stockRef: Number(proforma.stockRef),
     };
 
     setLoading(true);
