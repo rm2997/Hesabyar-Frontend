@@ -49,3 +49,10 @@ export const showAllStocks = async () => {
     url: endpoints.sepidar.getAllStocks,
   });
 };
+
+export const GetSepidarUsers = async () => {
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.sepidar.getSepidarUsers,
+  });
+};

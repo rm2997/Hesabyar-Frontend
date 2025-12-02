@@ -158,6 +158,7 @@ const endpoints = {
     syncCustomers: "/sepidar/syncCustomers",
     getFiscalYear: (fiscalYearId) => `/sepidar/getFiscalYear/${fiscalYearId}`,
     getAllStocks: "/sepidar/getAllStocks",
+    getSepidarUsers: "/sepidar/getSepidarUsers",
   },
 };
 

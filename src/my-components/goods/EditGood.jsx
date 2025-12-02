@@ -1,16 +1,14 @@
 import {
-  AbsoluteCenter,
   Box,
   Button,
   FormControl,
   FormLabel,
   HStack,
   Select,
-  Spinner,
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { DollarSign, Info, Package2, SquareCheckBig } from "lucide-react";
+import { DollarSign, Hash, Info, Package2, SquareCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ShowGoodByID, UpdateGood } from "../../api/services/goodsService";
 import { MyLoading } from "../MyLoading";
@@ -195,6 +193,21 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
                 </option>
               ))}
             </Select>
+          </HStack>
+        </FormControl>
+        <FormControl>
+          <HStack>
+            <FormLabel width="100px">موجودی</FormLabel>
+            <MyInputBox
+              isDisabled
+              px={2}
+              dir="ltr"
+              icon={Hash}
+              name="goodCount"
+              title="موجودی"
+              size={19}
+              value={formData?.goodCount}
+            />
           </HStack>
         </FormControl>
         <FormControl>

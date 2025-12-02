@@ -17,6 +17,7 @@ import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../MyLoading";
 import { UpdateUser } from "../../api/services/userService";
 import { UserRoles } from "../../api/services/enums/roles.enum";
+import { GetSepidarUsers } from "../../api/services/sepidarService";
 
 export const EditUser = ({
   selectedId,
@@ -31,15 +32,33 @@ export const EditUser = ({
     username: "",
     userfname: "",
     userlname: "",
+    sepidarId: 0,
     twoFactorAuthntication: false,
     isUserActive: true,
     mustChangePassword: false,
     usermobilenumber: "",
   });
+  const [sepidarUsers, setSepidarUsers] = useState([]);
   //const [users, setUsers] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+
+  useEffect(() => {
+    const loadSepidarUsers = async () => {
+      setLoading(true);
+      const response = await GetSepidarUsers();
+      if (!response.success) {
+        console.log(response.error);
+        setLoading(false);
+        return;
+      }
+      setSepidarUsers(response?.data);
+      setLoading(false);
+    };
+
+    loadSepidarUsers();
+  }, []);
 
   useEffect(() => {
     setFormData({ ...user });
@@ -68,6 +87,7 @@ export const EditUser = ({
       username: "",
       userfname: "",
       userlname: "",
+      sepidarId: 0,
       twoFactorAuthntication: false,
       isUserActive: false,
       mustChangePassword: false,
@@ -152,7 +172,7 @@ export const EditUser = ({
             </FormControl>
             <FormControl isRequired>
               <HStack>
-                <FormLabel hidden={!isDesktop} width="170px">
+                <FormLabel hidden={!isDesktop} width="140px">
                   نام خانوادگی
                 </FormLabel>
                 <MyInputBox
@@ -179,6 +199,27 @@ export const EditUser = ({
                   value={formData.usermobilenumber}
                   onChange={handleChangeFormData}
                 />
+              </HStack>
+            </FormControl>
+            <FormControl isRequired>
+              <HStack>
+                <FormLabel hidden={!isDesktop} width="140px">
+                  کاربر سپیدار
+                </FormLabel>
+                <Select
+                  placeholder="یک کاربر انتخاب کنید"
+                  dir="ltr"
+                  value={formData.sepidarId}
+                  name="sepidarId"
+                  maxW="620px"
+                  onChange={handleChangeFormData}
+                >
+                  {sepidarUsers.map((u) => (
+                    <option key={u.UserID} value={u.UserID}>
+                      {u.Name}
+                    </option>
+                  ))}
+                </Select>
               </HStack>
             </FormControl>
             <Flex direction="column">

@@ -23,6 +23,7 @@ import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../MyLoading";
 import { CreateUser, GetAllUsers } from "../../api/services/userService";
 import { UserRoles } from "../../api/services/enums/roles.enum";
+import { GetSepidarUsers } from "../../api/services/sepidarService";
 
 export const NewUser = ({ isDesktop }) => {
   const [formData, setFormData] = useState({
@@ -38,14 +39,15 @@ export const NewUser = ({ isDesktop }) => {
   });
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
+  const [sepidarUsers, setSepidarUsers] = useState([]);
   const [formError, setFormError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
 
   useEffect(() => {
-    setLoading(true);
     const loadUsersData = async () => {
+      setLoading(true);
       const usersData = await GetAllUsers();
       if (!usersData.success) {
         console.log(usersData.error);
@@ -56,7 +58,19 @@ export const NewUser = ({ isDesktop }) => {
       setLoading(false);
     };
 
+    const loadSepidarUsers = async () => {
+      setLoading(true);
+      const response = await GetSepidarUsers();
+      if (!response.success) {
+        console.log(response.error);
+        setLoading(false);
+        return;
+      }
+      setSepidarUsers(response?.data);
+      setLoading(false);
+    };
     loadUsersData();
+    loadSepidarUsers();
   }, []);
 
   const validateForm = async () => {
@@ -355,6 +369,27 @@ export const NewUser = ({ isDesktop }) => {
                     value={formData.confirm}
                     onChange={handleChangeFormData}
                   />
+                </HStack>
+              </FormControl>
+              <FormControl isRequired>
+                <HStack>
+                  <FormLabel hidden={!isDesktop} width="170px">
+                    کاربر سپیدار
+                  </FormLabel>
+                  <Select
+                    placeholder="یک کاربر انتخاب کنید"
+                    dir="ltr"
+                    value={formData.sepidarId}
+                    name="sepidarId"
+                    maxW="620px"
+                    onChange={handleChangeFormData}
+                  >
+                    {sepidarUsers.map((u) => (
+                      <option key={u.UserID} value={u.UserID}>
+                        {u.Name}
+                      </option>
+                    ))}
+                  </Select>
                 </HStack>
               </FormControl>
 
