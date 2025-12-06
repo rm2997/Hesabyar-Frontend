@@ -6,11 +6,10 @@ const BASE_URL =
     : "http://localhost:3001";
 const axiosClient = axios.create({
   baseURL: `${BASE_URL}`,
-  withCredentials: true,
+  withCredentials: process.env.NODE_ENV == "production" ? true : false,
   headers: {
     "Content-Type": "application/json",
   },
-
 });
 
 axiosClient.interceptors.request.use((config) => {
@@ -20,7 +19,6 @@ axiosClient.interceptors.request.use((config) => {
   }
   return config;
 });
-
 
 export const apiRequest = async ({
   method,
@@ -88,6 +86,5 @@ export const apiRequest = async ({
     };
   }
 };
-
 
 export default axiosClient;

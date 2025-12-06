@@ -3,14 +3,10 @@ import {
   Box,
   Button,
   FormControl,
-  FormLabel,
   Input,
   useToast,
-  VStack,
-  Heading,
   Text,
   Divider,
-  SimpleGrid,
   useBreakpointValue,
   Flex,
 } from "@chakra-ui/react";
@@ -30,13 +26,22 @@ export const ForgotPasswordForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChangeMobileNumber = async (mobile) => {
-    if (mobile.length <= 11) setMobile(mobile);
-    if (mobile.length == 11) {
+  const handleChangeMobileNumber = (e) => {
+    const tmpMobile = e.target.value;
+    console.log(tmpMobile.length);
+
+    if (isNaN(Number(tmpMobile))) return;
+    if (tmpMobile.length > 11) return;
+    if (tmpMobile.length < 12) {
+      setMobile(tmpMobile);
+    }
+    if (tmpMobile?.length == 11 && tmpMobile?.startsWith("09") == true) {
       setEnableSend(true);
       return;
-    } else setEnableSend(false);
+    }
+    setEnableSend(false);
   };
+
   const handleClick = (e) => {
     e.preventDefault();
     navigate("/login");
@@ -150,10 +155,15 @@ export const ForgotPasswordForm = () => {
               textColor="white"
               variant="outline"
               dir="ltr"
-              type="number"
               placeholder="09xxxxxxxxx"
               value={mobile}
-              onChange={(e) => handleChangeMobileNumber(e.target.value)}
+              isInvalid={
+                mobile?.length > 0 &&
+                (mobile?.length != 11 ||
+                  isNaN(Number(mobile)) ||
+                  mobile.startsWith("09") == false)
+              }
+              onChange={handleChangeMobileNumber}
             />
           </FormControl>
 
@@ -187,92 +197,3 @@ export const ForgotPasswordForm = () => {
     </Box>
   );
 };
-{
-  /* <SimpleGrid
-      filter={isLoading ? "blur(10px)" : ""}
-      spacing={0}
-      columns={{ base: 1, md: 1, lg: 4 }}
-      height="98vh"
-      width="99%"
-      m={"auto"}
-      mt={2}
-      mb={2}
-      p={isDesktop ? 5 : 0}
-      borderWidth={!isDesktop ? "1px" : ""}
-      borderRadius={!isDesktop ? "lg" : ""}
-    >
-      <Box></Box>
-      <Box
-        bg="blackAlpha.100"
-        bgImage="url(/assets/images/bg/forgetPassword.svg)"
-        bgSize={"contain"}
-        bgRepeat="no-repeat"
-        bgPosition={"center"}
-        p={8}
-        borderWidth={isDesktop ? 1 : 0}
-        borderRightWidth={0}
-        borderLeftRadius={isDesktop ? "lg" : ""}
-      />
-      <Box
-        p={8}
-        borderWidth={isDesktop ? 1 : 0}
-        borderLeftWidth={isDesktop ? 1 : 0}
-        borderRightRadius={isDesktop ? "lg" : ""}
-        borderLeftRadius={isDesktop ? "" : "lg"}
-        dir="rtl"
-      >
-        <VStack spacing={5} as="form" onSubmit={handleSubmit}>
-          <UserLock size={100} color="#74CEF7" strokeWidth={1} />
-          <Heading
-            color="blackAlpha.800"
-            fontFamily="Vaziri"
-            hidden={!isDesktop}
-            size="lg"
-          >
-            فراموشی رمز عبور
-          </Heading>
-          <Text
-            fontFamily="Vaziri"
-            fontSize="xs"
-            color="blackAlpha.500"
-            textAlign="center"
-          >
-            کاربر گرامی شماره همراه خود را وارد کنید تا لینک بازیابی برایتان ارسال شود
-          </Text>
-
-          <FormControl isRequired>
-            <FormLabel>شماره همراه</FormLabel>
-            <Input
-              variant="flushed"
-              dir="ltr"
-              type="number"
-              placeholder="09xxxxxxxxx"
-              value={mobile}
-              onChange={(e) => handleChangeMobileNumber(e.target.value)}
-            />
-          </FormControl>
-
-          <Button
-            leftIcon={<Send />}
-            variant="outline"
-            type="submit"
-            colorScheme="blue"
-            isLoading={isLoading}
-            isDisabled={!enableSend}
-            width="full"
-          >
-            ارسال لینک بازیابی
-          </Button>
-          <Divider />
-          <Button
-            variant="link"
-            colorScheme="blue"
-            onClick={handleClick}
-            width="full"
-          >
-            انصراف
-          </Button>
-        </VStack>
-      </Box>
-    </SimpleGrid> */
-}

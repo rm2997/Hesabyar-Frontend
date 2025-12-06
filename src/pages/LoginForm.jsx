@@ -100,10 +100,12 @@ export const LoginForm = () => {
   // };
 
   const handleGeneratCaptcha = async () => {
+    setIsFormDisabled(true);
     const { svg, token } = await getNewCaptchaFromServer();
     setCaptchaToken(token);
     setCaptchaImage(svg);
     setInputCaptha("");
+    setIsFormDisabled(false);
     //await createCaptchaImage(svg);
   };
 
@@ -235,7 +237,9 @@ export const LoginForm = () => {
     if (!rndTextRes.success) {
       toast({
         title: "خطا",
-        description: "مشکلی در دریافت کد تصادفی جدید پیش آمده است.",
+        description: rndTextRes?.error
+          ? rndTextRes?.error
+          : "مشکلی در دریافت کد تصادفی جدید پیش آمده است.",
         status: "error",
         duration: 3000,
         isClosable: false,
@@ -300,7 +304,9 @@ export const LoginForm = () => {
             <FormControl textColor="white" isRequired>
               <Input
                 ref={userNameBoxRef}
-                isInvalid={!form?.username || form?.username?.length < 3}
+                isInvalid={
+                  form?.username?.length > 0 && form?.username?.length < 3
+                }
                 autoComplete="off"
                 _placeholder={{ color: "whiteAlpha.700" }}
                 _focus={{
@@ -319,7 +325,9 @@ export const LoginForm = () => {
 
             <FormControl textColor="white" isRequired>
               <MyInputBox
-                isInvalid={!form?.password || form?.password?.length < 3}
+                isInvalid={
+                  form?.password?.length > 0 && form?.password?.length < 3
+                }
                 autoComplete="off"
                 _placeholder={{ color: "whiteAlpha.700" }}
                 _focus={{
@@ -342,7 +350,9 @@ export const LoginForm = () => {
                 <FormLabel hidden={!isDesktop}>رمز تصادفی</FormLabel>
                 <Flex justify="space-between">
                   <Input
-                    isInvalid={!inputCaptha || inputCaptha?.length != 5}
+                    isInvalid={
+                      inputCaptha?.length > 0 && inputCaptha?.length != 5
+                    }
                     autoComplete="off"
                     colorScheme="teal"
                     _placeholder={{ color: "whiteAlpha.700" }}
@@ -359,20 +369,29 @@ export const LoginForm = () => {
                     }
                   />
                   <Box
-                    width="150px"
-                    dangerouslySetInnerHTML={{ __html: captchaImage }}
-                    onClick={() => handleGeneratCaptcha()}
+                    minW="150px"
+                    minH="60px"
                     mx={1}
                     borderWidth={1}
-                    borderColor="gray"
+                    borderColor="whiteAlpha.300"
+                    borderRadius="md"
+                    onClick={() => handleGeneratCaptcha()}
+                    cursor={"pointer"}
+                    alignContent="center"
+                    p="px"
                   >
-                    {/* <Image
-                      objectFit="cover"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      src={endpoints.auth.newCaptcha}
-                      onClick={() => handleGeneratCaptcha()}
-                    /> */}
+                    <Box
+                      dangerouslySetInnerHTML={{ __html: captchaImage }}
+                      p="1px"
+                    />
+                    <Text
+                      height="50%"
+                      textColor="whiteAlpha.400"
+                      textAlign="center"
+                      hidden={captchaImage?.length > 0}
+                    >
+                      تصویر امنیتی
+                    </Text>
                   </Box>
                 </Flex>
               </FormControl>
@@ -386,7 +405,11 @@ export const LoginForm = () => {
               leftIcon={<LogIn />}
               type="submit"
               width="full"
-              disabled={isFormDisabled}
+              disabled={
+                form?.username?.length < 3 ||
+                form?.password?.length < 3 ||
+                isFormDisabled
+              }
               isLoading={isFormDisabled}
             >
               ورودبه حسابیار
@@ -417,7 +440,7 @@ export const LoginForm = () => {
               fontSize="2xs"
               color="whiteAlpha.600"
             >
-              نسخه 1.0.0.0 *** 11 آذر 1404
+              نسخه 1.0.0.0 *** 15 آذر 1404
             </Text>
           </Flex>
           <Flex
