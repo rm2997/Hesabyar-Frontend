@@ -48,6 +48,7 @@ import {
   showAllStocks,
 } from "../../api/services/sepidarService";
 import { MyInputBox } from "../../my-components/MyInputBox";
+import { Datepicker } from "@ijavad805/react-datepicker";
 
 export const NewProforma = ({ isDesktop }) => {
   const toast = useToast();
@@ -73,6 +74,7 @@ export const NewProforma = ({ isDesktop }) => {
     paperMoneySerial: 0,
     trustIssueDate: "",
     proformaGoods: null,
+    expirationDate: "",
     description: "",
     fiscalYear: 0,
   });
@@ -472,6 +474,7 @@ export const NewProforma = ({ isDesktop }) => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    console.log(e.target.name, e.target.value);
   };
 
   const handleAddNewUser = () => {
@@ -645,6 +648,49 @@ export const NewProforma = ({ isDesktop }) => {
                           </option>
                         ))}
                       </Select>
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="140px">
+                        اعتبار تا
+                      </FormLabel>
+                      <Box
+                        borderWidth={1}
+                        borderColor="gray.300"
+                        borderRadius="md"
+                        p={2}
+                      >
+                        <Datepicker
+                          fontSize="md"
+                          fontFamily="IranSans"
+                          input={
+                            <input
+                              style={{
+                                borderColor: "gray",
+                                borderWidth: "1px",
+                              }}
+                              placeholder="تاریخ اعتبار را انتخاب کنید..."
+                            />
+                          }
+                          id="expirationDate"
+                          closeWhenSelectADay={true}
+                          format={"YYYY/MM/DD"}
+                          adjustPosition="auto"
+                          theme="green"
+                          allowClear={true}
+                          name="expirationDate"
+                          value={formData.expirationDate}
+                          onChange={(e) =>
+                            handleChangeFormData({
+                              target: {
+                                value: e ? e : "",
+                                name: "expirationDate",
+                              },
+                            })
+                          }
+                        />
+                      </Box>
                     </HStack>
                   </FormControl>
                 </Stack>

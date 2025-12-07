@@ -47,11 +47,12 @@ import {
   getFiscalYear,
   showAllStocks,
 } from "../../api/services/sepidarService";
+import { Datepicker } from "@ijavad805/react-datepicker";
 
 export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
+  dayjs.extend(jalali);
   const toast = useToast();
   const isDesktop = useBreakpointValue({ base: false, md: true, lg: true });
-  dayjs.extend(jalali);
   const [formData, setFormData] = useState({
     title: "",
     customer: {},
@@ -65,6 +66,7 @@ export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
     paperMoneyAmount: 0,
     paperMoneySerial: 0,
     trustIssueDate: "",
+    expirationDate: "",
     proformaGoods: [],
     description: "",
     fiscalYear: 0,
@@ -643,6 +645,54 @@ export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
                           </option>
                         ))}
                       </Select>
+                    </HStack>
+                  </FormControl>
+                  <FormControl isRequired>
+                    <HStack>
+                      <FormLabel hidden={!isDesktop} width="140px">
+                        اعتبار تا
+                      </FormLabel>
+                      <Box
+                        borderWidth={1}
+                        borderColor="gray.300"
+                        borderRadius="md"
+                        p={2}
+                      >
+                        <Datepicker
+                          fontSize="md"
+                          fontFamily="IranSans"
+                          input={
+                            <input
+                              style={{
+                                borderColor: "gray",
+                                borderWidth: "1px",
+                              }}
+                              placeholder="تاریخ اعتبار را انتخاب کنید..."
+                            />
+                          }
+                          id="expirationDate"
+                          closeWhenSelectADay={true}
+                          format={"YYYY/MM/DD"}
+                          adjustPosition="auto"
+                          theme="green"
+                          allowClear={true}
+                          name="expirationDate"
+                          value={formData?.expirationDate}
+                          onChange={(e) =>
+                            handleChangeFormData({
+                              target: {
+                                value: e ? e : "",
+                                name: "expirationDate",
+                              },
+                            })
+                          }
+                        />
+                      </Box>
+                      {/* <Text>
+                        {dayjs(formData?.expirationDate)
+                          .locale("fa")
+                          .format("YYYY/MM/DD")}
+                      </Text> */}
                     </HStack>
                   </FormControl>
                 </Stack>

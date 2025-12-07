@@ -108,7 +108,7 @@ export const SearchCustomer = ({ onSelect, isOpen, onClose, searchItems }) => {
                           colorScheme="blue"
                           ml="10px"
                         >
-                          کد: {item?.id}
+                          کد: {item?.sepidarId}
                         </Badge>
                         {item?.customerGender +
                           " " +
