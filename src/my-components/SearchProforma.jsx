@@ -113,7 +113,7 @@ export const SearchProforma = ({ onSelect, isOpen, onClose, searchItems }) => {
                           colorScheme="blue"
                           ml="10px"
                         >
-                          پیش فاکتور شماره: {item?.id}
+                          پیش فاکتور شماره: {item?.proformaNumber}
                         </Badge>
                         {item?.title}
                       </Text>

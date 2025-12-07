@@ -555,7 +555,10 @@ export const NewProforma = ({ isDesktop }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="28%">
+                      <FormLabel
+                        hidden={!isDesktop}
+                        w={formData.customer ? "30%" : "28%"}
+                      >
                         نام مشتری
                       </FormLabel>
                       <MyInputBox

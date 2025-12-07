@@ -86,7 +86,7 @@ export const ShowUserAcceptedProformasByCustomerId = async (
 ) => {
   return await apiRequest({
     method: "GET",
-    url: endpoints.proforma.listUserAcceptedInvoicesByCustomerId(
+    url: endpoints.proforma.listUserAcceptedProformaByCustomerId(
       customerId,
       page,
       limit,

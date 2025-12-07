@@ -506,8 +506,8 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
   return (
     <Box>
       <Card
-        minH={isDesktop ? "85vh" : "83vh"}
         overflowY="auto"
+        minH={isDesktop ? "75vh" : "70vh"}
         m={1}
         filter={loading ? "blur(10px)" : ""}
       >
@@ -552,12 +552,16 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
         )}
         <CardBody borderTopWidth={2}>
           <Flex direction="column" gap={4} as="form" onSubmit={handleSubmit}>
-            <Flex direction={{ base: "column", md: "row" }} gap={5}>
-              <Box>
-                <Stack spacing={5} direction="column">
+            <Flex
+              direction={{ base: "column", md: "row" }}
+              columnGap={5}
+              rowGap={3}
+            >
+              <Flex flex={1} p={1} borderRadius="md" gap={15}>
+                <Stack direction="column">
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="23%">
+                      <FormLabel hidden={!isDesktop} w="30%">
                         عنوان
                       </FormLabel>
                       <MyInputBox
@@ -572,7 +576,10 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="28%">
+                      <FormLabel
+                        hidden={!isDesktop}
+                        w={formData?.customer ? "40%" : "32%"}
+                      >
                         نام مشتری
                       </FormLabel>
                       <MyInputBox
@@ -617,7 +624,10 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
 
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="40%">
+                      <FormLabel
+                        hidden={!isDesktop}
+                        w={formData?.proforma ? "44%" : "28%"}
+                      >
                         پیش‌ فاکتور
                       </FormLabel>
                       <Input
@@ -627,7 +637,7 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
                           formData?.proforma
                             ? formData?.proforma?.title +
                               " - " +
-                              formData?.proforma?.id
+                              formData?.proforma?.proformaNumber
                             : ""
                         }
                         name="proforma"
@@ -662,7 +672,7 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
 
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="30%">
+                      <FormLabel hidden={!isDesktop} w="28%">
                         نوع پرداخت
                       </FormLabel>
                       <Select
@@ -682,7 +692,7 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="40%">
+                      <FormLabel hidden={!isDesktop} w="28%">
                         انبار
                       </FormLabel>
                       <Select
@@ -701,7 +711,7 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
                     </HStack>
                   </FormControl>
                 </Stack>
-              </Box>
+              </Flex>
               <Box flex={3} p={4} borderRadius="md">
                 <SimpleGrid
                   columns={{ base: 1, md: 3, lg: 3 }} // در موبایل 1، تبلت 2، دسکتاپ 3 ستون
@@ -743,196 +753,238 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
               </Box>
             </Flex>
 
-            <FormControl isRequired>
-              <HStack>
-                <FormLabel width="170px">انتخاب کالا</FormLabel>
-              </HStack>
-            </FormControl>
+            <Flex direction={{ base: "column", md: "row" }}>
+              <FormControl isRequired>
+                <HStack>
+                  <FormLabel width="170px">انتخاب کالا</FormLabel>
+                </HStack>
+              </FormControl>
 
-            <Flex
-              direction={isDesktop ? "" : "column"}
-              flexWrap={isDesktop ? "wrap" : ""}
-              minH="100px"
-              rowGap={3}
-              p={2}
-              dir="ltr"
-              w="full"
-              columnGap={3}
-              borderStyle="dashed"
-              borderRadius="md"
-              borderWidth={1}
-            >
-              {invoiceItems.map((item, index) => (
-                <Box
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  p={3}
-                  w="250px"
-                  boxShadow="md"
-                  position="relative"
-                  key={index + "-depotGood"}
-                  mx={isDesktop ? "" : "auto"}
-                >
-                  <Flex justify="space-between" align="center">
-                    <IconButton
-                      colorScheme="red"
-                      variant="ghost"
-                      size="xs"
-                      icon={<CircleX />}
-                      onClick={() => {
-                        handleRemoveItem(item);
-                      }}
-                    />
-
-                    <Text
-                      title={item?.good?.goodName}
-                      mx={1}
-                      dir="rtl"
-                      fontFamily="IranSans"
-                      fontWeight="bold"
-                      fontSize="md"
-                    >
-                      {item?.good?.goodName
-                        ? item?.good?.goodName?.length <= 25
-                          ? item?.good?.goodName
-                          : item?.good?.goodName.substring(0, 22) + "..."
-                        : "نا مشخص"}
-                    </Text>
-                  </Flex>
-
-                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
-                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
-                      تعداد
-                    </Text>
-                    <NumberInput
-                      variant="flushed"
-                      size="xs"
-                      textAlign="center"
-                      fontFamily="IranSans"
-                      defaultValue={1}
-                      dir="ltr"
-                      min={1}
-                      name="quantity"
-                      value={item?.quantity}
-                      onChange={(value) =>
-                        handleItemChange(index, "quantity", value)
-                      }
-                      placeholder="تعداد"
-                    >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                    <Text
-                      dir="rtl"
-                      fontFamily="iransans"
-                      fontSize="xs"
-                      my="auto"
-                    >
-                      {item?.good?.goodUnit?.unitName}
-                    </Text>
-                  </Flex>
-
-                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
-                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
-                      قیمت
-                    </Text>
-                    <Input
-                      isInvalid={
-                        !item?.price ||
-                        isNaN(Number(item?.price)) ||
-                        item?.price == 0
-                      }
-                      size="sm"
-                      variant="flushed"
-                      textAlign="left"
-                      fontFamily="IranSans"
-                      name="price"
-                      value={Number(item?.price).toLocaleString()}
-                      onChange={(e) => {
-                        const rawVal = e.target.value.replaceAll(",", "");
-                        if (isNaN(Number(rawVal))) {
-                          handleItemChange(index, "price", 0);
-                          return;
-                        }
-                        const numVal = Number(rawVal);
-                        handleItemChange(index, "price", numVal);
-                      }}
-                    />
-                  </Flex>
-                  <Flex justify="space-between" columnGap={8} mt={3} dir="rtl">
-                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
-                      جمع
-                    </Text>
-                    <Input
-                      readOnly
-                      size="sm"
-                      variant="flushed"
-                      textAlign="left"
-                      fontFamily="IranSans"
-                      name="total"
-                      value={Number(
-                        item?.quantity * item.price
-                      ).toLocaleString()}
-                      onChange={(e) =>
-                        handleItemChange(index, "total", e.target.value)
-                      }
-                    />
-                  </Flex>
-
-                  <Flex justify="space-between" columnGap={3} mt={3} dir="rtl">
-                    <Text dir="rtl" fontFamily="iransans" fontSize="xs" mt={2}>
-                      توضیحات
-                    </Text>
-                    <Input
-                      variant="flushed"
-                      size="sm"
-                      name="description"
-                      value={item.description}
-                      onChange={(e) =>
-                        handleItemChange(index, "description", e.target.value)
-                      }
-                    />
-                  </Flex>
-                </Box>
-              ))}
-              <IconButton
-                ml={3}
-                icon={<PlusCircle size="lg" strokeWidth={1.2} />}
-                size="lg"
-                my="auto"
-                mx={isDesktop ? "" : "auto"}
-                colorScheme="green"
-                variant="ghost"
-                onClick={() => setShowSearchGood(true)}
-              />
               <Flex
-                hidden={invoiceItems?.length == 0}
-                p={3}
-                justify="space-between"
-                columnGap={5}
-                dir="rtl"
-                mt="auto"
-                mx={isDesktop ? "" : "auto"}
-                borderWidth={0.5}
+                direction={isDesktop ? "" : "column"}
+                flexWrap={isDesktop ? "wrap" : ""}
+                minH="100px"
+                rowGap={3}
+                p={2}
+                dir="ltr"
+                w="full"
+                columnGap={3}
                 borderStyle="dashed"
+                borderRadius="md"
+                borderWidth={1}
               >
-                <Text fontSize="md" textAlign="center" fontFamily="IranSans">
-                  جمع کل: {Number(totalPrice).toLocaleString()}
-                </Text>
+                {invoiceItems.map((item, index) => (
+                  <Box
+                    borderWidth="1px"
+                    borderRadius="lg"
+                    p={3}
+                    w="250px"
+                    boxShadow="md"
+                    position="relative"
+                    key={index + "-depotGood"}
+                    mx={isDesktop ? "" : "auto"}
+                  >
+                    <Flex justify="space-between" align="center">
+                      <IconButton
+                        colorScheme="red"
+                        variant="ghost"
+                        size="xs"
+                        icon={<CircleX />}
+                        onClick={() => {
+                          handleRemoveItem(item);
+                        }}
+                      />
 
-                <Text
-                  px={5}
-                  fontSize="md"
-                  textAlign="center"
-                  fontFamily="IranSans"
-                  borderRightWidth={0.5}
-                  borderColor="gray.300"
+                      <Text
+                        title={item?.good?.goodName}
+                        mx={1}
+                        dir="rtl"
+                        fontFamily="IranSans"
+                        fontWeight="bold"
+                        fontSize="md"
+                      >
+                        {item?.good?.goodName
+                          ? item?.good?.goodName?.length <= 25
+                            ? item?.good?.goodName
+                            : item?.good?.goodName.substring(0, 22) + "..."
+                          : "نا مشخص"}
+                      </Text>
+                    </Flex>
+
+                    <Flex
+                      justify="space-between"
+                      columnGap={3}
+                      mt={3}
+                      dir="rtl"
+                    >
+                      <Text
+                        dir="rtl"
+                        fontFamily="iransans"
+                        fontSize="xs"
+                        mt={2}
+                      >
+                        تعداد
+                      </Text>
+                      <NumberInput
+                        variant="flushed"
+                        size="xs"
+                        textAlign="center"
+                        fontFamily="IranSans"
+                        defaultValue={1}
+                        dir="ltr"
+                        min={1}
+                        name="quantity"
+                        value={item?.quantity}
+                        onChange={(value) =>
+                          handleItemChange(index, "quantity", value)
+                        }
+                        placeholder="تعداد"
+                      >
+                        <NumberInputField />
+                        <NumberInputStepper>
+                          <NumberIncrementStepper />
+                          <NumberDecrementStepper />
+                        </NumberInputStepper>
+                      </NumberInput>
+                      <Text
+                        dir="rtl"
+                        fontFamily="iransans"
+                        fontSize="xs"
+                        my="auto"
+                      >
+                        {item?.good?.goodUnit?.unitName}
+                      </Text>
+                    </Flex>
+
+                    <Flex
+                      justify="space-between"
+                      columnGap={3}
+                      mt={3}
+                      dir="rtl"
+                    >
+                      <Text
+                        dir="rtl"
+                        fontFamily="iransans"
+                        fontSize="xs"
+                        mt={2}
+                      >
+                        قیمت
+                      </Text>
+                      <Input
+                        isInvalid={
+                          !item?.price ||
+                          isNaN(Number(item?.price)) ||
+                          item?.price == 0
+                        }
+                        size="sm"
+                        variant="flushed"
+                        textAlign="left"
+                        fontFamily="IranSans"
+                        name="price"
+                        value={Number(item?.price).toLocaleString()}
+                        onChange={(e) => {
+                          const rawVal = e.target.value.replaceAll(",", "");
+                          if (isNaN(Number(rawVal))) {
+                            handleItemChange(index, "price", 0);
+                            return;
+                          }
+                          const numVal = Number(rawVal);
+                          handleItemChange(index, "price", numVal);
+                        }}
+                      />
+                    </Flex>
+                    <Flex
+                      justify="space-between"
+                      columnGap={8}
+                      mt={3}
+                      dir="rtl"
+                    >
+                      <Text
+                        dir="rtl"
+                        fontFamily="iransans"
+                        fontSize="xs"
+                        mt={2}
+                      >
+                        جمع
+                      </Text>
+                      <Input
+                        readOnly
+                        size="sm"
+                        variant="flushed"
+                        textAlign="left"
+                        fontFamily="IranSans"
+                        name="total"
+                        value={Number(
+                          item?.quantity * item.price
+                        ).toLocaleString()}
+                        onChange={(e) =>
+                          handleItemChange(index, "total", e.target.value)
+                        }
+                      />
+                    </Flex>
+
+                    <Flex
+                      justify="space-between"
+                      columnGap={3}
+                      mt={3}
+                      dir="rtl"
+                    >
+                      <Text
+                        dir="rtl"
+                        fontFamily="iransans"
+                        fontSize="xs"
+                        mt={2}
+                      >
+                        توضیحات
+                      </Text>
+                      <Input
+                        variant="flushed"
+                        size="sm"
+                        name="description"
+                        value={item.description}
+                        onChange={(e) =>
+                          handleItemChange(index, "description", e.target.value)
+                        }
+                      />
+                    </Flex>
+                  </Box>
+                ))}
+                <IconButton
+                  ml={3}
+                  icon={<PlusCircle size="lg" strokeWidth={1.2} />}
+                  size="lg"
+                  my="auto"
+                  mx={isDesktop ? "" : "auto"}
+                  colorScheme="green"
+                  variant="ghost"
+                  onClick={() => setShowSearchGood(true)}
+                />
+                <Flex
+                  hidden={invoiceItems?.length == 0}
+                  p={3}
+                  justify="space-between"
+                  columnGap={5}
+                  dir="rtl"
+                  mt="auto"
+                  mx={isDesktop ? "" : "auto"}
+                  borderWidth={0.5}
+                  borderStyle="dashed"
                 >
-                  تعداد کل: {totalQuantity}
-                </Text>
+                  <Text fontSize="md" textAlign="center" fontFamily="IranSans">
+                    جمع کل: {Number(totalPrice).toLocaleString()}
+                  </Text>
+
+                  <Text
+                    px={5}
+                    fontSize="md"
+                    textAlign="center"
+                    fontFamily="IranSans"
+                    borderRightWidth={0.5}
+                    borderColor="gray.300"
+                  >
+                    تعداد کل: {totalQuantity}
+                  </Text>
+                </Flex>
               </Flex>
             </Flex>
 
@@ -1060,7 +1112,6 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
             </Button>
           </Flex>
         </CardBody>
-        <CardFooter></CardFooter>
       </Card>
       <MyModal
         modalHeader=" فایل تاییدیه مشتری"

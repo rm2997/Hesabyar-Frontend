@@ -32,7 +32,7 @@ const endpoints = {
       `/proforma/user/my?page=${page}&limit=${limit}&search=${search}`,
     listMyAccepted: (page, limit, search) =>
       `/proforma/user/accepted?page=${page}&limit=${limit}&search=${search}`,
-    listUserAcceptedInvoicesByCustomerId: (customerId, page, limit, search) =>
+    listUserAcceptedProformaByCustomerId: (customerId, page, limit, search) =>
       `/proforma/customer/accepted/${customerId}?page=${page}&limit=${limit}&search=${search}`,
     listAll: (page, limit, search) =>
       `/proforma?page=${page}&limit=${limit}&search=${search}`,

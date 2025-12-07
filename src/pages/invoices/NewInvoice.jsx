@@ -451,10 +451,8 @@ export const NewInvoice = ({}) => {
   };
 
   const handleChangeProformaData = (proforma) => {
-    const newItems = [...proforma?.proformaGoods];
+    const newItems = [...proforma.proformaGoods];
     setInvoiceItems([...newItems]);
-    setFormData({ ...formData, title: proforma?.title });
-    if (proforma) setFormData({ ...formData, title: proforma?.title });
   };
 
   const handleRemoveItem = (item) => {
@@ -545,7 +543,10 @@ export const NewInvoice = ({}) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="28%">
+                      <FormLabel
+                        hidden={!isDesktop}
+                        w={formData?.customer ? "30%" : "28%"}
+                      >
                         نام مشتری
                       </FormLabel>
                       <MyInputBox
@@ -602,7 +603,10 @@ export const NewInvoice = ({}) => {
 
                   <FormControl>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} w="25%">
+                      <FormLabel
+                        hidden={!isDesktop}
+                        w={formData?.proforma ? "27%" : "25%"}
+                      >
                         پیش‌ فاکتور
                       </FormLabel>
                       <MyInputBox
@@ -610,10 +614,10 @@ export const NewInvoice = ({}) => {
                         title="لطفا یک پیش فاکتور انتخاب کنید"
                         onClick={() => setShowSearchProforma(true)}
                         value={
-                          formData?.proforma
+                          formData?.proforma != null
                             ? formData?.proforma?.title +
                               " - " +
-                              formData?.proforma?.id
+                              formData?.proforma?.proformaNumber
                             : ""
                         }
                         name="proforma"
@@ -941,7 +945,6 @@ export const NewInvoice = ({}) => {
             </Button>
           </Flex>
         </CardBody>
-        <CardFooter></CardFooter>
       </Card>
       <SearchCustomer
         searchItems={handleSearchCustomers}
