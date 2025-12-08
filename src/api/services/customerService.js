@@ -31,7 +31,7 @@ export const ShowCustomerByID = async (id) => {
   });
 };
 
-export const ShowAllCustomers = async (page = 1, limit = 10, search = "") => {
+export const ShowAllCustomers = async (page = 1, limit = 12, search = "") => {
   return await apiRequest({
     method: "GET",
     url: endpoints.customer.listAll(page, limit, search),

@@ -15,30 +15,17 @@ import {
   Tooltip,
   Icon,
   Flex,
-  AbsoluteCenter,
-  Spinner,
   Image,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import {
-  Trash2,
-  CircleFadingArrowUp,
-  Replace,
-  Handshake,
-  UserRoundCheck,
-  MailCheck,
-  UserLock,
-  ShieldUser,
-  ScanEye,
-  ShieldCheck,
-} from "lucide-react";
+import { Trash2, ScanEye, ShieldCheck } from "lucide-react";
 
 import {
   RemoveProforma,
   SetProformaIsAccepted,
   ShowProformaApprovedFile,
-  ShowUserAllProformas,
+  ShowReadyToAcceptProformaList,
 } from "../../api/services/proformaService";
 import { useEffect, useState } from "react";
 
@@ -53,7 +40,7 @@ export const ProformaRequests = ({ isDesktop }) => {
   const [currentProformaPage, setCurrentProformaPage] = useState(1);
   const [proformaSearch, setProformaSearch] = useState("");
   const [totalProformaPages, setTotalProformaPages] = useState(0);
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [approvedFile, setApprovedFile] = useState(null);
   const [proformas, setProformas] = useState([]);
   const [proformaSelectedID, setProformaSelectedID] = useState(0);
@@ -74,7 +61,7 @@ export const ProformaRequests = ({ isDesktop }) => {
 
   const loadProformaData = async (resetPage = false) => {
     setLoading(true);
-    const res = await ShowUserAllProformas(
+    const res = await ShowReadyToAcceptProformaList(
       resetPage ? 1 : currentProformaPage,
       itemsPerPage,
       resetPage ? "" : proformaSearch
@@ -94,10 +81,10 @@ export const ProformaRequests = ({ isDesktop }) => {
     }
 
     setTotalProformaPages(Math.ceil(res?.data?.total / itemsPerPage));
-    const newProformas = res.data.items.filter(
-      (p) => p.isAccepted == false && p.isSent == true && p.approvedFile
-    );
-    setProformas(newProformas);
+    // const newProformas = res.data.items.filter(
+    //   (p) => p.isAccepted == false && p.isSent == true && p.approvedFile
+    // );
+    setProformas(res?.data?.items);
     setLoading(false);
   };
 
@@ -221,7 +208,9 @@ export const ProformaRequests = ({ isDesktop }) => {
                     handleShowProformaPicture(row.id);
                   }}
                 >
-                  <Text fontFamily="IranSans">پیش فاکتور شماره :{row?.id}</Text>
+                  <Text fontFamily="IranSans">
+                    پیش فاکتور شماره :{row?.proformaNumber}
+                  </Text>
                   {/* <Box mr="auto">
                       <HStack>
                         {row.isConverted ? (

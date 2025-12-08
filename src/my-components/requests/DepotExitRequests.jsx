@@ -27,15 +27,12 @@ import { SearchBar } from "../SerachBar";
 import { MyLoading } from "../MyLoading";
 import {
   SetDepotIsAccepted,
-  SetDepotIsAcceptedByWarehouseMan,
   ShowDepotAcceptList,
-  ShowDepotWareHouseList,
 } from "../../api/services/depotService";
 import { DepotTypes } from "../../api/services/enums/depotTypes.enum";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import { MyWareHouseDepotExitStepper } from "../MyWareHouseDepotExitStepper";
-import { AcceptDepotExitByWareHouseMan } from "../warehouse/AcceptDepotExitByWareHouseMan";
+
 import { MyDepotExitRequestStepper } from "../MyDepotExitRequestStepper";
 import { EditDepotExit } from "../depot/EditDepotExit";
 
@@ -44,7 +41,7 @@ export const DepotExitRequests = ({ isDesktop }) => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [selectedID, setSelectedID] = useState(0);
   const [dialogGears, setDialogGears] = useState({

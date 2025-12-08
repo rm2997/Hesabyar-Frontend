@@ -31,7 +31,7 @@ export const ShowUnitByID = async (id) => {
   });
 };
 
-export const ShowAllUnits = async (page = 1, limit = 10, search = "") => {
+export const ShowAllUnits = async (page = 1, limit = 12, search = "") => {
   return await apiRequest({
     method: "GET",
     url: endpoints.unit.listAll(page, limit, search),

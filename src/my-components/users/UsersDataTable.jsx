@@ -20,7 +20,6 @@ import {
 import {
   Ban,
   FilePenLine,
-  Locate,
   Map,
   MapPin,
   MapPinCheck,
@@ -45,7 +44,7 @@ import { MyLoading } from "../MyLoading";
 export const UsersDataTable = ({ isDesktop }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [dialogGears, setDialogGears] = useState({
     title: "",

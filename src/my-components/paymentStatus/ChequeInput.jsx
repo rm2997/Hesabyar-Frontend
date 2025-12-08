@@ -6,20 +6,12 @@ import {
   FormLabel,
   HStack,
   Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Box,
-  TagLabel,
   Text,
-  Flex,
-  Button,
   Select,
 } from "@chakra-ui/react";
 import { Datepicker } from "@ijavad805/react-datepicker";
-import { Banknote, Database } from "lucide-react";
+import { Banknote } from "lucide-react";
 
 import { useEffect } from "react";
 import { Banks } from "../../api/services/enums/banks.enum";

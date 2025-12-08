@@ -36,7 +36,7 @@ import { MyLoading } from "../MyLoading";
 export const CustomerDataTable = ({ isDesktop }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [customersData, setCustomersData] = useState([]);

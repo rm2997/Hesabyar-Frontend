@@ -38,7 +38,7 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
   const [userData, setUserData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [dialogGears, setDialogGears] = useState({
     title: "",

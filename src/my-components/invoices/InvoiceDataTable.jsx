@@ -57,7 +57,7 @@ import { useNavigate } from "react-router-dom";
 export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [invoices, setInvoices] = useState([]);
   const [selectedID, setSelectedID] = useState(0);
@@ -153,7 +153,10 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
       });
       return;
     }
-    if (!invoice?.customer?.customerMobile) {
+    const defaultMobile = invoice?.customer?.phoneNumbers?.find(
+      (p) => p.isPrimary == true
+    );
+    if (!defaultMobile?.phoneNumber) {
       toast({
         title: "امکان ارسال وجود ندارد",
         description: "شماره موبایل مشتری ثبت نشده است",
@@ -192,7 +195,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
       description:
         "لینک درخواست آپلود مدارک واریز به شماره موبایل" +
         " " +
-        invoice.customer.customerMobile +
+        defaultMobile?.phoneNumber +
         " به نام " +
         invoice.customer.customerFName +
         " " +
@@ -218,7 +221,10 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
       });
       return;
     }
-    if (!invoice?.customer?.customerMobile) {
+    const defaultMobile = invoice?.customer?.phoneNumbers?.find(
+      (p) => p.isPrimary == true
+    );
+    if (!defaultMobile?.phoneNumber) {
       toast({
         title: "امکان ارسال وجود ندارد",
         description: "شماره موبایل مشتری ثبت نشده است",
@@ -248,7 +254,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
       description:
         "لینک درخواست مشخصات راننده به شماره موبایل" +
         " " +
-        invoice?.customer?.customerMobile +
+        defaultMobile?.phoneNumber +
         " به نام " +
         invoice?.customer?.customerFName +
         " " +
@@ -493,10 +499,14 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                           _hover={{ color: "#ffd54f" }}
                           color="orange.600"
                           onClick={(e) => {
+                            const defaultMobile =
+                              row?.customer?.phoneNumbers?.find(
+                                (p) => p.isPrimary == true
+                              );
                             setSelectedID(row?.id);
                             setDialogGears({
                               title: "ارسال درخواست ثبت راننده به مشتری",
-                              text: `آیا می خواهید درخواست به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                              text: `آیا می خواهید درخواست به شماره ${defaultMobile?.phoneNumber} به نام ${row.customer.customerLName} ارسال گردد؟`,
                               callBack: () => handleSendDriverLink(row?.id),
                             });
 
@@ -514,9 +524,13 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                           color="green.600"
                           onClick={(e) => {
                             setSelectedID(row.id);
+                            const defaultMobile =
+                              row?.customer?.phoneNumbers?.find(
+                                (p) => p.isPrimary == true
+                              );
                             setDialogGears({
                               title: "ارسال لینک به مشتری",
-                              text: `آیا می خواهید لینک به شماره ${row.customer.customerMobile} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                              text: `آیا می خواهید لینک به شماره ${defaultMobile?.phoneNumber} به نام ${row.customer.customerLName} ارسال گردد؟`,
                               callBack: () => handleSendCustomerLink(row?.id),
                             });
 

@@ -45,9 +45,20 @@ export const RemoveProforma = async (id) => {
   });
 };
 
+export const ShowReadyToAcceptProformaList = async (
+  page = 1,
+  limit = 12,
+  search = ""
+) => {
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.proforma.readyToAcceptList(page, limit, search),
+  });
+};
+
 export const ShowUserAllProformas = async (
   page = 1,
-  limit = 10,
+  limit = 12,
   search = ""
 ) => {
   return await apiRequest({
@@ -58,7 +69,7 @@ export const ShowUserAllProformas = async (
 
 export const ShowUserMyProformas = async (
   page = 1,
-  limit = 10,
+  limit = 12,
   search = ""
 ) => {
   return await apiRequest({
@@ -69,7 +80,7 @@ export const ShowUserMyProformas = async (
 
 export const ShowMyAcceptedProformas = async (
   page = 1,
-  limit = 10,
+  limit = 12,
   search = ""
 ) => {
   return await apiRequest({

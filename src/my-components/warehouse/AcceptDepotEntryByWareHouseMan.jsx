@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Flex,
   FormControl,
@@ -22,15 +21,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import {
-  CircleX,
-  Ellipsis,
-  Info,
-  ScanSearch,
-  SquareCheckBig,
-  UserRoundPlus,
-  UserSearch,
-} from "lucide-react";
+import { CircleX, Ellipsis, SquareCheckBig } from "lucide-react";
 import { useState, useEffect } from "react";
 import { MyLoading } from "../../my-components/MyLoading";
 import { PersianAlphabet } from "../../api/services/enums/persianAlphabets.enum";

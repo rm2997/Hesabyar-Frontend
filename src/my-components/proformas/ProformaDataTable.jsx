@@ -16,24 +16,10 @@ import {
   Tooltip,
   Icon,
   Flex,
-  AbsoluteCenter,
-  Spinner,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import {
-  FilePenLine,
-  Send,
-  Trash2,
-  CircleFadingArrowUp,
-  Replace,
-  Link2,
-  Handshake,
-  UserRoundCheck,
-  MailCheck,
-  UserLock,
-  ShieldUser,
-} from "lucide-react";
+import { FilePenLine, Send, Trash2, Replace } from "lucide-react";
 
 import { EditProforma } from "./EditProforma";
 import {
@@ -56,7 +42,7 @@ import { MyProformaStepper } from "../MyProformaSteper";
 export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [proformas, setProformas] = useState([]);
   const [showLoading, setShowLoading] = useState(true);
@@ -139,7 +125,10 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       });
       return;
     }
-    if (!proforma?.customer?.customerMobile) {
+    const defaultMobile = proforma?.customer?.phoneNumbers?.find(
+      (p) => p.isPrimary == true
+    );
+    if (!defaultMobile?.phoneNumber) {
       toast({
         title: "امکان ارسال وجود ندارد",
         description: "شماره موبایل مشتری ثبت نشده است",
@@ -173,12 +162,13 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       return;
     }
     updateProformaInListWithKey(id, "isSent", "true");
+
     toast({
       title: "توجه",
       description:
         "لینک تاییدیه به شماره موبایل" +
         " " +
-        proforma.customer.customerMobile +
+        defaultMobile?.phoneNumber +
         " به نام " +
         proforma.customer.customerFName +
         " " +
@@ -469,10 +459,14 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                           color="green.600"
                           onClick={(e) => {
                             setSelectedID(row.id);
+                            const defaultMobile =
+                              row?.customer?.phoneNumbers?.find(
+                                (p) => p.isPrimary == true
+                              );
                             setDialogGears({
                               title: "ارسال لینک به مشتری",
                               text: `آیا می خواهید لینک به شماره ${
-                                row.customer.customerMobile
+                                defaultMobile?.phoneNumber
                               } به نام ${
                                 row.customer.customerGender +
                                 " " +

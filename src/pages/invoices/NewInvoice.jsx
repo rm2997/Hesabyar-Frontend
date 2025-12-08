@@ -40,12 +40,7 @@ import { useEffect, useState } from "react";
 import { CreateInvoice } from "../../api/services/invoiceService";
 import { useNavigate } from "react-router-dom";
 import { ShowAllCustomers } from "../../api/services/customerService";
-import {
-  ShowMyAcceptedProformas,
-  ShowProformasByID,
-  ShowUserAcceptedProformasByCustomerId,
-  ShowUserAllProformas,
-} from "../../api/services/proformaService";
+import { ShowUserAcceptedProformasByCustomerId } from "../../api/services/proformaService";
 import { ShowAllGoods } from "../../api/services/goodsService";
 import { MyLoading } from "../../my-components/MyLoading";
 import { PaperMoneyInput } from "../../my-components/paymentStatus/PaperMoneyInput";

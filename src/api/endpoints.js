@@ -36,6 +36,8 @@ const endpoints = {
       `/proforma/customer/accepted/${customerId}?page=${page}&limit=${limit}&search=${search}`,
     listAll: (page, limit, search) =>
       `/proforma?page=${page}&limit=${limit}&search=${search}`,
+    readyToAcceptList: (page, limit, search) =>
+      `/proforma/readyToAcceptList?page=${page}&limit=${limit}&search=${search}`,
     getApprovedFile: (id) => `/proforma/file/${id}`,
     convert: (id) => `/proforma/convert/${id}`,
     listByToken: (token) => `/proforma/token/${token}`,
@@ -54,6 +56,8 @@ const endpoints = {
       `/invoice?page=${page}&limit=${limit}&search=${search}`,
     listMy: (page, limit, search) =>
       `/invoice/user/my?page=${page}&limit=${limit}&search=${search}`,
+    readyToAcceptList: (page, limit, search) =>
+      `/invoice/readyToAcceptList?page=${page}&limit=${limit}&search=${search}`,
     listUserAcceptedInvoices: (page, limit, search) =>
       `/invoice/all/accepted?page=${page}&limit=${limit}&search=${search}`,
     listUserAcceptedInvoicesByCustomerId: (customerId, page, limit, search) =>

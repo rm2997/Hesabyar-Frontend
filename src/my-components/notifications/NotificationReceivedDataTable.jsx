@@ -1,5 +1,4 @@
 import {
-  AbsoluteCenter,
   Box,
   Card,
   CardBody,
@@ -11,7 +10,6 @@ import {
   Icon,
   Link,
   SimpleGrid,
-  Spinner,
   Stack,
   Text,
   Tooltip,
@@ -19,7 +17,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { Trash2, Eye, Mail, MailOpen, EyeClosed, View } from "lucide-react";
+import { Trash2, Mail, MailOpen, View } from "lucide-react";
 import { MyLoading } from "../MyLoading";
 import { useEffect, useLayoutEffect, useState } from "react";
 import {
@@ -41,7 +39,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
   const [userData, setUserData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [dialogGears, setDialogGears] = useState({
     title: "",

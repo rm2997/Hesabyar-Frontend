@@ -5,12 +5,6 @@ import {
   FormControl,
   FormLabel,
   HStack,
-  Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Box,
   Text,
 } from "@chakra-ui/react";

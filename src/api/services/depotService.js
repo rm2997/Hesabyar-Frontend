@@ -77,7 +77,7 @@ export const ShowDepotByID = async (id) => {
 
 export const ShowAllDepots = async (
   page = 1,
-  limit = 10,
+  limit = 12,
   type,
   search = ""
 ) => {
@@ -89,7 +89,7 @@ export const ShowAllDepots = async (
 
 export const ShowDepotAcceptList = async (
   page = 1,
-  limit = 10,
+  limit = 12,
   type,
   search = ""
 ) => {
@@ -101,7 +101,7 @@ export const ShowDepotAcceptList = async (
 
 export const ShowDepotWareHouseList = async (
   page = 1,
-  limit = 10,
+  limit = 12,
   type,
   search = ""
 ) => {

@@ -3,17 +3,15 @@ import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   FormControl,
   FormLabel,
   HStack,
-  IconButton,
   VStack,
   useToast,
 } from "@chakra-ui/react";
 import { Info, Ruler, SquareCheckBig, UserRoundPlus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CreateUnit } from "../../api/services/unitsService";
 import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../../my-components/MyLoading";
@@ -168,7 +166,6 @@ export const NewUnit = ({ isDesktop }) => {
             </Button>
           </VStack>
         </CardBody>
-        <CardFooter></CardFooter>
       </Card>
       {loading && <MyLoading />}
     </Box>

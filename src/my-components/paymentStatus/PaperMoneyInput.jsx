@@ -7,11 +7,6 @@ import {
   FormLabel,
   HStack,
   Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Text,
 } from "@chakra-ui/react";
 import { Datepicker } from "@ijavad805/react-datepicker";

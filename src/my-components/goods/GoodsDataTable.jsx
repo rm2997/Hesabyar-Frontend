@@ -36,7 +36,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [selectedID, setSelectedID] = useState(0);
   const [dialogGears, setDialogGears] = useState({
@@ -175,7 +175,12 @@ export const GoodsDataTable = ({ isDesktop }) => {
                       <Flex flex={3} direction={"row"} gap={3}>
                         <Tooltip label={row?.goodName}>
                           <Flex direction={"row"} gap={2}>
-                            <Text>کد :</Text>
+                            <Text
+                              fontSize={["16px", "16px", "15px", "12px"]}
+                              fontFamily="iransans"
+                            >
+                              کد :
+                            </Text>
                             <Text
                               align={"justify"}
                               fontSize={["16px", "16px", "15px", "12px"]}

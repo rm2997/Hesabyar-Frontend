@@ -19,17 +19,7 @@ import {
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import {
-  Trash2,
-  CircleFadingArrowUp,
-  Handshake,
-  UserRoundCheck,
-  MailCheck,
-  UserLock,
-  ShieldUser,
-  ScanEye,
-  ShieldCheck,
-} from "lucide-react";
+import { Trash2, ScanEye, ShieldCheck } from "lucide-react";
 
 import { useEffect, useState } from "react";
 
@@ -41,7 +31,7 @@ import {
   RemoveInvoice,
   SetInvoiceIsAccepted,
   ShowInvoiceApprovedFile,
-  ShowUserAllInvoices,
+  ShowReadyToAcceptInvoiceList,
 } from "../../api/services/invoiceService";
 import { MyLoading } from "../MyLoading";
 import { MyInvoiceStepper } from "../MyInvoiceStepper";
@@ -49,7 +39,7 @@ export const InvoiceRequests = ({ isDesktop }) => {
   const [currentInvoicePage, setCurrentInvoicePage] = useState(1);
   const [invoiceSearch, setInvoiceSearch] = useState("");
   const [totalInvoicePages, setTotalInvoicePages] = useState(0);
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
   const [approvedFile, setApprovedFile] = useState(null);
   const [invoices, setInvoices] = useState([]);
   const [invoiceSelectedID, setInvoiceSelectedID] = useState(0);
@@ -66,7 +56,7 @@ export const InvoiceRequests = ({ isDesktop }) => {
 
   const loadInvoiceData = async (resetPage = false) => {
     setLoading(true);
-    const res = await ShowUserAllInvoices(
+    const res = await ShowReadyToAcceptInvoiceList(
       resetPage ? 1 : currentInvoicePage,
       itemsPerPage,
       resetPage ? "" : invoiceSearch
@@ -83,10 +73,10 @@ export const InvoiceRequests = ({ isDesktop }) => {
       return;
     }
     setTotalInvoicePages(Math.ceil(res?.data?.total / itemsPerPage));
-    const newInvoices = res.data.items.filter(
-      (i) => i.isAccepted == false && i.isSent == true && i.approvedFile
-    );
-    setInvoices(newInvoices);
+    // const newInvoices = res.data.items.filter(
+    //   (i) => i.isAccepted == false && i.isSent == true && i.approvedFile
+    // );
+    setInvoices(res?.data?.items);
     setLoading(false);
   };
 
@@ -228,7 +218,7 @@ export const InvoiceRequests = ({ isDesktop }) => {
                   }}
                 >
                   <Text fontFamily="IranSans" fontSize="md">
-                    فاکتور شماره :{row.id}
+                    فاکتور شماره :{row?.invoiceNumber}
                   </Text>
                 </CardHeader>
                 <CardBody p={2}>

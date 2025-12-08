@@ -1,19 +1,7 @@
-import {
-  Divider,
-  Flex,
-  FormControl,
-  FormLabel,
-  HStack,
-  Text,
-  Textarea,
-  VStack,
-} from "@chakra-ui/react";
-import { Captions, ScrollText, User } from "lucide-react";
+import { Divider, Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import { MyInputBox } from "../MyInputBox";
-import { GetAllUsers } from "../../api/services/userService";
 
 export const ShowUserNotification = ({ id, notification }) => {
   const [loading, setLoading] = useState(false);

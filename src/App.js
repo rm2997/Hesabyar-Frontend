@@ -2,17 +2,14 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { LoginForm } from "./pages/LoginForm";
 import { ForgotPasswordForm } from "./pages/password/ForgetPasswordForm";
 import { NotificationProvider } from "./contexts/NotificationContext";
-
 import {
   Navigate,
   Route,
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
-
 import { PrivateRoute } from "./my-components/PrivateRoute";
 import { NotFoundPage } from "./pages/NotFoundPage";
-
 import { Logout } from "./my-components/Logout";
 import { LocationProvider } from "./contexts/LocationContext";
 import { UserProvider } from "./contexts/UserContext";
@@ -25,7 +22,6 @@ import { ChangeUserPassword } from "./pages/password/ChangeUserPassword";
 import { MyHome } from "./pages/MyHome";
 import { UpdateDriverInfo } from "./pages/UpdateDriverInfo";
 import { UpdateInvoiceDriverInfo } from "./pages/UpdateInvoiceDriverInfo";
-import { Users } from "./pages/users/Users";
 import { ViewDepotExit } from "./pages/ViewDepotExit";
 function App() {
   return (
@@ -58,15 +54,6 @@ function App() {
               path="/upload-invoice-document"
               element={<UploadInvoiceDocument />}
             />
-            <Route path="*" element={<NotFoundPage />} />
-            <Route
-              path="/dashbord"
-              element={
-                <PrivateRoute>
-                  <>dashbord</>
-                </PrivateRoute>
-              }
-            />
 
             <Route
               path="/myhome/*"
@@ -80,7 +67,9 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
+
           {/* </AuthProvider> */}
         </Router>
       </UserProvider>

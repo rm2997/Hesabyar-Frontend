@@ -63,7 +63,7 @@ export const RequestsDataTable = ({ isDesktop }) => {
   const [invoiceSearch, setInvoiceSearch] = useState("");
   const [totalProformaPages, setTotalProformaPages] = useState(0);
   const [totalInvoicePages, setTotalInvoicePages] = useState(0);
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
 
   const [approvedFile, setApprovedFile] = useState(null);
 

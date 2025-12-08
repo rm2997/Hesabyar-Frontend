@@ -3,7 +3,7 @@ import endpoints from "../endpoints";
 
 export const ShowUserSndNotifications = async (
   page = 1,
-  limit = 10,
+  limit = 12,
   search = ""
 ) => {
   return await apiRequest({
@@ -14,7 +14,7 @@ export const ShowUserSndNotifications = async (
 
 export const ShowUserRcvAllNotifications = async (
   page = 1,
-  limit = 10,
+  limit = 12,
   search = ""
 ) => {
   return await apiRequest({

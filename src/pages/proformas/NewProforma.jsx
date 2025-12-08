@@ -946,7 +946,6 @@ export const NewProforma = ({ isDesktop }) => {
             </Button>
           </Flex>
         </CardBody>
-        <CardFooter></CardFooter>
         <SearchCustomer
           searchItems={handleSearchCustomers}
           isOpen={showSearchCustomer}

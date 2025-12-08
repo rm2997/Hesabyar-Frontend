@@ -22,14 +22,14 @@ export const Logout = async () => {
   return await apiRequest({ method: "POST", url: endpoints.auth.logout });
 };
 
-export const GetAllUsers = async (page = 1, limit = 10, search = "") => {
+export const GetAllUsers = async (page = 1, limit = 12, search = "") => {
   return await apiRequest({
     method: "GET",
     url: endpoints.user.listAll(page, limit, search),
   });
 };
 
-export const GetAllProfiles = async (page = 1, limit = 10, search = "") => {
+export const GetAllProfiles = async (page = 1, limit = 12, search = "") => {
   return await apiRequest({
     method: "GET",
     url: endpoints.user.listAllProfiles(page, limit, search),

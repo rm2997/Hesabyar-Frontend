@@ -12,19 +12,29 @@ import {
 export const MyAlert = ({ AlertHeader, AlertMessage, onClose, isOpen }) => {
   return (
     <AlertDialog
-      motionPreset="slideInRight"
+      motionPreset="scale"
       onClose={onClose}
       isOpen={isOpen}
       isCentered
       allowPinchZoom={true}
     >
       <AlertDialogOverlay />
-      <AlertDialogContent>
-        <AlertDialogHeader bg="blue.400" color="white">
+      <AlertDialogContent borderRadius={"md"}>
+        <AlertDialogCloseButton />
+        <AlertDialogHeader
+          borderTopRadius={"md"}
+          textAlign={"right"}
+          px={12}
+          fontFamily="IranSans"
+          bg="blue.400"
+          color="white"
+        >
           {AlertHeader}
         </AlertDialogHeader>
-        <AlertDialogCloseButton />
-        <AlertDialogBody dir="rtl">{AlertMessage}</AlertDialogBody>
+
+        <AlertDialogBody fontFamily="IranSans" dir="rtl">
+          {AlertMessage}
+        </AlertDialogBody>
         <AlertDialogFooter>
           <Button
             onClick={(e) => {

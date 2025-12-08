@@ -24,7 +24,7 @@ export const RemoveInvoice = async (id) => {
   });
 };
 
-export const ShowAllInvoices = async (page = 1, limit = 10, search = "") => {
+export const ShowAllInvoices = async (page = 1, limit = 12, search = "") => {
   return await apiRequest({
     method: "GET",
     url: endpoints.invoice.listAll(page, limit, search),
@@ -33,7 +33,7 @@ export const ShowAllInvoices = async (page = 1, limit = 10, search = "") => {
 
 export const ShowUserAllInvoices = async (
   page = 1,
-  limit = 10,
+  limit = 12,
   search = ""
 ) => {
   return await apiRequest({
@@ -42,9 +42,20 @@ export const ShowUserAllInvoices = async (
   });
 };
 
+export const ShowReadyToAcceptInvoiceList = async (
+  page = 1,
+  limit = 12,
+  search = ""
+) => {
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.invoice.readyToAcceptList(page, limit, search),
+  });
+};
+
 export const ShowUserAcceptedInvoices = async (
   page = 1,
-  limit = 10,
+  limit = 12,
   search = ""
 ) => {
   return await apiRequest({
@@ -56,7 +67,7 @@ export const ShowUserAcceptedInvoices = async (
 export const ShowUserAcceptedInvoicesByCustomerId = async (
   customerId,
   page = 1,
-  limit = 10,
+  limit = 12,
   search = ""
 ) => {
   return await apiRequest({
