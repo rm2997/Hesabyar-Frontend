@@ -176,16 +176,18 @@ export const CustomerDataTable = ({ isDesktop }) => {
                     <Flex justify="space-between" columnGap={3}>
                       <UsersRound color="purple" />
                       <Flex flex={3} direction={"row"} gap={3}>
-                        <Box>
-                          <Tooltip
-                            label={
-                              row?.customerGender +
-                              " " +
-                              row?.customerFName +
-                              " " +
-                              row?.customerLName
-                            }
-                          >
+                        <Tooltip
+                          label={
+                            row?.customerGender +
+                            " " +
+                            row?.customerFName +
+                            " " +
+                            row?.customerLName
+                          }
+                        >
+                          <Flex direction={"row"} gap={3}>
+                            <Text>کد :</Text>
+                            <Text>{row?.sepidarId}</Text>-
                             <Text
                               fontSize={["16px", "16px", "15px", "15px"]}
                               fontFamily="iransans"
@@ -207,8 +209,8 @@ export const CustomerDataTable = ({ isDesktop }) => {
                                   " " +
                                   row?.customerLName}
                             </Text>
-                          </Tooltip>
-                        </Box>
+                          </Flex>
+                        </Tooltip>
                       </Flex>
                     </Flex>
                   </CardHeader>

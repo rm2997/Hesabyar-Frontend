@@ -440,7 +440,7 @@ export const LoginForm = () => {
               fontSize="2xs"
               color="whiteAlpha.600"
             >
-              نسخه 1.0.0.0 *** 16 آذر 1404
+              نسخه 1.0.0.0 *** 17 آذر 1404
             </Text>
           </Flex>
           <Flex

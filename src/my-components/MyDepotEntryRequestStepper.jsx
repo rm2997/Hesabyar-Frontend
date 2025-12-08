@@ -80,7 +80,7 @@ export const MyDepotEntryRequestStepper = ({ data }) => {
               />
             </StepIndicator>
 
-            <Box flexShrink="0">
+            <Box minWidth="55px" flexShrink="0">
               <StepTitle textAlign="right">
                 <Text fontFamily="iransans" fontSize="10px">
                   <Tooltip

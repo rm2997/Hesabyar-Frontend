@@ -112,7 +112,7 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
                           colorScheme="blue"
                           ml="10px"
                         >
-                          کد کالا: {item?.id}
+                          کد کالا: {item?.sepidarId}
                         </Badge>
                         {item?.goodName}
                       </Text>

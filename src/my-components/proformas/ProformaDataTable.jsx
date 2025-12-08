@@ -333,7 +333,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
             userInfo="جستجوی پیش فاکتور"
           />
           <Box flex="1" overflowY="auto" p={1}>
-            <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
+            <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 4 }} spacing={3}>
               {proformas.map((row) => (
                 <Card
                   maxW="350px"

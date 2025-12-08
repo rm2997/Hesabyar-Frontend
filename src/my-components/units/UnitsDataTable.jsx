@@ -140,7 +140,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
           setSearch={setSearch}
           handleResetSearch={handleResetSearch}
           loadData={loadData}
-          userInfo="جستجوی مشتری"
+          userInfo="جستجوی واحد اندازه گیری"
         />
 
         <Box flex="1" overflowY="auto" p={1}>
@@ -169,6 +169,8 @@ export const UnitsDataTable = ({ isDesktop }) => {
                     <Flex justify="space-between" columnGap={3}>
                       <Ruler color="purple" />
                       <Flex flex={3} direction={"row"} gap={3}>
+                        <Text>کد : </Text>
+                        <Text>{row?.sepidarId}</Text>-
                         <Text
                           fontSize={["16px", "16px", "15px", "15px"]}
                           fontFamily="iransans"

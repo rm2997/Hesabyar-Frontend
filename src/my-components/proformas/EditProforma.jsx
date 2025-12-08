@@ -649,10 +649,11 @@ export const EditProforma = ({ onUpdate, proforma, closeMe }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="140px">
+                      <FormLabel hidden={!isDesktop} width="120px">
                         اعتبار تا
                       </FormLabel>
                       <Box
+                        w="full"
                         borderWidth={1}
                         borderColor="gray.300"
                         borderRadius="md"

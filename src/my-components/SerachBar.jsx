@@ -64,6 +64,9 @@ export const SearchBar = ({
             onChange={(e) => {
               setSearch(e.target.value);
             }}
+            onKeyUp={(e) => {
+              if (e.key == "Enter") loadData();
+            }}
           />
           <IconButton
             hidden={!search}

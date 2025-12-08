@@ -173,9 +173,19 @@ export const GoodsDataTable = ({ isDesktop }) => {
                     <Flex justify="space-between" columnGap={3}>
                       <WalletCards color="purple" />
                       <Flex flex={3} direction={"row"} gap={3}>
-                        <Box>
-                          <Tooltip label={row.goodName}>
+                        <Tooltip label={row?.goodName}>
+                          <Flex direction={"row"} gap={2}>
+                            <Text>کد :</Text>
                             <Text
+                              align={"justify"}
+                              fontSize={["16px", "16px", "15px", "12px"]}
+                              fontFamily="iransans"
+                            >
+                              {row?.sepidarId}
+                            </Text>
+                            -
+                            <Text
+                              align={"justify"}
                               fontSize={["16px", "16px", "15px", "12px"]}
                               fontFamily="iransans"
                             >
@@ -183,8 +193,8 @@ export const GoodsDataTable = ({ isDesktop }) => {
                                 ? row?.goodName?.substring(0, 25) + "..."
                                 : row?.goodName}
                             </Text>
-                          </Tooltip>
-                        </Box>
+                          </Flex>
+                        </Tooltip>
                       </Flex>
                     </Flex>
                   </CardHeader>
@@ -196,11 +206,9 @@ export const GoodsDataTable = ({ isDesktop }) => {
                       </HStack>
                       <Divider />
                       <HStack>
-                        <Text> قیمت کالا :</Text>
+                        <Text> کد کالا :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row?.goodPrice
-                            ? Number(row?.goodPrice).toLocaleString()
-                            : "0"}
+                          {row?.sepidarCode ? row?.sepidarCode : "0"}
                         </Text>
                       </HStack>
                       <Divider />

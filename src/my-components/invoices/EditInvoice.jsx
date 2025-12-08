@@ -119,7 +119,10 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
         const url = URL.createObjectURL(res?.data);
         setApprovedFile(url);
       }
-      setFormData({ ...invoice, invoiceGoods: [...invoice.invoiceGoods] });
+      setFormData({
+        ...invoice,
+        invoiceGoods: [...invoice.invoiceGoods],
+      });
       setInvoiceItems([...invoice.invoiceGoods]);
       setLoading(false);
     };
@@ -626,7 +629,7 @@ export const EditInvoice = ({ isDesktop, invoice, onUpdate, onClose }) => {
                     <HStack>
                       <FormLabel
                         hidden={!isDesktop}
-                        w={formData?.proforma ? "44%" : "28%"}
+                        w={formData?.proforma ? "44%" : "36%"}
                       >
                         پیش‌ فاکتور
                       </FormLabel>

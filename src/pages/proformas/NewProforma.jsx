@@ -652,10 +652,11 @@ export const NewProforma = ({ isDesktop }) => {
                   </FormControl>
                   <FormControl isRequired>
                     <HStack>
-                      <FormLabel hidden={!isDesktop} width="140px">
+                      <FormLabel hidden={!isDesktop} width="175px">
                         اعتبار تا
                       </FormLabel>
                       <Box
+                        w="full"
                         borderWidth={1}
                         borderColor="gray.300"
                         borderRadius="md"
