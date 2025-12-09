@@ -16,10 +16,12 @@ import {
   Tooltip,
   Icon,
   Flex,
+  IconButton,
+  Button,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import { FilePenLine, Send, Trash2, Replace } from "lucide-react";
+import { FilePenLine, Send, Trash2, Replace, RefreshCcw } from "lucide-react";
 
 import { EditProforma } from "./EditProforma";
 import {
@@ -315,13 +317,23 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
           direction="column"
           minH={isDesktop ? "85vh" : "83vh"}
         >
-          <SearchBar
-            search={search}
-            setSearch={setSearch}
-            handleResetSearch={handleResetSearch}
-            loadData={loadData}
-            userInfo="جستجوی پیش فاکتور"
-          />
+          <Flex columnGap={1} alignItems={"center"} mx={2}>
+            <SearchBar
+              search={search}
+              setSearch={setSearch}
+              handleResetSearch={handleResetSearch}
+              loadData={loadData}
+              userInfo="جستجوی پیش فاکتور"
+            />
+            <IconButton
+              icon={<RefreshCcw />}
+              variant={"ghost"}
+              maxW="50px"
+              onClick={loadData}
+              ml="5px"
+              colorScheme="green"
+            />
+          </Flex>
           <Box flex="1" overflowY="auto" p={1}>
             <SimpleGrid mr={1} columns={{ base: 1, md: 2, lg: 4 }} spacing={3}>
               {proformas.map((row) => (
