@@ -14,22 +14,30 @@ import {
   Image,
   Button,
   useBreakpointValue,
+  Center,
 } from "@chakra-ui/react";
 import {
   Bell,
-  Flashlight,
+  Blocks,
+  ChevronDown,
   MapPinCheck,
   MenuIcon,
   PencilLine,
   Power,
+  Ruler,
   Settings,
   ShieldUser,
   SquareEqual,
-  User2,
+  UserRoundCog,
   Users,
   Zap,
 } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { MyModal } from "./MyModal";
+import { GoodsDataTable } from "./goods/GoodsDataTable";
+import { UnitsDataTable } from "./units/UnitsDataTable";
+import { CustomerDataTable } from "./customers/CustomerDataTable";
 
 export const HeaderBar = ({
   setIsSidebarOpen,
@@ -39,6 +47,11 @@ export const HeaderBar = ({
   badgeCount,
   user,
 }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [modalItem, setModalItem] = useState({
+    item: null,
+    persianHeader: "",
+  });
   const navigate = useNavigate();
   const isDesktop = useBreakpointValue({ base: false, md: true });
   const handleSideBarWith = () => {
@@ -115,7 +128,55 @@ export const HeaderBar = ({
         </Tooltip>
       )}
 
-      <Flex gap={2} align="center">
+      <Flex align="center">
+        <Box hidden={!isDesktop}>
+          <IconButton
+            variant=""
+            icon={<Blocks />}
+            onClick={() => {
+              setShowModal(true);
+              setModalItem({
+                item: <GoodsDataTable />,
+                persianHeader: "کالاها",
+              });
+            }}
+            title="کالاها"
+            _hover={{ color: "orange" }}
+          />
+        </Box>
+        <Box hidden={!isDesktop}>
+          <IconButton
+            variant=""
+            icon={<Ruler />}
+            title="واحدها"
+            onClick={() => {
+              setShowModal(true);
+              setModalItem({
+                item: <UnitsDataTable />,
+                persianHeader: "واحدها",
+              });
+            }}
+            _hover={{ color: "orange" }}
+          />
+        </Box>
+        <Box hidden={!isDesktop}>
+          <IconButton
+            variant=""
+            icon={<Users />}
+            title="مشتریان"
+            onClick={() => {
+              setShowModal(true);
+              setModalItem({
+                item: <CustomerDataTable />,
+                persianHeader: "مشتریان",
+              });
+            }}
+            _hover={{ color: "orange" }}
+          />
+        </Box>
+        <Center height="30px">
+          <Divider orientation="vertical" />
+        </Center>
         <Box hidden={!isDesktop}>
           <IconButton
             variant=""
@@ -130,6 +191,7 @@ export const HeaderBar = ({
             _hover={{ color: "orange" }}
             id="notifications"
             icon={<Bell />}
+            title="پیام های خوانده نشده"
             size="sm"
             cursor="pointer"
             aria-label="Notifications"
@@ -152,13 +214,31 @@ export const HeaderBar = ({
             _hover={{ color: "orange" }}
             as={IconButton}
             id="user"
-            icon={<User2 />}
+            icon={
+              <Flex direction={"row"}>
+                <UserRoundCog />
+                <ChevronDown
+                  style={{
+                    position: "absolute",
+                    top: "5px",
+                    left: "-8px",
+                    width: "15px",
+                  }}
+                />
+              </Flex>
+            }
             size="sm"
             cursor="pointer"
             variant=""
           />
           <MenuList color="black">
-            <MenuItem color="orange.400" isDisabled={true}>
+            <MenuItem
+              color="orange.400"
+              isDisabled
+              bg="green.400"
+              borderBottomWidth={1}
+              borderBottomColor={"blackAlpha.400"}
+            >
               <HStack spacing={3}>
                 {user?.role == "admin" && <ShieldUser color="green" />}
                 {user?.role != "admin" && <Users color="black" />}
@@ -220,6 +300,13 @@ export const HeaderBar = ({
             </MenuItem>
           </MenuList>
         </Menu>
+        <MyModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          modalHeader={modalItem.persianHeader}
+        >
+          {modalItem.item}
+        </MyModal>
       </Flex>
     </Flex>
   );
