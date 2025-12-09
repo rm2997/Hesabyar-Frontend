@@ -90,7 +90,7 @@ export const ShowInvoicesByID = async (id) => {
 
 export const SetInvoiceIsAccepted = async (id) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.invoice.setInvoiceIsAccepted(id),
   });
 };
@@ -119,7 +119,7 @@ export const ShowInvoiceByToken = async (token) => {
 
 export const UpdateInvoiceCustomerFile = async (token, data) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.invoice.updateProformCustomerFile(token),
     headers: { "Content-Type": "multipart/form-data" },
     data: data,
@@ -128,7 +128,7 @@ export const UpdateInvoiceCustomerFile = async (token, data) => {
 
 export const UpdateInvoiceDriver = async (token, data) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.invoice.updateInvoiceDriverInfo(token),
 
     data: data,
@@ -137,14 +137,14 @@ export const UpdateInvoiceDriver = async (token, data) => {
 
 export const SetInvoiceIsSent = async (id) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.invoice.setInvoiceIsSent(id),
   });
 };
 
 export const SendInvoiceDriverLink = async (id) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.invoice.sendInvoiceDriverLink(id),
   });
 };

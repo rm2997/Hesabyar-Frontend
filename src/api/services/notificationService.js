@@ -39,14 +39,14 @@ export const ShowUnreadNotificationsCount = async () => {
 
 export const MarkNotificationAsUnread = async (id) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.notifications.markAsunread(id),
   });
 };
 
 export const MarkNotificationAsRead = async (id) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.notifications.markAsRead(id),
   });
 };

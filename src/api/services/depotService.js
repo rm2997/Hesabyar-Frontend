@@ -29,7 +29,7 @@ export const UploadExitGoodImage = async (id, data) => {
 
 export const UpdateDepotImageFile = async (id, data) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.depot.updateDepotImageFile(id),
     data: data,
     headers: { "Content-Type": "multipart/form-data" },
@@ -113,14 +113,14 @@ export const ShowDepotWareHouseList = async (
 
 export const SetDepotIsAccepted = async (id) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.depot.setDepotIsAccepted(id),
   });
 };
 
 export const SetDepotIsSent = async (id) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.depot.setDepotIsSent(id),
   });
 };
@@ -141,7 +141,7 @@ export const ShowDepotByToken = async (token) => {
 
 export const UpdateDepotDriverInfo = async (token, data) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.depot.updateDriverInfo(token),
     data: data,
   });
@@ -167,7 +167,7 @@ export const InsertDepotExitGoodImage = async (id, data) => {
 
 export const SetDepotIsAcceptedByWarehouseMan = async (id) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.depot.setDepotIsWarehouseAccepted(id),
   });
 };

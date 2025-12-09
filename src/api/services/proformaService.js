@@ -26,14 +26,14 @@ export const UpdateProforma = async (id, proformaData) => {
 
 export const SetProformaIsSent = async (id) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.proforma.setProformaIsSent(id),
   });
 };
 
 export const SetProformaIsAccepted = async (id) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.proforma.setProformaIsAccepted(id),
   });
 };
@@ -121,7 +121,7 @@ export const ShowProformasByToken = async (token) => {
 
 export const UpdateProformCustomerFile = async (token, data) => {
   return await apiRequest({
-    method: "PATCH",
+    method: "PUT",
     url: endpoints.proforma.updateProformCustomerFile(token),
     data: data,
     headers: { "Content-Type": "multipart/form-data" },
