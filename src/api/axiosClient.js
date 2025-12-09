@@ -1,11 +1,12 @@
 import axios from "axios";
 import { loadTokens } from "./tokenUtils";
 const BASE_URL =
-  process.env.NODE_ENV == "production"
+  process.env.NODE_ENV === "production"
     ? "https://api.hesab-yaar.ir"
     : "http://localhost:3001";
+
 const axiosClient = axios.create({
-  baseURL: `${BASE_URL}`,
+  baseURL: BASE_URL,
   withCredentials: process.env.NODE_ENV == "production" ? true : false,
   headers: {
     "Content-Type": "application/json",
