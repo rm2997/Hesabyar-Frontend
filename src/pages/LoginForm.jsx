@@ -210,9 +210,9 @@ export const LoginForm = () => {
       } else {
         navigate(
           "/second-login?token=" +
-            res?.data?.accessToken +
-            "&mobile=" +
-            res?.data?.mobilnumber
+          res?.data?.accessToken +
+          "&mobile=" +
+          res?.data?.mobilnumber
         );
       }
     } catch (error) {
@@ -440,7 +440,7 @@ export const LoginForm = () => {
               fontSize="2xs"
               color="whiteAlpha.600"
             >
-              نسخه 1.0.0.0 *** 18 آذر 1404
+              نسخه 1.0.0.0 *** 25 آذر 1404
             </Text>
           </Flex>
           <Flex

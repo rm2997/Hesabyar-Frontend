@@ -187,7 +187,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
                         >
                           <Flex direction={"row"} gap={3}>
                             <Text>کد :</Text>
-                            <Text>{row?.sepidarId}</Text>-
+                            <Text>{row?.sepidarDlId}</Text>-
                             <Text
                               fontSize={["16px", "16px", "15px", "15px"]}
                               fontFamily="iransans"
@@ -195,19 +195,19 @@ export const CustomerDataTable = ({ isDesktop }) => {
                               {row?.customerGender?.length +
                                 row?.customerFName?.length +
                                 row?.customerLName.length >
-                              25
+                                25
                                 ? (
-                                    row?.customerGender +
-                                    " " +
-                                    row?.customerFName +
-                                    " " +
-                                    row?.customerLName
-                                  ).substring(0, 25) + "..."
-                                : row?.customerGender +
+                                  row?.customerGender +
                                   " " +
                                   row?.customerFName +
                                   " " +
-                                  row?.customerLName}
+                                  row?.customerLName
+                                ).substring(0, 25) + "..."
+                                : row?.customerGender +
+                                " " +
+                                row?.customerFName +
+                                " " +
+                                row?.customerLName}
                             </Text>
                           </Flex>
                         </Tooltip>
