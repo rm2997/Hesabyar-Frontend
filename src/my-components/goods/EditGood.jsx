@@ -4,21 +4,26 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  IconButton,
   Select,
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { DollarSign, Hash, Info, Package2, SquareCheckBig } from "lucide-react";
+import { DollarSign, Hash, Info, List, Package2, SquareCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ShowGoodByID, UpdateGood } from "../../api/services/goodsService";
+import { ShowGoodByID, ShowGoodSaleListByID, UpdateGood } from "../../api/services/goodsService";
 import { MyLoading } from "../MyLoading";
 import { MyInputBox } from "../MyInputBox";
 import { ShowAllUnits } from "../../api/services/unitsService";
+import { MyModal } from "../MyModal";
+import { GoodSaleList } from "./GoodSaleList";
 
 export const EditGood = ({ id, onClose, onUpdate, Good }) => {
   const [units, setUnits] = new useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
+
+  const [showGoodSaleList, setShowGoodSaleList] = useState(false)
   const toast = useToast();
 
   useEffect(() => {
@@ -57,7 +62,6 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
         setLoading(false);
         return;
       }
-
       setFormData({ ...res.data });
       setLoading(false);
     };
@@ -155,6 +159,8 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
     setLoading(false);
   };
 
+
+
   return (
     <Box>
       <VStack
@@ -167,7 +173,7 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
       >
         <FormControl isRequired>
           <HStack>
-            <FormLabel width="100px">نام کالا</FormLabel>
+            <FormLabel fontSize={'12px'} fontFamily={'iransans'} width="100px">نام کالا</FormLabel>
             <MyInputBox
               icon={Package2}
               name="goodName"
@@ -179,7 +185,7 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
         </FormControl>
         <FormControl isRequired>
           <HStack>
-            <FormLabel width="100px">واحد</FormLabel>
+            <FormLabel fontSize={'12px'} fontFamily={'iransans'} width="100px">واحد</FormLabel>
             <Select
               dir="ltr"
               placeholder="یک واحد انتخاب کنید"
@@ -197,7 +203,7 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
         </FormControl>
         <FormControl>
           <HStack>
-            <FormLabel width="100px">موجودی</FormLabel>
+            <FormLabel fontSize={'12px'} fontFamily={'iransans'} width="100px">موجودی</FormLabel>
             <MyInputBox
               isDisabled
               px={2}
@@ -212,38 +218,36 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
         </FormControl>
         <FormControl>
           <HStack>
-            <FormLabel width="100px">قیمت</FormLabel>
+            <FormLabel fontSize={'12px'} fontFamily={'iransans'} width="120px">موجودی فروش</FormLabel>
             <MyInputBox
-              isInvalid={
-                formData?.goodPrice?.length > 0 &&
-                (isNaN(Number(formData?.goodPrice)) || formData?.goodPrice == 0)
-              }
+              isDisabled
               px={2}
               dir="ltr"
               icon={DollarSign}
-              name="goodPrice"
-              title="قیمت"
+              name="goodSaleCount"
+              title="موجودی فروش"
               size={19}
-              value={Number(formData?.goodPrice).toLocaleString()}
+              value={Number(formData?.goodSaleCount).toLocaleString()}
               onChange={(e) => {
                 const rawVal = e.target.value.replaceAll(",", "");
                 if (isNaN(Number(rawVal))) {
                   handleChangeFormData({
-                    target: { name: "goodPrice", value: 0 },
+                    target: { name: "goodSaleCount", value: 0 },
                   });
                   return;
                 }
                 const numVal = Number(rawVal);
                 handleChangeFormData({
-                  target: { name: "goodPrice", value: numVal },
+                  target: { name: "goodSaleCount", value: numVal },
                 });
               }}
-            ></MyInputBox>
+            />
+            <IconButton title="لیست فروش" icon={<List />} colorScheme="green" onClick={() => setShowGoodSaleList(true)} />
           </HStack>
         </FormControl>
         <FormControl>
           <HStack>
-            <FormLabel width="100px">توضیحات</FormLabel>
+            <FormLabel fontSize={'12px'} fontFamily={'iransans'} width="100px">توضیحات</FormLabel>
             <MyInputBox
               icon={Info}
               name="goodInfo"
@@ -255,6 +259,7 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
           </HStack>
         </FormControl>
         <Button
+          isDisabled
           leftIcon={<SquareCheckBig />}
           colorScheme="blue"
           type="submit"
@@ -264,6 +269,10 @@ export const EditGood = ({ id, onClose, onUpdate, Good }) => {
           تایید
         </Button>
       </VStack>
+      {loading && <MyLoading />}
+      <MyModal isOpen={showGoodSaleList} onClose={() => setShowGoodSaleList(false)}>
+        <GoodSaleList goodId={id} />
+      </MyModal>
       {loading && <MyLoading />}
     </Box>
   );

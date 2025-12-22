@@ -72,3 +72,10 @@ export const ShowGoodsByCount = async (count) => {
     url: endpoints.good.listCount(count),
   });
 };
+
+export const ShowGoodSaleListByID = async (id) => {
+  return await apiRequest({
+    method: 'GET',
+    url: endpoints.good.saleList(id),
+  })
+}

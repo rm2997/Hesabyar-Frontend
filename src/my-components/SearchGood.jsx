@@ -108,11 +108,11 @@ export const SearchGoods = ({ onSelect, isOpen, onClose, searchItems }) => {
                       <Text fontFamily="iranSans">
                         <Badge
                           fontFamily="iransans"
-                          fontSize="sm"
+                          fontSize="xs"
                           colorScheme="blue"
                           ml="10px"
                         >
-                          کد کالا: {item?.sepidarId}
+                          کد : {item?.sepidarCode}
                         </Badge>
                         {item?.goodName}
                       </Text>

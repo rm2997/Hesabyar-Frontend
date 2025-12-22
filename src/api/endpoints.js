@@ -103,6 +103,7 @@ const endpoints = {
     listAll: (page, limit, search) =>
       `/goods?page=${page}&limit=${limit}&search=${search}`,
     listCount: (count) => `/goods/count/${count}`,
+    saleList: (id) => `/goods/saleList/${id}`,
     update: (id) => `/goods/${id}`,
     listOne: (id) => `/goods/${id}`,
     detail: (id) => `/goods/${id}`,

@@ -98,7 +98,9 @@ export const GoodsDataTable = ({ isDesktop }) => {
   };
 
   const findGoodFromList = (id) => {
+
     goodsData.map((g) => (g.id === id ? g : null));
+
   };
 
   const handleDeleteGood = async (id) => {
@@ -225,6 +227,14 @@ export const GoodsDataTable = ({ isDesktop }) => {
                             : "0"}
                         </Text>
                       </HStack>
+                      <HStack>
+                        <Text> موجودی فروش :</Text>
+                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
+                          {row?.goodSaleCount
+                            ? Number(row?.goodSaleCount).toLocaleString()
+                            : "0"}
+                        </Text>
+                      </HStack>
                       <Divider />
                       <HStack>
                         <Text>توضیحات :</Text>
@@ -303,7 +313,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
           id={selectedID}
           onClose={onClose}
           onUpdate={updateGoodInList}
-          Good={findGoodFromList(selectedID)}
+        //Good={findGoodFromList(selectedID)}
         />
       </MyModal>
       <MyAlert
