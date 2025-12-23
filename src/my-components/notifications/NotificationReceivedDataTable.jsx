@@ -18,6 +18,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Trash2, Mail, MailOpen, View } from "lucide-react";
+import { SlEnvolopeLetter } from "react-icons/sl";
 import { MyLoading } from "../MyLoading";
 import { useEffect, useLayoutEffect, useState } from "react";
 import {
@@ -242,7 +243,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                     <HStack fontFamily="iransans">
                       {row.receiverRead ? (
                         <Tooltip label="خوانده شده">
-                          <MailOpen color="yellow" />
+                          <SlEnvolopeLetter size={"20px"} color="yellow" />
                         </Tooltip>
                       ) : (
                         <Tooltip label="خوانده نشده">

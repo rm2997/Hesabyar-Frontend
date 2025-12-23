@@ -20,24 +20,8 @@ import {
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
-import {
-  FilePenLine,
-  Send,
-  Trash2,
-  CircleFadingArrowUp,
-  MailCheck,
-  Handshake,
-  UserRoundCheck,
-  UserLock,
-  ShieldUser,
-  Link2,
-  ArrowRight,
-  Warehouse,
-  Truck,
-  Combine,
-  RefreshCcw,
-} from "lucide-react";
-
+import { FilePenLine, Send, Trash2, Combine, RefreshCcw } from "lucide-react";
+import { TbTruckDelivery } from "react-icons/tb";
 import { EditInvoice } from "./EditInvoice";
 import {
   GenerateNewToken,
@@ -438,6 +422,17 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                         <Divider />
                         <HStack>
                           <Text fontSize="10px" fontFamily="IranSans">
+                            پیش فاکتور :
+                          </Text>
+                          <Text fontFamily="IranSans" fontSize="12px">
+                            {row?.proforma
+                              ? row?.proforma?.proformaNumber
+                              : "ندارد"}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontSize="10px" fontFamily="IranSans">
                             نوع پرداخت :
                           </Text>
                           <Text fontFamily="IranSans" fontSize="12px">
@@ -447,7 +442,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                         <Divider />
                         <HStack>
                           <Text fontSize="10px" fontFamily="IranSans">
-                            تایید مشتری :
+                            فیش واریزی :
                           </Text>
                           <Text fontSize="12px" fontFamily="IranSans">
                             {row.approvedFile ? "دارد" : "ندارد"}
@@ -526,7 +521,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                           }}
                         >
                           <Tooltip label="درخواست ثبت راننده">
-                            <Icon w={6} h={6} as={Truck} />
+                            <Icon w={6} h={6} as={TbTruckDelivery} />
                           </Tooltip>
                         </Link>
 

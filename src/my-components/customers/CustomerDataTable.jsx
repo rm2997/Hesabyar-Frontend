@@ -322,7 +322,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
       />
       <MyModal
         size="full"
-        modalHeader={dialogGears.title}
+        modalHeader={"مشاهده و ویرایش مشتری"}
         onClose={onClose}
         isOpen={isOpen}
       >
