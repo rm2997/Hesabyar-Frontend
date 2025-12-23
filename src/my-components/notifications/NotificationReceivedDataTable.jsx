@@ -215,7 +215,7 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
         />
         <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
               {userMessages.map((row) => (
                 <Card
                   borderTopRadius={5}
@@ -251,12 +251,25 @@ export const NotificationReceivedDataTable = ({ isDesktop }) => {
                       )}
 
                       <Text fontFamily="iransans" mr="auto">
-                        {row.title}
+                        {row?.title?.length <= 25
+                          ? row?.title
+                          : row?.title?.substring(0, 25) + "..."}
                       </Text>
                     </HStack>
                   </CardHeader>
                   <CardBody p={2}>
                     <VStack align={"stretch"} spacing={2}>
+                      <HStack>
+                        <Text>عنوان :</Text>
+                        <Tooltip label={row?.title}>
+                          <Text fontFamily="iransans" mr="auto">
+                            {row?.title?.length <= 30
+                              ? row?.title
+                              : row?.title?.substring(0, 30) + "..."}
+                          </Text>
+                        </Tooltip>
+                      </HStack>
+                      <Divider />
                       <HStack>
                         <Text>تاریخ :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">

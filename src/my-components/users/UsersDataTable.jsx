@@ -26,6 +26,7 @@ import {
   ShieldUser,
   Trash2,
   User,
+  UserRound,
   UsersRound,
 } from "lucide-react";
 import dayjs from "dayjs";
@@ -217,7 +218,7 @@ export const UsersDataTable = ({ isDesktop }) => {
         />
         <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={3}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
               {usersData.map((row) => (
                 <Card
                   borderTopRadius={5}
@@ -225,6 +226,7 @@ export const UsersDataTable = ({ isDesktop }) => {
                   _hover={{ borderColor: "orange" }}
                 >
                   <CardHeader
+                    maxH="60px"
                     p={2}
                     bg="green.500"
                     borderTopRadius={5}
@@ -239,25 +241,31 @@ export const UsersDataTable = ({ isDesktop }) => {
                     }}
                   >
                     <HStack>
-                      <UsersRound size="25px" color="#F6AB49" strokeWidth={2} />
+                      <UserRound size="25px" color="yellow" strokeWidth={2} />
                       <Text mr="auto">{row.username}</Text>
                     </HStack>
                   </CardHeader>
-                  <CardBody p={2}>
+                  <CardBody px={2} py={2}>
                     <VStack align={"stretch"} spacing={1}>
                       <HStack>
                         <Text>نام :</Text>
-                        <Text mr="auto">{row.userfname}</Text>
+                        <Text fontFamily={"iransans"} mr="auto">
+                          {row.userfname}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text>نام خانوادگی:</Text>
-                        <Text mr="auto">{row.userlname}</Text>
+                        <Text fontFamily={"iransans"} mr="auto">
+                          {row.userlname}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
                         <Text>موبایل :</Text>
-                        <Text mr="auto">{row.usermobilenumber}</Text>
+                        <Text fontFamily={"iransans"} mr="auto">
+                          {row.usermobilenumber}
+                        </Text>
                       </HStack>
                       <Divider />
                       <HStack>
@@ -274,13 +282,34 @@ export const UsersDataTable = ({ isDesktop }) => {
                       </HStack>
                       <Divider />
                       <HStack>
-                        <Text>آخرین ورود :</Text>
-                        <Text color="orange.300" dir="ltr" mr="auto">
+                        <Text>تاریخ آخرین ورود :</Text>
+                        <Text
+                          fontFamily={"iransans"}
+                          color="orange.300"
+                          dir="ltr"
+                          mr="auto"
+                        >
                           {!row?.lastLogin
                             ? "ندارد"
                             : dayjs(row.lastLogin)
                                 .locale("fa")
-                                .format("YYYY/MM/DD HH:mm:ss")}
+                                .format("YYYY/MM/DD")}
+                        </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text>ساعت آخرین ورود :</Text>
+                        <Text
+                          fontFamily={"iransans"}
+                          color="orange.300"
+                          dir="ltr"
+                          mr="auto"
+                        >
+                          {!row?.lastLogin
+                            ? "ندارد"
+                            : dayjs(row.lastLogin)
+                                .locale("fa")
+                                .format("HH:mm:ss")}
                         </Text>
                       </HStack>
                       <Divider />

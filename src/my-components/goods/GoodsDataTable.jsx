@@ -98,9 +98,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
   };
 
   const findGoodFromList = (id) => {
-
     goodsData.map((g) => (g.id === id ? g : null));
-
   };
 
   const handleDeleteGood = async (id) => {
@@ -177,28 +175,9 @@ export const GoodsDataTable = ({ isDesktop }) => {
                       <Flex flex={3} direction={"row"} gap={3}>
                         <Tooltip label={row?.goodName}>
                           <Flex direction={"row"} gap={2}>
-                            <Text
-                              fontSize={["16px", "16px", "15px", "12px"]}
-                              fontFamily="iransans"
-                            >
-                              کد :
-                            </Text>
-                            <Text
-                              align={"justify"}
-                              fontSize={["16px", "16px", "15px", "12px"]}
-                              fontFamily="iransans"
-                            >
-                              {row?.sepidarId}
-                            </Text>
-                            -
-                            <Text
-                              align={"justify"}
-                              fontSize={["16px", "16px", "15px", "12px"]}
-                              fontFamily="iransans"
-                            >
-                              {row?.goodName?.length > 25
-                                ? row?.goodName?.substring(0, 25) + "..."
-                                : row?.goodName}
+                            <Text> کد کالا :</Text>
+                            <Text fontFamily="IranSans" fontSize="md" mr="auto">
+                              {row?.sepidarCode ? row?.sepidarCode : "0"}
                             </Text>
                           </Flex>
                         </Tooltip>
@@ -208,32 +187,50 @@ export const GoodsDataTable = ({ isDesktop }) => {
                   <CardBody px={4} py={2}>
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
-                        <Text> واحد :</Text>
-                        <Text mr="auto">{row?.goodUnit?.unitName}</Text>
+                        <Text> نام :</Text>
+                        <Tooltip label={row?.goodName}>
+                          <Text mr="auto" fontFamily="iransans">
+                            {row?.goodName?.length > 26
+                              ? row?.goodName?.substring(0, 26) + "..."
+                              : row?.goodName}
+                          </Text>
+                        </Tooltip>
                       </HStack>
                       <Divider />
-                      <HStack>
-                        <Text> کد کالا :</Text>
-                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {row?.sepidarCode ? row?.sepidarCode : "0"}
-                        </Text>
-                      </HStack>
-                      <Divider />
+
                       <HStack>
                         <Text> موجودی :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
                           {row?.goodCount
                             ? Number(row?.goodCount).toLocaleString()
-                            : "0"}
+                            : "0"}{" "}
+                          {row?.goodUnit?.unitName}
                         </Text>
                       </HStack>
+                      <Divider />
                       <HStack>
-                        <Text> موجودی فروش :</Text>
+                        <Text> فروخته شده :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">
                           {row?.goodSaleCount
                             ? Number(row?.goodSaleCount).toLocaleString()
-                            : "0"}
+                            : "0"}{" "}
+                          {row?.goodUnit?.unitName}
                         </Text>
+                      </HStack>
+                      <Divider />
+                      <HStack>
+                        <Text> قابل فروش :</Text>
+                        <Text
+                          dir="ltr"
+                          fontFamily="IranSans"
+                          fontSize="md"
+                          mr="auto"
+                        >
+                          {Number(
+                            row?.goodCount - row?.goodSaleCount
+                          ).toLocaleString()}{" "}
+                        </Text>
+                        <Text> {row?.goodUnit?.unitName}</Text>
                       </HStack>
                       <Divider />
                       <HStack>
@@ -313,7 +310,7 @@ export const GoodsDataTable = ({ isDesktop }) => {
           id={selectedID}
           onClose={onClose}
           onUpdate={updateGoodInList}
-        //Good={findGoodFromList(selectedID)}
+          //Good={findGoodFromList(selectedID)}
         />
       </MyModal>
       <MyAlert

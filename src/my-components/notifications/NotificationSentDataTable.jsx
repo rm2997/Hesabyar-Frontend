@@ -188,12 +188,25 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
                         <Mail color="orange" />
                       </Tooltip>
                       <Text fontFamily="IranSans" mr="auto">
-                        {row.title}
+                        {row?.title?.length <= 25
+                          ? row?.title
+                          : row?.title?.substring(0, 25) + "..."}
                       </Text>
                     </HStack>
                   </CardHeader>
                   <CardBody p={2}>
                     <VStack align={"stretch"} spacing={2}>
+                      <HStack>
+                        <Text>عنوان :</Text>
+                        <Tooltip label={row?.title}>
+                          <Text fontFamily="iransans" mr="auto">
+                            {row?.title?.length <= 30
+                              ? row?.title
+                              : row?.title?.substring(0, 30) + "..."}
+                          </Text>
+                        </Tooltip>
+                      </HStack>
+                      <Divider />
                       <HStack>
                         <Text fontFamily="IranSans">تاریخ :</Text>
                         <Text fontFamily="IranSans" fontSize="md" mr="auto">

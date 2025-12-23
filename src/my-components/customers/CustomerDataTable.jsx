@@ -187,28 +187,7 @@ export const CustomerDataTable = ({ isDesktop }) => {
                         >
                           <Flex direction={"row"} gap={3}>
                             <Text>کد :</Text>
-                            <Text>{row?.sepidarDlId}</Text>-
-                            <Text
-                              fontSize={["16px", "16px", "15px", "15px"]}
-                              fontFamily="iransans"
-                            >
-                              {row?.customerGender?.length +
-                                row?.customerFName?.length +
-                                row?.customerLName.length >
-                                25
-                                ? (
-                                  row?.customerGender +
-                                  " " +
-                                  row?.customerFName +
-                                  " " +
-                                  row?.customerLName
-                                ).substring(0, 25) + "..."
-                                : row?.customerGender +
-                                " " +
-                                row?.customerFName +
-                                " " +
-                                row?.customerLName}
-                            </Text>
+                            <Text>{row?.sepidarDlId}</Text>
                           </Flex>
                         </Tooltip>
                       </Flex>
@@ -217,10 +196,35 @@ export const CustomerDataTable = ({ isDesktop }) => {
                   <CardBody p={2}>
                     <VStack align={"stretch"} spacing={2}>
                       <HStack>
-                        <Text fontFamily="iransans">عنوان :</Text>
-                        <Text fontFamily="iransans" mr="auto">
-                          {row?.customerTitle}
-                        </Text>
+                        <Text fontFamily="iransans">نام :</Text>
+                        <Tooltip
+                          label={
+                            row?.customerGender +
+                            " " +
+                            row?.customerFName +
+                            " " +
+                            row?.customerLName
+                          }
+                        >
+                          <Text mr={"auto"} fontFamily="iransans">
+                            {row?.customerGender?.length +
+                              row?.customerFName?.length +
+                              row?.customerLName.length >
+                            30
+                              ? (
+                                  row?.customerGender +
+                                  " " +
+                                  row?.customerFName +
+                                  " " +
+                                  row?.customerLName
+                                ).substring(0, 30) + "..."
+                              : row?.customerGender +
+                                " " +
+                                row?.customerFName +
+                                " " +
+                                row?.customerLName}
+                          </Text>
+                        </Tooltip>
                       </HStack>
                       <Divider />
                       <HStack>

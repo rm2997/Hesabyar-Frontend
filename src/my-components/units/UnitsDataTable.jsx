@@ -4,6 +4,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Divider,
   Flex,
   HStack,
   Icon,
@@ -165,21 +166,22 @@ export const UnitsDataTable = ({ isDesktop }) => {
                     }}
                   >
                     <Flex justify="space-between" columnGap={3}>
-                      <Ruler color="purple" />
+                      <Ruler color="yellow" />
                       <Flex flex={3} direction={"row"} gap={3}>
                         <Text>کد : </Text>
-                        <Text>{row?.sepidarId}</Text>-
-                        <Text
-                          fontSize={["16px", "16px", "15px", "15px"]}
-                          fontFamily="iransans"
-                        >
-                          {row.unitName}
-                        </Text>
+                        <Text>{row?.sepidarId}</Text>
                       </Flex>
                     </Flex>
                   </CardHeader>
                   <CardBody px={4} py={2}>
                     <VStack align={"stretch"} spacing={2}>
+                      <HStack>
+                        <Text>نام واحد :</Text>
+                        <Text mr={"auto"} fontFamily="iransans">
+                          {row.unitName}
+                        </Text>
+                      </HStack>
+                      <Divider />
                       <HStack>
                         <Text>توضیحات :</Text>
                         <Text mr="auto">
