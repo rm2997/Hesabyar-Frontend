@@ -81,9 +81,11 @@ export const DepotExitRequests = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleResetSearch = () => {
-    setSearch("");
-    loadData(true);
+  const handleResetSearch = (reset = true) => {
+    if (reset) {
+      setSearch("");
+      loadData(true);
+    }
   };
 
   useEffect(() => {

@@ -80,9 +80,11 @@ export const InvoiceRequests = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleResetInvoiceSearch = () => {
-    setInvoiceSearch("");
-    loadInvoiceData(true);
+  const handleResetInvoiceSearch = (reset = true) => {
+    if (reset) {
+      setInvoiceSearch("");
+      loadInvoiceData(true);
+    }
   };
 
   const handleShowInvoicePicture = async (id) => {

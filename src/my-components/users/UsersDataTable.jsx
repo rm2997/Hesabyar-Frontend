@@ -184,7 +184,8 @@ export const UsersDataTable = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleResetSearch = async () => {
+  const handleResetSearch = async (reset = true) => {
+    if (!reset) return;
     setSearch("");
     await loadData(true);
   };

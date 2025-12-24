@@ -133,26 +133,27 @@ export const CustomerDataTable = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleResetSearch = () => {
-    setSearch("");
-    loadData(true);
+  const handleResetSearch = (reset = true) => {
+    if (reset) {
+      setSearch("");
+      loadData(true);
+    }
   };
 
   return (
     <Box>
+      <SearchBar
+        search={search}
+        setSearch={setSearch}
+        handleResetSearch={handleResetSearch}
+        loadData={loadData}
+        userInfo="جستجوی مشتری"
+      />
       <Flex
         filter={loading ? "blur(10px)" : ""}
         direction="column"
         minH={isDesktop ? "85vh" : "80vh"}
       >
-        <SearchBar
-          search={search}
-          setSearch={setSearch}
-          handleResetSearch={handleResetSearch}
-          loadData={loadData}
-          userInfo="جستجوی مشتری"
-        />
-
         <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>

@@ -139,14 +139,18 @@ export const RequestsDataTable = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleResetProformaSearch = () => {
-    setProformaSearch("");
-    loadProformaData(true);
+  const handleResetProformaSearch = (reset = true) => {
+    if (reset) {
+      setProformaSearch("");
+      loadProformaData(true);
+    }
   };
 
-  const handleResetInvoiceSearch = () => {
-    setInvoiceSearch("");
-    loadInvoiceData(true);
+  const handleResetInvoiceSearch = (reset = true) => {
+    if (reset) {
+      setInvoiceSearch("");
+      loadInvoiceData(true);
+    }
   };
 
   const handleShowProformaPicture = async (id) => {

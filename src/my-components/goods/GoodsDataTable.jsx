@@ -73,9 +73,11 @@ export const GoodsDataTable = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleResetSearch = () => {
-    setSearch("");
-    loadData(true);
+  const handleResetSearch = (reset = true) => {
+    if (reset) {
+      setSearch("");
+      loadData(true);
+    }
   };
 
   useEffect(() => {
@@ -130,6 +132,13 @@ export const GoodsDataTable = ({ isDesktop }) => {
 
   return (
     <Box>
+      <SearchBar
+        search={search}
+        setSearch={setSearch}
+        handleResetSearch={handleResetSearch}
+        loadData={loadData}
+        userInfo="جستجوی کالا"
+      />
       <Flex
         filter={loading ? "blur(10px)" : ""}
         direction="column"
@@ -137,14 +146,6 @@ export const GoodsDataTable = ({ isDesktop }) => {
         overflowY="auto"
         m={1}
       >
-        <SearchBar
-          search={search}
-          setSearch={setSearch}
-          handleResetSearch={handleResetSearch}
-          loadData={loadData}
-          userInfo="جستجوی کالا"
-        />
-
         <Box flex="1" overflowY="auto" p={1}>
           <Flex direction="column" gap={4}>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>

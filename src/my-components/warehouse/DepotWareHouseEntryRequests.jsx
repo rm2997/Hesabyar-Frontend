@@ -80,7 +80,8 @@ export const DepotWareHouseEntyRequests = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleResetSearch = () => {
+  const handleResetSearch = (reset = true) => {
+    if (!reset) return;
     setSearch("");
     loadData(true);
   };

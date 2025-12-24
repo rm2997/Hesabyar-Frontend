@@ -88,9 +88,11 @@ export const ProformaRequests = ({ isDesktop }) => {
     setLoading(false);
   };
 
-  const handleResetProformaSearch = () => {
-    setProformaSearch("");
-    loadProformaData(true);
+  const handleResetProformaSearch = (reset = true) => {
+    if (reset) {
+      setProformaSearch("");
+      loadProformaData(true);
+    }
   };
 
   const handleShowProformaPicture = async (id) => {
