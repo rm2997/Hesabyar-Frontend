@@ -273,7 +273,13 @@ export const DepotExitList = ({ isDesktop }) => {
                 >
                   <CardHeader
                     py={4}
-                    bg={row?.isAccepted ? "green.400" : "blue.200"}
+                    bg={
+                      row?.isAccepted
+                        ? row?.depotNumber
+                          ? "gray.500"
+                          : "green.400"
+                        : "blue.200"
+                    }
                     borderTopRadius={5}
                     _hover={{ cursor: "pointer", borderColor: "green.500" }}
                     onClick={(e) => {
@@ -301,7 +307,10 @@ export const DepotExitList = ({ isDesktop }) => {
                         <Warehouse color="#e49b5bff" height={18} width={18} />
                       </Flex> */}
                       <Text fontFamily="IranSans" fontSize="md">
-                        سند خروجی شماره : {row.id}
+                        سند خروجی شماره :{" "}
+                        {row?.depotNumber
+                          ? row?.depotNumber
+                          : " داخلی " + row?.id}
                       </Text>
                       {/* <Box mr="auto">
                         <HStack>
