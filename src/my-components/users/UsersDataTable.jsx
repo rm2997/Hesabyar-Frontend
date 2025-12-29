@@ -52,6 +52,7 @@ import { SendLocationSms } from "../../api/services/userService";
 import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
 import { MyLoading } from "../MyLoading";
+import { GetSepidarUsers } from "../../api/services/sepidarService";
 
 export const UsersDataTable = ({ isDesktop }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,6 +68,7 @@ export const UsersDataTable = ({ isDesktop }) => {
   const [loading, setLoading] = useState(false);
   const [usersData, setUsersData] = useState([]);
   const [selectedID, setSelectedID] = useState(0);
+  const [sepidarUsers, setSepidarUsers] = useState([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -95,6 +97,28 @@ export const UsersDataTable = ({ isDesktop }) => {
     setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
     setUsersData(res?.data?.items);
     setLoading(false);
+  };
+
+  useEffect(() => {
+    const loadSepidarUsers = async () => {
+      setLoading(true);
+      const response = await GetSepidarUsers();
+      if (!response.success) {
+        console.log(response.error);
+        setLoading(false);
+        return;
+      }
+      setSepidarUsers(response?.data);
+      setLoading(false);
+    };
+
+    loadSepidarUsers();
+  }, []);
+
+  const handleShowSepidarUser = (id) => {
+    const user = sepidarUsers.find((u) => u.UserID == id);
+    if (!user) return "نامشخص";
+    return user?.Name;
   };
 
   const handleDialogClose = (result) => {
@@ -243,223 +267,23 @@ export const UsersDataTable = ({ isDesktop }) => {
           loadData={loadData}
           userInfo="جستجوی کاربر"
         />
-        <Box flex="1" overflowY="auto" p={1} hidden={isDesktop}>
-          <Flex direction="column" gap={4}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
-              {usersData.map((row) => (
-                <Card
-                  borderTopRadius={5}
-                  borderWidth={1}
-                  _hover={{ borderColor: "orange" }}
-                >
-                  <CardHeader
-                    maxH="60px"
-                    p={2}
-                    bg="#CCA681"
-                    borderTopRadius={5}
-                    color="white"
-                    _hover={{ cursor: "pointer" }}
-                    onClick={(e) => {
-                      setSelectedID(row.id);
-                      setDialogGears({
-                        title: "ویرایش کاربر",
-                      });
-                      onOpen();
-                    }}
-                  >
-                    <HStack>
-                      <UserRound size="25px" color="yellow" strokeWidth={2} />
-                      <Text mr="auto">{row.username}</Text>
-                    </HStack>
-                  </CardHeader>
-                  <CardBody px={2} py={2}>
-                    <VStack align={"stretch"} spacing={1}>
-                      <HStack>
-                        <Text>نام :</Text>
-                        <Text fontFamily={"iransans"} mr="auto">
-                          {row.userfname}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>نام خانوادگی:</Text>
-                        <Text fontFamily={"iransans"} mr="auto">
-                          {row.userlname}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>موبایل :</Text>
-                        <Text fontFamily={"iransans"} mr="auto">
-                          {row.usermobilenumber}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>نقش :</Text>
-                        <Text mr="auto">
-                          <Tooltip label={row.role}>
-                            {handleSetUserRoleIcon(row.role)}
-                          </Tooltip>
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>تاریخ آخرین ورود :</Text>
-                        <Text
-                          fontFamily={"iransans"}
-                          color="orange.300"
-                          dir="ltr"
-                          mr="auto"
-                        >
-                          {!row?.lastLogin
-                            ? "ندارد"
-                            : dayjs(row.lastLogin)
-                                .locale("fa")
-                                .format("YYYY/MM/DD")}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>ساعت آخرین ورود :</Text>
-                        <Text
-                          fontFamily={"iransans"}
-                          color="orange.300"
-                          dir="ltr"
-                          mr="auto"
-                        >
-                          {!row?.lastLogin
-                            ? "ندارد"
-                            : dayjs(row.lastLogin)
-                                .locale("fa")
-                                .format("HH:mm:ss")}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>آخرین لوکیشن :</Text>
-                        <Link
-                          dir="ltr"
-                          mr="auto"
-                          color="blue.300"
-                          href={row.userLocation}
-                          isExternal
-                        >
-                          <Tooltip label={row.userLocation}>
-                            {row.userLocation == "Denied" ? (
-                              <Ban color="red" />
-                            ) : (
-                              <HStack>
-                                <Map /> <MapPin color="tomato" />
-                              </HStack>
-                            )}
-                          </Tooltip>
-                        </Link>
-                      </HStack>
-                    </VStack>
-                  </CardBody>
-                  <Divider />
-                  <CardFooter p={2} borderBottomRadius={5} bg="#F3F3F3">
-                    <Stack
-                      direction={["row"]}
-                      spacing={2}
-                      align={"stretch"}
-                      mr="auto"
-                    >
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="green.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "ارسال درخواست موقعیت مکانی",
-                            text: "کاربر موقعیت مکانی خود را ارسال کند؟",
-                            callBack: () => handleSendLocationRequest(row.id),
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="درخواست موقعیت مکانی">
-                          <Icon w={6} h={6} as={MapPinCheck} />
-                        </Tooltip>
-                      </Link>
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="red.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "حذف کاربر",
-                            text: "آیا واقعا می خواهید این کاربر را حذف کنید؟",
-                            callBack: () => handleDeleteUser(row.id),
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="حذف">
-                          <Icon w={6} h={6} as={Trash2} />
-                        </Tooltip>
-                      </Link>
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => {
-                          setSelectedID(row?.id);
-                          setDialogGears({
-                            title: "ویرایش کاربر",
-                          });
-                          onOpen();
-                        }}
-                      >
-                        <Tooltip label="ویرایش">
-                          <Icon w={6} h={6} as={FilePenLine} />
-                        </Tooltip>
-                      </Link>
-                    </Stack>
-                  </CardFooter>
-                </Card>
-              ))}
-            </SimpleGrid>
-          </Flex>
-        </Box>
-        <Box
-          borderWidth={"1px"}
-          borderColor={"black"}
-          borderRadius={"md"}
-          bg={"#FEFEFE"}
-          hidden={!isDesktop}
-        >
-          <TableContainer>
-            <Table variant={"simple"}>
-              <TableCaption fontFamily={"IranSans"}>لیست کاربران </TableCaption>
-              <Thead>
-                <Tr>
-                  <Td>نقش</Td>
-                  <Td>نام کاربری</Td>
-                  <Td>نام </Td>
-                  <Td>نام خانوادگی</Td>
-                  <Td>موبایل</Td>
-                  <Td>تاریخ ورود</Td>
-                  <Td>ساعت ورود</Td>
-                  <Td>موقعیت مکانی</Td>
-                  <Td></Td>
-                </Tr>
-              </Thead>
-              <Tbody>
+        {!isDesktop && (
+          <Box flex="1" overflowY="auto" p={1}>
+            <Flex direction="column" gap={4}>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
                 {usersData.map((row) => (
-                  <Tr
-                    _hover={{
-                      boxShadow: "md",
-                      borderWidth: "1px",
-                      borderRadius: "md",
-                    }}
+                  <Card
+                    borderTopRadius={5}
+                    borderWidth={1}
+                    _hover={{ borderColor: "orange" }}
                   >
-                    <Td
-                      _hover={{
-                        cursor: "pointer",
-                      }}
+                    <CardHeader
+                      maxH="60px"
+                      p={2}
+                      bg="#CCA681"
+                      borderTopRadius={5}
+                      color="white"
+                      _hover={{ cursor: "pointer" }}
                       onClick={(e) => {
                         setSelectedID(row.id);
                         setDialogGears({
@@ -468,42 +292,100 @@ export const UsersDataTable = ({ isDesktop }) => {
                         onOpen();
                       }}
                     >
-                      <Tooltip label={row.role}>
-                        {handleSetUserRoleIcon(row.role)}
-                      </Tooltip>
-                    </Td>
-                    <Td fontFamily={"IranSans"}>{row.username}</Td>
-                    <Td fontFamily={"IranSans"}>{row.userfname}</Td>
-                    <Td fontFamily={"IranSans"}>{row.userlname}</Td>
-                    <Td fontFamily={"IranSans"}>{row.usermobilenumber}</Td>
-
-                    <Td fontFamily={"IranSans"}>
-                      {!row?.lastLogin
-                        ? "ندارد"
-                        : dayjs(row.lastLogin)
-                            .locale("fa")
-                            .format("YYYY/MM/DD")}
-                    </Td>
-                    <Td fontFamily={"IranSans"}>
-                      {!row?.lastLogin
-                        ? "ندارد"
-                        : dayjs(row.lastLogin).locale("fa").format("HH:mm:ss")}
-                    </Td>
-                    <Td>
-                      <Link color="blue.300" href={row.userLocation} isExternal>
-                        <Tooltip label={"نمایش موقعیت"}>
-                          {row.userLocation == "Denied" ? (
-                            <Ban color="red" />
-                          ) : (
-                            <HStack>
-                              <Map /> <MapPin color="tomato" />
-                            </HStack>
-                          )}
-                        </Tooltip>
-                      </Link>
-                    </Td>
-                    <Td>
-                      <HStack
+                      <HStack>
+                        <UserRound size="25px" color="yellow" strokeWidth={2} />
+                        <Text mr="auto">{row.username}</Text>
+                      </HStack>
+                    </CardHeader>
+                    <CardBody px={2} py={2}>
+                      <VStack align={"stretch"} spacing={1}>
+                        <HStack>
+                          <Text>نام :</Text>
+                          <Text fontFamily={"iransans"} mr="auto">
+                            {row.userfname}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text>نام خانوادگی:</Text>
+                          <Text fontFamily={"iransans"} mr="auto">
+                            {row.userlname}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text>موبایل :</Text>
+                          <Text fontFamily={"iransans"} mr="auto">
+                            {row.usermobilenumber}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text>نقش :</Text>
+                          <Text mr="auto">
+                            <Tooltip label={row.role}>
+                              {handleSetUserRoleIcon(row.role)}
+                            </Tooltip>
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text>تاریخ آخرین ورود :</Text>
+                          <Text
+                            fontFamily={"iransans"}
+                            color="orange.300"
+                            dir="ltr"
+                            mr="auto"
+                          >
+                            {!row?.lastLogin
+                              ? "ندارد"
+                              : dayjs(row.lastLogin)
+                                  .locale("fa")
+                                  .format("YYYY/MM/DD")}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text>ساعت آخرین ورود :</Text>
+                          <Text
+                            fontFamily={"iransans"}
+                            color="orange.300"
+                            dir="ltr"
+                            mr="auto"
+                          >
+                            {!row?.lastLogin
+                              ? "ندارد"
+                              : dayjs(row.lastLogin)
+                                  .locale("fa")
+                                  .format("HH:mm:ss")}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text>آخرین لوکیشن :</Text>
+                          <Link
+                            dir="ltr"
+                            mr="auto"
+                            color="blue.300"
+                            href={row.userLocation}
+                            isExternal
+                          >
+                            <Tooltip label={row.userLocation}>
+                              {row.userLocation == "Denied" ? (
+                                <Ban color="red" />
+                              ) : (
+                                <HStack>
+                                  <Map /> <MapPin color="tomato" />
+                                </HStack>
+                              )}
+                            </Tooltip>
+                          </Link>
+                        </HStack>
+                      </VStack>
+                    </CardBody>
+                    <Divider />
+                    <CardFooter p={2} borderBottomRadius={5} bg="#F3F3F3">
+                      <Stack
                         direction={["row"]}
                         spacing={2}
                         align={"stretch"}
@@ -560,14 +442,169 @@ export const UsersDataTable = ({ isDesktop }) => {
                             <Icon w={6} h={6} as={FilePenLine} />
                           </Tooltip>
                         </Link>
-                      </HStack>
-                    </Td>
-                  </Tr>
+                      </Stack>
+                    </CardFooter>
+                  </Card>
                 ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </Box>
+              </SimpleGrid>
+            </Flex>
+          </Box>
+        )}
+        {isDesktop && (
+          <Box
+            borderWidth={"1px"}
+            borderColor={"black"}
+            borderRadius={"md"}
+            bg={"#FEFEFE"}
+            hidden={!isDesktop}
+          >
+            <TableContainer>
+              <Table variant={"simple"}>
+                <TableCaption fontFamily={"IranSans"}>
+                  لیست کاربران
+                </TableCaption>
+                <Thead bg={"gray.100"}>
+                  <Tr>
+                    <Td>نقش</Td>
+                    <Td>نام کاربری</Td>
+                    <Td>نام </Td>
+                    <Td>نام خانوادگی</Td>
+                    <Td>موبایل</Td>
+                    <Td>تاریخ ورود</Td>
+                    <Td>ساعت ورود</Td>
+                    <Td>موقعیت مکانی</Td>
+                    <Td>کاربر سپیدار</Td>
+                    <Td></Td>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {usersData.map((row) => (
+                    <Tr
+                      _hover={{
+                        boxShadow: "md",
+                        borderWidth: "1px",
+                        borderRadius: "md",
+                      }}
+                    >
+                      <Td
+                        _hover={{
+                          cursor: "pointer",
+                        }}
+                        onClick={(e) => {
+                          setSelectedID(row.id);
+                          setDialogGears({
+                            title: "ویرایش کاربر",
+                          });
+                          onOpen();
+                        }}
+                      >
+                        <Tooltip label={row.role}>
+                          {handleSetUserRoleIcon(row.role)}
+                        </Tooltip>
+                      </Td>
+                      <Td fontFamily={"IranSans"}>{row.username}</Td>
+                      <Td fontFamily={"IranSans"}>{row.userfname}</Td>
+                      <Td fontFamily={"IranSans"}>{row.userlname}</Td>
+                      <Td fontFamily={"IranSans"}>{row.usermobilenumber}</Td>
+                      <Td fontFamily={"IranSans"}>
+                        {!row?.lastLogin
+                          ? "ندارد"
+                          : dayjs(row.lastLogin)
+                              .locale("fa")
+                              .format("YYYY/MM/DD")}
+                      </Td>
+                      <Td fontFamily={"IranSans"}>
+                        {!row?.lastLogin
+                          ? "ندارد"
+                          : dayjs(row.lastLogin)
+                              .locale("fa")
+                              .format("HH:mm:ss")}
+                      </Td>
+                      <Td>
+                        <Link
+                          color="blue.300"
+                          href={row.userLocation}
+                          isExternal
+                        >
+                          <Tooltip label={"نمایش موقعیت"}>
+                            {row.userLocation == "Denied" ? (
+                              <Ban color="red" />
+                            ) : (
+                              <Map />
+                            )}
+                          </Tooltip>
+                        </Link>
+                      </Td>
+                      <Td>{handleShowSepidarUser(row?.sepidarId)}</Td>
+
+                      <Td>
+                        <HStack
+                          direction={["row"]}
+                          spacing={2}
+                          align={"stretch"}
+                          mr="auto"
+                        >
+                          <Link
+                            _hover={{ color: "#ffd54f" }}
+                            color="green.600"
+                            onClick={(e) => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "ارسال درخواست موقعیت مکانی",
+                                text: "کاربر موقعیت مکانی خود را ارسال کند؟",
+                                callBack: () =>
+                                  handleSendLocationRequest(row.id),
+                              });
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <Tooltip label="درخواست موقعیت مکانی">
+                              <Icon w={6} h={6} as={MapPinCheck} />
+                            </Tooltip>
+                          </Link>
+                          <Link
+                            _hover={{ color: "#ffd54f" }}
+                            color="red.600"
+                            onClick={(e) => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "حذف کاربر",
+                                text: "آیا واقعا می خواهید این کاربر را حذف کنید؟",
+                                callBack: () => handleDeleteUser(row.id),
+                              });
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <Tooltip label="حذف">
+                              <Icon w={6} h={6} as={Trash2} />
+                            </Tooltip>
+                          </Link>
+                          <Link
+                            _hover={{
+                              color: "orange",
+                            }}
+                            color="blue.600"
+                            onClick={(e) => {
+                              setSelectedID(row?.id);
+                              setDialogGears({
+                                title: "ویرایش کاربر",
+                              });
+                              onOpen();
+                            }}
+                          >
+                            <Tooltip label="ویرایش">
+                              <Icon w={6} h={6} as={FilePenLine} />
+                            </Tooltip>
+                          </Link>
+                        </HStack>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Box>
+        )}
         <MyModal
           modalHeader={dialogGears.title}
           isOpen={isOpen}

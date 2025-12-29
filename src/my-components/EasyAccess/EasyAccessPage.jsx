@@ -52,154 +52,165 @@ export const EasyAccessPage = ({ onItemClick }) => {
       rowGap={5}
       minH="86vh"
     >
-      <Flex
-        rowGap={1}
-        direction="column"
-        borderColor="gray.100"
-        borderWidth={1}
-        borderRadius="md"
-        p={1}
-        bg="white"
-      >
-        <Text fontSize="12px">درخواست های تایید</Text>
-        <Flex columnGap={3}>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<ShieldUser />}
-              onClick={() => onItemClick("acceptRequest")}
-            />
-            <Text fontFamily="iransans"> کاربر ارشد</Text>
-          </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<ListChecks />}
-              onClick={() => onItemClick("wareHouseRequests")}
-            />
-            <Text fontFamily="iransans"> انبار</Text>
-          </Flex>
-        </Flex>
-      </Flex>
-      <Flex
-        rowGap={1}
-        direction="column"
-        borderColor="gray.100"
-        borderWidth={1}
-        borderRadius="md"
-        p={1}
-        bg="white"
-      >
-        <Text fontSize="12px">پیش فاکتورها</Text>
-        <Flex columnGap={3}>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<FileSpreadsheet />}
-              onClick={() => onItemClick("newProforma")}
-            />
-            <Text fontFamily="iransans"> جدید</Text>
-          </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<LucideLayers2 />}
-              onClick={() => onItemClick("myProformas")}
-            />
-            <Text fontFamily="iransans"> سوابق من</Text>
-          </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<LucideLayers />}
-              onClick={() => onItemClick("allProformas")}
-            />
-            <Text fontFamily="iransans"> همه</Text>
+      {(user?.role == "warehouseman" || user?.role == "admin") && (
+        <Flex
+          rowGap={1}
+          direction="column"
+          borderColor="gray.100"
+          borderWidth={1}
+          borderRadius="md"
+          p={1}
+          bg="white"
+        >
+          <Text fontSize="12px">درخواست های تایید</Text>
+          <Flex columnGap={3}>
+            {user?.role == "admin" && (
+              <Flex alignItems="center" direction="column" p={1}>
+                <IconButton
+                  variant="outline"
+                  icon={<ShieldUser />}
+                  onClick={() => onItemClick("acceptRequest")}
+                />
+                <Text fontFamily="iransans"> کاربر ارشد</Text>
+              </Flex>
+            )}
+
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<ListChecks />}
+                onClick={() => onItemClick("wareHouseRequests")}
+              />
+              <Text fontFamily="iransans"> انبار</Text>
+            </Flex>
           </Flex>
         </Flex>
-      </Flex>
-      <Flex
-        rowGap={1}
-        direction="column"
-        borderColor="gray.100"
-        borderWidth={1}
-        borderRadius="md"
-        p={1}
-        bg="white"
-      >
-        <Text fontSize="12px"> فاکتورها</Text>
-        <Flex columnGap={3}>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<Newspaper />}
-              onClick={() => onItemClick("newInvoice")}
-            />
-            <Text fontFamily="iransans"> جدید</Text>
-          </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<Layers2 />}
-              onClick={() => onItemClick("myInvoices")}
-            />
-            <Text fontFamily="iransans"> سوابق من</Text>
-          </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<Layers />}
-              onClick={() => onItemClick("allInvoices")}
-            />
-            <Text fontFamily="iransans"> همه</Text>
-          </Flex>
-        </Flex>
-      </Flex>
-      <Flex
-        rowGap={1}
-        direction="column"
-        borderColor="gray.100"
-        borderWidth={1}
-        borderRadius="md"
-        p={1}
-        bg="white"
-      >
-        <Text fontSize="12px"> انبار</Text>
-        <Flex columnGap={3}>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<DecimalsArrowLeft />}
-              onClick={() => onItemClick("newDepotEntery")}
-            />
-            <Text fontFamily="iransans">ورود کالا</Text>
-          </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<SquareStack />}
-              onClick={() => onItemClick("depotEntryList")}
-            />
-            <Text fontFamily="iransans"> سوابق ورود</Text>
-          </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<Combine />}
-              onClick={() => onItemClick("newDepotExit")}
-            />
-            <Text fontFamily="iransans">خروج کالا</Text>
-          </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
-            <IconButton
-              variant="outline"
-              icon={<GalleryHorizontalEnd />}
-              onClick={() => onItemClick("depotExitList")}
-            />
-            <Text fontFamily="iransans"> سوابق خروج</Text>
+      )}
+      {user?.role != "warehouseman" && (
+        <Flex
+          rowGap={1}
+          direction="column"
+          borderColor="gray.100"
+          borderWidth={1}
+          borderRadius="md"
+          p={1}
+          bg="white"
+        >
+          <Text fontSize="12px">پیش فاکتورها</Text>
+          <Flex columnGap={3}>
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<FileSpreadsheet />}
+                onClick={() => onItemClick("newProforma")}
+              />
+              <Text fontFamily="iransans"> جدید</Text>
+            </Flex>
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<LucideLayers2 />}
+                onClick={() => onItemClick("myProformas")}
+              />
+              <Text fontFamily="iransans"> سوابق من</Text>
+            </Flex>
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<LucideLayers />}
+                onClick={() => onItemClick("allProformas")}
+              />
+              <Text fontFamily="iransans"> همه</Text>
+            </Flex>
           </Flex>
         </Flex>
-      </Flex>
+      )}
+      {user?.role != "warehouseman" && (
+        <Flex
+          rowGap={1}
+          direction="column"
+          borderColor="gray.100"
+          borderWidth={1}
+          borderRadius="md"
+          p={1}
+          bg="white"
+        >
+          <Text fontSize="12px"> فاکتورها</Text>
+          <Flex columnGap={3}>
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<Newspaper />}
+                onClick={() => onItemClick("newInvoice")}
+              />
+              <Text fontFamily="iransans"> جدید</Text>
+            </Flex>
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<Layers2 />}
+                onClick={() => onItemClick("myInvoices")}
+              />
+              <Text fontFamily="iransans"> سوابق من</Text>
+            </Flex>
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<Layers />}
+                onClick={() => onItemClick("allInvoices")}
+              />
+              <Text fontFamily="iransans"> همه</Text>
+            </Flex>
+          </Flex>
+        </Flex>
+      )}
+      {(user?.role == "warehouseman" || user?.role == "admin") && (
+        <Flex
+          rowGap={1}
+          direction="column"
+          borderColor="gray.100"
+          borderWidth={1}
+          borderRadius="md"
+          p={1}
+          bg="white"
+        >
+          <Text fontSize="12px"> انبار</Text>
+          <Flex columnGap={3}>
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<DecimalsArrowLeft />}
+                onClick={() => onItemClick("newDepotEntery")}
+              />
+              <Text fontFamily="iransans">ورود کالا</Text>
+            </Flex>
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<SquareStack />}
+                onClick={() => onItemClick("depotEntryList")}
+              />
+              <Text fontFamily="iransans"> سوابق ورود</Text>
+            </Flex>
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<Combine />}
+                onClick={() => onItemClick("newDepotExit")}
+              />
+              <Text fontFamily="iransans">خروج کالا</Text>
+            </Flex>
+            <Flex alignItems="center" direction="column" p={1}>
+              <IconButton
+                variant="outline"
+                icon={<GalleryHorizontalEnd />}
+                onClick={() => onItemClick("depotExitList")}
+              />
+              <Text fontFamily="iransans"> سوابق خروج</Text>
+            </Flex>
+          </Flex>
+        </Flex>
+      )}
       <Flex
         rowGap={1}
         direction="column"
@@ -227,14 +238,14 @@ export const EasyAccessPage = ({ onItemClick }) => {
             />
             <Text fontFamily="iransans"> لیست</Text>
           </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
+          {/* <Flex alignItems="center" direction="column" p={1}>
             <IconButton
               variant="outline"
               icon={<ArrowUpFromLine />}
               onClick={() => onItemClick("uploadCustomers")}
             />
             <Text fontFamily="iransans"> آپلود</Text>
-          </Flex>
+          </Flex> */}
         </Flex>
       </Flex>
       <Flex
@@ -264,14 +275,14 @@ export const EasyAccessPage = ({ onItemClick }) => {
             />
             <Text fontFamily="iransans"> لیست</Text>
           </Flex>
-          <Flex alignItems="center" direction="column" p={1}>
+          {/* <Flex alignItems="center" direction="column" p={1}>
             <IconButton
               variant="outline"
               icon={<ArrowUpFromLine />}
               onClick={() => onItemClick("uploadGoods")}
             />
             <Text fontFamily="iransans"> آپلود</Text>
-          </Flex>
+          </Flex> */}
         </Flex>
       </Flex>
       <Flex

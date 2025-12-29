@@ -272,15 +272,17 @@ export const HeaderBar = ({
               </MenuItem>
             )}
 
-            <MenuItem
-              color="blue.400"
-              onClick={() => OnItemClick("userSettings")}
-            >
-              <HStack spacing={3}>
-                <Settings />
-                <Text color="black">تنظیمات</Text>
-              </HStack>
-            </MenuItem>
+            {user?.role == "admin" && (
+              <MenuItem
+                color="blue.400"
+                onClick={() => OnItemClick("userSettings")}
+              >
+                <HStack spacing={3}>
+                  <Settings />
+                  <Text color="black">تنظیمات</Text>
+                </HStack>
+              </MenuItem>
+            )}
 
             <MenuItem
               color="green.400"
