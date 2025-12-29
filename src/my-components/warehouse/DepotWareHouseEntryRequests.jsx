@@ -198,7 +198,7 @@ export const DepotWareHouseEntyRequests = ({ isDesktop }) => {
                 >
                   <CardHeader
                     py={4}
-                    bg={row?.isAccepted ? "green.400" : "blue.200"}
+                    bg={"green.400"}
                     borderTopRadius={5}
                     _hover={{ cursor: "pointer", borderColor: "green.500" }}
                     onClick={(e) => {

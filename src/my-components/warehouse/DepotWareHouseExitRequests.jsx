@@ -195,7 +195,7 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
                 >
                   <CardHeader
                     py={4}
-                    bg={row?.isAccepted ? "green.400" : "blue.200"}
+                    bg={"red.200"}
                     borderTopRadius={5}
                     _hover={{ cursor: "pointer", borderColor: "green.500" }}
                     onClick={(e) => {
@@ -209,7 +209,7 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
                     }}
                   >
                     <Text fontFamily="IranSans" fontSize="md">
-                      سند خروجی شماره : {row?.id}
+                      سند خروجی شماره : داخلی {row?.id}
                     </Text>
                   </CardHeader>
                   <CardBody p={2}>

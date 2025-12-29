@@ -11,8 +11,15 @@ import {
   Link,
   SimpleGrid,
   Stack,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
+  Thead,
   Tooltip,
+  Tr,
   VStack,
   useDisclosure,
   useToast,
@@ -27,8 +34,12 @@ import {
   Trash2,
   User,
   UserRound,
-  UsersRound,
 } from "lucide-react";
+import { GrUserWorker } from "react-icons/gr";
+import { FaUserTie } from "react-icons/fa6";
+import { TbUserDollar } from "react-icons/tb";
+import { LiaUserTagSolid } from "react-icons/lia";
+
 import dayjs from "dayjs";
 import jalali from "jalali-dayjs";
 import { useEffect, useState } from "react";
@@ -190,6 +201,21 @@ export const UsersDataTable = ({ isDesktop }) => {
     await loadData(true);
   };
 
+  const handleSetUserRoleIcon = (role) => {
+    switch (role) {
+      case "admin":
+        return <ShieldUser size="28px" color="#608F60" />;
+      case "user":
+        return <User size="28px" color="#608F60" />;
+      case "warehouseman":
+        return <GrUserWorker size="28px" color="#608F60" />;
+      case "salesperson":
+        return <LiaUserTagSolid size="28px" color="#608F60" />;
+      case "accountant":
+        return <TbUserDollar size="28px" color="#608F60" />;
+    }
+  };
+
   useEffect(() => {
     loadData();
   }, [currentPage]);
@@ -217,7 +243,7 @@ export const UsersDataTable = ({ isDesktop }) => {
           loadData={loadData}
           userInfo="جستجوی کاربر"
         />
-        <Box flex="1" overflowY="auto" p={1}>
+        <Box flex="1" overflowY="auto" p={1} hidden={isDesktop}>
           <Flex direction="column" gap={4}>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
               {usersData.map((row) => (
@@ -229,7 +255,7 @@ export const UsersDataTable = ({ isDesktop }) => {
                   <CardHeader
                     maxH="60px"
                     p={2}
-                    bg="green.500"
+                    bg="#CCA681"
                     borderTopRadius={5}
                     color="white"
                     _hover={{ cursor: "pointer" }}
@@ -273,11 +299,7 @@ export const UsersDataTable = ({ isDesktop }) => {
                         <Text>نقش :</Text>
                         <Text mr="auto">
                           <Tooltip label={row.role}>
-                            {row.role == "admin" ? (
-                              <ShieldUser size="30px" color="green" />
-                            ) : (
-                              <User size="30px" color="#97D540" />
-                            )}
+                            {handleSetUserRoleIcon(row.role)}
                           </Tooltip>
                         </Text>
                       </HStack>
@@ -336,7 +358,8 @@ export const UsersDataTable = ({ isDesktop }) => {
                       </HStack>
                     </VStack>
                   </CardBody>
-                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
+                  <Divider />
+                  <CardFooter p={2} borderBottomRadius={5} bg="#F3F3F3">
                     <Stack
                       direction={["row"]}
                       spacing={2}
@@ -399,28 +422,171 @@ export const UsersDataTable = ({ isDesktop }) => {
                 </Card>
               ))}
             </SimpleGrid>
-            <MyModal
-              modalHeader={dialogGears.title}
-              isOpen={isOpen}
-              onClose={onClose}
-            >
-              <EditUser
-                selectedId={selectedID}
-                onClose={onClose}
-                onUpdate={updateUserInList}
-                user={findUserFromList(selectedID)}
-                isDesktop={isDesktop}
-              />
-            </MyModal>
-            <MyAlert
-              AlertHeader={dialogGears.title}
-              AlertMessage={dialogGears.text}
-              isOpen={isDialogOpen}
-              onClose={handleDialogClose}
-            />
           </Flex>
         </Box>
+        <Box
+          borderWidth={"1px"}
+          borderColor={"black"}
+          borderRadius={"md"}
+          bg={"#FEFEFE"}
+          hidden={!isDesktop}
+        >
+          <TableContainer>
+            <Table variant={"simple"}>
+              <TableCaption fontFamily={"IranSans"}>لیست کاربران </TableCaption>
+              <Thead>
+                <Tr>
+                  <Td>نقش</Td>
+                  <Td>نام کاربری</Td>
+                  <Td>نام </Td>
+                  <Td>نام خانوادگی</Td>
+                  <Td>موبایل</Td>
+                  <Td>تاریخ ورود</Td>
+                  <Td>ساعت ورود</Td>
+                  <Td>موقعیت مکانی</Td>
+                  <Td></Td>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {usersData.map((row) => (
+                  <Tr
+                    _hover={{
+                      boxShadow: "md",
+                      borderWidth: "1px",
+                      borderRadius: "md",
+                    }}
+                  >
+                    <Td
+                      _hover={{
+                        cursor: "pointer",
+                      }}
+                      onClick={(e) => {
+                        setSelectedID(row.id);
+                        setDialogGears({
+                          title: "ویرایش کاربر",
+                        });
+                        onOpen();
+                      }}
+                    >
+                      <Tooltip label={row.role}>
+                        {handleSetUserRoleIcon(row.role)}
+                      </Tooltip>
+                    </Td>
+                    <Td fontFamily={"IranSans"}>{row.username}</Td>
+                    <Td fontFamily={"IranSans"}>{row.userfname}</Td>
+                    <Td fontFamily={"IranSans"}>{row.userlname}</Td>
+                    <Td fontFamily={"IranSans"}>{row.usermobilenumber}</Td>
 
+                    <Td fontFamily={"IranSans"}>
+                      {!row?.lastLogin
+                        ? "ندارد"
+                        : dayjs(row.lastLogin)
+                            .locale("fa")
+                            .format("YYYY/MM/DD")}
+                    </Td>
+                    <Td fontFamily={"IranSans"}>
+                      {!row?.lastLogin
+                        ? "ندارد"
+                        : dayjs(row.lastLogin).locale("fa").format("HH:mm:ss")}
+                    </Td>
+                    <Td>
+                      <Link color="blue.300" href={row.userLocation} isExternal>
+                        <Tooltip label={"نمایش موقعیت"}>
+                          {row.userLocation == "Denied" ? (
+                            <Ban color="red" />
+                          ) : (
+                            <HStack>
+                              <Map /> <MapPin color="tomato" />
+                            </HStack>
+                          )}
+                        </Tooltip>
+                      </Link>
+                    </Td>
+                    <Td>
+                      <HStack
+                        direction={["row"]}
+                        spacing={2}
+                        align={"stretch"}
+                        mr="auto"
+                      >
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="green.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "ارسال درخواست موقعیت مکانی",
+                              text: "کاربر موقعیت مکانی خود را ارسال کند؟",
+                              callBack: () => handleSendLocationRequest(row.id),
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="درخواست موقعیت مکانی">
+                            <Icon w={6} h={6} as={MapPinCheck} />
+                          </Tooltip>
+                        </Link>
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="red.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "حذف کاربر",
+                              text: "آیا واقعا می خواهید این کاربر را حذف کنید؟",
+                              callBack: () => handleDeleteUser(row.id),
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="حذف">
+                            <Icon w={6} h={6} as={Trash2} />
+                          </Tooltip>
+                        </Link>
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => {
+                            setSelectedID(row?.id);
+                            setDialogGears({
+                              title: "ویرایش کاربر",
+                            });
+                            onOpen();
+                          }}
+                        >
+                          <Tooltip label="ویرایش">
+                            <Icon w={6} h={6} as={FilePenLine} />
+                          </Tooltip>
+                        </Link>
+                      </HStack>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </Box>
+        <MyModal
+          modalHeader={dialogGears.title}
+          isOpen={isOpen}
+          onClose={onClose}
+        >
+          <EditUser
+            selectedId={selectedID}
+            onClose={onClose}
+            onUpdate={updateUserInList}
+            user={findUserFromList(selectedID)}
+            isDesktop={isDesktop}
+          />
+        </MyModal>
+        <MyAlert
+          AlertHeader={dialogGears.title}
+          AlertMessage={dialogGears.text}
+          isOpen={isDialogOpen}
+          onClose={handleDialogClose}
+        />
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

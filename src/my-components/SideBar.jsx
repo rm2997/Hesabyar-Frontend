@@ -42,6 +42,7 @@ import {
   SquareLibrary,
   SquareStack,
   Table,
+  User,
   UserRoundPlus,
   Users,
   UsersRound,
@@ -49,10 +50,9 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GetUserByUserid } from "../api/services/userService";
-
-import { MyModal } from "./MyModal";
-import { ChangePasswordByUser } from "./users/ChangePasswordByUser";
-import { base } from "framer-motion/client";
+import { LiaUserTagSolid } from "react-icons/lia";
+import { GrUserWorker } from "react-icons/gr";
+import { TbUserDollar } from "react-icons/tb";
 
 export const Sidebar = ({ user, sidebarWidth, onMenuItemClick }) => {
   const [userName, setUserName] = useState("");
@@ -67,6 +67,21 @@ export const Sidebar = ({ user, sidebarWidth, onMenuItemClick }) => {
     };
     loadData();
   }, []);
+
+  const handleSetUserRoleIcon = (role) => {
+    switch (role) {
+      case "admin":
+        return <ShieldUser size="28px" color="#5cfa2cff" />;
+      case "user":
+        return <User size="28px" color="#5cfa2cff" />;
+      case "warehouseman":
+        return <GrUserWorker size="28px" color="#5cfa2cff" />;
+      case "salesperson":
+        return <LiaUserTagSolid size="28px" color="#5cfa2cff" />;
+      case "accountant":
+        return <TbUserDollar size="28px" color="#5cfa2cff" />;
+    }
+  };
 
   return (
     <Box
@@ -93,11 +108,7 @@ export const Sidebar = ({ user, sidebarWidth, onMenuItemClick }) => {
         >
           <Tooltip label={user?.role}>
             <Box mx={sidebarWidth !== 300 ? "auto" : ""}>
-              {user?.role == "admin" ? (
-                <ShieldUser color="lightYellow" />
-              ) : (
-                <Users color="black" />
-              )}
+              {handleSetUserRoleIcon(user?.role)}
             </Box>
           </Tooltip>
           <Heading
