@@ -8,6 +8,7 @@ import {
   Flex,
   HStack,
   Icon,
+  IconButton,
   Link,
   SimpleGrid,
   Stack,
@@ -17,7 +18,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { FilePenLine, Trash2 } from "lucide-react";
+import { FilePenLine, RefreshCcw, RefreshCcwDot, Trash2 } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { MyModal } from "../MyModal";
@@ -26,6 +27,7 @@ import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
 import { MyLoading } from "../MyLoading";
 import {
+  CheckSepidarDepot,
   GenerateNewToken,
   RemoveDepot,
   SetDepotIsSent,
@@ -80,6 +82,30 @@ export const DepotExitList = ({ isDesktop }) => {
 
     setDepotEntry(res?.data.items);
     setTotalPages(Math.ceil(res?.data?.total / itemsPerPage));
+    setLoading(false);
+  };
+
+  const handleCheckSepidarDepot = async (id) => {
+    setLoading(true);
+    const res = await CheckSepidarDepot(id);
+    if (!res.success) {
+      toast({
+        title: "خطا در دریافت داده‌ها",
+        description: res.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
+    toast({
+      title: "بروز رسانی  ",
+      description: res.data,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
     setLoading(false);
   };
 
@@ -312,6 +338,7 @@ export const DepotExitList = ({ isDesktop }) => {
                           ? row?.depotNumber
                           : " داخلی " + row?.id}
                       </Text>
+
                       {/* <Box mr="auto">
                         <HStack>
                           {row?.isAccepted ? (
@@ -421,6 +448,20 @@ export const DepotExitList = ({ isDesktop }) => {
                               row?.warehouseAcceptedBy?.userlname}
                           </Text>
                         </HStack>
+                        <Divider hidden={!row?.depotNumber} />
+                        {row?.depotNumber && (
+                          <HStack>
+                            <Text fontFamily="IranSans"> بررسی وضعیت :</Text>
+                            <IconButton
+                              onClick={() => handleCheckSepidarDepot(row.id)}
+                              maxH={"28px"}
+                              mr="auto"
+                              variant={"ghost"}
+                              colorScheme="blackAlpha"
+                              icon={<RefreshCcw />}
+                            />
+                          </HStack>
+                        )}
                       </VStack>
                     </Flex>
                   </CardBody>

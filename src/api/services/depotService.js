@@ -87,6 +87,13 @@ export const ShowAllDepots = async (
   });
 };
 
+export const CheckSepidarDepot = async (id) => {
+  return apiRequest({
+    method: "GET",
+    url: endpoints.depot.CheckSepidarDepot(id),
+  });
+};
+
 export const ShowDepotAcceptList = async (
   page = 1,
   limit = 12,
