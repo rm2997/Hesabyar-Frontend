@@ -651,7 +651,7 @@ export const NewCustomer = ({ isDesktop }) => {
                   rowGap={3}
                   mt={3}
                   dir="rtl"
-                  direction="column"
+                  direction={"column"}
                   borderWidth={1}
                   borderColor="gray.200"
                   borderStyle="dashed"
@@ -669,138 +669,147 @@ export const NewCustomer = ({ isDesktop }) => {
                   >
                     اطلاعات تماس
                   </Text>
-
-                  {phoneNumbers?.map((phone, index) => (
-                    <Box
-                      borderWidth="1px"
-                      borderRadius="lg"
-                      p={3}
-                      w="250px"
-                      boxShadow="md"
-                      position="relative"
-                      key={phone.unique}
-                      mx={isDesktop ? "" : "auto"}
-                    >
-                      <Flex justify="space-between" align="center">
-                        <IconButton
-                          colorScheme="red"
-                          variant="ghost"
-                          size="xs"
-                          icon={<CircleX />}
-                          onClick={() => {
-                            handleRemovePhone(phone);
-                          }}
-                        />
-
-                        <Text
-                          mx={1}
-                          dir="rtl"
-                          fontFamily="IranSans"
-                          fontWeight="bold"
-                          fontSize="md"
-                        >
-                          {"شماره تلفن" + " " + (index + 1)}
-                        </Text>
-                      </Flex>
-
-                      <Flex
-                        direction={"column"}
-                        justify="space-between"
-                        gap={3}
-                        mt={3}
-                        dir="rtl"
+                  <Flex
+                    direction={isDesktop ? "row" : "column"}
+                    dir={isDesktop ? "rtl" : ""}
+                  >
+                    {phoneNumbers?.map((phone, index) => (
+                      <Box
+                        borderWidth="1px"
+                        borderRadius="lg"
+                        p={3}
+                        w="250px"
+                        boxShadow="md"
+                        position="relative"
+                        key={phone.unique}
+                        mx={isDesktop ? "" : "auto"}
                       >
-                        <FormControl
-                          isRequired={
-                            formData?.customerBase == "ارتباط با تلفن"
-                              ? true
-                              : false
-                          }
+                        <Flex justify="space-between" align="center">
+                          <IconButton
+                            colorScheme="red"
+                            variant="ghost"
+                            size="xs"
+                            icon={<CircleX />}
+                            onClick={() => {
+                              handleRemovePhone(phone);
+                            }}
+                          />
+
+                          <Text
+                            mx={1}
+                            dir="rtl"
+                            fontFamily="IranSans"
+                            fontWeight="bold"
+                            fontSize="md"
+                          >
+                            {"شماره تلفن" + " " + (index + 1)}
+                          </Text>
+                        </Flex>
+
+                        <Flex
+                          direction={"column"}
+                          justify="space-between"
+                          gap={3}
+                          mt={3}
+                          dir="rtl"
                         >
-                          <HStack>
-                            <FormLabel hidden={!isDesktop} width="150px">
-                              نوع تلفن
-                            </FormLabel>
-                            <Select
-                              dir="ltr"
-                              name="phoneType"
-                              placeholder="نوع تلفن را انتخاب کنید"
-                              value={phone?.phoneType}
-                              onChange={(e) =>
-                                handleChangePhoneFormData(phone, {
-                                  phoneType: e.target.value,
-                                })
-                              }
-                            >
-                              {PhoneTypes.map((p) => (
-                                <option key={p.key} value={p.value}>
-                                  {p.value}
-                                </option>
-                              ))}
-                            </Select>
-                          </HStack>
-                        </FormControl>
-                        <FormControl
-                          isRequired={
-                            formData?.customerBase == "ارتباط با تلفن"
-                              ? true
-                              : false
-                          }
-                        >
-                          <HStack>
-                            <FormLabel hidden={!isDesktop} width="150px">
-                              شماره
-                            </FormLabel>
-                            <MyInputBox
-                              isInvalid={
-                                formData?.customerBase == "ارتباط با تلفن" &&
-                                (phone?.phoneNumber?.trim().length < 5 ||
-                                  isNaN(Number(phone?.phoneNumber)))
-                              }
-                              icon={Phone}
-                              name="phoneNumber"
-                              title="شماره"
-                              size={19}
-                              value={phone?.phoneNumber}
-                              onChange={(e) =>
-                                handleChangePhoneFormData(phone, {
-                                  phoneNumber: e.target.value,
-                                })
-                              }
-                            ></MyInputBox>
-                          </HStack>
-                        </FormControl>
-                        <FormControl>
-                          <HStack>
-                            <FormLabel htmlFor={phone.unique}>
-                              شماره اصلی
-                            </FormLabel>
-                            <Switch
-                              id={phone.unique}
-                              title="شماره اصلی"
-                              isChecked={phone?.isPrimary}
-                              name="isPrimary"
-                              onChange={(e) =>
-                                handleChangePhoneFormData(phone, {
-                                  isPrimary: e.target.checked,
-                                })
-                              }
-                            />
-                          </HStack>
-                        </FormControl>
-                      </Flex>
+                          <FormControl
+                            isRequired={
+                              formData?.customerBase == "ارتباط با تلفن"
+                                ? true
+                                : false
+                            }
+                          >
+                            <HStack>
+                              <FormLabel hidden={!isDesktop} width="150px">
+                                نوع تلفن
+                              </FormLabel>
+                              <Select
+                                dir="ltr"
+                                name="phoneType"
+                                placeholder="نوع تلفن را انتخاب کنید"
+                                value={phone?.phoneType}
+                                onChange={(e) =>
+                                  handleChangePhoneFormData(phone, {
+                                    phoneType: e.target.value,
+                                  })
+                                }
+                              >
+                                {PhoneTypes.map((p) => (
+                                  <option key={p.key} value={p.value}>
+                                    {p.value}
+                                  </option>
+                                ))}
+                              </Select>
+                            </HStack>
+                          </FormControl>
+                          <FormControl
+                            isRequired={
+                              formData?.customerBase == "ارتباط با تلفن"
+                                ? true
+                                : false
+                            }
+                          >
+                            <HStack>
+                              <FormLabel hidden={!isDesktop} width="150px">
+                                شماره
+                              </FormLabel>
+                              <MyInputBox
+                                isInvalid={
+                                  formData?.customerBase == "ارتباط با تلفن" &&
+                                  (phone?.phoneNumber?.trim().length < 5 ||
+                                    isNaN(Number(phone?.phoneNumber)))
+                                }
+                                icon={Phone}
+                                name="phoneNumber"
+                                title="شماره"
+                                size={19}
+                                value={phone?.phoneNumber}
+                                onChange={(e) =>
+                                  handleChangePhoneFormData(phone, {
+                                    phoneNumber: e.target.value,
+                                  })
+                                }
+                              ></MyInputBox>
+                            </HStack>
+                          </FormControl>
+                          <FormControl>
+                            <HStack>
+                              <FormLabel htmlFor={phone.unique}>
+                                شماره اصلی
+                              </FormLabel>
+                              <Switch
+                                id={phone.unique}
+                                title="شماره اصلی"
+                                isChecked={phone?.isPrimary}
+                                name="isPrimary"
+                                onChange={(e) =>
+                                  handleChangePhoneFormData(phone, {
+                                    isPrimary: e.target.checked,
+                                  })
+                                }
+                              />
+                            </HStack>
+                          </FormControl>
+                        </Flex>
+                      </Box>
+                    ))}
+                    <Box
+                      mx={isDesktop ? "5px" : "auto"}
+                      my={isDesktop ? "auto" : "5px"}
+                    >
+                      <IconButton
+                        ml={3}
+                        icon={<PlusCircle size="24px" strokeWidth={1.2} />}
+                        size="lg"
+                        my="auto"
+                        mx={isDesktop ? "" : "auto"}
+                        colorScheme="green"
+                        variant="ghost"
+                        onClick={() => handleAddNewPhone()}
+                      />
                     </Box>
-                  ))}
-                  <IconButton
-                    ml={3}
-                    icon={<PlusCircle size="lg" strokeWidth={1.2} />}
-                    size="lg"
-                    my="auto"
-                    mx={isDesktop ? "" : "auto"}
-                    colorScheme="green"
-                    variant="ghost"
-                    onClick={() => handleAddNewPhone()}
-                  />
+                  </Flex>
                 </Flex>
               </GridItem>
               <GridItem colSpan={isDesktop ? 2 : 1}>
@@ -827,156 +836,166 @@ export const NewCustomer = ({ isDesktop }) => {
                   >
                     اطلاعات نشانی
                   </Text>
-                  {locations?.map((location, index) => (
-                    <Box
-                      borderWidth="1px"
-                      borderRadius="lg"
-                      p={3}
-                      w="250px"
-                      boxShadow="md"
-                      position="relative"
-                      key={location.unique}
-                      mx={isDesktop ? "" : "auto"}
-                    >
-                      <Flex justify="space-between" align="center">
-                        <IconButton
-                          colorScheme="red"
-                          variant="ghost"
-                          size="xs"
-                          icon={<CircleX />}
-                          onClick={() => {
-                            handleRemoveLocation(location);
-                          }}
-                        />
-
-                        <Text
-                          mx={1}
-                          dir="rtl"
-                          fontFamily="IranSans"
-                          fontWeight="bold"
-                          fontSize="md"
-                        >
-                          {"نشانی" + " " + (index + 1)}
-                        </Text>
-                      </Flex>
-
-                      <Flex
-                        direction={"column"}
-                        justify="space-between"
-                        gap={3}
-                        mt={3}
-                        dir="rtl"
+                  <Flex
+                    direction={isDesktop ? "row" : "column"}
+                    dir={isDesktop ? "rtl" : ""}
+                  >
+                    {locations?.map((location, index) => (
+                      <Box
+                        borderWidth="1px"
+                        borderRadius="lg"
+                        p={3}
+                        w="250px"
+                        boxShadow="md"
+                        position="relative"
+                        key={location.unique}
+                        mx={isDesktop ? "" : "auto"}
                       >
-                        <FormControl
-                          isRequired={
-                            formData?.customerBase == "ارتباط با تلفن"
-                              ? true
-                              : false
-                          }
+                        <Flex justify="space-between" align="center">
+                          <IconButton
+                            colorScheme="red"
+                            variant="ghost"
+                            size="xs"
+                            icon={<CircleX />}
+                            onClick={() => {
+                              handleRemoveLocation(location);
+                            }}
+                          />
+
+                          <Text
+                            mx={1}
+                            dir="rtl"
+                            fontFamily="IranSans"
+                            fontWeight="bold"
+                            fontSize="md"
+                          >
+                            {"نشانی" + " " + (index + 1)}
+                          </Text>
+                        </Flex>
+
+                        <Flex
+                          direction={"column"}
+                          justify="space-between"
+                          gap={3}
+                          mt={3}
+                          dir="rtl"
                         >
-                          <HStack>
-                            <FormLabel hidden={!isDesktop} width="150px">
-                              نوع نشانی
-                            </FormLabel>
-                            <Select
-                              dir="ltr"
-                              name="locationType"
-                              placeholder="نوع نشانی را انتخاب کنید"
-                              value={location?.locationType}
-                              onChange={(e) =>
-                                handleChangePhoneFormData(location, {
-                                  locationType: e.target.value,
-                                })
-                              }
-                            >
-                              {AddressTypes.map((p) => (
-                                <option key={p.key} value={p.value}>
-                                  {p.value}
-                                </option>
-                              ))}
-                            </Select>
-                          </HStack>
-                        </FormControl>
-                        <FormControl
-                          isRequired={
-                            formData?.customerBase == "ارتباط با تلفن"
-                              ? true
-                              : false
-                          }
-                        >
-                          <HStack>
-                            <FormLabel hidden={!isDesktop} width="150px">
-                              نشانی
-                            </FormLabel>
-                            <Textarea
-                              isInvalid={
-                                formData?.customerBase == "ارتباط با آدرس" &&
-                                (location?.location?.trim().length < 5 ||
-                                  isNaN(Number(location?.location)))
-                              }
-                              resize="vertical"
-                              size="lg"
-                              name="location"
-                              placeholder="نشانی"
-                              value={location?.location}
-                              onChange={(e) =>
-                                handleChangeLocationsFormData(location, {
-                                  location: e.target.value,
-                                })
-                              }
-                            />
-                          </HStack>
-                        </FormControl>
-                        <FormControl>
-                          <HStack>
-                            <FormLabel hidden={!isDesktop} width="150px">
-                              کد پستی
-                            </FormLabel>
-                            <MyInputBox
-                              icon={MapPin}
-                              name="postalCode"
-                              title="کد پستی"
-                              size={19}
-                              value={location?.postalCode}
-                              onChange={(e) =>
-                                handleChangeLocationsFormData(location, {
-                                  postalCode: e.target.value,
-                                })
-                              }
-                            />
-                          </HStack>
-                        </FormControl>
-                        <FormControl>
-                          <HStack>
-                            <FormLabel htmlFor={location.unique}>
-                              آدرس پیش فرض
-                            </FormLabel>
-                            <Switch
-                              id={location.unique}
-                              title="آدرس پیش فرض"
-                              isChecked={location?.isPrimary}
-                              name="isPrimary"
-                              onChange={(e) =>
-                                handleChangeLocationsFormData(location, {
-                                  isPrimary: e.target.checked,
-                                })
-                              }
-                            />
-                          </HStack>
-                        </FormControl>
-                      </Flex>
+                          <FormControl
+                            isRequired={
+                              formData?.customerBase == "ارتباط با تلفن"
+                                ? true
+                                : false
+                            }
+                          >
+                            <HStack>
+                              <FormLabel hidden={!isDesktop} width="150px">
+                                نوع نشانی
+                              </FormLabel>
+                              <Select
+                                dir="ltr"
+                                name="locationType"
+                                placeholder="نوع نشانی را انتخاب کنید"
+                                value={location?.locationType}
+                                onChange={(e) =>
+                                  handleChangePhoneFormData(location, {
+                                    locationType: e.target.value,
+                                  })
+                                }
+                              >
+                                {AddressTypes.map((p) => (
+                                  <option key={p.key} value={p.value}>
+                                    {p.value}
+                                  </option>
+                                ))}
+                              </Select>
+                            </HStack>
+                          </FormControl>
+                          <FormControl
+                            isRequired={
+                              formData?.customerBase == "ارتباط با تلفن"
+                                ? true
+                                : false
+                            }
+                          >
+                            <HStack>
+                              <FormLabel hidden={!isDesktop} width="150px">
+                                نشانی
+                              </FormLabel>
+                              <Textarea
+                                isInvalid={
+                                  formData?.customerBase == "ارتباط با آدرس" &&
+                                  (location?.location?.trim().length < 5 ||
+                                    isNaN(Number(location?.location)))
+                                }
+                                resize="vertical"
+                                size="lg"
+                                name="location"
+                                placeholder="نشانی"
+                                value={location?.location}
+                                onChange={(e) =>
+                                  handleChangeLocationsFormData(location, {
+                                    location: e.target.value,
+                                  })
+                                }
+                              />
+                            </HStack>
+                          </FormControl>
+                          <FormControl>
+                            <HStack>
+                              <FormLabel hidden={!isDesktop} width="150px">
+                                کد پستی
+                              </FormLabel>
+                              <MyInputBox
+                                icon={MapPin}
+                                name="postalCode"
+                                title="کد پستی"
+                                size={19}
+                                value={location?.postalCode}
+                                onChange={(e) =>
+                                  handleChangeLocationsFormData(location, {
+                                    postalCode: e.target.value,
+                                  })
+                                }
+                              />
+                            </HStack>
+                          </FormControl>
+                          <FormControl>
+                            <HStack>
+                              <FormLabel htmlFor={location.unique}>
+                                آدرس پیش فرض
+                              </FormLabel>
+                              <Switch
+                                id={location.unique}
+                                title="آدرس پیش فرض"
+                                isChecked={location?.isPrimary}
+                                name="isPrimary"
+                                onChange={(e) =>
+                                  handleChangeLocationsFormData(location, {
+                                    isPrimary: e.target.checked,
+                                  })
+                                }
+                              />
+                            </HStack>
+                          </FormControl>
+                        </Flex>
+                      </Box>
+                    ))}
+                    <Box
+                      mx={isDesktop ? "5px" : "auto"}
+                      my={isDesktop ? "auto" : "5px"}
+                    >
+                      <IconButton
+                        ml={3}
+                        icon={<PlusCircle size="24px" strokeWidth={1.2} />}
+                        size="lg"
+                        my="auto"
+                        mx={isDesktop ? "" : "auto"}
+                        colorScheme="green"
+                        variant="ghost"
+                        onClick={() => handleAddNewAddress()}
+                      />
                     </Box>
-                  ))}
-                  <IconButton
-                    ml={3}
-                    icon={<PlusCircle size="lg" strokeWidth={1.2} />}
-                    size="lg"
-                    my="auto"
-                    mx={isDesktop ? "" : "auto"}
-                    colorScheme="green"
-                    variant="ghost"
-                    onClick={() => handleAddNewAddress()}
-                  />
+                  </Flex>
                 </Flex>
               </GridItem>
             </SimpleGrid>
