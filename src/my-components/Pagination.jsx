@@ -1,16 +1,23 @@
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Center,
+  Divider,
   Flex,
   HStack,
+  IconButton,
+  Text,
   Wrap,
   WrapItem,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import { ChevronFirst, ChevronLast } from "lucide-react";
 
 export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+  const isDesktop = useBreakpointValue({ base: false, md: true });
+
   const getPageNumbers = () => {
-    const maxVisible = 10; // تعداد دکمه‌ها
+    const maxVisible = isDesktop ? 10 : 5; // تعداد دکمه‌ها
     const half = Math.floor(maxVisible / 2);
     let start = Math.max(1, currentPage - half);
     let end = Math.min(totalPages, start + maxVisible - 1);
@@ -47,7 +54,8 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       py={2}
       fontSize="10px"
       columnGap={7}
-      justify="left"
+      justify="space-between"
+      dir="ltr"
     >
       <Flex
         hidden={totalPages < 2}
@@ -56,18 +64,6 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         rowGap={1}
       >
         <Wrap spacing={1} justify="center">
-          <WrapItem>
-            <Button
-              fontFamily="iransans"
-              fontStyle="normal"
-              size={buttonSize}
-              onClick={() => onPageChange(totalPages)}
-              isDisabled={currentPage === totalPages}
-              variant="outline"
-              leftIcon={<ArrowForwardIcon />}
-            ></Button>
-          </WrapItem>
-
           <HStack dir="ltr">
             {pages.map((page) => (
               <WrapItem key={page}>
@@ -84,18 +80,44 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 </Button>
               </WrapItem>
             ))}
+
+            <Divider orientation="vertical" />
+
+            <WrapItem>
+              <IconButton
+                title="ابتدا"
+                size={buttonSize}
+                onClick={() => onPageChange(1)}
+                isDisabled={currentPage === 1}
+                variant="ghost"
+                icon={<ChevronFirst />}
+                fontFamily="iransans"
+                fontStyle="normal"
+                colorScheme="blue"
+              />
+            </WrapItem>
+            <WrapItem>
+              <IconButton
+                title="انتها"
+                fontFamily="iransans"
+                fontStyle="normal"
+                size={buttonSize}
+                onClick={() => onPageChange(totalPages)}
+                isDisabled={currentPage === totalPages}
+                variant="ghost"
+                colorScheme="blue"
+                icon={<ChevronLast />}
+              />
+            </WrapItem>
+            <Divider orientation="vertical" />
+
+            <WrapItem columnGap={3}>
+              <Text fontFamily="iransans">مورد</Text>
+              <Text fontFamily="iransans">{12 * totalPages}</Text>
+              <Text fontFamily="iransans">از</Text>
+              <Text fontFamily="iransans">{12 * currentPage}</Text>
+            </WrapItem>
           </HStack>
-          <WrapItem>
-            <Button
-              size={buttonSize}
-              onClick={() => onPageChange(1)}
-              isDisabled={currentPage === 1}
-              variant="outline"
-              leftIcon={<ArrowBackIcon />}
-              fontFamily="iransans"
-              fontStyle="normal"
-            ></Button>
-          </WrapItem>
         </Wrap>
       </Flex>
     </Flex>

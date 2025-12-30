@@ -1,5 +1,4 @@
 import {
-  AbsoluteCenter,
   Box,
   Card,
   CardBody,
@@ -11,15 +10,22 @@ import {
   Icon,
   Link,
   SimpleGrid,
-  Spinner,
   Stack,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
+  Thead,
   Tooltip,
+  Tr,
   VStack,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { FilePenLine, Send, Trash2, UsersRound } from "lucide-react";
+import { BsPersonBoundingBox } from "react-icons/bs";
 import { MyModal } from "../MyModal";
 import { useEffect, useState } from "react";
 import { EditCustomer } from "./EditCustomer";
@@ -154,50 +160,207 @@ export const CustomerDataTable = ({ isDesktop }) => {
         direction="column"
         minH={isDesktop ? "85vh" : "80vh"}
       >
-        <Box flex="1" overflowY="auto" p={1}>
-          <Flex direction="column" gap={4}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
-              {customersData.map((row) => (
-                <Card
-                  borderTopRadius={5}
-                  borderWidth={1}
-                  _hover={{ borderColor: "orange" }}
-                >
-                  <CardHeader
-                    maxH={"60px"}
-                    bg="green.500"
+        {!isDesktop && (
+          <Box flex="1" overflowY="auto" p={1}>
+            <Flex direction="column" gap={4}>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
+                {customersData.map((row) => (
+                  <Card
                     borderTopRadius={5}
-                    color="white"
-                    _hover={{ cursor: "pointer" }}
-                    onClick={(e) => {
-                      setSelectedID(row?.id);
-                      onOpen();
-                    }}
+                    borderWidth={1}
+                    _hover={{ borderColor: "orange" }}
                   >
-                    <Flex justify="space-between" columnGap={3}>
-                      <UsersRound color="purple" />
-                      <Flex flex={3} direction={"row"} gap={3}>
-                        <Tooltip
-                          label={
-                            row?.customerGender +
-                            " " +
-                            row?.customerFName +
-                            " " +
-                            row?.customerLName
-                          }
-                        >
-                          <Flex direction={"row"} gap={3}>
-                            <Text>کد :</Text>
-                            <Text>{row?.sepidarDlId}</Text>
-                          </Flex>
-                        </Tooltip>
+                    <CardHeader
+                      maxH={"60px"}
+                      bg="green.500"
+                      borderTopRadius={5}
+                      color="white"
+                      _hover={{ cursor: "pointer" }}
+                      onClick={(e) => {
+                        setSelectedID(row?.id);
+                        onOpen();
+                      }}
+                    >
+                      <Flex justify="space-between" columnGap={3}>
+                        <UsersRound color="purple" />
+                        <Flex flex={3} direction={"row"} gap={3}>
+                          <Tooltip
+                            label={
+                              row?.customerGender +
+                              " " +
+                              row?.customerFName +
+                              " " +
+                              row?.customerLName
+                            }
+                          >
+                            <Flex direction={"row"} gap={3}>
+                              <Text>کد :</Text>
+                              <Text>{row?.sepidarDlId}</Text>
+                            </Flex>
+                          </Tooltip>
+                        </Flex>
                       </Flex>
-                    </Flex>
-                  </CardHeader>
-                  <CardBody p={2}>
-                    <VStack align={"stretch"} spacing={2}>
-                      <HStack>
-                        <Text fontFamily="iransans">نام :</Text>
+                    </CardHeader>
+                    <CardBody p={2}>
+                      <VStack align={"stretch"} spacing={2}>
+                        <HStack>
+                          <Text fontFamily="iransans">نام :</Text>
+                          <Tooltip
+                            label={
+                              row?.customerGender +
+                              " " +
+                              row?.customerFName +
+                              " " +
+                              row?.customerLName
+                            }
+                          >
+                            <Text mr={"auto"} fontFamily="iransans">
+                              {row?.customerGender?.length +
+                                row?.customerFName?.length +
+                                row?.customerLName.length >
+                              30
+                                ? (
+                                    row?.customerGender +
+                                    " " +
+                                    row?.customerFName +
+                                    " " +
+                                    row?.customerLName
+                                  ).substring(0, 30) + "..."
+                                : row?.customerGender +
+                                  " " +
+                                  row?.customerFName +
+                                  " " +
+                                  row?.customerLName}
+                            </Text>
+                          </Tooltip>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="iransans">نوع :</Text>
+                          <Text fontFamily="iransans" mr="auto">
+                            {row?.customerType}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="iransans"> شماره موبایل :</Text>
+                          <Text fontFamily="iransans" mr="auto">
+                            {row?.phoneNumbers[0]?.phoneNumber}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="iransans"> شماره ملی :</Text>
+                          <Text fontFamily="iransans" mr="auto">
+                            {row?.customerNationalCode}
+                          </Text>
+                        </HStack>
+                      </VStack>
+                    </CardBody>
+                    <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
+                      <Stack
+                        direction={["row"]}
+                        spacing={2}
+                        align={"stretch"}
+                        mr="auto"
+                      >
+                        <Link
+                          _disabled={true}
+                          _hover={{ color: "#ffd54f" }}
+                          color="green.600"
+                        >
+                          <Tooltip label="ارسال تبلیغات به مشتری">
+                            <Icon w={6} h={6} as={Send} />
+                          </Tooltip>
+                        </Link>
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="red.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "حذف پیش فاکتور",
+                              text: "آیا واقعا می خواهید این مشتری حذف کنید؟",
+                              callBack: () => handleDeleteCustomer(row.id),
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="حذف">
+                            <Icon w={6} h={6} as={Trash2} />
+                          </Tooltip>
+                        </Link>
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "ویرایش مشتری",
+                              text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
+                              callBack: () => handleEditCustomer(row.id),
+                            });
+                            onOpen();
+                          }}
+                        >
+                          <Tooltip label="ویرایش">
+                            <Icon w={6} h={6} as={FilePenLine} />
+                          </Tooltip>
+                        </Link>
+                      </Stack>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            </Flex>
+          </Box>
+        )}
+        {isDesktop && (
+          <Box
+            borderWidth={"1px"}
+            borderColor={"black"}
+            borderRadius={"md"}
+            bg={"#FEFEFE"}
+            mx={4}
+            my={1}
+          >
+            <TableContainer>
+              <Table textColor={"black"} variant={"simple"}>
+                <TableCaption fontFamily={"IranSans"}>مشتریان</TableCaption>
+                <Thead bg={"gray.100"}>
+                  <Tr>
+                    <Td></Td>
+                    <Td>کد مشتری </Td>
+                    <Td>نام </Td>
+                    <Td>نوع</Td>
+                    <Td>کد سرفصل </Td>
+                    <Td>شماره همراه</Td>
+                    <Td>کد ملی</Td>
+                    <Td></Td>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {customersData.map((row) => (
+                    <Tr
+                      _hover={{
+                        boxShadow: "md",
+                        borderWidth: "1px",
+                        borderRadius: "md",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Td
+                        onClick={(e) => {
+                          setSelectedID(row?.id);
+                          onOpen();
+                        }}
+                      >
+                        <BsPersonBoundingBox size={"24px"} color="orange" />
+                      </Td>
+                      <Td> {row?.sepidarId}</Td>
+                      <Td>
                         <Tooltip
                           label={
                             row?.customerGender +
@@ -211,14 +374,14 @@ export const CustomerDataTable = ({ isDesktop }) => {
                             {row?.customerGender?.length +
                               row?.customerFName?.length +
                               row?.customerLName.length >
-                            30
+                            50
                               ? (
                                   row?.customerGender +
                                   " " +
                                   row?.customerFName +
                                   " " +
                                   row?.customerLName
-                                ).substring(0, 30) + "..."
+                                ).substring(0, 50) + "..."
                               : row?.customerGender +
                                 " " +
                                 row?.customerFName +
@@ -226,95 +389,98 @@ export const CustomerDataTable = ({ isDesktop }) => {
                                 row?.customerLName}
                           </Text>
                         </Tooltip>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text fontFamily="iransans">نوع :</Text>
+                      </Td>
+                      <Td>
                         <Text fontFamily="iransans" mr="auto">
                           {row?.customerType}
                         </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text fontFamily="iransans"> شماره موبایل :</Text>
+                      </Td>
+                      <Td>
                         <Text fontFamily="iransans" mr="auto">
-                          {row?.phoneNumbers[0]?.phoneNumber}
+                          {row?.sepidarDlId}
                         </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text fontFamily="iransans"> شماره ملی :</Text>
+                      </Td>
+                      <Td>
                         <Text fontFamily="iransans" mr="auto">
-                          {row?.customerNationalCode}
+                          {row?.phoneNumbers[0]?.phoneNumber?.length > 0
+                            ? row?.phoneNumbers[0]?.phoneNumber
+                            : "ندارد"}
                         </Text>
-                      </HStack>
-                    </VStack>
-                  </CardBody>
-                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
-                    <Stack
-                      direction={["row"]}
-                      spacing={2}
-                      align={"stretch"}
-                      mr="auto"
-                    >
-                      <Link
-                        _disabled={true}
-                        _hover={{ color: "#ffd54f" }}
-                        color="green.600"
-                      >
-                        <Tooltip label="ارسال تبلیغات به مشتری">
-                          <Icon w={6} h={6} as={Send} />
-                        </Tooltip>
-                      </Link>
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="red.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "حذف پیش فاکتور",
-                            text: "آیا واقعا می خواهید این مشتری حذف کنید؟",
-                            callBack: () => handleDeleteCustomer(row.id),
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="حذف">
-                          <Icon w={6} h={6} as={Trash2} />
-                        </Tooltip>
-                      </Link>
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "ویرایش مشتری",
-                            text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
-                            callBack: () => handleEditCustomer(row.id),
-                          });
-                          onOpen();
-                        }}
-                      >
-                        <Tooltip label="ویرایش">
-                          <Icon w={6} h={6} as={FilePenLine} />
-                        </Tooltip>
-                      </Link>
-                    </Stack>
-                  </CardFooter>
-                </Card>
-              ))}
-            </SimpleGrid>
-          </Flex>
-        </Box>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
+                      </Td>
+                      <Td>
+                        <Text fontFamily="iransans" mr="auto">
+                          {row?.customerNationalCode?.length > 0
+                            ? row?.customerNationalCode
+                            : "ندارد"}
+                        </Text>
+                      </Td>
+                      <Td>
+                        <HStack
+                          direction={["row"]}
+                          spacing={2}
+                          align={"stretch"}
+                          mr="auto"
+                        >
+                          <Link
+                            _disabled={true}
+                            _hover={{ color: "#ffd54f" }}
+                            color="green.600"
+                          >
+                            <Tooltip label="ارسال تبلیغات به مشتری">
+                              <Icon w={6} h={6} as={Send} />
+                            </Tooltip>
+                          </Link>
+                          <Link
+                            _hover={{ color: "#ffd54f" }}
+                            color="red.600"
+                            onClick={(e) => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "حذف پیش فاکتور",
+                                text: "آیا واقعا می خواهید این مشتری حذف کنید؟",
+                                callBack: () => handleDeleteCustomer(row.id),
+                              });
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <Tooltip label="حذف">
+                              <Icon w={6} h={6} as={Trash2} />
+                            </Tooltip>
+                          </Link>
+                          <Link
+                            _hover={{
+                              color: "orange",
+                            }}
+                            color="blue.600"
+                            onClick={(e) => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "ویرایش مشتری",
+                                text: "آیا واقعا می خواهید این مشتری ویرایش کنید؟",
+                                callBack: () => handleEditCustomer(row.id),
+                              });
+                              onOpen();
+                            }}
+                          >
+                            <Tooltip label="ویرایش">
+                              <Icon w={6} h={6} as={FilePenLine} />
+                            </Tooltip>
+                          </Link>
+                        </HStack>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Box>
+        )}
       </Flex>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
       <MyAlert
         onClose={handleDialogClose}
         isOpen={isDialogOpen}
