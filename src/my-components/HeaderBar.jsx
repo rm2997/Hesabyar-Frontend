@@ -62,8 +62,9 @@ export const HeaderBar = ({
   return (
     <Flex
       align="center"
-      justify="space-between"
-      p={4}
+      justify={"space-between"}
+      py={4}
+      px={2}
       bg="gray.800"
       borderBottom="1px"
       borderColor="gray.700"
@@ -121,6 +122,7 @@ export const HeaderBar = ({
       {!isDesktop && (
         <Tooltip label="باز کردن منو" hasArrow>
           <IconButton
+            size={isDesktop ? "md" : "sm"}
             icon={<SquareEqual />}
             onClick={() => setIsSidebarOpen(true)}
             aria-label="Toggle Sidebar"
@@ -128,8 +130,8 @@ export const HeaderBar = ({
         </Tooltip>
       )}
 
-      <Flex align="center">
-        <Box hidden={!isDesktop}>
+      <Flex columnGap={"0.1px"} align="center">
+        <Box position="relative">
           <IconButton
             variant=""
             icon={<Blocks />}
@@ -144,8 +146,9 @@ export const HeaderBar = ({
             _hover={{ color: "orange" }}
           />
         </Box>
-        <Box hidden={!isDesktop}>
+        <Box position="relative">
           <IconButton
+            size="sm"
             variant=""
             icon={<Ruler />}
             title="واحدها"
@@ -159,8 +162,9 @@ export const HeaderBar = ({
             _hover={{ color: "orange" }}
           />
         </Box>
-        <Box hidden={!isDesktop}>
+        <Box position="relative">
           <IconButton
+            size="sm"
             variant=""
             icon={<Users />}
             title="مشتریان"
@@ -174,11 +178,12 @@ export const HeaderBar = ({
             _hover={{ color: "orange" }}
           />
         </Box>
-        <Center height="30px">
+        <Center mx={1} position="relative" height="30px">
           <Divider orientation="vertical" />
         </Center>
         <Box hidden={!isDesktop}>
           <IconButton
+            size="sm"
             variant=""
             icon={<Zap />}
             title="دسترسی سریع"

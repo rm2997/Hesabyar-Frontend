@@ -11,14 +11,20 @@ import {
   Link,
   SimpleGrid,
   Stack,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
+  Thead,
   Tooltip,
+  Tr,
   VStack,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { FilePenLine, Ruler, Trash2 } from "lucide-react";
-
 import { useEffect, useState } from "react";
 import { EditUnit } from "./EditUnit";
 import { MyAlert } from "../MyAlert";
@@ -144,104 +150,211 @@ export const UnitsDataTable = ({ isDesktop }) => {
           userInfo="جستجوی واحد اندازه گیری"
         />
 
-        <Box flex="1" overflowY="auto" p={1}>
-          <Flex direction="column" gap={4}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
-              {unitsData.map((row) => (
-                <Card
-                  borderTopRadius={5}
-                  borderWidth={1}
-                  _hover={{ borderColor: "orange" }}
-                >
-                  <CardHeader
-                    maxH="60px"
-                    bg="green.500"
+        {!isDesktop && (
+          <Box flex="1" overflowY="auto" p={1}>
+            <Flex direction="column" gap={4}>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
+                {unitsData.map((row) => (
+                  <Card
                     borderTopRadius={5}
-                    color="white"
-                    _hover={{ cursor: "pointer" }}
-                    onClick={() => {
-                      setSelectedID(row.id);
-                      setDialogGears({
-                        title: "ویرایش واحد",
-                      });
-                      onOpen();
-                    }}
+                    borderWidth={1}
+                    _hover={{ borderColor: "orange" }}
                   >
-                    <Flex justify="space-between" columnGap={3}>
-                      <Ruler color="yellow" />
-                      <Flex flex={3} direction={"row"} gap={3}>
-                        <Text>کد : </Text>
-                        <Text>{row?.sepidarId}</Text>
-                      </Flex>
-                    </Flex>
-                  </CardHeader>
-                  <CardBody px={4} py={2}>
-                    <VStack align={"stretch"} spacing={2}>
-                      <HStack>
-                        <Text>نام واحد :</Text>
-                        <Text mr={"auto"} fontFamily="iransans">
-                          {row.unitName}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>توضیحات :</Text>
-                        <Text mr="auto">
-                          {row?.unitInfo?.length > 15
-                            ? row?.unitInfo?.substring(0, 12) + "..."
-                            : row?.unitInfo}
-                        </Text>
-                      </HStack>
-                    </VStack>
-                  </CardBody>
-                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
-                    <Stack
-                      direction={["row"]}
-                      spacing={2}
-                      align={"stretch"}
-                      mr="auto"
+                    <CardHeader
+                      maxH="60px"
+                      bg="green.500"
+                      borderTopRadius={5}
+                      color="white"
+                      _hover={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setSelectedID(row.id);
+                        setDialogGears({
+                          title: "ویرایش واحد",
+                        });
+                        onOpen();
+                      }}
                     >
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="red.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "حذف واحد",
-                            text: "آیا واقعا می خواهید این واحد را حذف کنید؟",
-                            callBack: () => handleDeleteUnit(row?.id),
-                          });
-                          setIsDialogOpen(true);
-                        }}
+                      <Flex justify="space-between" columnGap={3}>
+                        <Ruler color="yellow" />
+                        <Flex flex={3} direction={"row"} gap={3}>
+                          <Text>کد : </Text>
+                          <Text>{row?.sepidarId}</Text>
+                        </Flex>
+                      </Flex>
+                    </CardHeader>
+                    <CardBody px={4} py={2}>
+                      <VStack align={"stretch"} spacing={2}>
+                        <HStack>
+                          <Text>نام واحد :</Text>
+                          <Text mr={"auto"} fontFamily="iransans">
+                            {row.unitName}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text>توضیحات :</Text>
+                          <Text mr="auto">
+                            {row?.unitInfo?.length > 15
+                              ? row?.unitInfo?.substring(0, 12) + "..."
+                              : row?.unitInfo}
+                          </Text>
+                        </HStack>
+                      </VStack>
+                    </CardBody>
+                    <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
+                      <Stack
+                        direction={["row"]}
+                        spacing={2}
+                        align={"stretch"}
+                        mr="auto"
                       >
-                        <Tooltip label="حذف">
-                          <Icon w={6} h={6} as={Trash2} />
-                        </Tooltip>
-                      </Link>
-                      <Link
-                        _hover={{
-                          color: "orange",
-                        }}
-                        color="blue.600"
-                        onClick={(e) => {
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="red.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "حذف واحد",
+                              text: "آیا واقعا می خواهید این واحد را حذف کنید؟",
+                              callBack: () => handleDeleteUnit(row?.id),
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="حذف">
+                            <Icon w={6} h={6} as={Trash2} />
+                          </Tooltip>
+                        </Link>
+                        <Link
+                          _hover={{
+                            color: "orange",
+                          }}
+                          color="blue.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "مشاهده و ویرایش واحد",
+                            });
+                            onOpen();
+                          }}
+                        >
+                          <Tooltip label="ویرایش">
+                            <Icon w={6} h={6} as={FilePenLine} />
+                          </Tooltip>
+                        </Link>
+                      </Stack>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            </Flex>
+          </Box>
+        )}
+        {isDesktop && (
+          <Box
+            borderWidth={"1px"}
+            borderColor={"black"}
+            borderRadius={"md"}
+            bg={"#FEFEFE"}
+            mx={4}
+            my={1}
+          >
+            <TableContainer>
+              <Table textColor={"black"} variant={"simple"}>
+                <TableCaption fontFamily={"IranSans"}>واحد ها</TableCaption>
+                <Thead bg={"gray.100"}>
+                  <Tr>
+                    <Td></Td>
+                    <Td>کد کالا </Td>
+                    <Td>نام کالا</Td>
+                    <Td>توضیحات</Td>
+                    <Td></Td>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {unitsData.map((row) => (
+                    <Tr
+                      _hover={{
+                        boxShadow: "md",
+                        borderWidth: "1px",
+                        borderRadius: "md",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Td
+                        onClick={() => {
                           setSelectedID(row.id);
                           setDialogGears({
-                            title: "مشاهده و ویرایش واحد",
+                            title: "ویرایش واحد",
                           });
                           onOpen();
                         }}
                       >
-                        <Tooltip label="ویرایش">
-                          <Icon w={6} h={6} as={FilePenLine} />
-                        </Tooltip>
-                      </Link>
-                    </Stack>
-                  </CardFooter>
-                </Card>
-              ))}
-            </SimpleGrid>
-          </Flex>
-        </Box>
+                        <Ruler color={"orange"} />
+                      </Td>
+                      <Td>{row.sepidarId}</Td>
+                      <Td>
+                        <Text mr={"auto"} fontFamily="iransans">
+                          {row.unitName}
+                        </Text>
+                      </Td>
+                      <Td>
+                        <Text mr="auto">
+                          {row?.unitInfo?.length > 50
+                            ? row?.unitInfo?.substring(0, 50) + "..."
+                            : row?.unitInfo}
+                        </Text>
+                      </Td>
+                      <Td>
+                        <HStack
+                          direction={["row"]}
+                          spacing={2}
+                          align={"stretch"}
+                          mr="auto"
+                        >
+                          <Link
+                            _hover={{ color: "#ffd54f" }}
+                            color="red.600"
+                            onClick={(e) => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "حذف واحد",
+                                text: "آیا واقعا می خواهید این واحد را حذف کنید؟",
+                                callBack: () => handleDeleteUnit(row?.id),
+                              });
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <Tooltip label="حذف">
+                              <Icon w={6} h={6} as={Trash2} />
+                            </Tooltip>
+                          </Link>
+                          <Link
+                            _hover={{
+                              color: "orange",
+                            }}
+                            color="blue.600"
+                            onClick={(e) => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "مشاهده و ویرایش واحد",
+                              });
+                              onOpen();
+                            }}
+                          >
+                            <Tooltip label="ویرایش">
+                              <Icon w={6} h={6} as={FilePenLine} />
+                            </Tooltip>
+                          </Link>
+                        </HStack>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Box>
+        )}
       </Flex>
       <MyModal
         size="md"
@@ -270,6 +383,7 @@ export const UnitsDataTable = ({ isDesktop }) => {
         zIndex="1"
         borderTopColor="gray.400"
         borderTopWidth="1px"
+        hidden={totalPages > 0}
       >
         <Flex justify="center" align="center">
           <Pagination

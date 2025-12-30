@@ -456,7 +456,6 @@ export const UsersDataTable = ({ isDesktop }) => {
             borderColor={"black"}
             borderRadius={"md"}
             bg={"#FEFEFE"}
-            hidden={!isDesktop}
           >
             <TableContainer>
               <Table variant={"simple"}>

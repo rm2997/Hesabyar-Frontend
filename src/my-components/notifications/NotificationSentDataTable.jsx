@@ -12,13 +12,21 @@ import {
   Link,
   SimpleGrid,
   Stack,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
+  Thead,
   Tooltip,
+  Tr,
   VStack,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { Trash2, Mail, View } from "lucide-react";
+import { BsEnvelopeArrowUp } from "react-icons/bs";
 import { MyLoading } from "../MyLoading";
 import { useEffect, useState } from "react";
 import { useNotification } from "../../contexts/NotificationContext";
@@ -158,91 +166,168 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
           loadData={loadData}
           userInfo="جستجوی اعلان ارسالی"
         />
-        <Box flex="1" overflowY="auto" p={1}>
-          <Flex direction="column" gap={4}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
-              {userData.map((row) => (
-                <Card
-                  borderTopRadius={5}
-                  borderWidth={1}
-                  _hover={{ borderColor: "orange" }}
-                >
-                  <CardHeader
-                    py={4}
-                    bg="green.500"
+        {!isDesktop && (
+          <Box flex="1" overflowY="auto" p={1}>
+            <Flex direction="column" gap={4}>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={4}>
+                {userData.map((row) => (
+                  <Card
                     borderTopRadius={5}
-                    color="white"
-                    _hover={{ cursor: "pointer" }}
-                    onClick={() => {
-                      setSelectedID(row.id);
-                      setDialogGears({
-                        title: "مشاهده پیام",
-                        text: "",
-                        callBack: null,
-                      });
-                      onOpen();
-                    }}
+                    borderWidth={1}
+                    _hover={{ borderColor: "orange" }}
                   >
-                    <HStack>
-                      <Tooltip>
-                        <Mail color="orange" />
-                      </Tooltip>
-                      <Text fontFamily="IranSans" mr="auto">
-                        {row?.title?.length <= 25
-                          ? row?.title
-                          : row?.title?.substring(0, 25) + "..."}
-                      </Text>
-                    </HStack>
-                  </CardHeader>
-                  <CardBody p={2}>
-                    <VStack align={"stretch"} spacing={2}>
-                      <HStack>
-                        <Text>عنوان :</Text>
-                        <Tooltip label={row?.title}>
-                          <Text fontFamily="iransans" mr="auto">
-                            {row?.title?.length <= 30
-                              ? row?.title
-                              : row?.title?.substring(0, 30) + "..."}
-                          </Text>
-                        </Tooltip>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text fontFamily="IranSans">تاریخ :</Text>
-                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
-                          {dayjs(row.createdAt)
-                            .locale("fa")
-                            .format("YYYY/MM/DD")}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>گیرنده :</Text>
-                        <Text mr="auto">
-                          {row.toUser?.userfname + " " + row.toUser?.userlname}
-                        </Text>
-                      </HStack>
-                      <Divider />
-                      <HStack>
-                        <Text>محتوا :</Text>
-                        <Text mr="auto">
-                          {row.message.length > 15
-                            ? row.message.substring(0, 12) + "..."
-                            : row.message}
-                        </Text>
-                      </HStack>
-                    </VStack>
-                  </CardBody>
-                  <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
-                    <Stack
-                      direction={["row"]}
-                      spacing={2}
-                      align={"stretch"}
-                      mr="auto"
+                    <CardHeader
+                      py={4}
+                      bg="green.500"
+                      borderTopRadius={5}
+                      color="white"
+                      _hover={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setSelectedID(row.id);
+                        setDialogGears({
+                          title: "مشاهده پیام",
+                          text: "",
+                          callBack: null,
+                        });
+                        onOpen();
+                      }}
                     >
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="green"
+                      <HStack>
+                        <Tooltip>
+                          <Mail color="orange" />
+                        </Tooltip>
+                        <Text fontFamily="IranSans" mr="auto">
+                          {row?.title?.length <= 25
+                            ? row?.title
+                            : row?.title?.substring(0, 25) + "..."}
+                        </Text>
+                      </HStack>
+                    </CardHeader>
+                    <CardBody p={2}>
+                      <VStack align={"stretch"} spacing={2}>
+                        <HStack>
+                          <Text>عنوان :</Text>
+                          <Tooltip label={row?.title}>
+                            <Text fontFamily="iransans" mr="auto">
+                              {row?.title?.length <= 30
+                                ? row?.title
+                                : row?.title?.substring(0, 30) + "..."}
+                            </Text>
+                          </Tooltip>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text fontFamily="IranSans">تاریخ :</Text>
+                          <Text fontFamily="IranSans" fontSize="md" mr="auto">
+                            {dayjs(row.createdAt)
+                              .locale("fa")
+                              .format("YYYY/MM/DD")}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text>گیرنده :</Text>
+                          <Text mr="auto">
+                            {row.toUser?.userfname +
+                              " " +
+                              row.toUser?.userlname}
+                          </Text>
+                        </HStack>
+                        <Divider />
+                        <HStack>
+                          <Text>محتوا :</Text>
+                          <Text mr="auto">
+                            {row.message.length > 15
+                              ? row.message.substring(0, 12) + "..."
+                              : row.message}
+                          </Text>
+                        </HStack>
+                      </VStack>
+                    </CardBody>
+                    <CardFooter p={2} borderBottomRadius={5} bg="gray.200">
+                      <Stack
+                        direction={["row"]}
+                        spacing={2}
+                        align={"stretch"}
+                        mr="auto"
+                      >
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="green"
+                          onClick={() => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "مشاهده پیام",
+                              text: "",
+                              callBack: null,
+                            });
+                            onOpen();
+                          }}
+                        >
+                          <Tooltip label="مشاهده">
+                            <Icon w={6} h={6} as={View} />
+                          </Tooltip>
+                        </Link>
+
+                        <Link
+                          _hover={{ color: "#ffd54f" }}
+                          color="red.600"
+                          onClick={(e) => {
+                            setSelectedID(row.id);
+                            setDialogGears({
+                              title: "حذف پیام",
+                              text: "آیا واقعا می خواهید این پیام را حذف کنید؟",
+                              callBack: () => handleDeleteNotification(row.id),
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Tooltip label="حذف">
+                            <Icon w={6} h={6} as={Trash2} />
+                          </Tooltip>
+                        </Link>
+                      </Stack>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            </Flex>
+          </Box>
+        )}
+        {isDesktop && (
+          <Box
+            borderWidth={"1px"}
+            borderColor={"black"}
+            borderRadius={"md"}
+            bg={"#FEFEFE"}
+            mx={4}
+            my={1}
+          >
+            <TableContainer>
+              <Table textColor={"black"} variant={"simple"}>
+                <TableCaption fontFamily={"IranSans"}>
+                  پیام های ارسال شده
+                </TableCaption>
+                <Thead bg={"gray.100"}>
+                  <Tr>
+                    <Td>وضعیت </Td>
+                    <Td>تاریخ </Td>
+                    <Td>عنوان</Td>
+                    <Td>گیرنده</Td>
+                    <Td></Td>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {userData.map((row) => (
+                    <Tr
+                      _hover={{
+                        boxShadow: "md",
+                        borderWidth: "1px",
+                        borderRadius: "md",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Td
                         onClick={() => {
                           setSelectedID(row.id);
                           setDialogGears({
@@ -253,53 +338,99 @@ export const NotificationSentDataTable = ({ isDesktop }) => {
                           onOpen();
                         }}
                       >
-                        <Tooltip label="مشاهده">
-                          <Icon w={6} h={6} as={View} />
+                        <BsEnvelopeArrowUp size={"24px"} color="green" />
+                      </Td>
+                      <Td>
+                        <Text fontFamily="IranSans" fontSize="md" mr="auto">
+                          {dayjs(row.createdAt)
+                            .locale("fa")
+                            .format("YYYY/MM/DD")}
+                        </Text>
+                      </Td>
+                      <Td>
+                        <Tooltip label={row?.title}>
+                          <Text fontFamily="iransans" mr="auto">
+                            {row?.title?.length <= 50
+                              ? row?.title
+                              : row?.title?.substring(0, 50) + "..."}
+                          </Text>
                         </Tooltip>
-                      </Link>
+                      </Td>
+                      <Td>
+                        <Text mr="auto">
+                          {row.toUser?.userfname + " " + row.toUser?.userlname}
+                        </Text>
+                      </Td>
 
-                      <Link
-                        _hover={{ color: "#ffd54f" }}
-                        color="red.600"
-                        onClick={(e) => {
-                          setSelectedID(row.id);
-                          setDialogGears({
-                            title: "حذف پیام",
-                            text: "آیا واقعا می خواهید این پیام را حذف کنید؟",
-                            callBack: () => handleDeleteNotification(row.id),
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <Tooltip label="حذف">
-                          <Icon w={6} h={6} as={Trash2} />
-                        </Tooltip>
-                      </Link>
-                    </Stack>
-                  </CardFooter>
-                </Card>
-              ))}
-            </SimpleGrid>
-            <MyModal
-              size="md"
-              modalHeader={dialogGears.title}
-              isOpen={isOpen}
-              onClose={onClose}
-            >
-              <ShowUserNotification
-                id={selectedID}
-                notification={userData.find((n) => n.id == selectedID)}
-              />
-            </MyModal>
-            <MyAlert
-              AlertHeader={dialogGears.title}
-              AlertMessage={dialogGears.text}
-              isOpen={isDialogOpen}
-              onClose={handleDialogClose}
-            />
-          </Flex>
-        </Box>
+                      <Td>
+                        <Stack
+                          direction={["row"]}
+                          spacing={2}
+                          align={"stretch"}
+                          mr="auto"
+                        >
+                          <Link
+                            _hover={{ color: "#ffd54f" }}
+                            color="green"
+                            onClick={() => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "مشاهده پیام",
+                                text: "",
+                                callBack: null,
+                              });
+                              onOpen();
+                            }}
+                          >
+                            <Tooltip label="مشاهده">
+                              <Icon w={6} h={6} as={View} />
+                            </Tooltip>
+                          </Link>
 
+                          <Link
+                            _hover={{ color: "#ffd54f" }}
+                            color="red.600"
+                            onClick={(e) => {
+                              setSelectedID(row.id);
+                              setDialogGears({
+                                title: "حذف پیام",
+                                text: "آیا واقعا می خواهید این پیام را حذف کنید؟",
+                                callBack: () =>
+                                  handleDeleteNotification(row.id),
+                              });
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <Tooltip label="حذف">
+                              <Icon w={6} h={6} as={Trash2} />
+                            </Tooltip>
+                          </Link>
+                        </Stack>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Box>
+        )}
+        <MyModal
+          size="md"
+          modalHeader={dialogGears.title}
+          isOpen={isOpen}
+          onClose={onClose}
+        >
+          <ShowUserNotification
+            id={selectedID}
+            notification={userData.find((n) => n.id == selectedID)}
+          />
+        </MyModal>
+        <MyAlert
+          AlertHeader={dialogGears.title}
+          AlertMessage={dialogGears.text}
+          isOpen={isDialogOpen}
+          onClose={handleDialogClose}
+        />
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
