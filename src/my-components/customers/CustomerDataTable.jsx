@@ -21,6 +21,7 @@ import {
   Tooltip,
   Tr,
   VStack,
+  useBreakpointValue,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -39,7 +40,9 @@ import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
 import { MyLoading } from "../MyLoading";
 
-export const CustomerDataTable = ({ isDesktop }) => {
+export const CustomerDataTable = ({}) => {
+  const isDesktop = useBreakpointValue({ base: false, md: true });
+
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const itemsPerPage = 12;

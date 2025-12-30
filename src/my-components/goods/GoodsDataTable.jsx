@@ -11,7 +11,6 @@ import {
   Icon,
   Link,
   SimpleGrid,
-  Spinner,
   Stack,
   Table,
   TableCaption,
@@ -23,6 +22,7 @@ import {
   Tooltip,
   Tr,
   VStack,
+  useBreakpointValue,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -39,7 +39,9 @@ import { Pagination } from "../Pagination";
 import { SearchBar } from "../SerachBar";
 import { MyLoading } from "../MyLoading";
 
-export const GoodsDataTable = ({ isDesktop }) => {
+export const GoodsDataTable = ({}) => {
+  const isDesktop = useBreakpointValue({ base: false, md: true });
+
   const [goodsData, setGoodsData] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
