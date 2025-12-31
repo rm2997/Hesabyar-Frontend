@@ -233,7 +233,7 @@ export const DepotWareHouseExitRequests = ({ isDesktop }) => {
                         <HStack>
                           <Text fontFamily="IranSans">شماره فاکتور:</Text>
                           <Text fontFamily="IranSans" fontSize="12px" mr="auto">
-                            {row.depotInvoice?.id}
+                            {row.depotInvoice?.invoiceNumber}
                           </Text>
                         </HStack>
                         <Divider />

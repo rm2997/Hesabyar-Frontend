@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Flex,
   FormControl,
@@ -24,11 +23,9 @@ import {
 } from "@chakra-ui/react";
 import {
   CircleX,
-  Ellipsis,
   Info,
   ScanSearch,
   SquareCheckBig,
-  UserRoundPlus,
   UserSearch,
 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -36,7 +33,6 @@ import { MyInputBox } from "../../my-components/MyInputBox";
 import { MyLoading } from "../../my-components/MyLoading";
 import { PersianAlphabet } from "../../api/services/enums/persianAlphabets.enum";
 import {
-  CreateDepot,
   ShowDepotImageFile,
   ShowDepotWarehouseImages,
   UpdateDepot,
@@ -561,7 +557,7 @@ export const EditDepotExit = ({ isDesktop, id, closeMe, onUpdate, depot }) => {
                   value={
                     formData?.depotInvoice
                       ? formData?.depotInvoice?.title
-                        ? formData?.depotInvoice?.id +
+                        ? formData?.depotInvoice?.invoiceNumber +
                           "-" +
                           formData?.depotInvoice?.title
                         : formData?.depotInvoice?.id + " - " + "بدون عنوان"

@@ -91,7 +91,7 @@ export const DepotExitList = ({ isDesktop }) => {
     if (!res.success) {
       toast({
         title: "خطا در دریافت داده‌ها",
-        description: res.error,
+        description: res?.error,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -99,13 +99,19 @@ export const DepotExitList = ({ isDesktop }) => {
       setLoading(false);
       return;
     }
+
     toast({
-      title: "بروز رسانی  ",
-      description: res.data,
+      title: "بروز رسانی",
+      description: res?.data?.message,
       status: "success",
       duration: 3000,
       isClosable: true,
     });
+    if (res?.data?.action == 1) {
+      console.log(`${id} will delete`);
+
+      deleteDepotEntryFromList(id);
+    }
     setLoading(false);
   };
 
@@ -402,7 +408,7 @@ export const DepotExitList = ({ isDesktop }) => {
                         <HStack>
                           <Text fontFamily="IranSans">شماره فاکتور:</Text>
                           <Text fontFamily="iransans" fontSize="12px" mr="auto">
-                            {row.depotInvoice?.id}
+                            {row.depotInvoice?.invoiceNumber}
                           </Text>
                         </HStack>
                         <Divider />
@@ -452,14 +458,16 @@ export const DepotExitList = ({ isDesktop }) => {
                         {row?.depotNumber && (
                           <HStack>
                             <Text fontFamily="IranSans"> بررسی وضعیت :</Text>
-                            <IconButton
-                              onClick={() => handleCheckSepidarDepot(row.id)}
-                              maxH={"28px"}
-                              mr="auto"
-                              variant={"ghost"}
-                              colorScheme="blackAlpha"
-                              icon={<RefreshCcw />}
-                            />
+                            <Tooltip label="در صورتی که سند از سپیدار حذف شده باشد این سند نیز حذف خواهد شد">
+                              <IconButton
+                                onClick={() => handleCheckSepidarDepot(row.id)}
+                                maxH={"28px"}
+                                mr="auto"
+                                variant={"ghost"}
+                                colorScheme="blackAlpha"
+                                icon={<RefreshCcw />}
+                              />
+                            </Tooltip>
                           </HStack>
                         )}
                       </VStack>

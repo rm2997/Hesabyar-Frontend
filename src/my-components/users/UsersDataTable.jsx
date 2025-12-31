@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Card,
   CardBody,
@@ -30,6 +31,7 @@ import {
   Map,
   MapPin,
   MapPinCheck,
+  MapPinXInside,
   ShieldUser,
   Trash2,
   User,
@@ -468,6 +470,7 @@ export const UsersDataTable = ({ isDesktop }) => {
                     <Td>نام کاربری</Td>
                     <Td>نام </Td>
                     <Td>نام خانوادگی</Td>
+                    <Td>وضعیت</Td>
                     <Td>موبایل</Td>
                     <Td>تاریخ ورود</Td>
                     <Td>ساعت ورود</Td>
@@ -504,6 +507,18 @@ export const UsersDataTable = ({ isDesktop }) => {
                       <Td fontFamily={"IranSans"}>{row.username}</Td>
                       <Td fontFamily={"IranSans"}>{row.userfname}</Td>
                       <Td fontFamily={"IranSans"}>{row.userlname}</Td>
+                      <Td>
+                        <Badge
+                          variant={"outline"}
+                          px={"5px"}
+                          fontSize="0.8em"
+                          colorScheme={row.isUserActive ? "green" : "red"}
+                          borderRadius={"md"}
+                          fontFamily={"IranSans"}
+                        >
+                          {row.isUserActive ? "فعال" : "غیرفعال"}
+                        </Badge>
+                      </Td>
                       <Td fontFamily={"IranSans"}>{row.usermobilenumber}</Td>
                       <Td fontFamily={"IranSans"}>
                         {!row?.lastLogin
@@ -520,19 +535,33 @@ export const UsersDataTable = ({ isDesktop }) => {
                               .format("HH:mm:ss")}
                       </Td>
                       <Td>
-                        <Link
-                          color="blue.300"
-                          href={row.userLocation}
-                          isExternal
-                        >
-                          <Tooltip label={"نمایش موقعیت"}>
-                            {row.userLocation == "Denied" ? (
-                              <Ban color="red" />
-                            ) : (
-                              <Map />
-                            )}
-                          </Tooltip>
-                        </Link>
+                        <Flex direction={"row"} justify={"center"}>
+                          <Link
+                            color="blue.300"
+                            href={
+                              row.userLocation == "Denied"
+                                ? "#"
+                                : row.userLocation
+                            }
+                            isExternal={
+                              row.userLocation == "Denied" ? false : true
+                            }
+                          >
+                            <Tooltip
+                              label={
+                                row.userLocation == "Denied"
+                                  ? "اجازه ثبت موقعیت داده نشده است"
+                                  : "نمایش موقعیت"
+                              }
+                            >
+                              {row.userLocation == "Denied" ? (
+                                <MapPinXInside color="red" />
+                              ) : (
+                                <Map />
+                              )}
+                            </Tooltip>
+                          </Link>
+                        </Flex>
                       </Td>
                       <Td>{handleShowSepidarUser(row?.sepidarId)}</Td>
 
