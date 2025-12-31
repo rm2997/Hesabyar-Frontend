@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { Send } from "lucide-react";
 
-export const SelectPhoneNumer = ({ phoneNumbers, handleSend }) => {
+export const SelectPhoneNumer = ({ id, phoneNumbers, handleSend }) => {
   return (
     <Box bgColor={"white"} textColor={"black"}>
       <TableContainer>
@@ -35,7 +35,7 @@ export const SelectPhoneNumer = ({ phoneNumbers, handleSend }) => {
                     variant={"ghost"}
                     colorScheme="blue"
                     icon={<Send />}
-                    onClick={() => handleSend(phone)}
+                    onClick={() => handleSend(id, phone)}
                   />
                 </Td>
               </Tr>

@@ -370,6 +370,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
           <SelectPhoneNumer
             phoneNumbers={customerPhoneNumbers}
             handleSend={handleSendCustomerLink}
+            id={selectedID}
           />
         </MyModal>
         <Flex
@@ -538,7 +539,10 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
 
                           //   setIsDialogOpen(true);
                           // }}
-                          onClick={() => handleSelectPhoneNumberToSend(row?.id)}
+                          onClick={() => {
+                            setSelectedID(row.id);
+                            handleSelectPhoneNumberToSend(row?.id);
+                          }}
                         >
                           <Tooltip
                             label={
