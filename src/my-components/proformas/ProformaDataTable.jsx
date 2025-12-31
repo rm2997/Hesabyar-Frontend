@@ -40,6 +40,7 @@ import { SearchBar } from "../SerachBar";
 import { Pagination } from "../Pagination";
 import { MyLoading } from "../MyLoading";
 import { MyProformaStepper } from "../MyProformaSteper";
+import { SelectPhoneNumer } from "../SelectPhoneNumber";
 
 export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,7 +48,8 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
   const itemsPerPage = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [proformas, setProformas] = useState([]);
-  const [showLoading, setShowLoading] = useState(true);
+  const [showSelectPhoneNumbers, setShowSelectPhoneNumbers] = useState(false);
+  const [customerPhoneNumbers, setCustomerPhoneNumbers] = useState([]);
   const [selectedID, setSelectedID] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -116,7 +118,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
     if (result === "Confirm") dialogGears.callBack(selectedID);
   };
 
-  const handleSendCustomerLink = async (id) => {
+  const handleSelectPhoneNumberToSend = (id) => {
     const proforma = proformas.find((p) => p.id == id);
 
     if (!proforma) {
@@ -132,6 +134,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
     const defaultMobile = proforma?.customer?.phoneNumbers?.find(
       (p) => p.isPrimary == true
     );
+
     if (!defaultMobile?.phoneNumber) {
       toast({
         title: "امکان ارسال وجود ندارد",
@@ -142,18 +145,71 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       });
       return;
     }
-    // if (!proforma?.customerLink) {
-    //   toast({
-    //     title: "امکان ارسال وجود ندارد",
-    //     description: "لینک موقت مشتری ساخته نشده است",
-    //     status: "error",
-    //     duration: 3000,
-    //     isClosable: true,
-    //   });
-    //   return;
-    // }
+    setCustomerPhoneNumbers(proforma?.customer?.phoneNumbers);
+    setShowSelectPhoneNumbers(true);
+  };
+
+  // const handleSendCustomerLink = async (id) => {
+  //   const proforma = proformas.find((p) => p.id == id);
+  //   if (!proforma) {
+  //     toast({
+  //       title: "امکان ارسال وجود ندارد",
+  //       description: "اطلاعات مشتری در دسترس نیست",
+  //       status: "error",
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //     return;
+  //   }
+  //   const defaultMobile = proforma?.customer?.phoneNumbers?.find(
+  //     (p) => p.isPrimary == true
+  //   );
+
+  //   if (!defaultMobile?.phoneNumber) {
+  //     toast({
+  //       title: "امکان ارسال وجود ندارد",
+  //       description: "شماره موبایل مشتری ثبت نشده است",
+  //       status: "error",
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   const res = await SetProformaIsSent(proforma.id);
+  //   if (!res.success) {
+  //     toast({
+  //       title: "امکان ارسال وجود ندارد",
+  //       description: res.error,
+  //       status: "error",
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //     setLoading(false);
+  //     return;
+  //   }
+  //   updateProformaInListWithKey(id, "isSent", "true");
+
+  //   toast({
+  //     title: "توجه",
+  //     description:
+  //       "لینک تاییدیه به شماره موبایل" +
+  //       " " +
+  //       defaultMobile?.phoneNumber +
+  //       " به نام " +
+  //       proforma.customer.customerFName +
+  //       " " +
+  //       proforma.customer.customerLName +
+  //       " ارسال شد. ",
+  //     status: "success",
+  //     duration: 3000,
+  //     isClosable: true,
+  //   });
+  //   setLoading(false);
+  // };
+  const handleSendCustomerLink = async (id, phone) => {
     setLoading(true);
-    const res = await SetProformaIsSent(proforma.id);
+    const res = await SetProformaIsSent(id, phone);
     if (!res.success) {
       toast({
         title: "امکان ارسال وجود ندارد",
@@ -166,18 +222,9 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       return;
     }
     updateProformaInListWithKey(id, "isSent", "true");
-
     toast({
       title: "توجه",
-      description:
-        "لینک تاییدیه به شماره موبایل" +
-        " " +
-        defaultMobile?.phoneNumber +
-        " به نام " +
-        proforma.customer.customerFName +
-        " " +
-        proforma.customer.customerLName +
-        " ارسال شد. ",
+      description: "لینک تاییدیه به شماره موبایل" + " " + phone + " ارسال شد. ",
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -314,6 +361,17 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
   if (proformas)
     return (
       <Box>
+        <MyModal
+          modalHeader={"انتخاب شماره"}
+          isOpen={showSelectPhoneNumbers}
+          size="xl"
+          onClose={() => setShowSelectPhoneNumbers(false)}
+        >
+          <SelectPhoneNumer
+            phoneNumbers={customerPhoneNumbers}
+            handleSend={handleSendCustomerLink}
+          />
+        </MyModal>
         <Flex
           filter={loading ? "blur(10px)" : ""}
           direction="column"
@@ -454,45 +512,33 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
                             <Icon w={6} h={6} as={Replace} />
                           </Tooltip>
                         </Link>
-
-                        {/* <Link
-                          _hover={{
-                            color: "orange",
-                          }}
-                          color="blue.600"
-                          onClick={(e) => handleGenerateNewLink(row.id)}
-                        >
-                          <Tooltip label="تولید لینک جدید">
-                            <Icon w={6} h={6} as={Link2} />
-                          </Tooltip>
-                        </Link> */}
-
                         <Link
                           hidden={row?.isSent && row?.approvedFile}
                           _hover={{ color: "#ffd54f" }}
                           color="green.600"
-                          onClick={(e) => {
-                            setSelectedID(row.id);
-                            const defaultMobile =
-                              row?.customer?.phoneNumbers?.find(
-                                (p) => p.isPrimary == true
-                              );
-                            setDialogGears({
-                              title: "ارسال لینک به مشتری",
-                              text: `آیا می خواهید لینک به شماره ${
-                                defaultMobile?.phoneNumber
-                              } به نام ${
-                                row.customer.customerGender +
-                                " " +
-                                row.customer.customerFName +
-                                " " +
-                                row.customer.customerLName
-                              } ارسال گردد؟`,
-                              callBack: () => handleSendCustomerLink(row.id),
-                            });
+                          // onClick={(e) => {
+                          //   setSelectedID(row.id);
+                          //   const defaultMobile =
+                          //     row?.customer?.phoneNumbers?.find(
+                          //       (p) => p.isPrimary == true
+                          //     );
+                          //   setDialogGears({
+                          //     title: "ارسال لینک به مشتری",
+                          //     text: `آیا می خواهید لینک به شماره ${
+                          //       defaultMobile?.phoneNumber
+                          //     } به نام ${
+                          //       row.customer.customerGender +
+                          //       " " +
+                          //       row.customer.customerFName +
+                          //       " " +
+                          //       row.customer.customerLName
+                          //     } ارسال گردد؟`,
+                          //     callBack: () => handleSendCustomerLink(row.id),
+                          //   });
 
-                            setIsDialogOpen(true);
-                          }}
+                          //   setIsDialogOpen(true);
+                          // }}
+                          onClick={() => handleSelectPhoneNumberToSend(row?.id)}
                         >
                           <Tooltip
                             label={
@@ -570,6 +616,7 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
             onPageChange={(page) => setCurrentPage(page)}
           />
         </Flex>
+
         {loading && <MyLoading />}
       </Box>
     );
