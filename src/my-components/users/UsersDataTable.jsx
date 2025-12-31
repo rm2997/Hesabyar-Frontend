@@ -538,7 +538,6 @@ export const UsersDataTable = ({ isDesktop }) => {
                         <Flex direction={"row"} justify={"center"}>
                           <Link
                             color="blue.300"
-<<<<<<< HEAD
                             href={
                               row.userLocation == "Denied"
                                 ? "#"
@@ -557,14 +556,6 @@ export const UsersDataTable = ({ isDesktop }) => {
                             >
                               {row.userLocation == "Denied" ? (
                                 <MapPinXInside color="red" />
-=======
-                            href={row.userLocation}
-                            isExternal
-                          >
-                            <Tooltip label={"نمایش موقعیت"}>
-                              {row.userLocation == "Denied" ? (
-                                <Ban color="red" />
->>>>>>> 9c19fca7154912504e78822b3456d85fd02889fe
                               ) : (
                                 <Map />
                               )}
