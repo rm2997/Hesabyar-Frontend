@@ -1,14 +1,16 @@
 import {
   Box,
+  Flex,
   IconButton,
   Table,
   TableContainer,
   Tbody,
   Td,
+  Text,
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { Send } from "lucide-react";
+import { MicVocal, Phone, Send } from "lucide-react";
 
 export const SelectPhoneNumer = ({ id, phoneNumbers, handleSend }) => {
   return (
@@ -26,7 +28,16 @@ export const SelectPhoneNumer = ({ id, phoneNumbers, handleSend }) => {
           <Tbody>
             {phoneNumbers.map((phone) => (
               <Tr>
-                <Td>{phone?.phoneType}</Td>
+                <Td>
+                  <Flex direction={"row"} columnGap={5}>
+                    {phone?.phoneType == "تلفن همراه" ? (
+                      <Phone color="orange" />
+                    ) : (
+                      <MicVocal />
+                    )}
+                    <Text>{phone?.phoneType}</Text>
+                  </Flex>
+                </Td>
                 <Td>{phone?.phoneNumber}</Td>
                 <Td>{phone?.isPrimary ? "بله" : "خیر"}</Td>
                 <Td>
@@ -35,7 +46,7 @@ export const SelectPhoneNumer = ({ id, phoneNumbers, handleSend }) => {
                     variant={"ghost"}
                     colorScheme="blue"
                     icon={<Send />}
-                    onClick={() => handleSend(id, phone)}
+                    onClick={() => handleSend(id, phone?.phoneNumber)}
                   />
                 </Td>
               </Tr>
