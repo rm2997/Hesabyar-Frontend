@@ -584,10 +584,12 @@ export const AcceptDepotExitByWareHouseMan = ({
                     <Text fontFamily="iransans">
                       {formData?.depotInvoice
                         ? formData?.depotInvoice?.title
-                          ? formData?.depotInvoice?.id +
+                          ? formData?.depotInvoice?.invoiceNumber +
                             "-" +
                             formData?.depotInvoice?.title
-                          : formData?.depotInvoice?.id + " - " + "بدون عنوان"
+                          : formData?.depotInvoice?.invoiceNumber +
+                            " - " +
+                            "بدون عنوان"
                         : ""}
                     </Text>
                   </HStack>
