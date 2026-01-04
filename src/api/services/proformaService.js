@@ -24,10 +24,10 @@ export const UpdateProforma = async (id, proformaData) => {
   });
 };
 
-export const SetProformaIsSent = async (id) => {
+export const SetProformaIsSent = async (id, phone) => {
   return await apiRequest({
     method: "PUT",
-    url: endpoints.proforma.setProformaIsSent(id),
+    url: endpoints.proforma.setProformaIsSent(id, phone),
   });
 };
 

@@ -135,16 +135,16 @@ export const UpdateInvoiceDriver = async (token, data) => {
   });
 };
 
-export const SetInvoiceIsSent = async (id) => {
+export const SetInvoiceIsSent = async (id, phone) => {
   return await apiRequest({
     method: "PUT",
-    url: endpoints.invoice.setInvoiceIsSent(id),
+    url: endpoints.invoice.setInvoiceIsSent(id, phone),
   });
 };
 
-export const SendInvoiceDriverLink = async (id) => {
+export const SendInvoiceDriverLink = async (id, phone) => {
   return await apiRequest({
     method: "PUT",
-    url: endpoints.invoice.sendInvoiceDriverLink(id),
+    url: endpoints.invoice.sendInvoiceDriverLink(id, phone),
   });
 };

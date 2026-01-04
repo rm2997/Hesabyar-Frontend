@@ -8,10 +8,11 @@ import {
   Td,
   Text,
   Thead,
+  Tooltip,
   Tr,
 } from "@chakra-ui/react";
-import { MicVocal, Phone, Send } from "lucide-react";
-
+import { Phone, Send } from "lucide-react";
+import { MdOutlinePhoneIphone } from "react-icons/md";
 export const SelectPhoneNumer = ({ id, phoneNumbers, handleSend }) => {
   return (
     <Box bgColor={"white"} textColor={"black"}>
@@ -30,12 +31,13 @@ export const SelectPhoneNumer = ({ id, phoneNumbers, handleSend }) => {
               <Tr>
                 <Td>
                   <Flex direction={"row"} columnGap={5}>
-                    {phone?.phoneType == "تلفن همراه" ? (
-                      <Phone color="orange" />
-                    ) : (
-                      <MicVocal />
-                    )}
-                    <Text>{phone?.phoneType}</Text>
+                    <Tooltip label={phone?.phoneType}>
+                      {phone?.phoneType == "تلفن همراه" ? (
+                        <MdOutlinePhoneIphone size={"24px"} color="orange" />
+                      ) : (
+                        <Phone color="orange" />
+                      )}
+                    </Tooltip>
                   </Flex>
                 </Td>
                 <Td>{phone?.phoneNumber}</Td>
@@ -47,6 +49,7 @@ export const SelectPhoneNumer = ({ id, phoneNumbers, handleSend }) => {
                     colorScheme="blue"
                     icon={<Send />}
                     onClick={() => handleSend(id, phone?.phoneNumber)}
+                    isDisabled={phone?.phoneType != "تلفن همراه"}
                   />
                 </Td>
               </Tr>

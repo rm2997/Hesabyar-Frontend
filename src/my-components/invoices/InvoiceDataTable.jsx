@@ -39,6 +39,7 @@ import { Pagination } from "../Pagination";
 import { MyLoading } from "../MyLoading";
 import { MyInvoiceStepper } from "../MyInvoiceStepper";
 import { useNavigate } from "react-router-dom";
+import { SelectPhoneNumer } from "../SelectPhoneNumber";
 
 export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,8 +50,10 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
   const [selectedID, setSelectedID] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showSelectPhoneNumbers, setShowSelectPhoneNumbers] = useState(false);
+  const [customerPhoneNumbers, setCustomerPhoneNumbers] = useState([]);
+  const [phoneNumberIsFor, setPhoneNumberIsFor] = useState(0);
   const toast = useToast();
-  const [deleteDialogResult, setDeleteDialogResult] = useState(null);
   const [dialogGears, setDialogGears] = useState({
     title: "",
     text: "",
@@ -128,8 +131,8 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
     setInvoices((prev) => prev.filter((u) => u.id != id));
   };
 
-  const handleSendCustomerLink = async (id) => {
-    const invoice = invoices.find((i) => i.id == id);
+  const handleSelectPhoneNumberToSend = (id) => {
+    const invoice = invoices.find((p) => p.id == id);
 
     if (!invoice) {
       toast({
@@ -141,31 +144,27 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
       });
       return;
     }
-    const defaultMobile = invoice?.customer?.phoneNumbers?.find(
-      (p) => p.isPrimary == true
-    );
-    if (!defaultMobile?.phoneNumber) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "شماره موبایل مشتری ثبت نشده است",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    // if (!invoice?.customerLink) {
+    // const defaultMobile = invoice?.customer?.phoneNumbers?.find(
+    //   (p) => p.isPrimary == true
+    // );
+
+    // if (!defaultMobile?.phoneNumber) {
     //   toast({
     //     title: "امکان ارسال وجود ندارد",
-    //     description: "لینک موقت مشتری ساخته نشده است",
+    //     description: "شماره موبایل  مشتری ثبت نشده است",
     //     status: "error",
     //     duration: 3000,
     //     isClosable: true,
     //   });
     //   return;
     // }
+    setCustomerPhoneNumbers(invoice?.customer?.phoneNumbers);
+    setShowSelectPhoneNumbers(true);
+  };
+
+  const handleSendCustomerLink = async (id, phone) => {
     setLoading(true);
-    const res = await SetInvoiceIsSent(invoice?.id);
+    const res = await SetInvoiceIsSent(id, phone);
     if (!res.success) {
       toast({
         title: "خطا بعد از ارسال",
@@ -181,14 +180,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
     toast({
       title: "توجه",
       description:
-        "لینک درخواست آپلود مدارک واریز به شماره موبایل" +
-        " " +
-        defaultMobile?.phoneNumber +
-        " به نام " +
-        invoice.customer.customerFName +
-        " " +
-        invoice.customer.customerLName +
-        " ارسال شد. ",
+        "لینک درخواست مدارک به شماره موبایل" + " " + phone + " ارسال شد. ",
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -196,35 +188,35 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
     setLoading(false);
   };
 
-  const handleSendDriverLink = async (id) => {
-    const invoice = invoices.find((i) => i.id == id);
+  const handleSendDriverLink = async (id, phone) => {
+    // const invoice = invoices.find((i) => i.id == id);
 
-    if (!invoice) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "اطلاعات مشتری در دسترس نیست",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    const defaultMobile = invoice?.customer?.phoneNumbers?.find(
-      (p) => p.isPrimary == true
-    );
-    if (!defaultMobile?.phoneNumber) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "شماره موبایل مشتری ثبت نشده است",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+    // if (!invoice) {
+    //   toast({
+    //     title: "امکان ارسال وجود ندارد",
+    //     description: "اطلاعات مشتری در دسترس نیست",
+    //     status: "error",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   return;
+    // }
+    // const defaultMobile = invoice?.customer?.phoneNumbers?.find(
+    //   (p) => p.isPrimary == true
+    // );
+    // if (!defaultMobile?.phoneNumber) {
+    //   toast({
+    //     title: "امکان ارسال وجود ندارد",
+    //     description: "شماره موبایل مشتری ثبت نشده است",
+    //     status: "error",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   return;
+    // }
 
     setLoading(true);
-    const res = await SendInvoiceDriverLink(invoice?.id);
+    const res = await SendInvoiceDriverLink(id, phone);
     if (!res.success) {
       toast({
         title: "خطا بعد از ارسال",
@@ -240,14 +232,7 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
     toast({
       title: "توجه",
       description:
-        "لینک درخواست مشخصات راننده به شماره موبایل" +
-        " " +
-        defaultMobile?.phoneNumber +
-        " به نام " +
-        invoice?.customer?.customerFName +
-        " " +
-        invoice?.customer?.customerLName +
-        " ارسال شد. ",
+        "لینک درخواست راننده به شماره موبایل" + " " + phone + " ارسال شد. ",
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -332,6 +317,22 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
   if (invoices)
     return (
       <Box>
+        <MyModal
+          modalHeader={"انتخاب شماره"}
+          isOpen={showSelectPhoneNumbers}
+          size="xl"
+          onClose={() => setShowSelectPhoneNumbers(false)}
+        >
+          <SelectPhoneNumer
+            phoneNumbers={customerPhoneNumbers}
+            handleSend={
+              phoneNumberIsFor == 0
+                ? handleSendCustomerLink
+                : handleSendDriverLink
+            }
+            id={selectedID}
+          />
+        </MyModal>
         <Flex
           filter={loading ? "blur(10px)" : ""}
           direction="column"
@@ -507,19 +508,24 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                           }
                           _hover={{ color: "#ffd54f" }}
                           color="orange.600"
-                          onClick={(e) => {
-                            const defaultMobile =
-                              row?.customer?.phoneNumbers?.find(
-                                (p) => p.isPrimary == true
-                              );
-                            setSelectedID(row?.id);
-                            setDialogGears({
-                              title: "ارسال درخواست ثبت راننده به مشتری",
-                              text: `آیا می خواهید درخواست به شماره ${defaultMobile?.phoneNumber} به نام ${row.customer.customerLName} ارسال گردد؟`,
-                              callBack: () => handleSendDriverLink(row?.id),
-                            });
+                          // onClick={(e) => {
+                          //   const defaultMobile =
+                          //     row?.customer?.phoneNumbers?.find(
+                          //       (p) => p.isPrimary == true
+                          //     );
+                          //   setSelectedID(row?.id);
+                          //   setDialogGears({
+                          //     title: "ارسال درخواست ثبت راننده به مشتری",
+                          //     text: `آیا می خواهید درخواست به شماره ${defaultMobile?.phoneNumber} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                          //     callBack: () => handleSendDriverLink(row?.id),
+                          //   });
 
-                            setIsDialogOpen(true);
+                          //   setIsDialogOpen(true);
+                          // }}
+                          onClick={() => {
+                            setSelectedID(row.id);
+                            setPhoneNumberIsFor(1);
+                            handleSelectPhoneNumberToSend(row?.id);
                           }}
                         >
                           <Tooltip label="درخواست ثبت راننده">
@@ -531,19 +537,24 @@ export const InvoiceDataTable = ({ isDesktop, listAll = false }) => {
                           hidden={row?.isSent && row?.approvedFile}
                           _hover={{ color: "#ffd54f" }}
                           color="green.600"
-                          onClick={(e) => {
-                            setSelectedID(row.id);
-                            const defaultMobile =
-                              row?.customer?.phoneNumbers?.find(
-                                (p) => p.isPrimary == true
-                              );
-                            setDialogGears({
-                              title: "ارسال لینک به مشتری",
-                              text: `آیا می خواهید لینک به شماره ${defaultMobile?.phoneNumber} به نام ${row.customer.customerLName} ارسال گردد؟`,
-                              callBack: () => handleSendCustomerLink(row?.id),
-                            });
+                          // onClick={(e) => {
+                          //   setSelectedID(row.id);
+                          //   const defaultMobile =
+                          //     row?.customer?.phoneNumbers?.find(
+                          //       (p) => p.isPrimary == true
+                          //     );
+                          //   setDialogGears({
+                          //     title: "ارسال لینک به مشتری",
+                          //     text: `آیا می خواهید لینک به شماره ${defaultMobile?.phoneNumber} به نام ${row.customer.customerLName} ارسال گردد؟`,
+                          //     callBack: () => handleSendCustomerLink(row?.id),
+                          //   });
 
-                            setIsDialogOpen(true);
+                          //   setIsDialogOpen(true);
+                          // }}
+                          onClick={() => {
+                            setSelectedID(row?.id);
+                            setPhoneNumberIsFor(0);
+                            handleSelectPhoneNumberToSend(row?.id);
                           }}
                         >
                           <Tooltip label="درخواست ثبت مدارک واریز وجه">

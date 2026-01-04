@@ -48,7 +48,7 @@ const endpoints = {
     detail: (id) => `/proforma/${id}`,
     create: "/proforma/",
     delete: (id) => `/proforma/${id}`,
-    setProformaIsSent: (id) => `/proforma/sent/${id}`,
+    setProformaIsSent: (id, phone) => `/proforma/sent/${id}?phone=${phone}`,
     setProformaIsAccepted: (id) => `/proforma/accept/${id}`,
   },
   invoice: {
@@ -67,7 +67,7 @@ const endpoints = {
     detail: (id) => `/invoice/${id}`,
     create: "/invoice/",
     delete: (id) => `/invoice/${id}`,
-    setInvoiceIsSent: (id) => `/invoice/sent/${id}`,
+    setInvoiceIsSent: (id, phone) => `/invoice/sent/${id}?phone=${phone}`,
     setInvoiceIsAccepted: (id) => `/invoice/accept/${id}`,
     getApprovedFile: (id) => `/invoice/file/${id}`,
     getApprovedFileByToken: (token) => `/invoice/file/token/${token}`,
@@ -75,7 +75,8 @@ const endpoints = {
     updateProformCustomerFile: (token) => `/invoice/token/${token}`,
     updateInvoiceDriverInfo: (token) => `/invoice/driver/token/${token}`,
     generateNewToken: (id) => `/invoice/generateNewToken/${id}`,
-    sendInvoiceDriverLink: (id) => `/invoice/sendDriverLink/${id}`,
+    sendInvoiceDriverLink: (id, phone) =>
+      `/invoice/sendDriverLink/${id}?phone=${phone}`,
   },
   customer: {
     listAll: (page, limit, search) =>

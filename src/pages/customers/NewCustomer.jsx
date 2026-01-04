@@ -672,6 +672,7 @@ export const NewCustomer = ({ isDesktop }) => {
                   <Flex
                     direction={isDesktop ? "row" : "column"}
                     dir={isDesktop ? "rtl" : ""}
+                    gap={3}
                   >
                     {phoneNumbers?.map((phone, index) => (
                       <Box
@@ -839,6 +840,7 @@ export const NewCustomer = ({ isDesktop }) => {
                   <Flex
                     direction={isDesktop ? "row" : "column"}
                     dir={isDesktop ? "rtl" : ""}
+                    gap={3}
                   >
                     {locations?.map((location, index) => (
                       <Box

@@ -216,6 +216,7 @@ export const HeaderBar = ({
 
         <Menu>
           <MenuButton
+            ml={2}
             _hover={{ color: "orange" }}
             as={IconButton}
             id="user"

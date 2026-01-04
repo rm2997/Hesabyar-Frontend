@@ -131,20 +131,20 @@ export const ProformaDataTable = ({ isDesktop, listAll = false }) => {
       });
       return;
     }
-    const defaultMobile = proforma?.customer?.phoneNumbers?.find(
-      (p) => p.isPrimary == true
-    );
+    // const defaultMobile = proforma?.customer?.phoneNumbers?.find(
+    //   (p) => p.isPrimary == true
+    // );
 
-    if (!defaultMobile?.phoneNumber) {
-      toast({
-        title: "امکان ارسال وجود ندارد",
-        description: "شماره موبایل مشتری ثبت نشده است",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+    // if (!defaultMobile?.phoneNumber) {
+    //   toast({
+    //     title: "امکان ارسال وجود ندارد",
+    //     description: "شماره موبایل مشتری ثبت نشده است",
+    //     status: "error",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   return;
+    // }
     setCustomerPhoneNumbers(proforma?.customer?.phoneNumbers);
     setShowSelectPhoneNumbers(true);
   };
