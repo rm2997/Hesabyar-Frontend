@@ -1,5 +1,7 @@
 import {
   Box,
+  Center,
+  Divider,
   Flex,
   IconButton,
   Table,
@@ -11,7 +13,7 @@ import {
   Tooltip,
   Tr,
 } from "@chakra-ui/react";
-import { Phone, Send } from "lucide-react";
+import { Check, Phone, Send, X } from "lucide-react";
 import { MdOutlinePhoneIphone } from "react-icons/md";
 export const SelectPhoneNumer = ({ id, phoneNumbers, handleSend }) => {
   return (
@@ -23,7 +25,6 @@ export const SelectPhoneNumer = ({ id, phoneNumbers, handleSend }) => {
               <Td>نوع</Td>
               <Td>شماره</Td>
               <Td>پیش فرض</Td>
-              <Td></Td>
             </Tr>
           </Thead>
           <Tbody>
@@ -41,16 +42,25 @@ export const SelectPhoneNumer = ({ id, phoneNumbers, handleSend }) => {
                   </Flex>
                 </Td>
                 <Td>{phone?.phoneNumber}</Td>
-                <Td>{phone?.isPrimary ? "بله" : "خیر"}</Td>
                 <Td>
-                  <IconButton
-                    title="ارسال"
-                    variant={"ghost"}
-                    colorScheme="blue"
-                    icon={<Send />}
-                    onClick={() => handleSend(id, phone?.phoneNumber)}
-                    isDisabled={phone?.phoneType != "تلفن همراه"}
-                  />
+                  <Flex direction={"row"} gap={2} alignItems={"center"}>
+                    {phone?.isPrimary ? (
+                      <Check color="green" />
+                    ) : (
+                      <X color="red" />
+                    )}
+                    <Center height={"30px"}>
+                      <Divider orientation="vertical" />
+                    </Center>
+                    <IconButton
+                      title="ارسال"
+                      variant={"ghost"}
+                      colorScheme="blue"
+                      icon={<Send />}
+                      onClick={() => handleSend(id, phone?.phoneNumber)}
+                      isDisabled={phone?.phoneType != "تلفن همراه"}
+                    />
+                  </Flex>
                 </Td>
               </Tr>
             ))}
