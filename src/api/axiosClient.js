@@ -2,7 +2,7 @@ import axios from "axios";
 import { loadTokens } from "./tokenUtils";
 const BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://api.hesab-yaar.ir"
+    ? "https://api.asansorlands.ir"
     : "http://localhost:3001";
 
 const axiosClient = axios.create({
