@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# docker related
+docker-compose.yml 
+
 # testing
 /coverage
 
