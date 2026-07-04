@@ -1,7 +1,7 @@
 # ==========================
 # Stage 1 - Build React App
 # ==========================
-FROM node:22-alpine AS builder
+FROM node:lts-alpine3.23 AS builder
 
 WORKDIR /app
 
