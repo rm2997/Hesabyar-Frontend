@@ -65,7 +65,7 @@ export const GoodsDataTable = ({}) => {
     const res = await ShowAllGoods(
       resetPage ? 1 : currentPage,
       itemsPerPage,
-      resetPage ? "" : search
+      resetPage ? "" : search,
     );
     if (!res.data) {
       toast({
@@ -101,7 +101,7 @@ export const GoodsDataTable = ({}) => {
 
   const updateGoodInList = (updatedGood) => {
     setGoodsData((prev) =>
-      prev.map((g) => (g.id === updatedGood.id ? updatedGood : g))
+      prev.map((g) => (g.id === updatedGood.id ? updatedGood : g)),
     );
   };
 
@@ -243,7 +243,7 @@ export const GoodsDataTable = ({}) => {
                             mr="auto"
                           >
                             {Number(
-                              row?.goodCount - row?.goodSaleCount
+                              row?.goodCount - row?.goodSaleCount,
                             ).toLocaleString()}{" "}
                           </Text>
                           <Text> {row?.goodUnit?.unitName}</Text>
@@ -387,9 +387,7 @@ export const GoodsDataTable = ({}) => {
                           dir="ltr"
                           textAlign={"center"}
                         >
-                          {Number(
-                            row?.goodCount - row?.goodSaleCount
-                          ).toLocaleString()}{" "}
+                          {Number(row?.goodSaleCount).toLocaleString()}{" "}
                         </Text>
                       </Td>
                       <Td>
@@ -400,7 +398,7 @@ export const GoodsDataTable = ({}) => {
                           textAlign={"center"}
                         >
                           {Number(
-                            row?.goodCount - row?.goodSaleCount
+                            row?.goodCount - row?.goodSaleCount,
                           ).toLocaleString()}{" "}
                         </Text>
                       </Td>
