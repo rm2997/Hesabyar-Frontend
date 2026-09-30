@@ -1,11 +1,10 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   FormControl,
   FormLabel,
-  Heading,
+  Icon,
   Image,
   Input,
   Link,
@@ -20,9 +19,9 @@ import { useNavigate } from "react-router-dom";
 import { saveTokens, loadTokens } from "../api/tokenUtils";
 import { UserContext } from "../contexts/UserContext";
 import { jwtDecode } from "jwt-decode";
-import { CircleUserRound, DoorOpen, LogIn } from "lucide-react";
+import { LucideUserRound } from "lucide-react";
 import { GetNewCaptcha, login } from "../api/services/authService";
-import endpoints from "../api/endpoints";
+import "../theme/login.css";
 
 export const LoginForm = () => {
   const userNameBoxRef = useRef();
@@ -47,6 +46,7 @@ export const LoginForm = () => {
   const { accessToken } = loadTokens();
 
   useEffect(() => {
+    //navigate("/second-login");
     if (accessToken) navigate("/myhome");
     userNameBoxRef.current.focus();
   }, []);
@@ -62,42 +62,6 @@ export const LoginForm = () => {
   const handleChangeCaptcha = (value) => {
     setInputCaptha(value);
   };
-
-  // const createCaptchaImage = async (rndText) => {
-  //   const canvas = document.createElement("canvas");
-  //   const ctx = canvas.getContext("2d");
-  //   const rotations = [-15, -10, -5, 0, 5, 10, 15];
-  //   const colors = ["green", "red", "brown", "blue", "purple"];
-  //   const fonts = ["Arial", "Verdana", "Georgia", "monospace", "cursive"];
-  //   //const rndText = Math.random().toString(36).substring(2, 7);
-  //   canvas.width = 150;
-  //   canvas.height = 80;
-  //   ctx.fillStyle = "white";
-  //   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  //   ctx.textBaseline = "middle";
-  //   ctx.textAlign = "center";
-
-  //   for (let i = 0; i < rndText.length; i++) {
-  //     const char = rndText[i];
-  //     const rndX = 25 + i * 25;
-  //     const rndY = 40;
-  //     const rndFontSize = Math.floor(Math.random() * (40 - 20 + 1)) + 20;
-  //     const rndFont = fonts[Math.floor(Math.random() * fonts.length)];
-  //     const rndColor = colors[Math.floor(Math.random() * colors.length)];
-  //     const rndRotate = rotations[Math.floor(Math.random() * rotations.length)];
-  //     ctx.save(); // ذخیره حالت فعلی
-  //     ctx.translate(rndX, rndY); // انتقال مرکز چرخش
-  //     ctx.rotate((rndRotate * Math.PI) / 180); // چرخش به رادیان
-  //     ctx.font = `bold ${rndFontSize}px ${rndFont}`;
-  //     ctx.fillStyle = rndColor;
-  //     ctx.fillText(char, 0, 0);
-  //     ctx.restore(); // بازگشت به حالت اولیه
-  //   }
-
-  //   const dataUrl = canvas.toDataURL("image/png");
-  //   setCaptcha(rndText);
-  //   setCaptchaImage(dataUrl);
-  // };
 
   const handleGeneratCaptcha = async () => {
     setIsFormDisabled(true);
@@ -212,7 +176,7 @@ export const LoginForm = () => {
           "/second-login?token=" +
             res?.data?.accessToken +
             "&mobile=" +
-            res?.data?.mobilnumber
+            res?.data?.mobilnumber,
         );
       }
     } catch (error) {
@@ -249,214 +213,276 @@ export const LoginForm = () => {
     return rndTextRes?.data;
   };
   return (
-    <Box
-      p="10px"
-      w="full"
-      minH="100vh"
-      bg="gray.700"
-      alignItems="center"
-      alignContent="center"
-      bgSize="auto"
-      bgRepeat="repeat-x"
-      bgPosition="left"
-      bgImage="url(/assets/images/bg/world.png)"
-    >
-      <Box width="full">
-        <Flex
-          filter={isFormDisabled ? "blur(10px)" : ""}
-          bg="gray"
-          textColor="white"
-          mx="auto"
-          borderWidh="2px"
-          borderRadius="lg"
-          w={isDesktop ? "600px" : "full"}
-          maxW={{ sm: "400", lg: "600px" }}
-          minH={isDesktop ? "600px" : "90vh"}
-          direction="column"
-          alignContent="center"
-          alignItems="center"
-          rowGap={isDesktop ? 2 : 0}
-          dir="rtl"
-          borderColor="white"
-          boxShadow="1px 2px 15px 1px rgb(0, 0, 0)"
-          p={isDesktop ? "10px" : "5px"}
-        >
-          <CircleUserRound mt="15px" size={100} strokeWidth={1} />
-          <Text color="white" fontSize="3xl">
-            ورود کاربران
-          </Text>
-          <Text
-            fontFamily="Beiruti"
-            size="xs"
-            color="whiteAlpha.500"
-            fontSize={isDesktop ? "md" : "sm"}
-          >
-            سامانه دستیار سیستم های حسابداری
-          </Text>
+    <div className="body">
+      <Flex className="auth-page">
+        <Flex w="full" flexDirection={"column"} rowGap={5}>
           <Flex
-            as="form"
-            direction="column"
-            width="70%"
-            rowGap={5}
-            onSubmit={handleSubmit}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w="full"
+            marginX={"auto"}
+            columnGap={2}
           >
-            <Divider mb="10px" />
-            <FormControl textColor="white" isRequired>
-              <Input
-                ref={userNameBoxRef}
-                isInvalid={
-                  form?.username?.length > 0 && form?.username?.length < 3
-                }
-                autoComplete="off"
-                _placeholder={{ color: "whiteAlpha.700" }}
-                _focus={{
-                  boxShadow: "teal 0px 2px 5px 1px",
-                  borderColor: "blackAlpha.400",
-                }}
-                textColor="white"
-                name="username"
-                type="text"
-                variant="outline"
-                value={form?.username}
-                onChange={handleChange}
-                placeholder="نام کاربری"
-              />
-            </FormControl>
-
-            <FormControl textColor="white" isRequired>
-              <MyInputBox
-                isInvalid={
-                  form?.password?.length > 0 && form?.password?.length < 3
-                }
-                autoComplete="off"
-                _placeholder={{ color: "whiteAlpha.700" }}
-                _focus={{
-                  boxShadow: "teal 0px 2px 5px 1px",
-                  borderColor: "blackAlpha.400",
-                }}
-                type="password"
-                pr={3}
-                textColor="white"
-                variant="outline"
-                name="password"
-                title="کلمه عبور"
-                size={30}
-                value={form.password}
-                onChange={handleChange}
-              />
-            </FormControl>
-            {showCaptcha && (
-              <FormControl textColor="white" isRequired>
-                <FormLabel hidden={!isDesktop}>رمز تصادفی</FormLabel>
-                <Flex justify="space-between">
-                  <Input
-                    isInvalid={
-                      inputCaptha?.length > 0 && inputCaptha?.length != 5
-                    }
-                    autoComplete="off"
-                    colorScheme="teal"
-                    _placeholder={{ color: "whiteAlpha.700" }}
-                    textColor="white"
-                    dir={isDesktop ? "ltr" : "rtl"}
-                    width="50%"
-                    name="captcha"
-                    type="text"
-                    variant="flushed"
-                    value={inputCaptha}
-                    onChange={(e) => handleChangeCaptcha(e.target.value)}
-                    placeholder={
-                      isDesktop ? "کد تصویر مقابل را وارد کنید" : "کد تصویر"
-                    }
-                  />
-                  <Box
-                    minW="150px"
-                    minH="60px"
-                    mx={1}
-                    borderWidth={1}
-                    borderColor="whiteAlpha.300"
-                    borderRadius="md"
-                    onClick={() => handleGeneratCaptcha()}
-                    cursor={"pointer"}
-                    alignContent="center"
-                    p="px"
-                  >
-                    <Box
-                      dangerouslySetInnerHTML={{ __html: captchaImage }}
-                      p="1px"
-                    />
-                    <Text
-                      height="50%"
-                      textColor="whiteAlpha.400"
-                      textAlign="center"
-                      hidden={captchaImage?.length > 0}
-                    >
-                      تصویر امنیتی
-                    </Text>
-                  </Box>
-                </Flex>
-              </FormControl>
-            )}
-            <Divider mt="5px" mb="10px" />
-            <Button
-              fontFamily="Yekan"
-              size="lg"
-              colorScheme="teal"
-              variant="solid"
-              leftIcon={<LogIn />}
-              type="submit"
-              width="full"
-              disabled={
-                form?.username?.length < 3 ||
-                form?.password?.length < 3 ||
-                isFormDisabled
-              }
-              isLoading={isFormDisabled}
-            >
-              ورودبه حسابیار
-            </Button>
-            <Link
-              fontFamily="Yekan"
-              mx="auto"
-              href="#"
-              onClick={handleClick}
-              textColor="yellow.400"
-            >
-              فراموشی نام کاربری/رمز
-            </Link>
-            <Link
-              fontFamily="Yekan"
-              mx="auto"
-              href="#"
-              onClick={handleHomeClick}
-              textColor="yellow.400"
-            >
-              خانه
-            </Link>
+            <Text color={"var(--muted);"}>تجارت آسانبر علیا · آسانسورلند</Text>
+            <Image
+              style={{
+                width: "42px",
+                height: "42px",
+                objectfit: "cover",
+                borderRadius: "50%",
+                background: "#fff",
+                border: "2px solid var(--brand)",
+                boxShadow: "0 0 0 5px rgba(123,45,255,.10)",
+              }}
+              src="/assets/images/logos/logo_small.webp"
+            />
           </Flex>
-          <Flex mt="auto">
+
+          <Flex
+            filter={isFormDisabled ? "blur(10px)" : ""}
+            textColor="white"
+            mx="auto"
+            borderWidh="2px"
+            borderRadius="lg"
+            w={isDesktop ? "460px" : "full"}
+            maxW={{ sm: "400", lg: "600px" }}
+            minH={isDesktop ? "600px" : "90vh"}
+            direction="column"
+            alignContent="center"
+            alignItems="center"
+            rowGap={isDesktop ? 2 : 0}
+            dir="rtl"
+            // borderColor="white"
+            // boxShadow="1px 2px 15px 1px rgb(0, 0, 0)"
+            // p={isDesktop ? "10px" : "5px"}
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--line)",
+              borderRadius: "32px",
+              padding: "clamp(24px,5vw,38px)",
+              boxShadow: "var(--shadow)",
+              backdropFilter: "blur(22px)",
+              webkitBackdropFilter: "blur(22px)",
+              transition:
+                "background .35s ease,border-color .35s ease,box-shadow .35s ease",
+            }}
+          >
+            <Flex
+              color={"#fff"}
+              style={{
+                boxShadow: "0 12px 35px rgba(123,45,255,.35)",
+                background: "linear-gradient(180deg,#623987,#7f5ba0)",
+                borderRadius: "22px",
+                margin: "0 auto 18px",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "72px",
+                height: "72px",
+              }}
+            >
+              <Icon w={"35px"} h={"35px"}>
+                <LucideUserRound />
+              </Icon>
+            </Flex>
+            <Text fontWeight={"bold"} color="black" fontSize="3xl">
+              ورود کاربران
+            </Text>
             <Text
+              fontFamily="Vazirmatn"
+              size="xs"
+              color="var(--muted)"
+              fontSize={isDesktop ? "md" : "sm"}
+            >
+              سامانه دستیار سیستم های حسابداری
+            </Text>
+            <Flex
+              as="form"
+              direction="column"
+              width="95%"
+              rowGap={"15px"}
+              onSubmit={handleSubmit}
+            >
+              <FormControl textColor="white" isRequired>
+                <Text my="5px" color={"var(--text)"}>
+                  نام کاربری
+                </Text>
+                <Input
+                  ref={userNameBoxRef}
+                  isInvalid={
+                    form?.username?.length > 0 && form?.username?.length < 3
+                  }
+                  autoComplete="off"
+                  h={"55px"}
+                  borderRadius={"2xl"}
+                  _placeholder={{ color: "whiteAlpha.700" }}
+                  textColor={"var(--text)"}
+                  name="username"
+                  type="text"
+                  variant="outline"
+                  value={form?.username}
+                  onChange={handleChange}
+                  placeholder="نام کاربری"
+                />
+              </FormControl>
+
+              <FormControl textColor="white" isRequired>
+                <Text my="5px" color={"var(--text)"}>
+                  کلمه عبور
+                </Text>
+                <MyInputBox
+                  borderRadius={"2xl"}
+                  isInvalid={
+                    form?.password?.length > 0 && form?.password?.length < 3
+                  }
+                  h={"55px"}
+                  autoComplete="off"
+                  _placeholder={{ color: "whiteAlpha.700" }}
+                  type="password"
+                  pr={3}
+                  textColor={"var(--text)"}
+                  variant="outline"
+                  name="password"
+                  title="کلمه عبور"
+                  size={30}
+                  value={form.password}
+                  onChange={handleChange}
+                />
+              </FormControl>
+              {showCaptcha && (
+                <FormControl color={"var(--text)"} isRequired>
+                  <FormLabel hidden={!isDesktop}>رمز تصادفی</FormLabel>
+                  <Flex justify="space-between">
+                    <Input
+                      isInvalid={
+                        inputCaptha?.length > 0 && inputCaptha?.length != 5
+                      }
+                      autoComplete="off"
+                      _placeholder={{ color: "whiteAlpha.700" }}
+                      textColor={"var(--text)"}
+                      px={2}
+                      h={"55px"}
+                      dir={isDesktop ? "ltr" : "rtl"}
+                      width="50%"
+                      name="captcha"
+                      type="text"
+                      variant="outline"
+                      borderRadius={"2xl"}
+                      value={inputCaptha}
+                      onChange={(e) => handleChangeCaptcha(e.target.value)}
+                      placeholder={
+                        isDesktop ? "کد تصویر مقابل را وارد کنید" : "کد تصویر"
+                      }
+                    />
+                    <Box
+                      minW="150px"
+                      minH="60px"
+                      mx={1}
+                      borderWidth={1}
+                      borderColor="whiteAlpha.300"
+                      borderRadius="md"
+                      onClick={() => handleGeneratCaptcha()}
+                      cursor={"pointer"}
+                      alignContent="center"
+                      p="px"
+                    >
+                      <Box
+                        dangerouslySetInnerHTML={{ __html: captchaImage }}
+                        p="1px"
+                      />
+                      <Text
+                        height="50%"
+                        textColor="whiteAlpha.400"
+                        textAlign="center"
+                        hidden={captchaImage?.length > 0}
+                      >
+                        تصویر امنیتی
+                      </Text>
+                    </Box>
+                  </Flex>
+                </FormControl>
+              )}
+              <Link
+                href="#"
+                onClick={handleClick}
+                textColor="#512C74"
+                _hover={{
+                  color: "#512C74",
+                  opacity: "1",
+                  transform: "translateX(-3px)",
+                }}
+              >
+                فراموشی نام کاربری/رمز
+              </Link>
+
+              <Button
+                size="lg"
+                style={{
+                  background: "linear-gradient(180deg,#623987,#7f5ba0)",
+                }}
+                _hover={{
+                  background:
+                    "linear-gradient( 180deg, #74469d 0%, #5a327d 100% )",
+                  boxShadow: "0 14px 30px rgba(57,27,90,.28)",
+                  transform: "translateY(-2px);",
+                }}
+                borderRadius={"2xl"}
+                color={"white"}
+                variant="solid"
+                type="submit"
+                width="full"
+                disabled={
+                  form?.username?.length < 3 ||
+                  form?.password?.length < 3 ||
+                  isFormDisabled
+                }
+                isLoading={isFormDisabled}
+              >
+                ورود به سامانه
+              </Button>
+
+              <Button
+                mx="auto"
+                size="lg"
+                href="#"
+                borderRadius={"2xl"}
+                borderColor={"transparent"}
+                _hover={{
+                  borderColor: "rgb(98, 57, 135)",
+                  background: "rgba(98,57,135,.12)",
+                }}
+                variant={"outline"}
+                onClick={handleHomeClick}
+                width="full"
+              >
+                بازگشت به صفحه اصلی
+              </Button>
+            </Flex>
+
+            <Flex
+              hidden={!isFormDisabled}
+              direction={"column"}
+              top={0}
+              left={0}
+              position="absolute"
+              zIndex={100}
+              minHeight="50%"
+              h="100%"
+              minW="full"
+              bg="blackAlpha.300"
+            />
+          </Flex>
+          <Flex mt={"auto"}>
+            <Text
+              color={"var(--muted);"}
               mx="auto"
               fontFamily="iransans"
               fontSize="2xs"
-              color="whiteAlpha.600"
             >
-              نسخه 1.0.0.0 *** چهاردهم دی 1404
+              نسخه 1.0.1.0 *** هشتم مهر 1405
             </Text>
           </Flex>
-          <Flex
-            hidden={!isFormDisabled}
-            direction={"column"}
-            top={0}
-            left={0}
-            position="absolute"
-            zIndex={100}
-            minHeight="50%"
-            h="100%"
-            minW="full"
-            bg="blackAlpha.300"
-          />
         </Flex>
-      </Box>
-    </Box>
+      </Flex>
+    </div>
   );
 };

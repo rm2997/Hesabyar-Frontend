@@ -6,17 +6,17 @@ import {
   Input,
   useToast,
   Text,
-  Divider,
   useBreakpointValue,
   Flex,
+  Image,
+  Icon,
+  Link,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Send, UserLock } from "lucide-react";
-import {
-  GetUserByMobileNumber,
-  SendForgetPassSms,
-} from "../../api/services/userService";
+import { LockOpen } from "lucide-react";
+import { GetUserByMobileNumber } from "../../api/services/userService";
+import "../../theme/login.css";
 
 export const ForgotPasswordForm = () => {
   const isDesktop = useBreakpointValue({ base: false, md: false, lg: true });
@@ -44,7 +44,7 @@ export const ForgotPasswordForm = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    navigate("/login");
+    navigate("/Home");
   };
 
   const handleSubmit = async (e) => {
@@ -91,109 +91,172 @@ export const ForgotPasswordForm = () => {
   };
 
   return (
-    <Box
-      p="10px"
-      w="full"
-      minH="100vh"
-      bg="gray.700"
-      alignItems="center"
-      alignContent="center"
-      bgSize="auto"
-      bgRepeat="repeat-x"
-      bgPosition="left"
-      bgImage="url(/assets/images/bg/world.png)"
-    >
-      <Flex
-        filter={isLoading ? "blur(10px)" : ""}
-        bg="gray"
-        textColor="white"
-        mx="auto"
-        borderWidh="1px"
-        borderRadius="lg"
-        w={isDesktop ? "600px" : "full"}
-        maxW={{ sm: "400", lg: "600px" }}
-        minH={isDesktop ? "600px" : "90vh"}
-        direction="column"
-        alignContent="center"
-        alignItems="center"
-        rowGap={isDesktop ? 5 : 3}
-        dir="rtl"
-        borderColor="white"
-        boxShadow="1px 2px 15px 1px rgb(0, 0, 0)"
-        pt={isDesktop ? "10px" : "5px"}
-      >
-        <UserLock mt="15px" size={100} strokeWidth={1} />
-        <Text color="white" fontSize="3xl">
-          فراموشی رمز/نام کاربری
-        </Text>
-        <Text
-          fontFamily="Beiruti"
-          size="xs"
-          color="whiteAlpha.500"
-          fontSize={isDesktop ? "md" : "sm"}
-        >
-          کاربر گرامی شماره همراه خود را وارد کنید تا لینک بازیابی برایتان ارسال
-          شود
-        </Text>
-        <Flex
-          as="form"
-          direction="column"
-          width="70%"
-          rowGap={5}
-          onSubmit={handleSubmit}
-        >
-          <Divider mb="10px" />
-          <FormControl isRequired>
-            <Input
-              autoComplete="off"
-              _placeholder={{ color: "whiteAlpha.700" }}
-              _focus={{
-                boxShadow: "teal 0px 2px 5px 1px",
-                borderColor: "blackAlpha.400",
+    <div className="body">
+      <Flex className="auth-page">
+        <Flex w="full" flexDirection={"column"} rowGap={5}>
+          <Flex
+            alignItems={"center"}
+            justifyContent={"center"}
+            w="full"
+            marginX={"auto"}
+            columnGap={2}
+          >
+            <Text color={"var(--muted);"}>تجارت آسانبر علیا · آسانسورلند</Text>
+            <Image
+              style={{
+                width: "42px",
+                height: "42px",
+                objectfit: "cover",
+                borderRadius: "50%",
+                background: "#fff",
+                border: "2px solid var(--brand)",
+                boxShadow: "0 0 0 5px rgba(123,45,255,.10)",
               }}
-              pr={3}
-              textColor="white"
-              variant="outline"
-              dir="ltr"
-              placeholder="09xxxxxxxxx"
-              value={mobile}
-              isInvalid={
-                mobile?.length > 0 &&
-                (mobile?.length != 11 ||
-                  isNaN(Number(mobile)) ||
-                  mobile.startsWith("09") == false)
-              }
-              onChange={handleChangeMobileNumber}
+              src="/assets/images/logos/logo_small.webp"
             />
-          </FormControl>
-
-          <Button
-            fontFamily="Yekan"
-            size="lg"
-            leftIcon={<Send />}
-            variant="solid"
-            type="submit"
-            colorScheme="teal"
-            isLoading={isLoading}
-            isDisabled={!enableSend}
-            width="full"
-          >
-            ارسال لینک بازیابی
-          </Button>
-          <Divider />
-          <Button
-            fontFamily="Yekan"
+          </Flex>
+          <Flex
+            filter={isLoading ? "blur(10px)" : ""}
+            textColor="white"
             mx="auto"
-            href="#"
-            onClick={handleClick}
-            textColor="yellow.400"
-            variant="link"
-            colorScheme="blue"
+            borderWidh="2px"
+            borderRadius="lg"
+            w={isDesktop ? "460px" : "full"}
+            maxW={{ sm: "400", lg: "600px" }}
+            minH={isDesktop ? "300px" : "90vh"}
+            direction="column"
+            alignContent="center"
+            alignItems="center"
+            rowGap={isDesktop ? 2 : 0}
+            dir="rtl"
+            // borderColor="white"
+            // boxShadow="1px 2px 15px 1px rgb(0, 0, 0)"
+            // p={isDesktop ? "10px" : "5px"}
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--line)",
+              borderRadius: "32px",
+              padding: "clamp(24px,5vw,38px)",
+              boxShadow: "var(--shadow)",
+              backdropFilter: "blur(22px)",
+              webkitBackdropFilter: "blur(22px)",
+              transition:
+                "background .35s ease,border-color .35s ease,box-shadow .35s ease",
+            }}
           >
-            انصراف
-          </Button>
+            <Flex
+              color={"#fff"}
+              style={{
+                boxShadow: "0 12px 35px rgba(123,45,255,.35)",
+                background: "linear-gradient(180deg,#623987,#7f5ba0)",
+                borderRadius: "22px",
+                margin: "0 auto 18px",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "72px",
+                height: "72px",
+              }}
+            >
+              <Icon w={"35px"} h={"35px"}>
+                <LockOpen />
+              </Icon>
+            </Flex>
+            <Text fontWeight={"bold"} color="black" fontSize="3xl">
+              بازیابی نام کاربری/کلمه عبور
+            </Text>
+            <Text
+              fontFamily="Vazirmatn"
+              size="xs"
+              color="var(--muted)"
+              fontSize={isDesktop ? "md" : "sm"}
+              textAlign={"center"}
+            >
+              کاربر گرامی شماره همراه خود را وارد کنید تا لینک بازیابی برایتان
+              ارسال شود
+            </Text>
+            <Flex
+              as="form"
+              direction="column"
+              width="95%"
+              rowGap={5}
+              onSubmit={handleSubmit}
+            >
+              <FormControl isRequired>
+                <Text my="5px" color={"var(--text)"}>
+                  شماره همراه
+                </Text>
+                <Input
+                  autoComplete="off"
+                  _placeholder={{ color: "whiteAlpha.700" }}
+                  pr={3}
+                  h={"55px"}
+                  textColor={"var(--text)"}
+                  variant="outline"
+                  dir="ltr"
+                  placeholder="09xxxxxxxxx"
+                  value={mobile}
+                  isInvalid={
+                    mobile?.length > 0 &&
+                    (mobile?.length != 11 ||
+                      isNaN(Number(mobile)) ||
+                      mobile.startsWith("09") == false)
+                  }
+                  onChange={handleChangeMobileNumber}
+                />
+              </FormControl>
+
+              <Button
+                size="lg"
+                color={"white"}
+                style={{
+                  background: "linear-gradient(180deg,#623987,#7f5ba0)",
+                }}
+                _hover={{
+                  background:
+                    "linear-gradient( 180deg, #74469d 0%, #5a327d 100% )",
+                  boxShadow: "0 14px 30px rgba(57,27,90,.28)",
+                  transform: "translateY(-2px);",
+                }}
+                borderRadius={"2xl"}
+                variant="solid"
+                type="submit"
+                isLoading={isLoading}
+                isDisabled={!enableSend}
+                width="full"
+              >
+                ارسال لینک بازیابی
+              </Button>
+              <Button
+                mx="auto"
+                size="lg"
+                href="#"
+                borderRadius={"2xl"}
+                borderColor={"transparent"}
+                _hover={{
+                  borderColor: "rgb(98, 57, 135)",
+                  background: "rgba(98,57,135,.12)",
+                }}
+                variant={"outline"}
+                onClick={handleClick}
+                width="full"
+              >
+                بازگشت به صفحه اصلی
+              </Button>
+            </Flex>
+          </Flex>
+          <Link
+            mx="auto"
+            href="/login"
+            textColor="#512C74"
+            _hover={{
+              color: "#512C74",
+              opacity: "1",
+            }}
+          >
+            بازگشت به صفحه ورود
+          </Link>
         </Flex>
       </Flex>
-    </Box>
+    </div>
   );
 };
