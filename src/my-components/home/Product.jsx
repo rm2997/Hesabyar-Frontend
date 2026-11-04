@@ -15,8 +15,8 @@ export const Product = ({ pName, pComment, pImage, pPro1, pPro2 }) => {
         <h3>{pName} </h3>
         <p>{pComment}</p>
         <div className="mini-row">
-          <span className="mini-chip">توان بیشتر</span>
-          <span className="mini-chip">لرزش کمتر</span>
+          <span className="mini-chip">{pPro1}</span>
+          <span className="mini-chip">{pPro2}</span>
         </div>
       </div>
     </>

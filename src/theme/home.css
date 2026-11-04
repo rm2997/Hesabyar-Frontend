@@ -289,6 +289,8 @@ textarea {
   box-shadow: var(--shadow);
   cursor: pointer;
   transition: transform 0.35s var(--ease);
+  padding-left: initial;
+  padding-top: initial;
 }
 .theme-toggle {
   width: 48px;

@@ -478,7 +478,7 @@ export const LoginForm = () => {
               fontFamily="iransans"
               fontSize="2xs"
             >
-              نسخه 1.0.1.0 *** هشتم مهر 1405
+              نسخه 1.2.0.0 *** دوازدهم آبان 1405
             </Text>
           </Flex>
         </Flex>

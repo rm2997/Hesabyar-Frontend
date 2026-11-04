@@ -281,7 +281,7 @@ input {
   color: #d9c2ff;
 }
 .btn {
-  min-height: 52px;
+  /* min-height: 52px; */
   border-radius: 17px;
   border: 1px solid transparent;
   display: inline-flex;
@@ -463,6 +463,6 @@ input {
     height: 50px;
   }
   .btn {
-    height: 50px;
+    height: 40px;
   }
 }

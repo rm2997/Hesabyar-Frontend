@@ -6,12 +6,14 @@ import "../theme/home.css";
 import { Cataloge } from "../my-components/home/Cataloge";
 import { Footer } from "../my-components/home/Footer";
 import { Flex } from "@chakra-ui/react";
+import { useState } from "react";
 export const Home = () => {
+  const [drawer, setDrawer] = useState(false);
   return (
     <Flex position={"relative"} flexDir={"column"} dir="rtl">
       <div class="drawer-backdrop" id="drawerBackdrop" />
-      <DrawerMenu />
-      <Header />
+      <DrawerMenu setDrawer={setDrawer} open={drawer ? "open" : ""} />
+      <Header setDrawer={setDrawer} />
       <Intro />
       <section className="section products-section" id="products">
         <div className="container">

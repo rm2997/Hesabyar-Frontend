@@ -73,25 +73,26 @@ export const HeaderBar = ({
       <HStack spacing={sidebarWidth === 300 ? 3 : 1}>
         <HStack>
           <Box
+            mt={-3}
             mx={1}
-            borderRadius="10%"
-            _hover={{
-              cursor: "pointer",
-            }}
-            boxShadow="0 0 25px orange"
-            boxSize={20}
+            bgColor={"transparent"}
+            color={"transparent"}
+            borderRadius="full"
+            cursor="pointer"
+            transition={"filter ease 500ms"}
+            _hover={{ filter: "blur(1px)" }}
+            boxSize={8}
             maxH={5}
-            bgSize="contain"
-            bgRepeat="no-repeat"
-            bgPosition="center"
             onClick={() => navigate("/home")}
           >
             <Image
-              borderRadius="10%"
-              src="/assets/images/logos/logo1.jpg"
+              src="/assets/images/logos/logo_small.webp"
+              borderRadius={"full"}
+              alt="تجارت آسانبر علیا"
               objectFit="cover"
               target="_blank"
               rel="noopener noreferrer"
+              display={"block"}
             />
           </Box>
           <Button

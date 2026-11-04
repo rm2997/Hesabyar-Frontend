@@ -110,6 +110,8 @@ const endpoints = {
     detail: (id) => `/goods/${id}`,
     create: "/goods/",
     uploadExcel: "/goods/upload-excel",
+    uploadPrices: "/goods/upload-prices",
+    getPrices: "/goods/priceList",
     delete: (id) => `/goods/${id}`,
   },
   unit: {

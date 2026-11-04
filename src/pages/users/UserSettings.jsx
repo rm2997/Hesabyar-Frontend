@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import SepidarConnection from "./SepidarConnection";
 import SepidarSyncronization from "./SepidarSyncronization";
+import ProductPrice from "./ProductsPrice";
 
 export default function UserSettings({ isDesktop }) {
   return (
@@ -31,6 +32,9 @@ export default function UserSettings({ isDesktop }) {
           <Tab>
             <Text fontSize={isDesktop ? "md" : "sm"}>همسان سازی </Text>
           </Tab>
+          <Tab>
+            <Text fontSize={isDesktop ? "md" : "sm"}>لیست قیمت </Text>
+          </Tab>
         </TabList>
         <TabIndicator mt="-1.5px" height="2px" bg="blue.500" />
         <TabPanels borderColor="gray.200" borderWidth="1px" borderRadius="5">
@@ -39,6 +43,9 @@ export default function UserSettings({ isDesktop }) {
           </TabPanel>
           <TabPanel>
             <SepidarSyncronization />
+          </TabPanel>
+          <TabPanel>
+            <ProductPrice />
           </TabPanel>
         </TabPanels>
       </Tabs>

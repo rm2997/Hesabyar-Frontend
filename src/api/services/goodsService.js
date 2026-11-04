@@ -24,25 +24,6 @@ export const UploadGoodsFile = async (formData) => {
     headers: { "Content-Type": "multipart/form-data" },
     data: formData,
   });
-  // try {
-  //   const response = await axiosClient.post(
-  //     endpoints.good.uploadExcel,
-  //     formData,
-  //     { headers: { "Content-Type": "multipart/form-data" } }
-  //   );
-  //   return response;
-  // } catch (error) {
-  //   if (error.response) {
-  //     // پاسخ از سمت سرور (۴xx یا ۵xx)
-  //     throw new Error(error.response.data?.message || "خطای سرور");
-  //   } else if (error.request) {
-  //     // درخواست فرستاده شده ولی پاسخی نیومده
-  //     throw new Error("پاسخی از سرور دریافت نشد");
-  //   } else {
-  //     // خطای دیگر (مثلاً در خود کد)
-  //     throw new Error(`مشکلی در ارسال درخواست رخ داد-s${error.message}`);
-  //   }
-  // }
 };
 
 export const RemoveGood = async (id) => {
@@ -75,7 +56,23 @@ export const ShowGoodsByCount = async (count) => {
 
 export const ShowGoodSaleListByID = async (id) => {
   return await apiRequest({
-    method: 'GET',
+    method: "GET",
     url: endpoints.good.saleList(id),
-  })
-}
+  });
+};
+export const UploadGoodPrices = async (data) => {
+  return await apiRequest({
+    method: "POST",
+    url: endpoints.good.uploadPrices,
+    headers: { "Content-Type": "multipart/form-data" },
+    data: data,
+  });
+};
+
+export const GetPriceList = async () => {
+  return await apiRequest({
+    method: "GET",
+    url: endpoints.good.getPrices,
+    responseType: "blob",
+  });
+};

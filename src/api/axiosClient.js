@@ -1,7 +1,7 @@
 import axios from "axios";
 import { loadTokens } from "./tokenUtils";
 const BASE_URL =
-  process.env.NODE_ENV !== "developement" ? "/api" : "http://localhost:3001";
+  process.env.NODE_ENV !== "development" ? "/api" : "http://localhost:3001";
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,
